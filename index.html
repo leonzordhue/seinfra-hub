@@ -839,7 +839,6 @@
         <div class="sidebar-item" data-mod="rodovias"     onclick="loadModule('rodovias')">     <span class="sidebar-icon">&#128739;</span><span>Rodovias</span></div>
         <div class="sidebar-item" data-mod="ramais"       onclick="loadModule('ramais')">       <span class="sidebar-icon">&#127807;</span><span>Ramais</span></div>
         <div class="sidebar-item" data-mod="aerodromos"   onclick="loadModule('aerodromos')">   <span class="sidebar-icon">&#9992;</span><span>Aeródromos</span></div>
-        <div class="sidebar-item" data-mod="hidrovias"    onclick="loadModule('hidrovias')">    <span class="sidebar-icon">&#128674;</span><span>Hidrovias</span></div>
         <div class="sidebar-item" data-mod="terminais"    onclick="loadModule('terminais')">    <span class="sidebar-icon">&#9875;</span><span>Terminais</span></div>
         <div class="sidebar-section-label">Operações</div>
         <div class="sidebar-item" data-mod="obras"        onclick="loadModule('obras')">        <span class="sidebar-icon">&#128736;</span><span>Obras</span></div>
@@ -940,7 +939,6 @@ const HUB = {
     rodovias:     { id: "rodovias",     label: "Rodovias",       icon: "\u{1F6E3}",  color: "#1A2B5E" },
     ramais:       { id: "ramais",       label: "Ramais",         icon: "\u{1F33F}",  color: "#2D8540" },
     aerodromos:   { id: "aerodromos",   label: "Aeródromos",     icon: "\u{2708}",   color: "#0E7490" },
-    hidrovias:    { id: "hidrovias",    label: "Hidrovias",      icon: "\u{1F6A2}",  color: "#5B21B6" },
     terminais:    { id: "terminais",    label: "Terminais",      icon: "\u{2693}",   color: "#B8620A" },
     obras:        { id: "obras",        label: "Obras",          icon: "\u{1F3D7}",  color: "#C0392B" },
     atlas:        { id: "atlas",        label: "Atlas",          icon: "\u{1F5FA}",  color: "#1A2B5E" },
@@ -1238,7 +1236,7 @@ function getHomeHTML() {
         <div class="kpi-mini k-verde"><div class="kpi-mini-label">Extensão</div><div class="kpi-mini-value" id="kpi-ext">—</div><div class="kpi-mini-unit">km totais</div></div>
         <div class="kpi-mini k-amarelo"><div class="kpi-mini-label">Ramais</div><div class="kpi-mini-value" id="kpi-ram">—</div><div class="kpi-mini-unit">cadastrados</div></div>
         <div class="kpi-mini k-ciano"><div class="kpi-mini-label">Aeródromos</div><div class="kpi-mini-value" id="kpi-aero">—</div><div class="kpi-mini-unit">pontos</div></div>
-        <div class="kpi-mini k-roxo"><div class="kpi-mini-label">Hidrovias</div><div class="kpi-mini-value" id="kpi-hidro">—</div><div class="kpi-mini-unit">km navegáveis</div></div>
+        <div class="kpi-mini k-roxo"><div class="kpi-mini-label">Sinistros</div><div class="kpi-mini-value" id="kpi-sin">—</div><div class="kpi-mini-unit">registrados</div></div>
         <div class="kpi-mini k-laranja"><div class="kpi-mini-label">Terminais</div><div class="kpi-mini-value" id="kpi-term">—</div><div class="kpi-mini-unit">fluviais</div></div>
         <div class="kpi-mini k-vermelho"><div class="kpi-mini-label">Contratos</div><div class="kpi-mini-value" id="kpi-ct">—</div><div class="kpi-mini-unit">ativos</div></div>
         <div class="kpi-mini k-amarelo"><div class="kpi-mini-label">Investimento</div><div class="kpi-mini-value" id="kpi-inv">—</div><div class="kpi-mini-unit">R$ contratual</div></div>
@@ -1248,7 +1246,7 @@ function getHomeHTML() {
 
       <div class="section-title-wrap">
         <div class="section-title"><span class="section-title-bar"></span>Módulos disponíveis</div>
-        <div class="section-title-sub">10 áreas de gestão</div>
+        <div class="section-title-sub">9 módulos ativos</div>
       </div>
       <div class="module-grid">${cards}</div>
 
@@ -1311,7 +1309,7 @@ function populateHeroKPIs() {
   set("kpi-ram", ram ? fmtNum((ram.features || []).length) : "1.200+");
   const aer = HUB.state.geojsons[GEOJSON_FILES.aerodromos];
   set("kpi-aero", aer ? fmtNum((aer.features || []).length) : "120+");
-  set("kpi-hidro", "18.000+");
+  set("kpi-sin", fmtNum((HUB.state.sinistros || []).length));
   const term = HUB.state.geojsons[GEOJSON_FILES.terminais];
   set("kpi-term", term ? fmtNum((term.features || []).length) : "—");
   const ct = HUB.state.contratos || [];
@@ -1557,12 +1555,30 @@ function getRodoviasHTML() {
         </div>
       </div>
       <div class="tab-content" id="rod-rc">
-        <div class="filter-row">
-          <input class="filter-input" id="rodFilter" placeholder="Buscar rodovia, código, trecho…" oninput="filterRodovias()"/>
+        <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem">
+          <select class="filter-select" id="rodSelectRod" onchange="onSelectRodovia()" style="flex:1;min-width:200px">
+            <option value="">— Selecione uma rodovia —</option>
+          </select>
+          <input class="filter-input" id="rodFilter" placeholder="Ou busque pelo nome / código…" oninput="filterRodovias()" style="flex:1;min-width:180px"/>
         </div>
-        <div class="table-wrap"><table class="data-table" id="rodTable">
-          <thead><tr><th>Código</th><th>Rodovia</th><th>Extensão (km)</th><th>Situação</th><th>Pavimento</th></tr></thead>
-          <tbody></tbody></table></div>
+        <!-- resultado seleção -->
+        <div id="rodResultado" style="display:none;margin-top:0.6rem">
+          <div class="kpi-grid" id="rodResKpis" style="margin-bottom:0.8rem"></div>
+          <div class="panel-title" style="font-size:0.8rem;margin-bottom:0.4rem">Trechos cadastrados</div>
+          <div class="table-wrap" style="margin-bottom:1rem"><table class="data-table" id="rodTrechosTable">
+            <thead><tr><th>Código</th><th>Extensão (km)</th><th>Início</th><th>Fim</th><th>Pavimento</th></tr></thead>
+            <tbody></tbody></table></div>
+          <div class="panel-title" style="font-size:0.8rem;margin-bottom:0.4rem">Contratos desta rodovia</div>
+          <div id="rodContratos" style="margin-bottom:1rem"></div>
+          <div class="panel-title" style="font-size:0.8rem;margin-bottom:0.4rem">Traçado</div>
+          <div id="rodMapCons" class="map-wrap" style="height:380px;border-radius:var(--radius);overflow:hidden"></div>
+        </div>
+        <!-- tabela geral (sem seleção) -->
+        <div id="rodTabelaGeral">
+          <div class="table-wrap" style="margin-top:0.4rem"><table class="data-table" id="rodTable">
+            <thead><tr><th>Código</th><th>Rodovia</th><th>Extensão (km)</th><th>Situação</th><th>Pavimento</th></tr></thead>
+            <tbody></tbody></table></div>
+        </div>
       </div>
       <div class="tab-content" id="rod-rs">
         <div class="chart-wrap tall"><canvas id="chSinMes"></canvas></div>
@@ -1644,8 +1660,9 @@ async function initRodovias() {
     try { map.fitBounds(L.geoJSON(gj).getBounds(), { padding: [20, 20] }); } catch (e) {}
   }
 
-  // tabela
+  // tabela geral + select
   renderRodoviasTable(rod);
+  populateRodSelect(rod);
 
   // sinistros chart
   const mesMap = {};
@@ -1710,6 +1727,109 @@ function filterRodovias() {
   renderRodoviasTable(filtered);
 }
 
+function populateRodSelect(rod) {
+  const sel = document.getElementById("rodSelectRod"); if (!sel) return;
+  const seen = new Set();
+  const items = [];
+  (rod || []).forEach(r => {
+    const cod  = (r.codigo || r.cod || "").toString().trim();
+    const nome = (r.rodovia || r.nome || "").toString().trim();
+    const key  = (cod || nome).toUpperCase();
+    if (!key) return;
+    if (seen.has(key)) return;
+    seen.add(key);
+    items.push({ val: cod || nome, label: (cod && nome) ? `${cod} — ${nome}` : (cod || nome) });
+  });
+  items.sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
+  items.forEach(it => {
+    const o = document.createElement("option"); o.value = it.val; o.textContent = it.label; sel.appendChild(o);
+  });
+}
+
+async function onSelectRodovia() {
+  const sel = document.getElementById("rodSelectRod");
+  const cod = (sel?.value || "").trim();
+  const rodRes   = document.getElementById("rodResultado");
+  const rodGeral = document.getElementById("rodTabelaGeral");
+  if (!cod) {
+    if (rodRes)   rodRes.style.display   = "none";
+    if (rodGeral) rodGeral.style.display = "block";
+    filterRodovias(); return;
+  }
+  if (rodRes)   rodRes.style.display   = "block";
+  if (rodGeral) rodGeral.style.display = "none";
+
+  const codUp = cod.toUpperCase();
+  const rod = HUB.state.rodovias || [];
+  const trechos = rod.filter(r => [r.codigo, r.cod, r.rodovia, r.nome].join(" ").toUpperCase().includes(codUp));
+  const extTotal = trechos.reduce((s, t) => s + parseNum(t.extensao_km || t.extensao || t.km), 0);
+  const pav = trechos.filter(t => /pav|dupli|asf/i.test((t.pavimento || t.tipo_pavimento || t.situacao_fisica || t.situacao || ""))).reduce((s, t) => s + parseNum(t.extensao_km || t.extensao || t.km), 0);
+
+  const kpis = document.getElementById("rodResKpis");
+  if (kpis) kpis.innerHTML = `
+    <div class="kpi-card"><div class="kpi-card-label">Trechos</div><div class="kpi-card-value">${trechos.length}</div><div class="kpi-card-foot">cadastrados</div></div>
+    <div class="kpi-card v"><div class="kpi-card-label">Extensão total</div><div class="kpi-card-value">${fmtNum(extTotal,1)}</div><div class="kpi-card-foot">km</div></div>
+    <div class="kpi-card a"><div class="kpi-card-label">Pavimentado</div><div class="kpi-card-value">${fmtNum(pav,1)}</div><div class="kpi-card-foot">km</div></div>
+    <div class="kpi-card c"><div class="kpi-card-label">Leito natural</div><div class="kpi-card-value">${fmtNum(extTotal-pav,1)}</div><div class="kpi-card-foot">km</div></div>`;
+
+  const tbody = document.querySelector("#rodTrechosTable tbody");
+  if (tbody) tbody.innerHTML = trechos.length
+    ? trechos.map(t => `<tr>
+        <td style="font-family:var(--font-cond);font-weight:700;color:var(--azul)">${htmlEscape(t.codigo||t.cod||"—")}</td>
+        <td>${fmtNum(parseNum(t.extensao_km||t.extensao||t.km),1)}</td>
+        <td>${htmlEscape(t.inicio||t.localizacao_inicio||"—")}</td>
+        <td>${htmlEscape(t.fim||t.final||t.localizacao_final||"—")}</td>
+        <td>${htmlEscape(t.pavimento||t.tipo_pavimento||t.situacao_fisica||"—")}</td>
+      </tr>`).join("")
+    : `<tr><td colspan="5" class="info-state">Nenhum trecho encontrado para ${htmlEscape(cod)}.</td></tr>`;
+
+  // Contratos: busca o código da rodovia dentro de todos os campos de texto
+  const ct = HUB.state.contratos || [];
+  const codNorm = codUp.replace(/[\s-]/g, "");
+  const ctMatch = ct.filter(c => {
+    const txt = [c.objeto, c.nome_obra, c.descricao, c.rodovia, c.br, c.trecho, c.municipio].join(" ").toUpperCase();
+    const txtNorm = txt.replace(/[\s-]/g, "");
+    return txtNorm.includes(codNorm) || txt.includes(codUp);
+  });
+  const ctDiv = document.getElementById("rodContratos");
+  if (ctDiv) ctDiv.innerHTML = ctMatch.length
+    ? `<div style="display:flex;flex-direction:column;gap:0.5rem">${ctMatch.map(c => `
+        <div style="background:var(--azul-claro);border-radius:8px;padding:0.7rem 1rem;border:1px solid var(--azul-borda);display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
+          <div style="flex:1;min-width:180px">
+            <div style="font-size:0.7rem;font-weight:700;color:var(--azul)">${htmlEscape(c.contrato||c.numero_contrato||"—")}</div>
+            <div style="font-size:0.85rem;font-weight:600;margin:0.15rem 0;line-height:1.3">${htmlEscape(c.objeto||c.nome_obra||"—")}</div>
+            <div style="font-size:0.73rem;color:var(--cinza-med)">${htmlEscape(c.empresa||c.contratada||"")} · ${htmlEscape(c.municipio||"")}</div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            ${statusChip(c.situacao_eobras||c.situacao_real||c.situacao)}
+            <div style="font-size:0.82rem;font-weight:700;color:var(--azul);margin-top:0.25rem">${fmtBRL(parseNum(c.valor_atualizado||c.valor_contratual||0))}</div>
+          </div>
+        </div>`).join("")}</div>`
+    : `<div class="info-state" style="padding:1rem 0">Nenhum contrato vinculado a <strong>${htmlEscape(cod)}</strong> encontrado. Verifique se o código aparece na planilha de contratos.</div>`;
+
+  // Mapa isolado
+  const map = mkMap("rodMapCons", { center: [-4.5, -63.5], zoom: 5 });
+  if (map) {
+    const gj = await loadGeoJSON(GEOJSON_FILES.rodovias_est);
+    if (gj) {
+      const feats = (gj.features || []).filter(f => JSON.stringify(f.properties || {}).toUpperCase().includes(codUp));
+      if (feats.length) {
+        const lyr = L.geoJSON({ type: "FeatureCollection", features: feats }, {
+          style: { color: "#1A2B5E", weight: 3.5, opacity: 0.9 },
+          onEachFeature: (f, lyr) => {
+            const p = f.properties || {};
+            lyr.bindPopup(`<div class="pop-title">${htmlEscape(p.RODOVIA||p.NOME||p.CODIGO||cod)}</div><div class="pop-row">${htmlEscape(p.SITUACAO||p.PAVIMENTO||"")}</div>`);
+          }
+        }).addTo(map);
+        try { map.fitBounds(lyr.getBounds(), { padding: [30, 30] }); } catch(e) {}
+      } else {
+        L.geoJSON(gj, { style: { color: "#1A2B5E", weight: 1.5, opacity: 0.5 } }).addTo(map);
+      }
+    }
+    setTimeout(() => map.invalidateSize(), 120);
+  }
+}
+
 /* ──────────────────────────────────────────────
    MÓDULO RAMAIS
    Fonte: Sheets API v4 (id: 1Cr5Qbj_My7oOcIYiIjZ6NgJiCsij4ZAQCSxdP49cffc)
@@ -1730,60 +1850,143 @@ function getRamaisHTML() {
       <div class="kpi-card a"><div class="kpi-card-label">Com obra ativa</div><div class="kpi-card-value" id="rk-ram-obra">—</div><div class="kpi-card-foot">ramais</div></div>
       <div class="kpi-card c"><div class="kpi-card-label">Extensão total</div><div class="kpi-card-value" id="rk-ram-ext">—</div><div class="kpi-card-foot">km</div></div>
     </div>
+
     <div class="panel-card">
-      <div class="filter-row">
-        <select class="filter-select" id="ramMunSelect" onchange="onRamMunChange()">
-          <option value="">Carregando municípios…</option>
-        </select>
-        <select class="filter-select" id="ramSelect" disabled onchange="onRamSelect()">
-          <option value="">Selecione um ramal</option>
-        </select>
+      <div class="tab-bar" id="ramTabs">
+        <button class="tab-item active" data-tab="rg">Visão Geral</button>
+        <button class="tab-item" data-tab="rm">Municípios</button>
+        <button class="tab-item" data-tab="rc">Contratos</button>
       </div>
-      <div id="ramDetail" style="display:none;margin:0.8rem 0;padding:1rem;background:var(--azul-claro);border-radius:var(--radius);border:1px solid var(--azul-borda)">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.6rem" id="ramDetailGrid"></div>
+
+      <!-- ABA GERAL -->
+      <div class="tab-content active" id="ram-rg">
+        <div class="chart-grid-2">
+          <div>
+            <div class="panel-title" style="margin-bottom:0.6rem">Situação dos ramais</div>
+            <div class="chart-wrap"><canvas id="chRamSit"></canvas></div>
+          </div>
+          <div>
+            <div class="panel-title" style="margin-bottom:0.6rem">Top 10 municípios — quantidade de ramais</div>
+            <div class="chart-wrap"><canvas id="chRamMun"></canvas></div>
+          </div>
+        </div>
+        <div style="margin-top:1rem">
+          <div class="panel-title" style="margin-bottom:0.6rem">Mapa geral dos ramais estaduais</div>
+          <div id="ramMapGeral" class="map-wrap tall"></div>
+        </div>
       </div>
-      <div id="ramMap" class="map-wrap tall"></div>
-    </div>
-    <div class="panel-card">
-      <div class="panel-header">
-        <div class="panel-title">Ramais do município selecionado <span id="ramCount" style="color:var(--azul-aux);font-weight:400;font-size:0.82rem"></span></div>
-        <input class="filter-input" style="width:220px" id="ramBusca" placeholder="Filtrar por nome…" oninput="filterRamaisTable()"/>
+
+      <!-- ABA MUNICÍPIOS -->
+      <div class="tab-content" id="ram-rm">
+        <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem">
+          <select class="filter-select" id="ramMunSelect" onchange="onRamMunChange()" style="flex:1;min-width:180px">
+            <option value="">Carregando municípios…</option>
+          </select>
+          <select class="filter-select" id="ramSelect" disabled onchange="onRamSelect()" style="flex:1;min-width:180px">
+            <option value="">Selecione um ramal</option>
+          </select>
+          <input class="filter-input" id="ramBusca" placeholder="Buscar pelo nome do ramal…" oninput="filterRamaisTable()" style="width:200px"/>
+        </div>
+        <div id="ramDetail" style="display:none;margin:0.7rem 0;padding:1rem;background:var(--azul-claro);border-radius:var(--radius);border:1px solid var(--azul-borda)">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.5rem" id="ramDetailGrid"></div>
+        </div>
+        <div id="ramMap" class="map-wrap" style="height:420px;margin:0.7rem 0;border-radius:var(--radius);overflow:hidden"></div>
+        <div class="panel-header">
+          <div class="panel-title">Ramais <span id="ramCount" style="color:var(--cinza-aux);font-weight:400;font-size:0.82rem"></span></div>
+        </div>
+        <div class="table-wrap"><table class="data-table" id="ramTable">
+          <thead><tr><th>Código</th><th>Nome</th><th>Extensão (km)</th><th>Situação</th><th>Pavimento</th></tr></thead>
+          <tbody><tr><td colspan="5" style="text-align:center;color:var(--cinza-aux);padding:1.5rem">Selecione um município para listar os ramais</td></tr></tbody>
+        </table></div>
       </div>
-      <div class="table-wrap"><table class="data-table" id="ramTable">
-        <thead><tr><th>Código</th><th>Nome</th><th>Extensão (km)</th><th>Situação</th><th>Pavimento</th></tr></thead>
-        <tbody><tr><td colspan="5" style="text-align:center;color:var(--cinza-aux);padding:1.5rem">Selecione um município para listar os ramais</td></tr></tbody>
-      </table></div>
+
+      <!-- ABA CONTRATOS -->
+      <div class="tab-content" id="ram-rc">
+        <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem">
+          <input class="filter-input" id="ramCtBusca" placeholder="Buscar por nome da obra ou número do contrato…" oninput="filterRamaisContratos()" style="flex:1;min-width:220px"/>
+          <select class="filter-select" id="ramCtStatus" onchange="filterRamaisContratos()" style="min-width:180px">
+            <option value="">Todos os status</option>
+            <option value="vigente">Vigentes / Em execução</option>
+            <option value="concluida">Concluídas</option>
+            <option value="paralisada">Paralisadas</option>
+          </select>
+        </div>
+        <div id="ramCtList" style="margin-top:0.6rem">
+          <div class="info-state">Carregando contratos de ramais…</div>
+        </div>
+      </div>
     </div>
   </div>`;
 }
 
 async function initRamais() {
-  // mapa GeoJSON em paralelo com Sheets API
-  const map = mkMap("ramMap", { center: [-4.5, -63.0], zoom: 5 });
+  // liga tabs
+  $$("#ramTabs .tab-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      $$("#ramTabs .tab-item").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      $$(".tab-content", btn.closest(".panel-card")).forEach(tc => tc.classList.remove("active"));
+      const pane = document.getElementById(`ram-${btn.dataset.tab}`);
+      if (pane) pane.classList.add("active");
+      // lazy init mapas
+      if (btn.dataset.tab === "rg") setTimeout(() => HUB.state.maps.ramMapGeral?.invalidateSize(), 100);
+      if (btn.dataset.tab === "rm") setTimeout(() => HUB.state.maps.ramMap?.invalidateSize(), 100);
+      if (btn.dataset.tab === "rc") renderRamaisContratos();
+    });
+  });
 
+  // Carrega GeoJSON + Sheets em paralelo
   const [gj] = await Promise.all([
     loadGeoJSON(GEOJSON_FILES.ramais),
     carregarRamaisSheet()
   ]);
 
+  // Mapa geral (aba Visão Geral)
+  const mapGeral = mkMap("ramMapGeral", { center: [-4.5, -63.0], zoom: 5 });
   if (gj) {
     HUB.state.ramaisGeoJSON = gj;
     HUB.state.ramaisGeoLayer = L.geoJSON(gj, {
       style: f => {
         const sit = ((f.properties || {}).SITUACAO || "").toUpperCase();
         const cor = sit.includes("EM OBRA") ? "#F5A623" : sit.includes("EXTINTA") ? "#8896A8" : "#2D8540";
-        return { color: cor, weight: 2.2, opacity: 0.85 };
+        return { color: cor, weight: 2, opacity: 0.82 };
       },
       onEachFeature: (f, lyr) => {
         const p = f.properties || {};
-        const cod = p["CÓDIGO"] || p["CODIGO"] || p["CÓDIGO"] || "";
-        const num = p["Número"] || p["Numero"] || p["Número"] || "";
-        const nome = p.NOME || p.Nome || cod + (num ? " - " + num : "") || "Ramal";
-        lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(p.MUNICIPIO || p.Municipio || "")}</div>`);
+        const cod  = p["CÓDIGO"]||p["CODIGO"]||"";
+        const num  = p["Número"]||p["Numero"]||"";
+        const nome = p.NOME||p.Nome||(cod+(num?" - "+num:""))||"Ramal";
+        lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(p.MUNICIPIO||p.Municipio||"")}</div>`);
       }
-    }).addTo(map);
-    try { map.fitBounds(HUB.state.ramaisGeoLayer.getBounds(), { padding: [20,20] }); } catch(e) {}
+    });
+    if (mapGeral) {
+      HUB.state.ramaisGeoLayer.addTo(mapGeral);
+      try { mapGeral.fitBounds(HUB.state.ramaisGeoLayer.getBounds(), { padding: [20,20] }); } catch(e) {}
+    }
   }
+
+  // Mapa municípios (aba Municípios) — inicializa vazio
+  mkMap("ramMap", { center: [-4.5, -63.0], zoom: 5 });
+  if (gj && HUB.state.ramaisGeoLayer) {
+    // Clona a layer para o mapa de municípios também
+    HUB.state.ramaisGeoLayerMun = L.geoJSON(gj, {
+      style: f => {
+        const sit = ((f.properties||{}).SITUACAO||"").toUpperCase();
+        const cor = sit.includes("EM OBRA") ? "#F5A623" : sit.includes("EXTINTA") ? "#8896A8" : "#2D8540";
+        return { color: cor, weight: 2.2, opacity: 0.85 };
+      },
+      onEachFeature: (f, lyr) => {
+        const p = f.properties||{};
+        const nome = p.NOME||p["CÓDIGO"]||"Ramal";
+        lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(p.MUNICIPIO||p.Municipio||"")}</div>`);
+      }
+    });
+    HUB.state.ramaisGeoLayerMun.addTo(HUB.state.maps.ramMap);
+    try { HUB.state.maps.ramMap.fitBounds(HUB.state.ramaisGeoLayerMun.getBounds(), { padding:[20,20] }); } catch(e) {}
+  }
+
+  // Gráficos da aba Geral
+  _initRamaisCharts();
 }
 
 async function carregarRamaisSheet() {
@@ -1868,26 +2071,84 @@ async function carregarRamaisSheet() {
   }
 }
 
+function _initRamaisCharts() {
+  const sheet = HUB.state.ramaisSheet || [];
+  if (!sheet.length) return;
+
+  // Gráfico situação
+  const sitMap = {};
+  sheet.forEach(r => {
+    const s = (r.situacao || "Indefinido").split(/[\s\/]/)[0].trim() || "Indefinido";
+    sitMap[s] = (sitMap[s] || 0) + 1;
+  });
+  mkChart("chRamSit", {
+    type: "doughnut",
+    data: { labels: Object.keys(sitMap), datasets: [{ data: Object.values(sitMap), backgroundColor: ["#2D8540","#F5A623","#8896A8","#1A2B5E","#C0392B"], borderWidth: 2, borderColor: "#fff" }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: "58%", plugins: { legend: { position: "bottom", labels: { font: { family: "Lexend Deca", size: 11 } } } } }
+  });
+
+  // Top 10 municípios
+  const munMap = {};
+  sheet.forEach(r => { if (r.municipio) munMap[r.municipio] = (munMap[r.municipio] || 0) + 1; });
+  const munSorted = Object.entries(munMap).sort((a,b) => b[1]-a[1]).slice(0,10);
+  mkChart("chRamMun", {
+    type: "bar",
+    data: {
+      labels: munSorted.map(x => x[0]),
+      datasets: [{ label: "Ramais", data: munSorted.map(x => x[1]), backgroundColor: "#2D8540", borderRadius: 4 }]
+    },
+    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
+  });
+}
+
 function onRamMunChange() {
   const mun = document.getElementById("ramMunSelect").value;
   const sel2 = document.getElementById("ramSelect");
-  document.getElementById("ramDetail").style.display = "none";
-  if (!mun) { sel2.innerHTML = '<option value="">Selecione um ramal</option>'; sel2.disabled = true; renderRamaisTable([]); return; }
+  const det = document.getElementById("ramDetail");
+  if (det) det.style.display = "none";
 
-  // foca mapa no município
-  const gj = HUB.state.ramaisGeoJSON;
-  if (gj) {
+  const gj  = HUB.state.ramaisGeoJSON;
+  const map  = HUB.state.maps.ramMap;
+
+  if (!mun) {
+    // Restaura todas as features
+    if (map) {
+      if (HUB.state.ramaisMunLayer)  { try { map.removeLayer(HUB.state.ramaisMunLayer);  } catch(e) {} HUB.state.ramaisMunLayer = null; }
+      if (HUB.state.ramaisGeoLayerMun) { HUB.state.ramaisGeoLayerMun.addTo(map); try { map.fitBounds(HUB.state.ramaisGeoLayerMun.getBounds(), {padding:[20,20]}); } catch(e) {} }
+    }
+    sel2.innerHTML = '<option value="">Selecione um ramal</option>'; sel2.disabled = true;
+    renderRamaisTable([]); return;
+  }
+
+  // Filtra GeoJSON para mostrar só o município selecionado
+  if (gj && map) {
+    // Esconde a layer completa
+    if (HUB.state.ramaisGeoLayerMun) { try { map.removeLayer(HUB.state.ramaisGeoLayerMun); } catch(e) {} }
+    // Remove layer filtrada anterior
+    if (HUB.state.ramaisMunLayer) { try { map.removeLayer(HUB.state.ramaisMunLayer); } catch(e) {} HUB.state.ramaisMunLayer = null; }
     const feats = (gj.features||[]).filter(f => {
-      const m = (f.properties||{}).MUNICIPIO || (f.properties||{}).Municipio || "";
+      const m = (f.properties||{}).MUNICIPIO||(f.properties||{}).Municipio||"";
       return m.trim().toUpperCase() === mun.toUpperCase();
     });
-    if (feats.length && HUB.state.maps.ramMap) {
-      try { HUB.state.maps.ramMap.fitBounds(L.geoJSON({type:"FeatureCollection",features:feats}).getBounds(), {padding:[30,30]}); } catch(e){}
+    if (feats.length) {
+      HUB.state.ramaisMunLayer = L.geoJSON({type:"FeatureCollection",features:feats},{
+        style: f => {
+          const sit = ((f.properties||{}).SITUACAO||"").toUpperCase();
+          const cor = sit.includes("EM OBRA") ? "#F5A623" : sit.includes("EXTINTA") ? "#8896A8" : "#2D8540";
+          return { color: cor, weight: 3, opacity: 0.92 };
+        },
+        onEachFeature: (f, lyr) => {
+          const p = f.properties||{};
+          const nome = p.NOME||p["CÓDIGO"]||"Ramal";
+          lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(mun)}</div>`);
+        }
+      }).addTo(map);
+      try { map.fitBounds(HUB.state.ramaisMunLayer.getBounds(), { padding: [40, 40] }); } catch(e) {}
     }
   }
 
   const porMun = HUB.state.ramaisPorMun || {};
-  const ramais = (porMun[mun] || []).slice().sort((a,b) => a.nomeCompleto.localeCompare(b.nomeCompleto));
+  const ramais = (porMun[mun] || []).slice().sort((a,b) => (a.nomeCompleto||"").localeCompare(b.nomeCompleto||""));
   sel2.innerHTML = '<option value="">— Todos (' + ramais.length + ') —</option>';
   ramais.forEach(r => {
     const o = document.createElement("option"); o.value = r.rowIndex;
@@ -1895,7 +2156,7 @@ function onRamMunChange() {
   });
   sel2.disabled = false;
   const count = document.getElementById("ramCount");
-  if(count) count.textContent = "· " + mun + " — " + ramais.length + " ramais";
+  if (count) count.textContent = "· " + mun + " — " + ramais.length + " ramal(is)";
   renderRamaisTable(ramais);
 }
 
@@ -1966,6 +2227,62 @@ function renderRamaisTable(rows) {
       <td>${htmlEscape(r.revestimento||"—")}</td>
     </tr>`;
   }).join("");
+}
+
+function renderRamaisContratos() {
+  const ct = HUB.state.contratos || [];
+  if (!ct.length) {
+    const el = document.getElementById("ramCtList");
+    if (el) el.innerHTML = `<div class="info-state">Sem dados de contratos carregados.</div>`;
+    return;
+  }
+  filterRamaisContratos();
+}
+
+function filterRamaisContratos() {
+  const ct = HUB.state.contratos || [];
+  const q  = ((document.getElementById("ramCtBusca")||{}).value||"").toLowerCase();
+  const st = ((document.getElementById("ramCtStatus")||{}).value||"");
+
+  // Filtra contratos que mencionam ramal ou convênio de ramal
+  let rows = ct.filter(c => {
+    const txt = [c.objeto, c.nome_obra, c.descricao, c.trecho, c.tipo_obra, c.modal].join(" ").toLowerCase();
+    return /ramal|vicinal|vicinais/i.test(txt);
+  });
+
+  if (q) rows = rows.filter(c => {
+    const txt = [c.objeto, c.nome_obra, c.descricao, c.contrato, c.numero_contrato, c.municipio, c.empresa, c.contratada].join(" ").toLowerCase();
+    return txt.includes(q);
+  });
+
+  if (st === "vigente")    rows = rows.filter(c => /vigent|execu|andamento/i.test(c.situacao_eobras||c.situacao_real||c.situacao||""));
+  if (st === "concluida")  rows = rows.filter(c => /conclu/i.test(c.situacao_eobras||c.situacao_real||c.situacao||""));
+  if (st === "paralisada") rows = rows.filter(c => /paral|atras/i.test(c.situacao_eobras||c.situacao_real||c.situacao||""));
+
+  const el = document.getElementById("ramCtList");
+  if (!el) return;
+
+  if (!rows.length) {
+    el.innerHTML = `<div class="info-state">${q ? "Nenhum contrato encontrado para a busca." : "Nenhum contrato de ramal identificado na base de contratos."}</div>`;
+    return;
+  }
+
+  el.innerHTML = `<div style="font-size:0.75rem;color:var(--cinza-aux);margin-bottom:0.5rem">${rows.length} contrato(s) de ramal encontrado(s)</div>
+  <div style="display:flex;flex-direction:column;gap:0.5rem">
+  ${rows.slice(0, 200).map((c, i) => `
+    <div style="background:#fff;border-radius:10px;padding:0.85rem 1rem;border:1px solid var(--borda);box-shadow:var(--shadow)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.4rem">
+        <span style="font-family:var(--font-cond);font-size:0.7rem;font-weight:700;color:var(--cinza-aux)">${htmlEscape(c.contrato||c.numero_contrato||"Nº "+( i+1))}</span>
+        ${statusChip(c.situacao_eobras||c.situacao_real||c.situacao)}
+      </div>
+      <div style="font-size:0.88rem;font-weight:700;color:var(--cinza-txt);margin-bottom:0.25rem;line-height:1.35">${htmlEscape(c.objeto||c.nome_obra||"—")}</div>
+      <div style="font-size:0.74rem;color:var(--cinza-med);margin-bottom:0.35rem">${htmlEscape(c.municipio||"—")} · ${htmlEscape(c.empresa||c.contratada||"")}</div>
+      <div style="display:flex;gap:1rem;font-size:0.75rem;color:var(--cinza-med);border-top:1px dashed var(--borda);padding-top:0.35rem">
+        <span>Valor: <strong style="color:var(--azul)">${fmtBRL(parseNum(c.valor_atualizado||c.valor_contratual||0))}</strong></span>
+        <span>Prazo: ${htmlEscape(c.prazo||c.vigencia||"—")}</span>
+      </div>
+    </div>`).join("")}
+  </div>`;
 }
 
 /* ──────────────────────────────────────────────
@@ -2057,12 +2374,6 @@ function getAerodromosHTML() {
       </div>
     </div>
 
-    <div id="aeModalOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
-      <div style="background:#fff;border-radius:16px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;padding:1.5rem;position:relative">
-        <button onclick="document.getElementById('aeModalOv').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--cinza-aux)">✕</button>
-        <div id="aeModalContent"></div>
-      </div>
-    </div>
   </div>`;
 }
 
@@ -2082,12 +2393,11 @@ function initAerodromos() {
     const cor = aeCorIcon(a);
     const icon = L.divIcon({
       className: "",
-      html: `<div style="width:26px;height:26px;border-radius:50%;background:${cor};border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;">✈</div>`,
-      iconSize: [26,26], iconAnchor: [13,13], popupAnchor: [0,-14]
+      html: `<div style="width:28px;height:28px;border-radius:50%;background:${cor};border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;cursor:pointer">✈</div>`,
+      iconSize: [28,28], iconAnchor: [14,14]
     });
     L.marker([a.lat, a.lon], { icon }).addTo(map)
-      .bindPopup(`<div style="min-width:160px"><b style="color:#1A2B5E">${a.nome}</b><br><small>${a.municipio}</small><br><small style="color:#666">${a.pista_desig} · ${a.comprimento} · ${a.rbac107}</small></div>`)
-      .on("click", () => abrirModalAero(i));
+      .on("click", e => { L.DomEvent.stopPropagation(e); abrirModalAero(i); });
   });
 
   renderAerodromosTable(data);
@@ -2116,6 +2426,8 @@ function initAerodromos() {
 
 function abrirModalAero(i) {
   const a = AE_DATA[i]; if (!a) return;
+  // Remove modal anterior se existir
+  document.getElementById("aeModalGlobal")?.remove();
   const cor = aeCorIcon(a);
   const campos = [
     ["ICAO", a.icao||"—"], ["CIAD", a.ciad||"—"], ["Altitude", a.altitude],
@@ -2123,16 +2435,29 @@ function abrirModalAero(i) {
     ["Superfície", a.superficie], ["Resistência", a.resistencia],
     ["RBAC 107", a.rbac107], ["Operação", a.operacao], ["Gestão", a.fonte],
   ];
-  document.getElementById("aeModalContent").innerHTML = `
-    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
-      <div style="width:44px;height:44px;border-radius:50%;background:${cor};display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0">✈</div>
-      <div><div style="font-size:1.05rem;font-weight:700;color:#1A2B5E">${htmlEscape(a.nome)}</div><div style="font-size:0.8rem;color:#8896A8">${htmlEscape(a.municipio)}</div></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-      ${campos.map(([l,v]) => `<div style="padding:0.4rem 0.6rem;background:#f5f7fb;border-radius:6px"><div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:#8896A8;letter-spacing:.07em">${l}</div><div style="font-size:0.83rem;font-weight:600;color:#1A2540">${htmlEscape(v||"—")}</div></div>`).join("")}
+  const div = document.createElement("div");
+  div.id = "aeModalGlobal";
+  div.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem";
+  div.innerHTML = `
+    <div style="background:#fff;border-radius:16px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+      <button onclick="document.getElementById('aeModalGlobal').remove();document.body.style.overflow=''" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#8896A8;line-height:1">✕</button>
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.1rem">
+        <div style="width:46px;height:46px;border-radius:50%;background:${cor};display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,.2)">✈</div>
+        <div>
+          <div style="font-size:1.1rem;font-weight:800;color:#1A2B5E;font-family:'Lexend Zetta',sans-serif">${htmlEscape(a.nome)}</div>
+          <div style="font-size:0.8rem;color:#8896A8;margin-top:2px">${htmlEscape(a.municipio)}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+        ${campos.map(([l,v]) => `<div style="padding:0.45rem 0.65rem;background:#f5f7fb;border-radius:8px;border:1px solid #e0e6f0">
+          <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;color:#8896A8;letter-spacing:.08em;margin-bottom:2px">${l}</div>
+          <div style="font-size:0.85rem;font-weight:600;color:#1A2540">${htmlEscape(v||"—")}</div>
+        </div>`).join("")}
+      </div>
     </div>`;
-  const ov = document.getElementById("aeModalOv");
-  ov.style.display = "flex";
+  div.addEventListener("click", e => { if (e.target === div) { div.remove(); document.body.style.overflow = ""; } });
+  document.body.appendChild(div);
+  document.body.style.overflow = "hidden";
 }
 
 function renderAerodromosTable(list) {
@@ -2214,22 +2539,29 @@ async function initHidrovias() {
 function getTerminaisHTML() {
   return `
   <div class="mod-wrap">
-    ${modHero("terminais", "Terminais fluviais e portos flutuantes da rede SEINFRA")}
+    ${modHero("terminais", "Terminais fluviais e portos flutuantes da rede SEINFRA/AM")}
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-card-label">Terminais</div><div class="kpi-card-value" id="tm-tot">—</div><div class="kpi-card-foot">cadastrados</div></div>
+      <div class="kpi-card c"><div class="kpi-card-label">Terminais</div><div class="kpi-card-value" id="tm-tot">—</div><div class="kpi-card-foot">cadastrados</div></div>
       <div class="kpi-card v"><div class="kpi-card-label">Operacionais</div><div class="kpi-card-value" id="tm-op">—</div><div class="kpi-card-foot">ativos</div></div>
-      <div class="kpi-card c"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="tm-mun">—</div><div class="kpi-card-foot">cobertos</div></div>
+      <div class="kpi-card"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="tm-mun">—</div><div class="kpi-card-foot">cobertos</div></div>
       <div class="kpi-card a"><div class="kpi-card-label">Flutuantes</div><div class="kpi-card-value" id="tm-flut">—</div><div class="kpi-card-foot">tipo principal</div></div>
     </div>
     <div class="panel-card">
-      <div class="panel-header"><div class="panel-title">Mapa de terminais</div></div>
-      <div id="tmMap" class="map-wrap"></div>
+      <div class="panel-header">
+        <div class="panel-title">Mapa de terminais fluviais</div>
+        <div id="tmLegenda" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap"></div>
+      </div>
+      <div id="tmMap" class="map-wrap" style="height:420px"></div>
     </div>
     <div class="panel-card">
-      <div class="panel-header"><div class="panel-title">Lista de terminais</div></div>
+      <div class="panel-header">
+        <div class="panel-title">Lista de terminais</div>
+        <input class="filter-input" id="tmBusca" placeholder="Buscar por nome ou município…" oninput="filterTerminais()" style="width:220px"/>
+      </div>
       <div class="table-wrap"><table class="data-table" id="tmTable">
-        <thead><tr><th>Nome</th><th>Município</th><th>Tipo</th><th>Situação</th></tr></thead>
-        <tbody></tbody></table></div>
+        <thead><tr><th>Nome</th><th>Município</th><th>Rio / Localização</th><th>Tipo</th><th>Situação</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
     </div>
   </div>`;
 }
@@ -2237,41 +2569,103 @@ function getTerminaisHTML() {
 async function initTerminais() {
   const map = mkMap("tmMap", { center: [-4.5, -63.5], zoom: 5 });
   const gj = await loadGeoJSON(GEOJSON_FILES.terminais);
-  if (!gj) return;
-  HUB.state.terminais = gj;
+  if (!gj) {
+    $("#tm-tot").textContent = "—";
+    return;
+  }
+  HUB.state.terminaisGJ = gj;
   const feats = gj.features || [];
   const muns = new Set();
   let flut = 0, op = 0;
+
   feats.forEach(f => {
     const p = f.properties || {};
-    if (p.MUNICIPIO || p.municipio) muns.add((p.MUNICIPIO || p.municipio).toString());
-    if ((p.TIPO || p.tipo || "").toString().toLowerCase().includes("flut")) flut++;
-    if ((p.SITUACAO || "").toString().toLowerCase().includes("oper")) op++;
+    // tolerância máxima de nomes de campo
+    const munVal  = p.MUNICIPIO || p.Municipio || p.municipio || p.MUNICÍPIO || "";
+    const tipoVal = p.TIPO      || p.Tipo      || p.tipo      || "";
+    const sitVal  = p.SITUACAO  || p.Situacao  || p.situacao  || p.STATUS || p.Status || "";
+    if (munVal) muns.add(munVal.toString().trim());
+    if (/flut/i.test(tipoVal)) flut++;
+    if (/oper/i.test(sitVal))  op++;
   });
-  $("#tm-tot").textContent = fmtNum(feats.length);
-  $("#tm-op").textContent  = op ? fmtNum(op) : fmtNum(feats.length);
-  $("#tm-mun").textContent = fmtNum(muns.size);
+
+  $("#tm-tot").textContent  = fmtNum(feats.length);
+  $("#tm-op").textContent   = op  ? fmtNum(op)  : fmtNum(feats.length);
+  $("#tm-mun").textContent  = fmtNum(muns.size);
   $("#tm-flut").textContent = fmtNum(flut || feats.length);
 
+  // Legenda de cores (por tipo, se disponível)
+  const tiposSet = new Set(feats.map(f => {
+    const p = f.properties || {};
+    return (p.TIPO||p.Tipo||p.tipo||"Flutuante").toString().slice(0,20);
+  }));
+  const tmCores = ["#B8620A","#0E7490","#1A2B5E","#2D8540","#6C3483"];
+  const tiposArr = [...tiposSet];
+  HUB.state.tmTipoCores = {};
+  tiposArr.forEach((t, i) => { HUB.state.tmTipoCores[t] = tmCores[i % tmCores.length]; });
+  const leg = document.getElementById("tmLegenda");
+  if (leg) leg.innerHTML = tiposArr.map(t =>
+    `<span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--cinza-med)">
+      <span style="width:9px;height:9px;border-radius:50%;background:${HUB.state.tmTipoCores[t]};display:inline-block"></span>${htmlEscape(t)}
+    </span>`).join("");
+
+  // Mapa
   L.geoJSON(gj, {
-    pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, color: "#fff", weight: 1.2, fillColor: "#B8620A", fillOpacity: 0.95 }),
+    pointToLayer: (f, latlng) => {
+      const p = f.properties || {};
+      const tipo = (p.TIPO||p.Tipo||p.tipo||"Flutuante").toString().slice(0,20);
+      const cor  = (HUB.state.tmTipoCores || {})[tipo] || "#B8620A";
+      return L.circleMarker(latlng, { radius: 6, color: "#fff", weight: 1.5, fillColor: cor, fillOpacity: 0.95 });
+    },
     onEachFeature: (f, lyr) => {
       const p = f.properties || {};
-      lyr.bindPopup(`<div class="pop-title">${htmlEscape(p.NOME || p.nome || "Terminal")}</div><div class="pop-row">${htmlEscape(p.MUNICIPIO || p.municipio || "")}</div>`);
+      const nome = p.NOME||p.Nome||p.nome||p.TERMINAL||"Terminal";
+      const mun  = p.MUNICIPIO||p.Municipio||p.municipio||"";
+      const tipo = p.TIPO||p.Tipo||p.tipo||"";
+      const sit  = p.SITUACAO||p.Situacao||p.situacao||"";
+      const rio  = p.RIO||p.Rio||p.rio||p.LOCALIZAÇÃO||p.LOCALIZACAO||"";
+      lyr.bindPopup(`
+        <div class="pop-title">${htmlEscape(nome)}</div>
+        <div class="pop-row">${htmlEscape(mun)}</div>
+        ${tipo ? `<div class="pop-row" style="color:#B8620A;font-weight:600">${htmlEscape(tipo)}</div>` : ""}
+        ${rio  ? `<div class="pop-row">${htmlEscape(rio)}</div>` : ""}
+        ${sit  ? `<div class="pop-row">${htmlEscape(sit)}</div>` : ""}
+      `);
     }
   }).addTo(map);
+
   try { const b = L.geoJSON(gj).getBounds(); if (b.isValid()) map.fitBounds(b, { padding: [20, 20] }); } catch (e) {}
 
-  const body = feats.slice(0, 200).map(f => {
-    const p = f.properties || {};
+  // Tabela
+  HUB.state.terminaisList = feats.map(f => f.properties || {});
+  renderTerminaisTable(HUB.state.terminaisList);
+}
+
+function renderTerminaisTable(props) {
+  const tb = document.querySelector("#tmTable tbody"); if (!tb) return;
+  tb.innerHTML = props.slice(0, 300).map(p => {
+    const nome = p.NOME||p.Nome||p.nome||p.TERMINAL||"—";
+    const mun  = p.MUNICIPIO||p.Municipio||p.municipio||"—";
+    const rio  = p.RIO||p.Rio||p.rio||p.LOCALIZAÇÃO||p.LOCALIZACAO||"—";
+    const tipo = p.TIPO||p.Tipo||p.tipo||"—";
+    const sit  = p.SITUACAO||p.Situacao||p.situacao||p.STATUS||"—";
     return `<tr>
-      <td>${htmlEscape(p.NOME || p.nome || "—")}</td>
-      <td>${htmlEscape(p.MUNICIPIO || p.municipio || "—")}</td>
-      <td>${htmlEscape(p.TIPO || p.tipo || "—")}</td>
-      <td>${htmlEscape(p.SITUACAO || p.situacao || "—")}</td>
+      <td style="font-weight:600">${htmlEscape(nome)}</td>
+      <td>${htmlEscape(mun)}</td>
+      <td>${htmlEscape(rio)}</td>
+      <td><span style="font-size:0.72rem;font-weight:700;color:var(--laranja)">${htmlEscape(tipo)}</span></td>
+      <td>${htmlEscape(sit)}</td>
     </tr>`;
-  }).join("");
-  const tb = $("#tmTable tbody"); if (tb) tb.innerHTML = body;
+  }).join("") || `<tr><td colspan="5" class="info-state">Sem terminais carregados.</td></tr>`;
+}
+
+function filterTerminais() {
+  const q = (document.getElementById("tmBusca")?.value || "").toLowerCase();
+  const all = HUB.state.terminaisList || [];
+  const filtered = q ? all.filter(p => {
+    return [p.NOME,p.Nome,p.nome,p.MUNICIPIO,p.Municipio,p.municipio,p.RIO,p.rio].some(v => (v||"").toString().toLowerCase().includes(q));
+  }) : all;
+  renderTerminaisTable(filtered);
 }
 
 /* ──────────────────────────────────────────────
@@ -2621,24 +3015,91 @@ function buildAlerts(contratos, icm) {
 }
 
 /* ──────────────────────────────────────────────
-   MÓDULO BRIEFINGS
+   MÓDULO BRIEFINGS — 3 abas: Painel Executivo · Obras · Análise Municipal
    ────────────────────────────────────────────── */
 function getBriefingsHTML() {
   return `
   <div class="mod-wrap">
-    ${modHero("briefings", "Briefings executivos de obra · exportação com papel timbrado oficial")}
+    ${modHero("briefings", "Inteligência executiva · portfólio SEINFRA/AM · análise estratégica e exportação timbrada")}
+
+    <!-- KPIs globais -->
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-card-label">Contratos</div><div class="kpi-card-value" id="br-tot">—</div><div class="kpi-card-foot">no portfólio</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Em execução</div><div class="kpi-card-value" id="br-exec">—</div><div class="kpi-card-foot">vigentes</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Atenção</div><div class="kpi-card-value" id="br-atenc">—</div><div class="kpi-card-foot">atrasadas/paralisadas</div></div>
+      <div class="kpi-card r"><div class="kpi-card-label">Investimento</div><div class="kpi-card-value" id="br-inv">—</div><div class="kpi-card-foot">valor contratual total</div></div>
+    </div>
+
     <div class="panel-card">
-      <div class="filter-row">
-        <input class="filter-input" id="brBusca" placeholder="Buscar obra, município, contratada…" oninput="renderBriefings()"/>
-        <select class="filter-select" id="brStatus" onchange="renderBriefings()">
-          <option value="">Todos os status</option>
-          <option value="vigente">Vigentes</option>
-          <option value="concluida">Concluídas</option>
-          <option value="paralisada">Paralisadas</option>
-        </select>
+      <div class="tab-bar" id="brTabs">
+        <button class="tab-item active" data-tab="bp">Painel Executivo</button>
+        <button class="tab-item" data-tab="bo">Briefings por Obra</button>
+        <button class="tab-item" data-tab="bm">Análise Municipal</button>
       </div>
-      <div class="panel-body">
+
+      <!-- ABA PAINEL EXECUTIVO -->
+      <div class="tab-content active" id="br-bp">
+        <!-- Semáforo estratégico -->
+        <div class="panel-header" style="margin-bottom:0.6rem">
+          <div class="panel-title">Semáforo do portfólio</div>
+          <button class="module-action-btn" onclick="exportBriefingExecutivoPDF()">&#128196; Relatório executivo PDF</button>
+        </div>
+        <div class="alert-grid" id="brAlertGrid" style="margin-bottom:1rem"></div>
+
+        <!-- Análise estratégica auto-gerada -->
+        <div id="brResumoExecutivo" style="background:var(--azul-claro);border-left:4px solid var(--azul);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:0.85rem;line-height:1.7;color:var(--cinza-txt)"></div>
+
+        <!-- 4 gráficos analíticos -->
+        <div class="chart-grid-2" style="margin-bottom:1rem">
+          <div>
+            <div class="panel-title" style="margin-bottom:0.5rem;font-size:0.8rem">Distribuição por status</div>
+            <div class="chart-wrap"><canvas id="chBrStatus"></canvas></div>
+          </div>
+          <div>
+            <div class="panel-title" style="margin-bottom:0.5rem;font-size:0.8rem">Top 10 municípios — investimento</div>
+            <div class="chart-wrap"><canvas id="chBrMun"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-grid-2">
+          <div>
+            <div class="panel-title" style="margin-bottom:0.5rem;font-size:0.8rem">Investimento por faixa de valor</div>
+            <div class="chart-wrap"><canvas id="chBrFaixa"></canvas></div>
+          </div>
+          <div>
+            <div class="panel-title" style="margin-bottom:0.5rem;font-size:0.8rem">Sinistros por rodovia — trechos críticos</div>
+            <div class="chart-wrap"><canvas id="chBrSin"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA BRIEFINGS POR OBRA -->
+      <div class="tab-content" id="br-bo">
+        <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem">
+          <input class="filter-input" id="brBusca" placeholder="Buscar obra, município, contratada, nº contrato…" oninput="renderBriefings()" style="flex:1;min-width:220px"/>
+          <select class="filter-select" id="brStatus" onchange="renderBriefings()" style="min-width:180px">
+            <option value="">Todos os status</option>
+            <option value="vigente">Vigentes / Em execução</option>
+            <option value="concluida">Concluídas</option>
+            <option value="paralisada">Paralisadas / Atrasadas</option>
+          </select>
+          <select class="filter-select" id="brMunFiltro" onchange="renderBriefings()" style="min-width:180px">
+            <option value="">Todos os municípios</option>
+          </select>
+        </div>
+        <div id="brContagem" style="font-size:0.73rem;color:var(--cinza-aux);margin:0.5rem 0"></div>
         <div id="brList"></div>
+      </div>
+
+      <!-- ABA ANÁLISE MUNICIPAL -->
+      <div class="tab-content" id="br-bm">
+        <div class="filter-row">
+          <select class="filter-select" id="brMunSelect" onchange="renderBriefingMunicipal()" style="flex:1;min-width:200px">
+            <option value="">— Selecione um município —</option>
+          </select>
+        </div>
+        <div id="brMunPanel" style="margin-top:0.8rem">
+          <div class="info-state">Selecione um município para ver a análise consolidada.</div>
+        </div>
       </div>
     </div>
   </div>`;
@@ -2646,39 +3107,327 @@ function getBriefingsHTML() {
 
 async function initBriefings() {
   if (!HUB.state.contratos) await loadCoreData();
+
+  const ct  = HUB.state.contratos || [];
+  const sin = HUB.state.sinistros || [];
+  const icm = HUB.state.icm || [];
+
+  // KPIs globais
+  const exec    = ct.filter(c => /vigent|execu|andamento/i.test(c.situacao_eobras||c.situacao_real||c.situacao||""));
+  const atenc   = ct.filter(c => /paral|atras/i.test(c.situacao_eobras||c.situacao_real||c.situacao||""));
+  const invTotal= ct.reduce((a,c) => a + parseNum(c.valor_atualizado||c.valor_contratual||0), 0);
+  const setEl   = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  setEl("br-tot",  fmtNum(ct.length));
+  setEl("br-exec", fmtNum(exec.length));
+  setEl("br-atenc",fmtNum(atenc.length));
+  setEl("br-inv",  invTotal >= 1e9 ? "R$ "+(invTotal/1e9).toFixed(2)+" bi" : (invTotal >= 1e6 ? "R$ "+(invTotal/1e6).toFixed(1)+" mi" : fmtBRL(invTotal)));
+
+  // tabs
+  $$("#brTabs .tab-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      $$("#brTabs .tab-item").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      $$(".tab-content", btn.closest(".panel-card")).forEach(tc => tc.classList.remove("active"));
+      document.getElementById(`br-${btn.dataset.tab}`)?.classList.add("active");
+    });
+  });
+
+  // Semáforo
+  _buildBrSemaforo(ct, icm, sin);
+  // Resumo executivo
+  _buildResumoExecutivo(ct, sin, icm);
+  // Gráficos painel
+  _buildBrCharts(ct, sin);
+  // Popula selects de município
+  _populateBrMuns(ct);
+  // renderiza lista inicial
   renderBriefings();
 }
 
+function _buildBrSemaforo(ct, icm, sin) {
+  const alerts = [];
+  const exec  = ct.filter(c => /vigent|execu|andamento/i.test(c.situacao_eobras||c.situacao_real||c.situacao||"")).length;
+  const paral = ct.filter(c => /paral/i.test(c.situacao_eobras||c.situacao_real||c.situacao||"")).length;
+  const atras = ct.filter(c => /atras/i.test(c.situacao_eobras||c.situacao_real||c.situacao||"")).length;
+  const conc  = ct.filter(c => /conclu/i.test(c.situacao_eobras||c.situacao_real||c.situacao||"")).length;
+
+  if (exec > 0)
+    alerts.push({ level: "ok",      msg: `${exec} contratos em execução — portfólio ativo`, mod: "obras" });
+  if (paral > 0)
+    alerts.push({ level: "danger",  msg: `${paral} obras paralisadas — requer ação imediata`, mod: "obras" });
+  if (atras > 0)
+    alerts.push({ level: "warning", msg: `${atras} obras com atraso — monitorar cronograma`, mod: "obras" });
+  if (conc > 0)
+    alerts.push({ level: "ok",      msg: `${conc} obras concluídas no portfólio`, mod: "obras" });
+
+  const icmCrit = (icm||[]).filter(r => parseNum(r.iri||r.icm||r.indice||0) > 4.0).length;
+  if (icmCrit > 0)
+    alerts.push({ level: "warning", msg: `${icmCrit} trechos rodoviários com ICM crítico (>4,0)`, mod: "rodovias" });
+  if ((sin||[]).length > 30)
+    alerts.push({ level: "warning", msg: `${sin.length} sinistros registrados — revisar trechos de risco`, mod: "rodovias" });
+
+  const el = document.getElementById("brAlertGrid"); if (!el) return;
+  el.innerHTML = alerts.length
+    ? alerts.map(a => `
+        <div class="alert-chip alert-${a.level}" onclick="loadModule('${a.mod}')" style="cursor:pointer">
+          ${a.level==="danger"?"🔴":a.level==="warning"?"🟡":"🟢"} ${htmlEscape(a.msg)}
+        </div>`).join("")
+    : `<div class="alert-chip alert-ok">🟢 Portfólio sem alertas críticos no momento</div>`;
+}
+
+function _buildResumoExecutivo(ct, sin, icm) {
+  const el = document.getElementById("brResumoExecutivo"); if (!el) return;
+  const total  = ct.length;
+  const exec   = ct.filter(c => /vigent|execu|andamento/i.test(c.situacao_eobras||c.situacao_real||c.situacao||"")).length;
+  const paral  = ct.filter(c => /paral|atras/i.test(c.situacao_eobras||c.situacao_real||c.situacao||"")).length;
+  const conc   = ct.filter(c => /conclu/i.test(c.situacao_eobras||c.situacao_real||c.situacao||"")).length;
+  const inv    = ct.reduce((a,c) => a + parseNum(c.valor_atualizado||c.valor_contratual||0), 0);
+  const muns   = new Set(ct.map(c => c.municipio).filter(Boolean)).size;
+  const invFmt = inv >= 1e9 ? `R$ ${(inv/1e9).toFixed(2)} bilhões` : `R$ ${(inv/1e6).toFixed(1)} milhões`;
+  const pctExec = total ? Math.round(exec/total*100) : 0;
+  const pctConc = total ? Math.round(conc/total*100) : 0;
+
+  const munMap = {};
+  ct.forEach(c => { if (c.municipio) { munMap[c.municipio] = (munMap[c.municipio]||0) + parseNum(c.valor_atualizado||c.valor_contratual||0); } });
+  const topMun = Object.entries(munMap).sort((a,b)=>b[1]-a[1])[0];
+
+  el.innerHTML = `
+    <strong style="font-family:var(--font-head);font-size:0.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--azul)">Síntese Executiva — SEINFRA/AM · ${new Date().toLocaleDateString("pt-BR")}</strong><br/><br/>
+    O portfólio de obras da SEINFRA/AM compreende <strong>${fmtNum(total)}</strong> contratos,
+    totalizando <strong>${invFmt}</strong> em investimentos e abrangendo <strong>${muns}</strong> municípios do Amazonas.
+    ${exec > 0 ? ` Dos contratos ativos, <strong>${exec} (${pctExec}%)</strong> encontram-se em plena execução.` : ""}
+    ${conc > 0 ? ` Foram concluídas <strong>${conc} obras (${pctConc}%)</strong> do portfólio.` : ""}
+    ${paral > 0 ? ` <strong style="color:var(--vermelho)">${paral} contratos</strong> encontram-se paralisados ou com atraso, demandando intervenção gerencial prioritária.` : ""}
+    ${topMun ? ` O município com maior volume de investimentos é <strong>${htmlEscape(topMun[0])}</strong> (${invFmt.split(" ")[0]} ${topMun[1]>=1e6?(topMun[1]/1e6).toFixed(1)+" mi":fmtBRL(topMun[1])}).` : ""}
+    ${sin && sin.length > 0 ? ` A base de sinistros registra <strong>${sin.length}</strong> ocorrências rodoviárias, requerendo atenção especial nos trechos críticos.` : ""}
+    ${icm && icm.length > 0 ? ` O Índice de Condição da Manutenção (ICM) aponta <strong>${(icm||[]).filter(r=>parseNum(r.iri||r.icm||r.indice||0)>4).length}</strong> trechos em condição crítica (ICM > 4,0).` : ""}`;
+}
+
+function _buildBrCharts(ct, sin) {
+  // Chart status
+  const stMap = {};
+  ct.forEach(c => {
+    const s = (c.situacao_eobras||c.situacao_real||c.situacao||"Indefinido").toString();
+    const key = /vigent|execu|andamento/i.test(s) ? "Em execução" : /conclu/i.test(s) ? "Concluída" : /paral/i.test(s) ? "Paralisada" : /atras/i.test(s) ? "Atrasada" : "Outros";
+    stMap[key] = (stMap[key]||0)+1;
+  });
+  mkChart("chBrStatus", {
+    type: "doughnut",
+    data: { labels: Object.keys(stMap), datasets: [{ data: Object.values(stMap), backgroundColor: ["#2D8540","#475569","#C0392B","#F5A623","#8896A8"], borderWidth: 2, borderColor: "#fff" }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: "58%", plugins: { legend: { position: "bottom", labels: { font: { family:"Lexend Deca", size:11 } } } } }
+  });
+
+  // Chart top 10 municípios por investimento
+  const munMap = {};
+  ct.forEach(c => { if(c.municipio) munMap[c.municipio] = (munMap[c.municipio]||0) + parseNum(c.valor_atualizado||c.valor_contratual||0); });
+  const munTop = Object.entries(munMap).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  mkChart("chBrMun", {
+    type: "bar",
+    data: { labels: munTop.map(x => x[0].length>18?x[0].slice(0,16)+"…":x[0]), datasets: [{ label: "R$", data: munTop.map(x => Math.round(x[1]/1e6)), backgroundColor: "#1A2B5E", borderRadius: 4 }] },
+    options: { indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx => `R$ ${ctx.parsed.x.toFixed(1)} mi` } } }, scales:{ x:{ beginAtZero:true, ticks:{ callback: v => `R$ ${v} mi` } } } }
+  });
+
+  // Chart faixa de valor
+  const faixas = [
+    { label: "< 1 mi",    min: 0,      max: 1e6 },
+    { label: "1–5 mi",   min: 1e6,    max: 5e6 },
+    { label: "5–20 mi",  min: 5e6,    max: 20e6 },
+    { label: "20–50 mi", min: 20e6,   max: 50e6 },
+    { label: "> 50 mi",  min: 50e6,   max: Infinity },
+  ];
+  const faixaCount = faixas.map(f => ct.filter(c => { const v = parseNum(c.valor_atualizado||c.valor_contratual||0); return v >= f.min && v < f.max; }).length);
+  mkChart("chBrFaixa", {
+    type: "bar",
+    data: { labels: faixas.map(f=>f.label), datasets: [{ label: "Contratos", data: faixaCount, backgroundColor: ["#8896A8","#0E7490","#1A2B5E","#2D8540","#F5A623"], borderRadius: 4 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  // Chart sinistros top 10
+  const sinRod = {};
+  (sin||[]).forEach(s => { const r = (s.rodovia||s.br||"Não informado").toString(); sinRod[r] = (sinRod[r]||0)+1; });
+  const sinTop = Object.entries(sinRod).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  mkChart("chBrSin", {
+    type: "bar",
+    data: { labels: sinTop.map(x=>x[0]), datasets: [{ label: "Ocorrências", data: sinTop.map(x=>x[1]), backgroundColor: "#C0392B", borderRadius: 4 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true} } }
+  });
+}
+
+function _populateBrMuns(ct) {
+  const muns = [...new Set(ct.map(c=>c.municipio).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+
+  // select aba Obras
+  const selFiltro = document.getElementById("brMunFiltro");
+  if (selFiltro) muns.forEach(m => { const o=document.createElement("option"); o.value=m; o.textContent=m; selFiltro.appendChild(o); });
+
+  // select aba Municipal
+  const selMun = document.getElementById("brMunSelect");
+  if (selMun) muns.forEach(m => { const o=document.createElement("option"); o.value=m; o.textContent=m; selMun.appendChild(o); });
+}
+
 function renderBriefings() {
-  const ct = HUB.state.contratos || [];
-  const q = ($("#brBusca")?.value || "").toLowerCase();
-  const st = $("#brStatus")?.value || "";
-  const filtered = ct.filter(c => {
-    const txt = [c.objeto, c.municipio, c.empresa, c.contratada].some(v => (v || "").toString().toLowerCase().includes(q));
-    if (q && !txt) return false;
-    const s = (c.situacao_eobras || c.situacao_real || c.situacao || "").toString().toLowerCase();
-    if (st === "vigente" && !/vigent|execu|andamento/.test(s)) return false;
-    if (st === "concluida" && !/conclu/.test(s)) return false;
-    if (st === "paralisada" && !/paral/.test(s)) return false;
+  const ct  = HUB.state.contratos || [];
+  const q   = (document.getElementById("brBusca")?.value || "").toLowerCase();
+  const st  = document.getElementById("brStatus")?.value || "";
+  const mun = document.getElementById("brMunFiltro")?.value || "";
+
+  let rows = ct.filter(c => {
+    if (q) {
+      const txt = [c.objeto,c.nome_obra,c.descricao,c.municipio,c.empresa,c.contratada,c.contrato,c.numero_contrato].join(" ").toLowerCase();
+      if (!txt.includes(q)) return false;
+    }
+    const s = (c.situacao_eobras||c.situacao_real||c.situacao||"").toLowerCase();
+    if (st==="vigente"    && !/vigent|execu|andamento/.test(s)) return false;
+    if (st==="concluida"  && !/conclu/.test(s)) return false;
+    if (st==="paralisada" && !/paral|atras/.test(s)) return false;
+    if (mun && (c.municipio||"") !== mun) return false;
     return true;
   });
-  const list = filtered.slice(0, 120).map((c, i) => {
+
+  const cont = document.getElementById("brContagem");
+  if (cont) cont.textContent = `${rows.length} contrato(s) encontrado(s)`;
+
+  const list = rows.slice(0, 200).map((c, i) => {
     const realIdx = ct.indexOf(c);
+    const sit = c.situacao_eobras||c.situacao_real||c.situacao||"";
+    const cor = /vigent|execu/i.test(sit) ? "var(--verde)" : /conclu/i.test(sit) ? "var(--cinza-aux)" : /paral|atras/i.test(sit) ? "var(--vermelho)" : "var(--azul)";
+    const inv = parseNum(c.valor_atualizado||c.valor_contratual||0);
     return `
-    <div class="obra-card" style="margin-bottom:0.65rem">
-      <div class="obra-card-head">
-        <span class="obra-card-num">#${htmlEscape(c.contrato || c.numero_contrato || (i+1))}</span>
-        ${statusChip(c.situacao_eobras || c.situacao_real || c.situacao)}
+    <div style="background:#fff;border-radius:10px;border:1px solid var(--borda);margin-bottom:0.55rem;overflow:hidden;box-shadow:var(--shadow)">
+      <div style="padding:0.85rem 1rem;display:flex;gap:0.8rem;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;flex-wrap:wrap">
+            <span style="font-family:var(--font-cond);font-size:0.7rem;font-weight:700;color:var(--cinza-aux);background:var(--cinza-bg);padding:1px 6px;border-radius:4px;border:1px solid var(--borda)">${htmlEscape(c.contrato||c.numero_contrato||"CT-"+(i+1))}</span>
+            ${statusChip(sit)}
+          </div>
+          <div style="font-size:0.9rem;font-weight:700;color:var(--cinza-txt);line-height:1.35;margin-bottom:0.25rem">${htmlEscape(c.objeto||c.nome_obra||c.descricao||"Obra")}</div>
+          <div style="font-size:0.75rem;color:var(--cinza-med)">
+            📍 ${htmlEscape(c.municipio||"—")} &nbsp;·&nbsp; 🏢 ${htmlEscape(c.empresa||c.contratada||"—")}
+          </div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-size:1rem;font-weight:800;color:var(--azul);font-family:var(--font-head)">${fmtBRL(inv)}</div>
+          <div style="font-size:0.71rem;color:var(--cinza-aux);margin-top:2px">${htmlEscape(c.prazo||c.vigencia||"—")}</div>
+          <button class="module-action-btn" style="margin-top:0.4rem;font-size:0.72rem" onclick="event.stopPropagation();exportObraPDF(${realIdx})">&#128196; PDF</button>
+        </div>
       </div>
-      <div class="obra-card-title">${htmlEscape(c.objeto || c.nome_obra || c.descricao || "Obra")}</div>
-      <div class="obra-card-sub">${htmlEscape(c.municipio || "—")} · ${htmlEscape(c.empresa || c.contratada || "")}</div>
-      <div class="obra-card-meta">
-        <div>Valor <strong>${fmtBRL(parseNum(c.valor_atualizado || c.valor_contratual || 0))}</strong></div>
-        <button class="module-action-btn" onclick="event.stopPropagation(); exportObraPDF(${realIdx})">&#128196; Exportar PDF</button>
-      </div>
+      ${(c.objeto||c.descricao||"").length > 60 ? `
+      <div style="border-top:1px solid var(--borda);padding:0.6rem 1rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:0.4rem;background:var(--cinza-bg)">
+        ${[[`Prazo`,c.prazo||c.vigencia||"—"],[`Medição`,c.medicao||c.avanco_fisico||"—"],[`Nota Fiscal`,c.nota_fiscal||"—"],[`Tipo`,c.tipo_obra||c.modal||"—"]].map(([l,v])=>`
+          <div><div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;color:var(--cinza-aux);letter-spacing:.06em">${l}</div><div style="font-size:0.78rem;font-weight:600;color:var(--cinza-txt)">${htmlEscape(v)}</div></div>`).join("")}
+      </div>` : ""}
     </div>`;
   }).join("");
-  $("#brList").innerHTML = list || `<div class="info-state">Nenhuma obra corresponde aos filtros.</div>`;
+
+  const brList = document.getElementById("brList");
+  if (brList) brList.innerHTML = list || `<div class="info-state">Nenhum contrato corresponde aos filtros aplicados.</div>`;
+}
+
+function renderBriefingMunicipal() {
+  const mun = document.getElementById("brMunSelect")?.value || "";
+  const el  = document.getElementById("brMunPanel"); if (!el) return;
+  if (!mun) { el.innerHTML = `<div class="info-state">Selecione um município para ver a análise consolidada.</div>`; return; }
+
+  const ct   = HUB.state.contratos || [];
+  const ctM  = ct.filter(c => (c.municipio||"") === mun);
+  const invM = ctM.reduce((a,c) => a+parseNum(c.valor_atualizado||c.valor_contratual||0), 0);
+  const execM= ctM.filter(c => /vigent|execu|andamento/i.test(c.situacao_eobras||c.situacao_real||c.situacao||"")).length;
+
+  const ramais   = (HUB.state.ramaisSheet || []).filter(r => r.municipio?.toUpperCase() === mun.toUpperCase());
+  const aerodromos = AE_DATA.filter(a => a.municipio?.toUpperCase() === mun.toUpperCase());
+  const sin      = (HUB.state.sinistros || []).filter(s => (s.municipio||"").toUpperCase() === mun.toUpperCase());
+
+  el.innerHTML = `
+    <div style="margin-bottom:1rem">
+      <div style="font-family:var(--font-head);font-size:1.05rem;font-weight:700;color:var(--azul);margin-bottom:0.5rem">Município: ${htmlEscape(mun)}</div>
+      <div class="kpi-grid">
+        <div class="kpi-card"><div class="kpi-card-label">Contratos</div><div class="kpi-card-value">${ctM.length}</div><div class="kpi-card-foot">no município</div></div>
+        <div class="kpi-card v"><div class="kpi-card-label">Em execução</div><div class="kpi-card-value">${execM}</div><div class="kpi-card-foot">vigentes</div></div>
+        <div class="kpi-card a"><div class="kpi-card-label">Investimento</div><div class="kpi-card-value">${invM>=1e6?(invM/1e6).toFixed(1)+" mi":fmtBRL(invM)}</div><div class="kpi-card-foot">contratual</div></div>
+        <div class="kpi-card c"><div class="kpi-card-label">Ramais</div><div class="kpi-card-value">${ramais.length}</div><div class="kpi-card-foot">cadastrados</div></div>
+      </div>
+    </div>
+    ${aerodromos.length ? `<div style="background:var(--cinza-bg);border-radius:8px;padding:0.6rem 0.9rem;margin-bottom:0.8rem;font-size:0.8rem;color:var(--cinza-txt);border:1px solid var(--borda)">✈ <strong>${aerodromos.length}</strong> aeródromo(s): ${aerodromos.map(a=>htmlEscape(a.nome)).join(", ")}</div>` : ""}
+    ${sin.length ? `<div style="background:var(--vermelho-cl);border-radius:8px;padding:0.6rem 0.9rem;margin-bottom:0.8rem;font-size:0.8rem;color:var(--cinza-txt);border:1px solid rgba(192,57,43,.2)">⚠ <strong>${sin.length}</strong> sinistro(s) registrado(s) neste município.</div>` : ""}
+    <div style="margin-bottom:0.5rem">
+      <div class="panel-title" style="font-size:0.8rem;margin-bottom:0.5rem">Contratos</div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem">
+        ${ctM.length ? ctM.map(c => `
+          <div style="background:#fff;border-radius:8px;padding:0.65rem 0.9rem;border:1px solid var(--borda);display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap">
+            <div style="flex:1;min-width:180px">
+              <div style="font-size:0.7rem;color:var(--cinza-aux);font-family:var(--font-cond);font-weight:700">${htmlEscape(c.contrato||c.numero_contrato||"—")}</div>
+              <div style="font-size:0.83rem;font-weight:600;color:var(--cinza-txt)">${htmlEscape(c.objeto||c.nome_obra||"—")}</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              ${statusChip(c.situacao_eobras||c.situacao_real||c.situacao)}
+              <div style="font-size:0.78rem;font-weight:700;color:var(--azul);margin-top:2px">${fmtBRL(parseNum(c.valor_atualizado||c.valor_contratual||0))}</div>
+            </div>
+          </div>`).join("") : `<div class="info-state">Sem contratos cadastrados para ${htmlEscape(mun)}.</div>`}
+      </div>
+    </div>
+    ${ramais.length ? `
+    <div>
+      <div class="panel-title" style="font-size:0.8rem;margin-bottom:0.5rem">Ramais</div>
+      <div class="table-wrap"><table class="data-table">
+        <thead><tr><th>Código</th><th>Nome</th><th>Extensão (km)</th><th>Situação</th></tr></thead>
+        <tbody>${ramais.slice(0,50).map(r => `<tr>
+          <td style="font-family:var(--font-cond);font-weight:700;color:var(--azul)">${htmlEscape([r.codigo,r.numero].filter(Boolean).join("-")||"—")}</td>
+          <td>${htmlEscape(r.nome||"—")}</td>
+          <td>${r.extensao?r.extensao.toLocaleString("pt-BR",{maximumFractionDigits:2}):"—"}</td>
+          <td><span style="font-size:0.72rem;font-weight:700;color:${r.situacao?.toUpperCase().includes("EM OBRA")?"var(--amarelo)":"var(--verde)"}">${htmlEscape(r.situacao||"—")}</span></td>
+        </tr>`).join("")}</tbody>
+      </table></div>
+    </div>` : ""}
+    <div style="margin-top:1rem;text-align:right">
+      <button class="module-action-btn" style="font-size:0.78rem" onclick="exportBriefingMunicipalPDF('${htmlEscape(mun)}')">&#128196; Briefing municipal PDF</button>
+    </div>`;
+}
+
+async function exportBriefingExecutivoPDF() {
+  const ct  = HUB.state.contratos || [];
+  const sin = HUB.state.sinistros || [];
+  const inv = ct.reduce((a,c)=>a+parseNum(c.valor_atualizado||c.valor_contratual||0),0);
+  const exec= ct.filter(c=>/vigent|execu/i.test(c.situacao_eobras||c.situacao||"")).length;
+  const conc= ct.filter(c=>/conclu/i.test(c.situacao_eobras||c.situacao||"")).length;
+  const paral=ct.filter(c=>/paral|atras/i.test(c.situacao_eobras||c.situacao||"")).length;
+  const rows= ct.slice(0,80).map(c=>[
+    (c.contrato||c.numero_contrato||"—").toString().slice(0,18),
+    (c.objeto||c.nome_obra||"—").toString().slice(0,55),
+    (c.municipio||"—").toString(),
+    (c.situacao_eobras||c.situacao||"—").toString().slice(0,20),
+    fmtBRL(parseNum(c.valor_atualizado||c.valor_contratual||0))
+  ]);
+  await exportPDF(`Relatório Executivo — Portfólio SEINFRA/AM`, [
+    { type: "heading", value: "Síntese executiva" },
+    { type: "text", value: `Data de emissão: ${new Date().toLocaleDateString("pt-BR")}` },
+    { type: "text", value: `Total de contratos: ${ct.length}` },
+    { type: "text", value: `Investimento contratual total: ${inv>=1e9?"R$ "+(inv/1e9).toFixed(2)+" bilhões":"R$ "+(inv/1e6).toFixed(1)+" milhões"}` },
+    { type: "text", value: `Em execução: ${exec} | Concluídas: ${conc} | Paralisadas/Atrasadas: ${paral}` },
+    { type: "text", value: `Sinistros registrados: ${sin.length}` },
+    { type: "heading", value: "Portfólio de contratos" },
+    { type: "table", headers: ["Contrato","Objeto","Município","Situação","Valor"], rows }
+  ]);
+}
+
+async function exportBriefingMunicipalPDF(mun) {
+  if (!mun) return;
+  const ct  = (HUB.state.contratos||[]).filter(c=>c.municipio===mun);
+  const ram = (HUB.state.ramaisSheet||[]).filter(r=>r.municipio?.toUpperCase()===mun.toUpperCase());
+  const inv = ct.reduce((a,c)=>a+parseNum(c.valor_atualizado||c.valor_contratual||0),0);
+  const ctRows = ct.map(c=>[
+    (c.contrato||c.numero_contrato||"—").toString().slice(0,18),
+    (c.objeto||c.nome_obra||"—").toString().slice(0,55),
+    (c.situacao_eobras||c.situacao||"—").toString().slice(0,20),
+    fmtBRL(parseNum(c.valor_atualizado||c.valor_contratual||0))
+  ]);
+  await exportPDF(`Briefing Municipal — ${mun} · SEINFRA/AM`, [
+    { type: "heading", value: `Município: ${mun}` },
+    { type: "text",    value: `Data: ${new Date().toLocaleDateString("pt-BR")}` },
+    { type: "text",    value: `Contratos: ${ct.length} | Investimento: ${inv>=1e6?"R$ "+(inv/1e6).toFixed(1)+" mi":fmtBRL(inv)}` },
+    { type: "text",    value: `Ramais cadastrados: ${ram.length}` },
+    ...(ct.length ? [{ type: "heading", value: "Contratos" }, { type: "table", headers: ["Nº","Objeto","Situação","Valor"], rows: ctRows }] : []),
+    ...(ram.length ? [{ type: "heading", value: "Ramais" }, { type: "table", headers: ["Código","Nome","Extensão","Situação"], rows: ram.slice(0,50).map(r=>[[r.codigo,r.numero].filter(Boolean).join("-")||"—",r.nome||"—",r.extensao?r.extensao.toLocaleString("pt-BR",{maximumFractionDigits:2})+" km":"—",r.situacao||"—"]) }] : [])
+  ]);
 }
 
 /* ═════════════════════════════════════════════════════════════════
