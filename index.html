@@ -689,27 +689,64 @@
     .alert-warning { background: var(--amarelo-cl);  color: #7A4F00;          border-color: var(--amarelo-brd); }
     .alert-ok      { background: var(--verde-cl);    color: var(--verde);      border-color: var(--verde-brd); }
 
-    /* Atlas layers */
-    .atlas-layer-panel {
-      position: absolute; top: 12px; right: 12px; z-index: 400;
-      background: rgba(255,255,255,0.97); border-radius: 10px;
-      padding: 0.7rem 0.85rem; box-shadow: 0 6px 20px rgba(0,0,0,0.18);
-      min-width: 220px; max-height: calc(100% - 24px); overflow-y: auto;
+    /* Atlas — painel de camadas */
+    .atlas-panel {
+      position: absolute; top: 10px; right: 10px; z-index: 800;
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 6px 24px rgba(0,45,114,.15); width: 260px;
+      max-height: calc(100% - 20px); display: flex; flex-direction: column;
+      overflow: hidden;
     }
-    .atlas-layer-title {
-      font-family: var(--font-cond); font-size: 0.7rem; font-weight: 800;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--azul); margin-bottom: 0.5rem;
+    .atlas-panel-hdr {
+      padding: 0.55rem 0.85rem; background: var(--azul); display: flex; align-items: center; gap: 0.45rem;
+      cursor: pointer; user-select: none; flex-shrink: 0;
     }
+    .atlas-panel-hdr:hover { background: #152347; }
+    .atlas-panel-title { font-size: 0.68rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.08em; flex: 1; }
+    .atlas-panel-cnt { font-size: 0.55rem; font-weight: 700; background: var(--amarelo); color: var(--azul); padding: 0.1em 0.4em; border-radius: 100px; }
+    .atlas-panel-srch { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--borda); flex-shrink: 0; }
+    .atlas-panel-srch input { width: 100%; font-family: var(--font); font-size: 0.72rem; padding: 0.35rem 0.55rem; border: 1.5px solid var(--borda); border-radius: 5px; outline: none; }
+    .atlas-panel-srch input:focus { border-color: var(--azul); }
+    .atlas-panel-body { overflow-y: auto; flex: 1; }
+    .atlas-group { border-bottom: 1px solid var(--borda); }
+    .atlas-group:last-child { border-bottom: none; }
+    .atlas-group-hdr {
+      padding: 0.45rem 0.85rem; display: flex; align-items: center; gap: 0.4rem;
+      cursor: pointer; user-select: none; transition: background .12s;
+    }
+    .atlas-group-hdr:hover { background: var(--cinza-bg); }
+    .atlas-group-arrow { font-size: 0.5rem; color: var(--cinza-aux); transition: transform 0.2s; width: 10px; text-align: center; flex-shrink: 0; }
+    .atlas-group-hdr.open .atlas-group-arrow { transform: rotate(90deg); }
+    .atlas-group-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(0,0,0,.1); }
+    .atlas-group-name { font-size: 0.68rem; font-weight: 700; color: var(--cinza-txt); flex: 1; }
+    .atlas-group-items { display: none; padding-bottom: 0.25rem; }
+    .atlas-group-hdr.open + .atlas-group-items { display: block; }
     .atlas-layer-item {
-      display: flex; align-items: center; gap: 0.5rem;
-      padding: 0.35rem 0; font-size: 0.78rem; color: var(--cinza-txt);
-      cursor: pointer; user-select: none;
+      display: flex; align-items: center; gap: 0.4rem;
+      padding: 0.25rem 0.85rem 0.25rem 1.85rem;
+      cursor: pointer; user-select: none; transition: background .1s;
     }
-    .atlas-layer-item input { accent-color: var(--azul); }
-    .atlas-layer-swatch {
-      width: 14px; height: 4px; border-radius: 2px; flex-shrink: 0;
+    .atlas-layer-item:hover { background: var(--cinza-bg); }
+    .atlas-layer-ck { width: 15px; height: 15px; border-radius: 3px; border: 1.5px solid var(--borda); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .15s; }
+    .atlas-layer-item.on .atlas-layer-ck { background: var(--azul); border-color: var(--azul); color: #fff; font-size: 0.55rem; }
+    .atlas-layer-swatch { flex-shrink: 0; }
+    .atlas-layer-label { font-size: 0.64rem; font-weight: 500; color: var(--cinza-med); }
+    .atlas-layer-item.on .atlas-layer-label { color: var(--cinza-txt); font-weight: 600; }
+    /* basemap bar */
+    .atlas-basemap-bar {
+      display: flex; gap: 0.35rem; padding: 0.5rem 0.6rem; overflow-x: auto;
+      background: rgba(255,255,255,0.95); border-radius: 100px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.18);
+      position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
+      z-index: 800; white-space: nowrap;
     }
+    .atlas-basemap-btn {
+      font-family: var(--font); font-size: 0.65rem; font-weight: 700; letter-spacing: 0.04em;
+      padding: 0.28em 0.75em; border-radius: 100px; border: 1.5px solid var(--borda);
+      background: #fff; color: var(--cinza-med); cursor: pointer; transition: all .15s; white-space: nowrap;
+    }
+    .atlas-basemap-btn.active { background: var(--azul); color: #fff; border-color: var(--azul); }
+    .atlas-basemap-btn:hover:not(.active) { border-color: var(--azul); color: var(--azul); }
 
     /* Obra cards */
     .obra-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 0.85rem; }
@@ -2043,7 +2080,7 @@ async function initRamais() {
         onEachFeature: (f, lyr) => {
           const p = f.properties||{};
           const nome = p.NOME||p["CÓDIGO"]||p["CODIGO"]||"Ramal";
-          lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(p.MUNICIPIO||p.Municipio||"")}</div>`);
+          lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(p["Município"]||p.MUNICIPIO||p.Municipio||"")}</div>`);
         }
       });
       HUB.state.ramaisGeoLayerMun.addTo(mapR);
@@ -2086,7 +2123,7 @@ async function initRamais() {
     // fallback GeoJSON se planilha falhou
     const muns = new Set();
     (gj.features||[]).forEach(f => {
-      const m = (f.properties||{}).MUNICIPIO||(f.properties||{}).Municipio||"";
+      const m = (f.properties||{})["Município"]||(f.properties||{}).MUNICIPIO||(f.properties||{}).Municipio||"";
       if (m) muns.add(m.trim());
     });
     if (muns.size > 0) {
@@ -2113,7 +2150,7 @@ async function initRamais() {
         const cod  = p["CÓDIGO"]||p["CODIGO"]||"";
         const num  = p["Número"]||p["Numero"]||"";
         const nome = p.NOME||p.Nome||(cod+(num?" - "+num:""))||"Ramal";
-        lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(p.MUNICIPIO||p.Municipio||"")}</div>`);
+        lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(p["Município"]||p.MUNICIPIO||p.Municipio||"")}</div>`);
       }
     });
     if (mapGeral) {
@@ -2196,7 +2233,7 @@ async function carregarRamaisSheet() {
     if (gj) {
       const muns = new Set();
       (gj.features||[]).forEach(f => {
-        const m = (f.properties||{}).MUNICIPIO || (f.properties||{}).Municipio || "";
+        const m = (f.properties||{})["Município"] || (f.properties||{}).MUNICIPIO || (f.properties||{}).Municipio || "";
         if(m) muns.add(m.trim());
       });
       const sel = document.getElementById("ramMunSelect");
@@ -2267,7 +2304,7 @@ function onRamMunChange() {
     // Remove layer filtrada anterior
     if (HUB.state.ramaisMunLayer) { try { map.removeLayer(HUB.state.ramaisMunLayer); } catch(e) {} HUB.state.ramaisMunLayer = null; }
     const feats = (gj.features||[]).filter(f => {
-      const m = (f.properties||{}).MUNICIPIO||(f.properties||{}).Municipio||"";
+      const m = (f.properties||{})["Município"]||(f.properties||{}).MUNICIPIO||(f.properties||{}).Municipio||"";
       return m.trim().toUpperCase() === mun.toUpperCase();
     });
     if (feats.length) {
@@ -2498,9 +2535,17 @@ function getAerodromosHTML() {
         <button class="tab-item" data-aetab="publico">Público Federal</button>
       </div>
 
-      <!-- Busca global -->
-      <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;flex-wrap:wrap">
+      <!-- Busca global + sub-filtros -->
+      <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem;flex-wrap:wrap;align-items:center">
         <input class="filter-input" id="aeBusca" placeholder="Buscar por nome, município, ICAO…" oninput="filterAerodromos()" style="flex:1;min-width:200px"/>
+        <div style="display:flex;gap:0.35rem;flex-wrap:wrap" id="aeSubFiltros">
+          <button class="chip" data-aefilter="" onclick="setAeFilter(this)" style="font-size:0.68rem;padding:0.25em 0.65em;border-radius:100px;border:1.5px solid var(--azul);background:var(--azul);color:#fff;cursor:pointer;font-weight:700">Todos</button>
+          <button class="chip" data-aefilter="VFR" onclick="setAeFilter(this)" style="font-size:0.68rem;padding:0.25em 0.65em;border-radius:100px;border:1.5px solid var(--borda);background:#fff;color:var(--cinza-med);cursor:pointer;font-weight:600">VFR</button>
+          <button class="chip" data-aefilter="IFR" onclick="setAeFilter(this)" style="font-size:0.68rem;padding:0.25em 0.65em;border-radius:100px;border:1.5px solid var(--borda);background:#fff;color:var(--cinza-med);cursor:pointer;font-weight:600">IFR</button>
+          <button class="chip" data-aefilter="AP-0" onclick="setAeFilter(this)" style="font-size:0.68rem;padding:0.25em 0.65em;border-radius:100px;border:1.5px solid var(--borda);background:#fff;color:var(--cinza-med);cursor:pointer;font-weight:600">AP-0</button>
+          <button class="chip" data-aefilter="AP-1" onclick="setAeFilter(this)" style="font-size:0.68rem;padding:0.25em 0.65em;border-radius:100px;border:1.5px solid var(--borda);background:#fff;color:var(--cinza-med);cursor:pointer;font-weight:600">AP-1</button>
+          <button class="chip" data-aefilter="AP-2" onclick="setAeFilter(this)" style="font-size:0.68rem;padding:0.25em 0.65em;border-radius:100px;border:1.5px solid var(--borda);background:#fff;color:var(--cinza-med);cursor:pointer;font-weight:600">AP-2</button>
+        </div>
       </div>
 
       <!-- Aba Todos -->
@@ -2724,8 +2769,22 @@ function renderAerodromosTable(list) {
   }).join("") || `<tr><td colspan="9" style="text-align:center;color:var(--cinza-aux);padding:1.5rem">Sem resultados</td></tr>`;
 }
 
+let _aeActiveFilter = "";
+
+function setAeFilter(btn) {
+  _aeActiveFilter = btn.dataset.aefilter || "";
+  document.querySelectorAll("#aeSubFiltros .chip").forEach(b => {
+    const on = b === btn;
+    b.style.background = on ? "var(--azul)" : "#fff";
+    b.style.color      = on ? "#fff" : "var(--cinza-med)";
+    b.style.borderColor = on ? "var(--azul)" : "var(--borda)";
+  });
+  filterAerodromos();
+}
+
 function filterAerodromos() {
   const q = (document.getElementById("aeBusca")?.value || "").toLowerCase();
+  const sf = _aeActiveFilter || "";
   // Detecta qual aba está ativa
   const activeTab = document.querySelector("#aeTabs .tab-item.active")?.dataset?.aetab || "todos";
   let pool = AE_DATA;
@@ -2733,6 +2792,9 @@ function filterAerodromos() {
   if (activeTab === "publico") pool = AE_DATA.filter(a => a.fonte === "PÚBLICO");
 
   const f = pool.filter(a => {
+    if (sf === "VFR") { if (a.operacao.includes("IFR")) return false; }
+    else if (sf === "IFR") { if (!a.operacao.includes("IFR")) return false; }
+    else if (sf) { if (a.rbac107 !== sf) return false; }
     if (!q) return true;
     return [a.nome, a.icao, a.ciad, a.municipio, a.operacao, a.superficie, a.rbac107].some(v => (v || "").toLowerCase().includes(q));
   });
@@ -2791,155 +2853,166 @@ async function initHidrovias() {
 }
 
 /* ──────────────────────────────────────────────
-   MÓDULO TERMINAIS
+   MÓDULO TERMINAIS — dados soberanos (31 entradas)
+   <!-- AKE/UFT-1.0 | BUILD: DMOBHUB-20260527 | IC: 1.0 | MÓDULO: terminais -->
    ────────────────────────────────────────────── */
+const TM_DATA = [
+  {localidade:"JAPURÁ",       destino:"Comunidade Acanauí",                             lat:-1.8214,  lon:-66.60935},
+  {localidade:"ALVARÃES",     destino:"Distrito de Nogueira",                           lat:-3.30389, lon:-64.77853},
+  {localidade:"AMATURÁ",      destino:"Comunidade Nova Italia",                         lat:-3.40794, lon:-68.22404},
+  {localidade:"ANAMÃ",        destino:"Distrito do Arixi",                              lat:-3.47613, lon:-61.50977},
+  {localidade:"ANORI",        destino:"Comunidade Vila do Cuianã",                      lat:-3.77333, lon:-61.64444},
+  {localidade:"ATALAIA DO NORTE", destino:"Porto de Atalaia do Norte",                 lat:-4.36293, lon:-70.1924},
+  {localidade:"AUTAZES",      destino:"Comunidade Vila do Novo Céu",                    lat:-3.38436, lon:-59.27321},
+  {localidade:"BARCELOS",     destino:"Distrito de Moura",                              lat:-1.45722, lon:-61.62972},
+  {localidade:"BARREIRINHA",  destino:"Distrito Cametá de Ramos",                       lat:-2.83611, lon:-57.41722},
+  {localidade:"BENJAMIN CONSTANT", destino:"Comunidade Feijoal",                        lat:-4.29514, lon:-69.53769},
+  {localidade:"BENJAMIN CONSTANT", destino:"Comunidade Filadélfia",                     lat:-4.37867, lon:-59.63389},
+  {localidade:"BERURI",       destino:"Comunidade Santa Maria do Pupunhal",             lat:-3.726,   lon:-61.24186},
+  {localidade:"BOA VISTA DO RAMOS", destino:"Comunidade Menino de Deus",                lat:-3.15968, lon:-57.54784},
+  {localidade:"BOA VISTA DO RAMOS", destino:"Comunidade de Jesus do Lago Preto do Ramos", lat:-3.26628, lon:-57.99386},
+  {localidade:"BORBA",        destino:"Distrito do Axinim",                             lat:-4.05022, lon:-59.37214},
+  {localidade:"CAREIRO",      destino:"Comunidade Purupuru",                            lat:-3.38278, lon:-59.72278},
+  {localidade:"HUMAITÁ",      destino:"Comunidade de Auxiliadora",                      lat:-6.24962, lon:-61.83792},
+  {localidade:"JURUÁ",        destino:"Porto de Juruá",                                 lat:-3.47058, lon:-66.06476},
+  {localidade:"JUTAÍ",        destino:"Vila Copatana",                                  lat:-2.85194, lon:-66.93},
+  {localidade:"MANICORÉ",     destino:"Comunidade Cachoeirinha",                        lat:-5.49083, lon:-60.825},
+  {localidade:"MANICORÉ",     destino:"Comunidade Democracia",                          lat:-6.48333, lon:-61.4},
+  {localidade:"MAUÉS",        destino:"Comunidade Bom Jesus do Canela",                 lat:-3.60494, lon:-57.98478},
+  {localidade:"NHAMUNDÁ",     destino:"Rua Tiradentes",                                 lat:-2.19238, lon:-56.70922},
+  {localidade:"PARINTINS",    destino:"Comunidade do Bom Socorro do Zé Açú",            lat:-2.67402, lon:-56.62769},
+  {localidade:"PARINTINS",    destino:"Distrito do Mocambo",                            lat:-2.45918, lon:-57.28159},
+  {localidade:"SANTO ANTÔNIO DO IÇÁ", destino:"Vila da Betânia",                       lat:-3.07245, lon:-68.07091},
+  {localidade:"SÃO PAULO DE OLIVENÇA", destino:"Comunidade Campo Alegre",              lat:-3.58621, lon:-69.38079},
+  {localidade:"SÃO SEBASTIÃO DO UATUMÃ", destino:"Distrito de Santana",               lat:-2.57758, lon:-57.98683},
+  {localidade:"TAPAUÁ",       destino:"Comunidade Foz do Tapauá",                       lat:-5.76247, lon:-64.39258},
+  {localidade:"TEFÉ",         destino:"Comunidade Caimbé",                              lat:-3.52972, lon:-64.40981},
+  {localidade:"URUCURITUBA",  destino:"Comunidade do Tabocal",                          lat:-3.122,   lon:-58.15847},
+];
+
+function _cap(s) { if (!s) return ""; return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase(); }
+function _capWords(s) { return s.split(" ").map(w => w.length > 2 ? _cap(w) : w.toLowerCase()).join(" "); }
+
 function getTerminaisHTML() {
   return `
   <div class="mod-wrap">
     ${modHero("terminais", "Terminais fluviais e portos flutuantes da rede SEINFRA/AM")}
     <div class="kpi-grid">
-      <div class="kpi-card c"><div class="kpi-card-label">Terminais</div><div class="kpi-card-value" id="tm-tot">—</div><div class="kpi-card-foot">cadastrados</div></div>
-      <div class="kpi-card v"><div class="kpi-card-label">Operacionais</div><div class="kpi-card-value" id="tm-op">—</div><div class="kpi-card-foot">ativos</div></div>
-      <div class="kpi-card"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="tm-mun">—</div><div class="kpi-card-foot">cobertos</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Flutuantes</div><div class="kpi-card-value" id="tm-flut">—</div><div class="kpi-card-foot">tipo principal</div></div>
+      <div class="kpi-card c"><div class="kpi-card-label">Terminais</div><div class="kpi-card-value" id="tm-tot">${TM_DATA.length}</div><div class="kpi-card-foot">cadastrados</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="tm-mun">—</div><div class="kpi-card-foot">atendidos</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Flutuantes</div><div class="kpi-card-value">${TM_DATA.length}</div><div class="kpi-card-foot">tipo principal</div></div>
+      <div class="kpi-card"><div class="kpi-card-label">Comunidades</div><div class="kpi-card-value">${TM_DATA.filter(t=>/comunidade/i.test(t.destino)).length}</div><div class="kpi-card-foot">atendidas</div></div>
     </div>
     <div class="panel-card">
       <div class="panel-header">
         <div class="panel-title">Mapa de terminais fluviais</div>
-        <div id="tmLegenda" style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap"></div>
+        <span style="font-size:0.7rem;color:var(--cinza-aux)">${TM_DATA.length} terminais · AM</span>
       </div>
       <div id="tmMap" class="map-wrap" style="height:420px"></div>
     </div>
     <div class="panel-card">
       <div class="panel-header">
         <div class="panel-title">Lista de terminais</div>
-        <input class="filter-input" id="tmBusca" placeholder="Buscar por nome ou município…" oninput="filterTerminais()" style="width:220px"/>
+        <input class="filter-input" id="tmBusca" placeholder="Buscar município ou destino…" oninput="filterTerminais()" style="width:240px"/>
       </div>
       <div class="table-wrap"><table class="data-table" id="tmTable">
-        <thead><tr><th>Nome</th><th>Município</th><th>Rio / Localização</th><th>Tipo</th><th>Situação</th></tr></thead>
+        <thead><tr><th>#</th><th>Destino / Comunidade</th><th>Município</th><th>Coordenadas</th></tr></thead>
         <tbody></tbody>
       </table></div>
+    </div>
+    <!-- Modal detalhes terminal -->
+    <div id="tmModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center;padding:1rem">
+      <div style="background:#fff;border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,45,114,0.25)">
+        <div style="background:linear-gradient(135deg,#012a4a,#01497c);padding:1.5rem;border-radius:16px 16px 0 0;position:relative">
+          <button onclick="document.getElementById('tmModal').style.display='none'" style="position:absolute;top:0.75rem;right:0.75rem;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
+          <div style="font-size:1.5rem;margin-bottom:0.4rem">⚓</div>
+          <div id="tmModalTitle" style="font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-0.02em;margin-bottom:0.2rem"></div>
+          <div id="tmModalMun" style="font-size:0.78rem;color:rgba(255,255,255,0.6)"></div>
+        </div>
+        <div style="padding:1.5rem">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem">
+            <div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.15rem">Município</div><div id="tmModalMunVal" style="font-size:0.88rem;font-weight:600"></div></div>
+            <div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.15rem">Destino</div><div id="tmModalDestino" style="font-size:0.88rem;font-weight:600"></div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem">
+            <div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.15rem">Latitude</div><div id="tmModalLat" style="font-size:0.85rem;font-weight:600;font-family:monospace"></div></div>
+            <div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.15rem">Longitude</div><div id="tmModalLon" style="font-size:0.85rem;font-weight:600;font-family:monospace"></div></div>
+          </div>
+          <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.4rem">Localização</div>
+          <div id="tmMinimap" style="height:200px;border-radius:10px;overflow:hidden;border:1px solid var(--borda)"></div>
+        </div>
+      </div>
     </div>
   </div>`;
 }
 
-async function initTerminais() {
-  const map = mkMap("tmMap", { center: [-4.5, -63.5], zoom: 5 });
-  const gj = await loadGeoJSON(GEOJSON_FILES.terminais);
-  if (!gj) {
-    $("#tm-tot").textContent = "—";
-    return;
-  }
-  HUB.state.terminaisGJ = gj;
-  const feats = gj.features || [];
-  const muns = new Set();
-  let flut = 0, op = 0;
+let _tmMinimap = null;
 
-  // Detecta dinamicamente qual chave corresponde ao município
-  function _tmProp(p, variants, regex) {
-    for (const k of variants) if (p[k] !== undefined && p[k] !== null && p[k] !== "") return p[k];
-    // scan por regex em todos os keys
-    const fallbackKey = Object.keys(p).find(k => regex.test(k));
-    return fallbackKey ? p[fallbackKey] : "";
-  }
-
-  feats.forEach(f => {
-    const p = f.properties || {};
-    const munVal  = _tmProp(p, ["MUNICIPIO","Municipio","municipio","MUNICÍPIO","NM_MUNICIP","NOME_MUN","CIDADE","CITY","LOCALIDADE"], /munic|cidade|city|local/i);
-    const tipoVal = _tmProp(p, ["TIPO","Tipo","tipo","TYPE","CATEGORY"], /tipo|type|categ/i);
-    const sitVal  = _tmProp(p, ["SITUACAO","Situacao","situacao","STATUS","Status","status","CONDICAO","CONDICÃO"], /sit|status|cond/i);
-    if (munVal) muns.add(munVal.toString().trim());
-    if (/flut/i.test(tipoVal)) flut++;
-    if (/oper/i.test(sitVal))  op++;
-  });
-
-  // Se detecção de município falhou, tenta escanear todos os valores das props
-  if (muns.size === 0 && feats.length > 0) {
-    feats.forEach(f => {
-      const p = f.properties || {};
-      Object.values(p).forEach(v => {
-        if (typeof v === "string" && v.length > 3 && v.length < 50 && /^[A-ZÁÉÍÓÚÂÊÔÃÕÇ\s]+$/i.test(v)) {
-          muns.add(v.trim());
-        }
-      });
-    });
-  }
-  $("#tm-tot").textContent  = fmtNum(feats.length);
-  $("#tm-op").textContent   = op  ? fmtNum(op)  : fmtNum(feats.length);
-  $("#tm-mun").textContent  = fmtNum(muns.size || Math.ceil(feats.length / 1.5));
-  $("#tm-flut").textContent = fmtNum(flut || feats.length);
-
-  // Legenda de cores (por tipo, se disponível)
-  const tiposSet = new Set(feats.map(f => {
-    const p = f.properties || {};
-    return (p.TIPO||p.Tipo||p.tipo||"Flutuante").toString().slice(0,20);
-  }));
-  const tmCores = ["#B8620A","#0E7490","#1A2B5E","#2D8540","#6C3483"];
-  const tiposArr = [...tiposSet];
-  HUB.state.tmTipoCores = {};
-  tiposArr.forEach((t, i) => { HUB.state.tmTipoCores[t] = tmCores[i % tmCores.length]; });
-  const leg = document.getElementById("tmLegenda");
-  if (leg) leg.innerHTML = tiposArr.map(t =>
-    `<span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--cinza-med)">
-      <span style="width:9px;height:9px;border-radius:50%;background:${HUB.state.tmTipoCores[t]};display:inline-block"></span>${htmlEscape(t)}
-    </span>`).join("");
+function initTerminais() {
+  const muns = new Set(TM_DATA.map(t => t.localidade));
+  const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  setEl("tm-mun", muns.size);
 
   // Mapa
-  L.geoJSON(gj, {
-    pointToLayer: (f, latlng) => {
-      const p = f.properties || {};
-      const tipo = (p.TIPO||p.Tipo||p.tipo||"Flutuante").toString().slice(0,20);
-      const cor  = (HUB.state.tmTipoCores || {})[tipo] || "#B8620A";
-      return L.circleMarker(latlng, { radius: 6, color: "#fff", weight: 1.5, fillColor: cor, fillOpacity: 0.95 });
-    },
-    onEachFeature: (f, lyr) => {
-      const p = f.properties || {};
-      const nome = p.NOME||p.Nome||p.nome||p.TERMINAL||"Terminal";
-      const mun  = p.MUNICIPIO||p.Municipio||p.municipio||"";
-      const tipo = p.TIPO||p.Tipo||p.tipo||"";
-      const sit  = p.SITUACAO||p.Situacao||p.situacao||"";
-      const rio  = p.RIO||p.Rio||p.rio||p.LOCALIZAÇÃO||p.LOCALIZACAO||"";
-      lyr.bindPopup(`
-        <div class="pop-title">${htmlEscape(nome)}</div>
-        <div class="pop-row">${htmlEscape(mun)}</div>
-        ${tipo ? `<div class="pop-row" style="color:#B8620A;font-weight:600">${htmlEscape(tipo)}</div>` : ""}
-        ${rio  ? `<div class="pop-row">${htmlEscape(rio)}</div>` : ""}
-        ${sit  ? `<div class="pop-row">${htmlEscape(sit)}</div>` : ""}
-      `);
-    }
-  }).addTo(map);
+  const map = mkMap("tmMap", { center: [-4.5, -63.5], zoom: 5 });
+  const tmIcon = () => L.divIcon({
+    className: "",
+    html: `<div style="width:26px;height:26px;border-radius:50%;background:#0077b6;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff">⚓</div>`,
+    iconSize: [26,26], iconAnchor: [13,13]
+  });
+  TM_DATA.forEach((t, i) => {
+    L.marker([t.lat, t.lon], { icon: tmIcon() }).addTo(map)
+      .bindPopup(`<div class="pop-title">${htmlEscape(t.destino)}</div><div class="pop-row">📍 ${htmlEscape(_capWords(t.localidade))}</div><div class="pop-row" style="font-family:monospace;font-size:0.7rem;color:var(--cinza-aux)">${t.lat.toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>`)
+      .on("click", () => abrirModalTerminal(i));
+  });
+  const latlngs = TM_DATA.map(t => [t.lat, t.lon]);
+  try { map.fitBounds(L.latLngBounds(latlngs), { padding: [30,30] }); } catch(e) {}
 
-  try { const b = L.geoJSON(gj).getBounds(); if (b.isValid()) map.fitBounds(b, { padding: [20, 20] }); } catch (e) {}
-
-  // Tabela
-  HUB.state.terminaisList = feats.map(f => f.properties || {});
-  renderTerminaisTable(HUB.state.terminaisList);
+  // Tabela inicial
+  renderTerminaisTable(TM_DATA);
 }
 
-function renderTerminaisTable(props) {
+function abrirModalTerminal(i) {
+  const t = TM_DATA[i]; if (!t) return;
+  const modal = document.getElementById("tmModal"); if (!modal) return;
+  document.getElementById("tmModalTitle").textContent  = t.destino;
+  document.getElementById("tmModalMun").textContent    = "📍 " + _capWords(t.localidade);
+  document.getElementById("tmModalMunVal").textContent = _capWords(t.localidade);
+  document.getElementById("tmModalDestino").textContent = t.destino;
+  document.getElementById("tmModalLat").textContent    = t.lat.toFixed(5) + "°";
+  document.getElementById("tmModalLon").textContent    = t.lon.toFixed(5) + "°";
+  modal.style.display = "flex";
+  // Minimap
+  const mm = document.getElementById("tmMinimap");
+  if (mm) {
+    if (_tmMinimap) { _tmMinimap.remove(); _tmMinimap = null; }
+    setTimeout(() => {
+      _tmMinimap = L.map(mm, { center: [t.lat, t.lon], zoom: 12, zoomControl: false, attributionControl: false });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(_tmMinimap);
+      L.marker([t.lat, t.lon]).addTo(_tmMinimap);
+      _tmMinimap.invalidateSize();
+    }, 50);
+  }
+}
+
+function renderTerminaisTable(list) {
   const tb = document.querySelector("#tmTable tbody"); if (!tb) return;
-  tb.innerHTML = props.slice(0, 300).map(p => {
-    const nome = p.NOME||p.Nome||p.nome||p.TERMINAL||"—";
-    const mun  = p.MUNICIPIO||p.Municipio||p.municipio||"—";
-    const rio  = p.RIO||p.Rio||p.rio||p.LOCALIZAÇÃO||p.LOCALIZACAO||"—";
-    const tipo = p.TIPO||p.Tipo||p.tipo||"—";
-    const sit  = p.SITUACAO||p.Situacao||p.situacao||p.STATUS||"—";
-    return `<tr>
-      <td style="font-weight:600">${htmlEscape(nome)}</td>
-      <td>${htmlEscape(mun)}</td>
-      <td>${htmlEscape(rio)}</td>
-      <td><span style="font-size:0.72rem;font-weight:700;color:var(--laranja)">${htmlEscape(tipo)}</span></td>
-      <td>${htmlEscape(sit)}</td>
+  tb.innerHTML = list.map((t, i) => {
+    const globalIdx = TM_DATA.indexOf(t);
+    return `<tr style="cursor:pointer" onclick="abrirModalTerminal(${globalIdx})">
+      <td style="color:var(--cinza-aux);font-size:0.8rem;text-align:right">${(TM_DATA.indexOf(t)+1).toString().padStart(2,"0")}</td>
+      <td style="font-weight:600">${htmlEscape(t.destino)}</td>
+      <td>${htmlEscape(_capWords(t.localidade))}</td>
+      <td style="font-family:monospace;font-size:0.72rem;color:var(--cinza-aux)">${t.lat.toFixed(4)}, ${t.lon.toFixed(4)}</td>
     </tr>`;
-  }).join("") || `<tr><td colspan="5" class="info-state">Sem terminais carregados.</td></tr>`;
+  }).join("") || `<tr><td colspan="4" class="info-state">Sem terminais encontrados.</td></tr>`;
 }
 
 function filterTerminais() {
   const q = (document.getElementById("tmBusca")?.value || "").toLowerCase();
-  const all = HUB.state.terminaisList || [];
-  const filtered = q ? all.filter(p => {
-    return [p.NOME,p.Nome,p.nome,p.MUNICIPIO,p.Municipio,p.municipio,p.RIO,p.rio].some(v => (v||"").toString().toLowerCase().includes(q));
-  }) : all;
+  const filtered = q ? TM_DATA.filter(t =>
+    t.localidade.toLowerCase().includes(q) || t.destino.toLowerCase().includes(q)
+  ) : TM_DATA;
   renderTerminaisTable(filtered);
 }
 
@@ -3038,29 +3111,103 @@ async function exportObraPDF(idx) {
 }
 
 /* ──────────────────────────────────────────────
-   MÓDULO ATLAS
+   MÓDULO ATLAS — v2 · basemaps + grupos + lazy load
+   <!-- AKE/UFT-1.0 | BUILD: DMOBHUB-20260527 | IC: 1.0 | MÓDULO: atlas -->
    ────────────────────────────────────────────── */
-const ATLAS_LAYERS = [
-  { key: "rodovias_est", label: "Rodovias estaduais",   color: "#1A2B5E", type: "line" },
-  { key: "rodovias_fed", label: "Rodovias federais",    color: "#2D8540", type: "line" },
-  { key: "ramais",       label: "Ramais SEINFRA",       color: "#F5A623", type: "line" },
-  { key: "hidrovias",    label: "Hidrovias",            color: "#5B21B6", type: "line" },
-  { key: "aerodromos",   label: "Aeródromos",           color: "#0E7490", type: "point" },
-  { key: "terminais",    label: "Terminais fluviais",   color: "#B8620A", type: "point" },
-  { key: "municipios",   label: "Municípios (AM)",      color: "#8896A8", type: "poly" },
-  { key: "sistemas",     label: "Sistemas viários AM",  color: "#C0392B", type: "line" },
-  { key: "rodovias_est2",label: "Rodovias estaduais (overlay)", color: "#152347", type: "line" },
+const ATLAS_GROUPS = [
+  {
+    id: "rodoviario", label: "Rodoviário", color: "#1A2B5E", icon: "🛣",
+    layers: [
+      { key: "rodovias_est", label: "Rodovias Estaduais", color: "#1A2B5E", sw: "ln", type: "line",
+        file: "rodovias_est",
+        popup: p => `<b>${p.Nome||p.NOME||"Rodovia estadual"}</b><br>${p.Codigo||p.CODIGO||""}`,
+        defaultOn: true },
+      { key: "rodovias_fed", label: "Rodovias Federais", color: "#C0392B", sw: "ln", type: "line",
+        file: "rodovias_fed",
+        popup: p => `<b>BR-${p.Codigo_BR||"?"}</b><br>${p.Nome_Tipo_||""} · ${p.Extensao||""}km` },
+      { key: "ramais", label: "Ramais SEINFRA", color: "#F5A623", sw: "ld", type: "line",
+        file: "ramais",
+        popup: p => `<b>${p.NOME||p["CÓDIGO"]||"Ramal"}</b><br>${p["Município"]||p.MUNICIPIO||""} · ${p["Extensão"]||p.EXTENSAO||""}km` },
+    ]
+  },
+  {
+    id: "hidroviario", label: "Hidroviário", color: "#2980B9", icon: "🚢",
+    layers: [
+      { key: "hidrovias", label: "Hidrovias", color: "#2980B9", sw: "ln", type: "line",
+        file: "hidrovias",
+        popup: p => `<b>${p.name||p.NOME||"Hidrovia"}</b><br>${p.folders||""}` },
+      { key: "terminais", label: "Terminais Flutuantes", color: "#1565C0", sw: "pt", type: "pointIcon", icon: "⚓",
+        file: "terminais",
+        popup: p => `<b>${p.Localidade||p.NOME||"Terminal"}</b><br>${p.Destino||""}` },
+    ]
+  },
+  {
+    id: "aeroportuario", label: "Aeroportuário", color: "#E67E22", icon: "✈",
+    layers: [
+      { key: "aerodromos", label: "Aeródromos SEINFRA", color: "#002D72", sw: "pt", type: "pointIcon", icon: "✈",
+        file: "aerodromos",
+        popup: p => `<b>${p.Nome||p.NOME||"Aeródromo"}</b><br>CIAD: ${p.CIAD||"—"}<br>Pista: ${p.Compriment||"—"}m` },
+    ]
+  },
+  {
+    id: "territorial", label: "Territorial", color: "#0E8A7D", icon: "🏠",
+    layers: [
+      { key: "municipios", label: "Divisas Municipais", color: "#0E8A7D", sw: "pg", type: "poly",
+        file: "municipios",
+        popup: p => `<b>${p.NM_MUN||p.NOME||"Município"}</b>` },
+    ]
+  },
 ];
 
+// Mapa plano key→def para acesso rápido
+const ATLAS_LAYER_MAP = {};
+ATLAS_GROUPS.forEach(g => g.layers.forEach(l => { ATLAS_LAYER_MAP[l.key] = l; }));
+
 function getAtlasHTML() {
+  // Gera HTML dos grupos para o painel
+  const gruposHTML = ATLAS_GROUPS.map(g => {
+    const layersHTML = g.layers.map(l => `
+      <div class="atlas-layer-item${l.defaultOn ? " on" : ""}" data-layer-key="${l.key}" onclick="atlasItemClick(this,'${l.key}')">
+        <div class="atlas-layer-ck">${l.defaultOn ? "✓" : ""}</div>
+        ${l.sw === "ln" ? `<div class="atlas-layer-swatch" style="width:16px;height:3px;border-radius:2px;background:${l.color}"></div>` :
+          l.sw === "ld" ? `<div class="atlas-layer-swatch" style="width:16px;height:0;border-top:2.5px dashed ${l.color}"></div>` :
+          l.sw === "pt" ? `<div class="atlas-layer-swatch" style="width:8px;height:8px;border-radius:50%;background:${l.color}"></div>` :
+          l.sw === "pg" ? `<div class="atlas-layer-swatch" style="width:12px;height:9px;border-radius:2px;border:1.5px solid ${l.color};opacity:.7"></div>` :
+          `<div class="atlas-layer-swatch" style="width:14px;height:4px;border-radius:2px;background:${l.color}"></div>`}
+        <span class="atlas-layer-label">${l.label}</span>
+      </div>`).join("");
+    return `
+      <div class="atlas-group">
+        <div class="atlas-group-hdr" onclick="atlasGroupToggle(this)">
+          <span class="atlas-group-arrow">▶</span>
+          <span class="atlas-group-dot" style="background:${g.color}"></span>
+          <span class="atlas-group-name">${g.icon} ${g.label}</span>
+        </div>
+        <div class="atlas-group-items">${layersHTML}</div>
+      </div>`;
+  }).join("");
+
   return `
   <div class="mod-wrap">
-    ${modHero("atlas", "Atlas geoespacial completo · 9 camadas toggleáveis com lazy loading")}
-    <div class="panel-card" style="position:relative">
-      <div id="atlasMap" class="map-wrap tall" style="position:relative">
-        <div class="atlas-layer-panel">
-          <div class="atlas-layer-title">Camadas</div>
-          <div id="atlasLayerList"></div>
+    ${modHero("atlas", "Atlas geoespacial completo · basemaps + camadas temáticas toggleáveis")}
+    <div class="panel-card" style="padding:0;overflow:hidden">
+      <div id="atlasMap" class="map-wrap tall" style="position:relative;height:600px">
+        <!-- Painel de camadas -->
+        <div class="atlas-panel" id="atlasPanel">
+          <div class="atlas-panel-hdr" onclick="atlasCollapsePanel()">
+            <span style="font-size:0.85rem;filter:grayscale(1) brightness(10)">🗺</span>
+            <span class="atlas-panel-title">Camadas</span>
+            <span class="atlas-panel-cnt" id="atlasCntBadge">0 ativas</span>
+          </div>
+          <div class="atlas-panel-srch"><input type="text" placeholder="Filtrar camadas…" oninput="atlasSearchLayer(this.value)" /></div>
+          <div class="atlas-panel-body" id="atlasGroupsBody">${gruposHTML}</div>
+        </div>
+        <!-- Barra de basemaps -->
+        <div class="atlas-basemap-bar" id="atlasBasemapBar">
+          <button class="atlas-basemap-btn active" data-bm="osm" onclick="atlasSetBasemap(this)">Padrão</button>
+          <button class="atlas-basemap-btn" data-bm="sat" onclick="atlasSetBasemap(this)">Satélite</button>
+          <button class="atlas-basemap-btn" data-bm="topo" onclick="atlasSetBasemap(this)">Topo</button>
+          <button class="atlas-basemap-btn" data-bm="dark" onclick="atlasSetBasemap(this)">Escuro</button>
         </div>
       </div>
     </div>
@@ -3069,50 +3216,143 @@ function getAtlasHTML() {
 
 async function initAtlas() {
   const map = mkMap("atlasMap", { center: [-4.5, -63.5], zoom: 5 });
+  HUB.state.atlasMap = map;
   HUB.state.atlasLayers = {};
-  const list = $("#atlasLayerList");
-  list.innerHTML = ATLAS_LAYERS.map((l, i) => `
-    <label class="atlas-layer-item">
-      <input type="checkbox" data-key="${l.key}" data-i="${i}" />
-      <span class="atlas-layer-swatch" style="background:${l.color}"></span>
-      <span>${l.label}</span>
-    </label>
-  `).join("");
-  $$("#atlasLayerList input").forEach(inp => {
-    inp.addEventListener("change", async () => {
-      const k = inp.dataset.key, i = +inp.dataset.i;
-      await atlasToggleLayer(map, k, i, inp.checked);
-    });
-  });
-  // ativa rodovias est por default
-  const def = $$("#atlasLayerList input")[0];
-  def.checked = true; def.dispatchEvent(new Event("change"));
+
+  // Basemaps
+  const _bm = {
+    osm:  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" }),
+    sat:  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18, attribution: "© Esri" }),
+    topo: L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "© OpenTopoMap" }),
+    dark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, attribution: "© CartoDB" }),
+  };
+  HUB.state.atlasBasemaps = _bm;
+  HUB.state.atlasCurrentBm = "osm";
+  // Remove o tile layer padrão do mkMap e coloca o OSM correto
+  map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
+  _bm.osm.addTo(map);
+
+  // Ativa as camadas default (defaultOn: true)
+  for (const g of ATLAS_GROUPS) {
+    for (const l of g.layers) {
+      if (l.defaultOn) await atlasLoadLayer(map, l.key);
+    }
+  }
+  atlasUpdateCount();
+
+  // Abre primeiro grupo por default
+  const firstHdr = document.querySelector(".atlas-group-hdr");
+  if (firstHdr) { firstHdr.classList.add("open"); }
 }
 
-async function atlasToggleLayer(map, key, i, on) {
-  const def = ATLAS_LAYERS[i];
-  if (!def) return;
+function atlasGroupToggle(hdr) {
+  hdr.classList.toggle("open");
+}
+
+function atlasCollapsePanel() {
+  // toggle minimiza/expande o body + busca
+  const body = document.getElementById("atlasGroupsBody");
+  const srch = document.querySelector(".atlas-panel-srch");
+  if (!body) return;
+  const hidden = body.style.display === "none";
+  body.style.display = hidden ? "" : "none";
+  if (srch) srch.style.display = hidden ? "" : "none";
+}
+
+async function atlasItemClick(el, key) {
+  const on = !el.classList.contains("on");
+  el.classList.toggle("on", on);
+  el.querySelector(".atlas-layer-ck").textContent = on ? "✓" : "";
+  const map = HUB.state.atlasMap; if (!map) return;
+  if (on) {
+    await atlasLoadLayer(map, key);
+  } else {
+    const layer = HUB.state.atlasLayers[key];
+    if (layer) { try { map.removeLayer(layer); } catch(e) {} }
+  }
+  atlasUpdateCount();
+}
+
+async function atlasLoadLayer(map, key) {
+  const def = ATLAS_LAYER_MAP[key]; if (!def) return;
   let layer = HUB.state.atlasLayers[key];
   if (!layer) {
-    let file;
-    if (key === "rodovias_est2") file = GEOJSON_FILES.rodovias_est;
-    else file = GEOJSON_FILES[key];
+    const file = GEOJSON_FILES[def.file || key];
     if (!file) return;
     const gj = await loadGeoJSON(file);
     if (!gj) return;
-    if (def.type === "point") {
+    const popFn = def.popup || (p => p.NOME||p.nome||"—");
+    if (def.type === "pointIcon") {
+      const ico = def.icon || "●";
+      const col = def.color || "#1A2B5E";
       layer = L.geoJSON(gj, {
-        pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 4, color: "#fff", weight: 1.2, fillColor: def.color, fillOpacity: 0.95 }),
-        onEachFeature: (f, lyr) => { const p = f.properties || {}; lyr.bindPopup(`<div class="pop-title">${htmlEscape(p.NOME || p.nome || "—")}</div>`); }
+        pointToLayer: (f, ll) => L.marker(ll, {
+          icon: L.divIcon({
+            className: "",
+            html: `<div style="width:22px;height:22px;border-radius:50%;background:${col};border:2px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff">${ico}</div>`,
+            iconSize: [22,22], iconAnchor: [11,11]
+          })
+        }),
+        onEachFeature: (f, lyr) => {
+          const p = f.properties || {};
+          lyr.bindPopup(`<div class="pop-title">${htmlEscape(popFn(p))}</div>`);
+        }
       });
     } else if (def.type === "poly") {
-      layer = L.geoJSON(gj, { style: { color: def.color, weight: 0.8, fillOpacity: 0.04, fillColor: def.color } });
+      layer = L.geoJSON(gj, {
+        style: { color: def.color, weight: 0.9, fillOpacity: 0.05, fillColor: def.color },
+        onEachFeature: (f, lyr) => {
+          const p = f.properties || {};
+          lyr.bindPopup(`<div class="pop-title">${htmlEscape(popFn(p))}</div>`);
+        }
+      });
     } else {
-      layer = L.geoJSON(gj, { style: { color: def.color, weight: 1.8, opacity: 0.85 } });
+      layer = L.geoJSON(gj, {
+        style: { color: def.color, weight: def.sw === "ld" ? 1.5 : 2.2, opacity: 0.85,
+                 dashArray: def.sw === "ld" ? "6,4" : null },
+        onEachFeature: (f, lyr) => {
+          const p = f.properties || {};
+          lyr.bindPopup(`<div class="pop-title">${htmlEscape(popFn(p))}</div>`);
+        }
+      });
     }
     HUB.state.atlasLayers[key] = layer;
   }
-  if (on) layer.addTo(map); else map.removeLayer(layer);
+  try { layer.addTo(map); } catch(e) {}
+}
+
+function atlasSetBasemap(btn) {
+  const bm = btn.dataset.bm;
+  const map = HUB.state.atlasMap; if (!map) return;
+  document.querySelectorAll(".atlas-basemap-btn").forEach(b => b.classList.toggle("active", b === btn));
+  const bms = HUB.state.atlasBasemaps;
+  if (!bms) return;
+  Object.values(bms).forEach(l => { try { map.removeLayer(l); } catch(e) {} });
+  if (bms[bm]) bms[bm].addTo(map);
+  HUB.state.atlasCurrentBm = bm;
+}
+
+function atlasUpdateCount() {
+  const active = document.querySelectorAll(".atlas-layer-item.on").length;
+  const badge = document.getElementById("atlasCntBadge");
+  if (badge) badge.textContent = active + " ativa" + (active === 1 ? "" : "s");
+}
+
+function atlasSearchLayer(q) {
+  const lc = q.toLowerCase();
+  document.querySelectorAll(".atlas-layer-item").forEach(el => {
+    const label = el.querySelector(".atlas-layer-label")?.textContent.toLowerCase() || "";
+    el.style.display = (!lc || label.includes(lc)) ? "" : "none";
+  });
+  // mostra grupos que têm itens visíveis
+  document.querySelectorAll(".atlas-group").forEach(g => {
+    const any = Array.from(g.querySelectorAll(".atlas-layer-item")).some(el => el.style.display !== "none");
+    g.style.display = any ? "" : "none";
+    if (any && lc) {
+      const hdr = g.querySelector(".atlas-group-hdr");
+      if (hdr) hdr.classList.add("open");
+    }
+  });
 }
 
 /* ──────────────────────────────────────────────
