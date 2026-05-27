@@ -1712,192 +1712,450 @@ function filterRodovias() {
 
 /* ──────────────────────────────────────────────
    MÓDULO RAMAIS
+   Fonte: Sheets API v4 (id: 1Cr5Qbj_My7oOcIYiIjZ6NgJiCsij4ZAQCSxdP49cffc)
+   + GeoJSON CDN para traçados
    ────────────────────────────────────────────── */
+const RAM_SHEET_ID = '1Cr5Qbj_My7oOcIYiIjZ6NgJiCsij4ZAQCSxdP49cffc';
+const RAM_API_KEY  = 'AIzaSyBrK45p0mev1t5NyDJomdDIvJTe2DWaojA';
+const RAM_RANGE    = 'Ramais!A:BK';
+const RAM_COL = { CODIGO:0,NUMERO:1,NOME:2,MUNICIPIO:9,EXTENSAO:11,INICIO:7,FIM:8,LATITUDE:14,LONGITUDE:15,REVESTIMENTO:51,SITUACAO:54 };
+
 function getRamaisHTML() {
   return `
   <div class="mod-wrap">
-    ${modHero("ramais", "Atlas de ramais por município · busca, detalhes e mapa")}
-    <div class="panel-card">
-      <div class="filter-row">
-        <select class="filter-select" id="ramMun"><option value="">Todos os municípios</option></select>
-        <input class="filter-input" id="ramBusca" placeholder="Buscar ramal por nome…" oninput="filterRamais()"/>
-      </div>
-      <div class="panel-body">
-        <div class="ramal-detail" id="ramDetail" style="display:none">
-          <div class="ramal-detail-grid">
-            <div class="ramal-detail-item"><div class="ramal-detail-label">Ramal</div><div class="ramal-detail-value" id="rd-nome">—</div></div>
-            <div class="ramal-detail-item"><div class="ramal-detail-label">Município</div><div class="ramal-detail-value" id="rd-mun">—</div></div>
-            <div class="ramal-detail-item"><div class="ramal-detail-label">Extensão</div><div class="ramal-detail-value" id="rd-ext">—</div></div>
-            <div class="ramal-detail-item"><div class="ramal-detail-label">Pavimento</div><div class="ramal-detail-value" id="rd-pav">—</div></div>
-            <div class="ramal-detail-item"><div class="ramal-detail-label">Situação</div><div class="ramal-detail-value" id="rd-sit">—</div></div>
-            <div class="ramal-detail-item"><div class="ramal-detail-label">ID</div><div class="ramal-detail-value" id="rd-id">—</div></div>
-          </div>
-        </div>
-        <div id="ramMap" class="map-wrap tall"></div>
-      </div>
+    ${modHero("ramais", "Atlas de ramais estaduais · planilha SEINFRA + traçados GeoJSON")}
+    <div class="kpi-grid">
+      <div class="kpi-card v"><div class="kpi-card-label">Total ramais</div><div class="kpi-card-value" id="rk-ram-tot">—</div><div class="kpi-card-foot">cadastrados</div></div>
+      <div class="kpi-card"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="rk-ram-mun">—</div><div class="kpi-card-foot">atendidos</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Com obra ativa</div><div class="kpi-card-value" id="rk-ram-obra">—</div><div class="kpi-card-foot">ramais</div></div>
+      <div class="kpi-card c"><div class="kpi-card-label">Extensão total</div><div class="kpi-card-value" id="rk-ram-ext">—</div><div class="kpi-card-foot">km</div></div>
     </div>
     <div class="panel-card">
-      <div class="panel-header"><div class="panel-title">Ramais filtrados (<span id="ramCount">0</span>)</div></div>
+      <div class="filter-row">
+        <select class="filter-select" id="ramMunSelect" onchange="onRamMunChange()">
+          <option value="">Carregando municípios…</option>
+        </select>
+        <select class="filter-select" id="ramSelect" disabled onchange="onRamSelect()">
+          <option value="">Selecione um ramal</option>
+        </select>
+      </div>
+      <div id="ramDetail" style="display:none;margin:0.8rem 0;padding:1rem;background:var(--azul-claro);border-radius:var(--radius);border:1px solid var(--azul-borda)">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0.6rem" id="ramDetailGrid"></div>
+      </div>
+      <div id="ramMap" class="map-wrap tall"></div>
+    </div>
+    <div class="panel-card">
+      <div class="panel-header">
+        <div class="panel-title">Ramais do município selecionado <span id="ramCount" style="color:var(--azul-aux);font-weight:400;font-size:0.82rem"></span></div>
+        <input class="filter-input" style="width:220px" id="ramBusca" placeholder="Filtrar por nome…" oninput="filterRamaisTable()"/>
+      </div>
       <div class="table-wrap"><table class="data-table" id="ramTable">
-        <thead><tr><th>Ramal</th><th>Município</th><th>Extensão</th><th>Pavimento</th></tr></thead>
-        <tbody></tbody></table></div>
+        <thead><tr><th>Código</th><th>Nome</th><th>Extensão (km)</th><th>Situação</th><th>Pavimento</th></tr></thead>
+        <tbody><tr><td colspan="5" style="text-align:center;color:var(--cinza-aux);padding:1.5rem">Selecione um município para listar os ramais</td></tr></tbody>
+      </table></div>
     </div>
   </div>`;
 }
 
 async function initRamais() {
+  // mapa GeoJSON em paralelo com Sheets API
   const map = mkMap("ramMap", { center: [-4.5, -63.0], zoom: 5 });
-  const gj = await loadGeoJSON(GEOJSON_FILES.ramais);
-  if (!gj) {
-    $("#ramMap").innerHTML = `<div class="info-state">Falha ao carregar ramais.</div>`;
-    return;
+
+  const [gj] = await Promise.all([
+    loadGeoJSON(GEOJSON_FILES.ramais),
+    carregarRamaisSheet()
+  ]);
+
+  if (gj) {
+    HUB.state.ramaisGeoJSON = gj;
+    HUB.state.ramaisGeoLayer = L.geoJSON(gj, {
+      style: f => {
+        const sit = ((f.properties || {}).SITUACAO || "").toUpperCase();
+        const cor = sit.includes("EM OBRA") ? "#F5A623" : sit.includes("EXTINTA") ? "#8896A8" : "#2D8540";
+        return { color: cor, weight: 2.2, opacity: 0.85 };
+      },
+      onEachFeature: (f, lyr) => {
+        const p = f.properties || {};
+        const cod = p["CÓDIGO"] || p["CODIGO"] || p["CÓDIGO"] || "";
+        const num = p["Número"] || p["Numero"] || p["Número"] || "";
+        const nome = p.NOME || p.Nome || cod + (num ? " - " + num : "") || "Ramal";
+        lyr.bindPopup(`<div class="pop-title">${htmlEscape(nome)}</div><div class="pop-row">${htmlEscape(p.MUNICIPIO || p.Municipio || "")}</div>`);
+      }
+    }).addTo(map);
+    try { map.fitBounds(HUB.state.ramaisGeoLayer.getBounds(), { padding: [20,20] }); } catch(e) {}
   }
-  HUB.state.ramais = gj;
+}
 
-  // Popula select de municípios
-  const muns = new Set();
-  (gj.features || []).forEach(f => {
-    const p = f.properties || {};
-    const m = p.MUNICIPIO || p.municipio || p.MUN_NOME || p.NOME_MUN || "";
-    if (m) muns.add(String(m).trim());
-  });
-  const sel = $("#ramMun");
-  Array.from(muns).sort().forEach(m => {
-    const opt = document.createElement("option"); opt.value = m; opt.textContent = m;
-    sel.appendChild(opt);
-  });
-  sel.addEventListener("change", () => filterRamais());
+async function carregarRamaisSheet() {
+  if (HUB.state.ramaisSheet) return; // já carregado
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${RAM_SHEET_ID}/values/${RAM_RANGE}?key=${RAM_API_KEY}`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const data = await resp.json();
+    const rows = (data.values || []).slice(1);
+    const parsed = rows.map((row, i) => ({
+      rowIndex: i + 2,
+      codigo:       row[RAM_COL.CODIGO]      || "",
+      numero:       row[RAM_COL.NUMERO]      || "",
+      nome:         row[RAM_COL.NOME]        || "",
+      municipio:    row[RAM_COL.MUNICIPIO]   || "",
+      extensao:     parseFloat((row[RAM_COL.EXTENSAO] || "0").replace(",", ".")) || 0,
+      inicio:       row[RAM_COL.INICIO]      || "",
+      fim:          row[RAM_COL.FIM]         || "",
+      latitude:     parseFloat((row[RAM_COL.LATITUDE]  || "").replace(",", ".")) || null,
+      longitude:    parseFloat((row[RAM_COL.LONGITUDE] || "").replace(",", ".")) || null,
+      situacao:     row[RAM_COL.SITUACAO]    || "",
+      revestimento: row[RAM_COL.REVESTIMENTO]|| "",
+    })).filter(r => r.municipio);
 
-  HUB.state.ramaisLayer = L.geoJSON(gj, {
-    style: { color: "#2D8540", weight: 2, opacity: 0.85 },
-    onEachFeature: (f, lyr) => {
-      const p = f.properties || {};
-      const name = p.NOME || p.RAMAL || p.nome || "Ramal";
-      const mun  = p.MUNICIPIO || p.municipio || "—";
-      const ext  = parseNum(p.EXTENSAO || p.extensao || p.COMPRIMENT || 0);
-      lyr.bindPopup(`<div class="pop-title">${htmlEscape(name)}</div><div class="pop-row">${htmlEscape(mun)}</div><div class="pop-row">${fmtKm(ext)}</div>`);
-      lyr.on("click", () => showRamalDetail(p));
+    parsed.forEach(r => {
+      const sit = r.situacao.toUpperCase();
+      r.temObra = sit.includes("EM OBRA") && !sit.includes("EXTINTA");
+      const id = [r.codigo, r.numero].filter(Boolean).join(" - ");
+      r.nomeCompleto = id ? id + (r.nome ? " - " + r.nome : "") : r.nome;
+    });
+
+    const porMun = {};
+    parsed.forEach(r => {
+      if (!porMun[r.municipio]) porMun[r.municipio] = [];
+      porMun[r.municipio].push(r);
+    });
+
+    HUB.state.ramaisSheet = parsed;
+    HUB.state.ramaisPorMun = porMun;
+
+    // KPIs
+    const tot = parsed.length;
+    const muns = Object.keys(porMun).length;
+    const obras = parsed.filter(r => r.temObra).length;
+    const extTotal = parsed.reduce((a, r) => a + r.extensao, 0);
+    const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+    setEl("rk-ram-tot", tot.toLocaleString("pt-BR"));
+    setEl("rk-ram-mun", muns);
+    setEl("rk-ram-obra", obras);
+    setEl("rk-ram-ext", Math.round(extTotal).toLocaleString("pt-BR"));
+
+    // Popula select de municípios
+    const sel = document.getElementById("ramMunSelect");
+    if (sel) {
+      sel.innerHTML = '<option value="">Selecione um município</option>';
+      Object.keys(porMun).sort((a,b) => a.localeCompare(b)).forEach(m => {
+        const o = document.createElement("option");
+        o.value = m; o.textContent = m + " (" + porMun[m].length + ")";
+        sel.appendChild(o);
+      });
     }
-  }).addTo(map);
-  try { map.fitBounds(HUB.state.ramaisLayer.getBounds(), { padding: [20, 20] }); } catch (e) {}
-
-  filterRamais();
+  } catch(e) {
+    console.warn("Ramais Sheets:", e);
+    // fallback: popula municípios pelo GeoJSON
+    const gj = HUB.state.ramaisGeoJSON;
+    if (gj) {
+      const muns = new Set();
+      (gj.features||[]).forEach(f => {
+        const m = (f.properties||{}).MUNICIPIO || (f.properties||{}).Municipio || "";
+        if(m) muns.add(m.trim());
+      });
+      const sel = document.getElementById("ramMunSelect");
+      if (sel) {
+        sel.innerHTML = '<option value="">Selecione um município (GeoJSON)</option>';
+        Array.from(muns).sort().forEach(m => {
+          const o = document.createElement("option"); o.value = m; o.textContent = m;
+          sel.appendChild(o);
+        });
+      }
+    }
+  }
 }
 
-function showRamalDetail(p) {
-  $("#ramDetail").style.display = "block";
-  $("#rd-nome").textContent = p.NOME || p.RAMAL || p.nome || "—";
-  $("#rd-mun").textContent  = p.MUNICIPIO || p.municipio || "—";
-  $("#rd-ext").textContent  = fmtKm(parseNum(p.EXTENSAO || p.extensao || p.COMPRIMENT || 0));
-  $("#rd-pav").textContent  = p.PAVIMENTO || p.pavimento || "—";
-  $("#rd-sit").textContent  = p.SITUACAO || p.situacao || "—";
-  $("#rd-id").textContent   = p.ID || p.id || p.GID || "—";
-}
+function onRamMunChange() {
+  const mun = document.getElementById("ramMunSelect").value;
+  const sel2 = document.getElementById("ramSelect");
+  document.getElementById("ramDetail").style.display = "none";
+  if (!mun) { sel2.innerHTML = '<option value="">Selecione um ramal</option>'; sel2.disabled = true; renderRamaisTable([]); return; }
 
-function filterRamais() {
-  const gj = HUB.state.ramais;
-  if (!gj) return;
-  const munSel = $("#ramMun").value;
-  const q = ($("#ramBusca").value || "").toLowerCase();
-  const filtered = (gj.features || []).filter(f => {
-    const p = f.properties || {};
-    const m = (p.MUNICIPIO || p.municipio || "").toString();
-    const n = (p.NOME || p.RAMAL || p.nome || "").toString();
-    if (munSel && m !== munSel) return false;
-    if (q && !n.toLowerCase().includes(q)) return false;
-    return true;
+  // foca mapa no município
+  const gj = HUB.state.ramaisGeoJSON;
+  if (gj) {
+    const feats = (gj.features||[]).filter(f => {
+      const m = (f.properties||{}).MUNICIPIO || (f.properties||{}).Municipio || "";
+      return m.trim().toUpperCase() === mun.toUpperCase();
+    });
+    if (feats.length && HUB.state.maps.ramMap) {
+      try { HUB.state.maps.ramMap.fitBounds(L.geoJSON({type:"FeatureCollection",features:feats}).getBounds(), {padding:[30,30]}); } catch(e){}
+    }
+  }
+
+  const porMun = HUB.state.ramaisPorMun || {};
+  const ramais = (porMun[mun] || []).slice().sort((a,b) => a.nomeCompleto.localeCompare(b.nomeCompleto));
+  sel2.innerHTML = '<option value="">— Todos (' + ramais.length + ') —</option>';
+  ramais.forEach(r => {
+    const o = document.createElement("option"); o.value = r.rowIndex;
+    o.textContent = r.nomeCompleto || r.nome; sel2.appendChild(o);
   });
-  $("#ramCount").textContent = fmtNum(filtered.length);
-  const rows = filtered.slice(0, 200).map(f => {
-    const p = f.properties || {};
-    return `<tr>
-      <td>${htmlEscape(p.NOME || p.RAMAL || p.nome || "—")}</td>
-      <td>${htmlEscape(p.MUNICIPIO || p.municipio || "—")}</td>
-      <td>${fmtKm(parseNum(p.EXTENSAO || p.extensao || p.COMPRIMENT || 0))}</td>
-      <td>${htmlEscape(p.PAVIMENTO || p.pavimento || "—")}</td>
+  sel2.disabled = false;
+  const count = document.getElementById("ramCount");
+  if(count) count.textContent = "· " + mun + " — " + ramais.length + " ramais";
+  renderRamaisTable(ramais);
+}
+
+function onRamSelect() {
+  const idx = +document.getElementById("ramSelect").value;
+  if (!idx) return;
+  const sheet = HUB.state.ramaisSheet || [];
+  const r = sheet.find(x => x.rowIndex === idx);
+  if (!r) return;
+  const det = document.getElementById("ramDetail");
+  const grid = document.getElementById("ramDetailGrid");
+  if (!det || !grid) return;
+  const campos = [
+    ["Código", [r.codigo, r.numero].filter(Boolean).join(" / ") || "—"],
+    ["Nome", r.nome || "—"],
+    ["Município", r.municipio || "—"],
+    ["Extensão", r.extensao ? r.extensao.toLocaleString("pt-BR",{maximumFractionDigits:2})+" km" : "—"],
+    ["Situação", r.situacao || "—"],
+    ["Início", r.inicio || "—"],
+    ["Fim", r.fim || "—"],
+    ["Pavimento", r.revestimento || "—"],
+  ];
+  grid.innerHTML = campos.map(([l,v]) => `
+    <div style="padding:0.4rem 0.6rem;background:#fff;border-radius:6px;border:1px solid var(--borda)">
+      <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--cinza-aux);margin-bottom:2px">${l}</div>
+      <div style="font-size:0.85rem;font-weight:600;color:var(--cinza-txt)">${htmlEscape(v)}</div>
+    </div>`).join("");
+  det.style.display = "block";
+
+  // foca no traçado GeoJSON do ramal
+  const gj = HUB.state.ramaisGeoJSON;
+  if (gj && r.codigo) {
+    const feat = (gj.features||[]).find(f => {
+      const p = f.properties||{};
+      const cod = (p["CÓDIGO"]||p["CODIGO"]||p["CÓDIGO"]||"").trim().toUpperCase();
+      const num = (p["Número"]||p["Numero"]||p["Número"]||"").trim();
+      return cod === r.codigo.trim().toUpperCase() && num === r.numero.trim();
+    });
+    if (feat && HUB.state.maps.ramMap) {
+      try { HUB.state.maps.ramMap.fitBounds(L.geoJSON(feat).getBounds(), {padding:[40,40]}); } catch(e){}
+    } else if (r.latitude && r.longitude && HUB.state.maps.ramMap) {
+      HUB.state.maps.ramMap.setView([r.latitude, r.longitude], 10);
+    }
+  }
+}
+
+function filterRamaisTable() {
+  const mun = (document.getElementById("ramMunSelect")||{}).value || "";
+  const q = ((document.getElementById("ramBusca")||{}).value || "").toLowerCase();
+  const porMun = HUB.state.ramaisPorMun || {};
+  let rows = mun ? (porMun[mun] || []) : (HUB.state.ramaisSheet || []);
+  if (q) rows = rows.filter(r => r.nomeCompleto.toLowerCase().includes(q) || r.municipio.toLowerCase().includes(q));
+  renderRamaisTable(rows);
+}
+
+function renderRamaisTable(rows) {
+  const tbody = document.querySelector("#ramTable tbody");
+  if (!tbody) return;
+  if (!rows.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--cinza-aux);padding:1.2rem">Nenhum ramal encontrado</td></tr>'; return; }
+  tbody.innerHTML = rows.slice(0, 300).map(r => {
+    const sit = r.situacao || "—";
+    const sitCor = sit.toUpperCase().includes("EM OBRA") ? "var(--amarelo)" : sit.toUpperCase().includes("EXTINTA") ? "var(--cinza-aux)" : "var(--verde)";
+    return `<tr style="cursor:pointer" onclick="document.getElementById('ramSelect').value=${r.rowIndex};onRamSelect()">
+      <td style="font-family:var(--font-cond);font-weight:700;color:var(--azul)">${htmlEscape([r.codigo,r.numero].filter(Boolean).join("-")||"—")}</td>
+      <td>${htmlEscape(r.nome||"—")}</td>
+      <td>${r.extensao ? r.extensao.toLocaleString("pt-BR",{maximumFractionDigits:2}) : "—"}</td>
+      <td><span style="font-size:0.72rem;font-weight:700;color:${sitCor}">${htmlEscape(sit)}</span></td>
+      <td>${htmlEscape(r.revestimento||"—")}</td>
     </tr>`;
   }).join("");
-  const tb = $("#ramTable tbody"); if (tb) tb.innerHTML = rows || `<tr><td colspan="4" class="info-state">Nenhum ramal corresponde aos filtros.</td></tr>`;
 }
 
 /* ──────────────────────────────────────────────
    MÓDULO AERÓDROMOS
+   Fonte: Base soberana ANAC — 22 aeródromos do AM
+   (portado de aero-amazonas/index.html)
    ────────────────────────────────────────────── */
+const AE_DATA = (function(){
+  const raw = [
+    {icao:"SBMY",ciad:"AM0015",nome:"MANICORÉ",municipio:"MANICORÉ",lat:-5.81111,lon:-61.27833,altitude:"53 m",operacao:"VFR Diurno",pista_desig:"05/23",comprimento:"1265 m",largura:"30 m",resistencia:"PCR 90/F/D/X/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"ESTADO"},
+    {icao:"SWBC",ciad:"AM0017",nome:"BARCELOS",municipio:"BARCELOS",lat:-0.98111,lon:-62.91944,altitude:"34 m",operacao:"VFR Diurno",pista_desig:"09/27",comprimento:"1500 m",largura:"30 m",resistencia:"PCN 17/F/B/Y/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"ESTADO"},
+    {icao:"SWCA",ciad:"AM0007",nome:"CARAUARI",municipio:"CARAUARI",lat:-4.87139,lon:-66.8975,altitude:"108 m",operacao:"VFR Diurno",pista_desig:"04/22",comprimento:"1665 m",largura:"18 m",resistencia:"PCN 12/F/C/Y/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"ESTADO"},
+    {icao:"SWEI",ciad:"AM0009",nome:"EIRUNEPÉ",municipio:"EIRUNEPÉ",lat:-6.63944,lon:-69.87972,altitude:"127 m",operacao:"VFR Diurno",pista_desig:"16/34",comprimento:"2210 m",largura:"45 m",resistencia:"PCN 30/F/C/X/U",superficie:"Asfalto",rbac107:"AP-1",fonte:"ESTADO"},
+    {icao:"SWMW",ciad:"AM0020",nome:"MAUÉS",municipio:"MAUÉS",lat:-3.37194,lon:-57.72472,altitude:"21 m",operacao:"VFR Diurno",pista_desig:"01/19",comprimento:"1200 m",largura:"30 m",resistencia:"PCN 11/F/B/Y/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"ESTADO"},
+    {icao:"SWOB",ciad:"AM0014",nome:"FONTE BOA",municipio:"FONTE BOA",lat:-2.5325,lon:-66.08333,altitude:"63 m",operacao:"VFR Diurno",pista_desig:"18/36",comprimento:"1300 m",largura:"24 m",resistencia:"PCR 40/R/B/Z/T",superficie:"Asfalto",rbac107:"AP-0",fonte:"ESTADO"},
+    {icao:"SWII",ciad:"AM0013",nome:"IPIRANGA",municipio:"SANTO ANTÔNIO DO IÇÁ",lat:-2.94028,lon:-69.69417,altitude:"67 m",operacao:"VFR Diurno",pista_desig:"01/19",comprimento:"1500 m",largura:"30 m",resistencia:"PCN 13/R/C/W/U",superficie:"Concreto",rbac107:"AP-0",fonte:"ESTADO"},
+    {icao:"",ciad:"",nome:"LÁBREA",municipio:"LÁBREA",lat:-7.27889,lon:-64.76944,altitude:"74 m",operacao:"VFR Diurno",pista_desig:"18/36",comprimento:"1200 m",largura:"30 m",resistencia:"PCN 8/F/C/Y/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"EDUARDO GOMES",municipio:"MANAUS",lat:-3.04111,lon:-60.05056,altitude:"80 m",operacao:"VFR/IFR Diurno/Noturno",pista_desig:"11/29",comprimento:"2700 m",largura:"45 m",resistencia:"PCR 860/F/A/X/T",superficie:"Asfalto",rbac107:"AP-2",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"ITACOATIARA",municipio:"ITACOATIARA",lat:-3.12639,lon:-58.48167,altitude:"43 m",operacao:"VFR Diurno",pista_desig:"14/32",comprimento:"1520 m",largura:"30 m",resistencia:"PCN 10/F/A/Y/T",superficie:"Asfalto",rbac107:"AP-0",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"PREFEITO ORLANDO MARINHO",municipio:"TEFÉ",lat:-3.38028,lon:-64.72528,altitude:"57 m",operacao:"VFR/IFR Diurno/Noturno",pista_desig:"15/33",comprimento:"2000 m",largura:"45 m",resistencia:"PCR 360/F/C/X/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"TABATINGA",municipio:"TABATINGA",lat:-4.25056,lon:-69.93778,altitude:"80 m",operacao:"VFR/IFR Diurno/Noturno",pista_desig:"12/30",comprimento:"2150 m",largura:"33 m",resistencia:"PCR 330/F/A/X/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"SÃO GABRIEL DA CACHOEIRA",municipio:"SÃO GABRIEL DA CACHOEIRA",lat:-0.14806,lon:-66.98583,altitude:"76 m",operacao:"VFR/IFR Diurno",pista_desig:"05/23",comprimento:"2600 m",largura:"45 m",resistencia:"PCR 280/F/C/X/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"SENADORA EUNICE MICHILES",municipio:"SÃO PAULO DE OLIVENÇA",lat:-3.46917,lon:-68.92111,altitude:"102 m",operacao:"VFR Diurno",pista_desig:"04/22",comprimento:"1200 m",largura:"23 m",resistencia:"PCN 6/R/B/Y/T",superficie:"Concreto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"BORBA",municipio:"BORBA",lat:-4.40611,lon:-59.6025,altitude:"30 m",operacao:"VFR Diurno",pista_desig:"12/30",comprimento:"1200 m",largura:"23 m",resistencia:"PCN 8/F/C/Y/U",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"FLORES",municipio:"MANAUS",lat:-3.07278,lon:-60.02111,altitude:"62 m",operacao:"VFR Diurno",pista_desig:"11/29",comprimento:"799 m",largura:"30 m",resistencia:"5700 kg/0,5 MPa",superficie:"Asfalto",rbac107:"AP-0",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"COARI",municipio:"COARI",lat:-4.13417,lon:-63.1325,altitude:"40 m",operacao:"VFR Diurno",pista_desig:"10/28",comprimento:"1600 m",largura:"36 m",resistencia:"PCN 29/F/C/X/U",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"HUMAITÁ",municipio:"HUMAITÁ",lat:-7.53472,lon:-63.07222,altitude:"70 m",operacao:"VFR Diurno",pista_desig:"14/32",comprimento:"1520 m",largura:"30 m",resistencia:"PCN 7/F/B/Y/U",superficie:"Asfalto",rbac107:"AP-0",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"NOVO CAMPO",municipio:"BOCA DO ACRE",lat:-8.83472,lon:-67.3125,altitude:"120 m",operacao:"VFR Diurno",pista_desig:"18/36",comprimento:"1600 m",largura:"30 m",resistencia:"PCN 19/F/C/Y/U",superficie:"Asfalto",rbac107:"AP-0",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"PARINTINS",municipio:"PARINTINS",lat:-2.67361,lon:-56.7775,altitude:"25 m",operacao:"VFR Diurno/Noturno",pista_desig:"06/24",comprimento:"1801 m",largura:"30 m",resistencia:"PCN 33/F/B/X/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"SANTA ISABEL DO RIO NEGRO",municipio:"SANTA ISABEL DO RIO NEGRO",lat:-0.37861,lon:-64.99306,altitude:"68 m",operacao:"VFR Diurno",pista_desig:"09/27",comprimento:"1200 m",largura:"30 m",resistencia:"PCN 50/F/D/X/T",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+    {icao:"",ciad:"",nome:"APUÍ",municipio:"APUÍ",lat:-7.17222,lon:-59.83889,altitude:"60 m",operacao:"VFR Diurno",pista_desig:"08/26",comprimento:"1200 m",largura:"23 m",resistencia:"PCN 12/F/B/Y/U",superficie:"Asfalto",rbac107:"AP-1",fonte:"PÚBLICO"},
+  ];
+  const seen = new Set();
+  return raw.filter(a => { const k=a.nome+a.municipio; if(seen.has(k)) return false; seen.add(k); return true; });
+})();
+
+function aeCorIcon(a) {
+  if (a.operacao && a.operacao.includes("IFR")) return "#F5A623";
+  if (a.fonte === "ESTADO") return "#6C3483";
+  return "#1A2B5E";
+}
+
 function getAerodromosHTML() {
   return `
   <div class="mod-wrap">
-    ${modHero("aerodromos", "Aeródromos cadastrados · localização, infraestrutura e operação")}
+    ${modHero("aerodromos", "Aeródromos do Amazonas · base ANAC · SEINFRA + públicos federais")}
     <div class="kpi-grid">
       <div class="kpi-card c"><div class="kpi-card-label">Total</div><div class="kpi-card-value" id="ae-tot">—</div><div class="kpi-card-foot">aeródromos</div></div>
-      <div class="kpi-card v"><div class="kpi-card-label">Operacionais</div><div class="kpi-card-value" id="ae-op">—</div><div class="kpi-card-foot">ativos</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="ae-mun">—</div><div class="kpi-card-foot">atendidos</div></div>
-      <div class="kpi-card"><div class="kpi-card-label">Pistas pavim.</div><div class="kpi-card-value" id="ae-pav">—</div><div class="kpi-card-foot">asfalto</div></div>
+      <div class="kpi-card" style="border-top-color:#6C3483"><div class="kpi-card-label">Gestão SEINFRA</div><div class="kpi-card-value" id="ae-est">—</div><div class="kpi-card-foot">estaduais</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="ae-mun">—</div><div class="kpi-card-foot">atendidos</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Com IFR</div><div class="kpi-card-value" id="ae-ifr">—</div><div class="kpi-card-foot">instrumentos</div></div>
     </div>
+
     <div class="panel-card">
-      <div class="panel-header"><div class="panel-title">Mapa de aeródromos</div></div>
-      <div id="aeMap" class="map-wrap"></div>
+      <div class="panel-header">
+        <div class="panel-title">Mapa de aeródromos</div>
+        <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap">
+          <span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--cinza-med)"><span style="width:10px;height:10px;border-radius:50%;background:#6C3483;display:inline-block"></span>SEINFRA</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--cinza-med)"><span style="width:10px;height:10px;border-radius:50%;background:#1A2B5E;display:inline-block"></span>Público</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:0.72rem;color:var(--cinza-med)"><span style="width:10px;height:10px;border-radius:50%;background:#F5A623;display:inline-block"></span>IFR</span>
+        </div>
+      </div>
+      <div id="aeMap" class="map-wrap" style="height:400px"></div>
     </div>
+
     <div class="panel-card">
-      <div class="panel-header"><div class="panel-title">Lista de aeródromos</div></div>
-      <div class="filter-row"><input class="filter-input" id="aeBusca" placeholder="Buscar aeródromo, ICAO, município…" oninput="filterAerodromos()"/></div>
+      <div class="panel-header">
+        <div class="panel-title">Lista de aeródromos</div>
+        <div style="display:flex;gap:0.5rem">
+          <select class="filter-select" id="aeFiltroFonte" onchange="filterAerodromos()" style="width:160px">
+            <option value="">Todos</option>
+            <option value="ESTADO">Gestão SEINFRA</option>
+            <option value="PÚBLICO">Público</option>
+          </select>
+          <input class="filter-input" id="aeBusca" placeholder="Buscar nome, município…" oninput="filterAerodromos()" style="width:220px"/>
+        </div>
+      </div>
       <div class="table-wrap"><table class="data-table" id="aeTable">
-        <thead><tr><th>Nome</th><th>ICAO</th><th>Município</th><th>Pista (m)</th></tr></thead>
-        <tbody></tbody></table></div>
+        <thead><tr><th>Nome</th><th>ICAO</th><th>Município</th><th>Pista</th><th>Comp. (m)</th><th>Superfície</th><th>RBAC107</th><th>Operação</th></tr></thead>
+        <tbody></tbody>
+      </table></div>
+    </div>
+
+    <div class="panel-card">
+      <div class="panel-title" style="margin-bottom:0.8rem">Análise</div>
+      <div class="chart-grid-2">
+        <div><div class="panel-title" style="font-size:0.78rem;margin-bottom:0.5rem">Comprimento de pista (m)</div><div class="chart-wrap"><canvas id="chAeComp"></canvas></div></div>
+        <div><div class="panel-title" style="font-size:0.78rem;margin-bottom:0.5rem">Classe RBAC 107</div><div class="chart-wrap"><canvas id="chAeRbac"></canvas></div></div>
+      </div>
+    </div>
+
+    <div id="aeModalOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:center;justify-content:center">
+      <div style="background:#fff;border-radius:16px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;padding:1.5rem;position:relative">
+        <button onclick="document.getElementById('aeModalOv').style.display='none'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.2rem;cursor:pointer;color:var(--cinza-aux)">✕</button>
+        <div id="aeModalContent"></div>
+      </div>
     </div>
   </div>`;
 }
 
-async function initAerodromos() {
-  const map = mkMap("aeMap", { center: [-4.5, -63.5], zoom: 5 });
-  const gj = await loadGeoJSON(GEOJSON_FILES.aerodromos);
-  if (!gj) return;
-  HUB.state.aerodromos = gj;
-  const feats = gj.features || [];
+function initAerodromos() {
+  const data = AE_DATA;
+  const muns = new Set(data.map(a => a.municipio));
+  const est = data.filter(a => a.fonte === "ESTADO");
+  const ifr = data.filter(a => a.operacao && a.operacao.includes("IFR"));
+  const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
+  setEl("ae-tot", data.length);
+  setEl("ae-est", est.length);
+  setEl("ae-mun", muns.size);
+  setEl("ae-ifr", ifr.length);
 
-  const muns = new Set();
-  let pav = 0, op = 0;
-  feats.forEach(f => {
-    const p = f.properties || {};
-    if (p.MUNICIPIO || p.municipio) muns.add((p.MUNICIPIO || p.municipio).toString().trim());
-    if ((p.PISO || p.pavimento || "").toString().toLowerCase().includes("asfa")) pav++;
-    if ((p.SITUACAO || p.STATUS || "").toString().toLowerCase().includes("oper")) op++;
+  const map = mkMap("aeMap", { center: [-4.0, -63.5], zoom: 5 });
+  data.forEach((a, i) => {
+    const cor = aeCorIcon(a);
+    const icon = L.divIcon({
+      className: "",
+      html: `<div style="width:26px;height:26px;border-radius:50%;background:${cor};border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;">✈</div>`,
+      iconSize: [26,26], iconAnchor: [13,13], popupAnchor: [0,-14]
+    });
+    L.marker([a.lat, a.lon], { icon }).addTo(map)
+      .bindPopup(`<div style="min-width:160px"><b style="color:#1A2B5E">${a.nome}</b><br><small>${a.municipio}</small><br><small style="color:#666">${a.pista_desig} · ${a.comprimento} · ${a.rbac107}</small></div>`)
+      .on("click", () => abrirModalAero(i));
   });
-  $("#ae-tot").textContent = fmtNum(feats.length);
-  $("#ae-op").textContent  = op ? fmtNum(op) : fmtNum(feats.length);
-  $("#ae-mun").textContent = fmtNum(muns.size);
-  $("#ae-pav").textContent = fmtNum(pav);
 
-  L.geoJSON(gj, {
-    pointToLayer: (f, latlng) => L.circleMarker(latlng, { radius: 5, color: "#fff", weight: 1.2, fillColor: "#0E7490", fillOpacity: 0.95 }),
-    onEachFeature: (f, lyr) => {
-      const p = f.properties || {};
-      lyr.bindPopup(`<div class="pop-title">${htmlEscape(p.NOME || p.nome || p.ICAO || "Aeródromo")}</div><div class="pop-row">${htmlEscape(p.MUNICIPIO || p.municipio || "")}</div><div class="pop-row">Pista: ${htmlEscape((p.COMPRIMENTO || p.PISTA || "—") + " m")}</div>`);
-    }
-  }).addTo(map);
-  try { const b = L.geoJSON(gj).getBounds(); if (b.isValid()) map.fitBounds(b, { padding: [20, 20] }); } catch (e) {}
+  renderAerodromosTable(data);
 
-  renderAerodromosTable(feats);
+  // Chart comprimento
+  const sorted = data.slice().sort((a,b) => parseInt(b.comprimento) - parseInt(a.comprimento));
+  mkChart("chAeComp", {
+    type: "bar",
+    data: {
+      labels: sorted.map(a => a.nome.length > 18 ? a.nome.slice(0,16)+"…" : a.nome),
+      datasets: [{ data: sorted.map(a => parseInt(a.comprimento)||0),
+        backgroundColor: sorted.map(a => aeCorIcon(a)), borderRadius: 4, borderSkipped: false }]
+    },
+    options: { indexAxis:"y", responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{beginAtZero:true, ticks:{font:{size:10}}}, y:{ticks:{font:{size:9}}}} }
+  });
+
+  // Chart RBAC
+  const rbacMap = {};
+  data.forEach(a => { rbacMap[a.rbac107] = (rbacMap[a.rbac107]||0)+1; });
+  mkChart("chAeRbac", {
+    type: "doughnut",
+    data: { labels: Object.keys(rbacMap), datasets: [{ data: Object.values(rbacMap), backgroundColor: ["#1A2B5E","#2D8540","#F5A623"], borderWidth: 2, borderColor:"#fff" }] },
+    options: { responsive:true, maintainAspectRatio:false, cutout:"60%", plugins:{ legend:{ position:"bottom", labels:{font:{size:11}} } } }
+  });
 }
 
-function renderAerodromosTable(feats) {
-  const body = feats.slice(0, 200).map(f => {
-    const p = f.properties || {};
-    return `<tr>
-      <td>${htmlEscape(p.NOME || p.nome || "—")}</td>
-      <td>${htmlEscape(p.ICAO || p.icao || "—")}</td>
-      <td>${htmlEscape(p.MUNICIPIO || p.municipio || "—")}</td>
-      <td>${htmlEscape(p.COMPRIMENTO || p.PISTA || "—")}</td>
-    </tr>`;
-  }).join("");
-  const tb = $("#aeTable tbody"); if (tb) tb.innerHTML = body || `<tr><td colspan="4" class="info-state">Sem aeródromos.</td></tr>`;
+function abrirModalAero(i) {
+  const a = AE_DATA[i]; if (!a) return;
+  const cor = aeCorIcon(a);
+  const campos = [
+    ["ICAO", a.icao||"—"], ["CIAD", a.ciad||"—"], ["Altitude", a.altitude],
+    ["Pista", a.pista_desig], ["Comprimento", a.comprimento], ["Largura", a.largura],
+    ["Superfície", a.superficie], ["Resistência", a.resistencia],
+    ["RBAC 107", a.rbac107], ["Operação", a.operacao], ["Gestão", a.fonte],
+  ];
+  document.getElementById("aeModalContent").innerHTML = `
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+      <div style="width:44px;height:44px;border-radius:50%;background:${cor};display:flex;align-items:center;justify-content:center;font-size:20px;color:#fff;flex-shrink:0">✈</div>
+      <div><div style="font-size:1.05rem;font-weight:700;color:#1A2B5E">${htmlEscape(a.nome)}</div><div style="font-size:0.8rem;color:#8896A8">${htmlEscape(a.municipio)}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
+      ${campos.map(([l,v]) => `<div style="padding:0.4rem 0.6rem;background:#f5f7fb;border-radius:6px"><div style="font-size:0.62rem;font-weight:700;text-transform:uppercase;color:#8896A8;letter-spacing:.07em">${l}</div><div style="font-size:0.83rem;font-weight:600;color:#1A2540">${htmlEscape(v||"—")}</div></div>`).join("")}
+    </div>`;
+  const ov = document.getElementById("aeModalOv");
+  ov.style.display = "flex";
+}
+
+function renderAerodromosTable(list) {
+  const tb = document.querySelector("#aeTable tbody"); if(!tb) return;
+  tb.innerHTML = list.map((a,i) => `<tr style="cursor:pointer" onclick="abrirModalAero(${AE_DATA.indexOf(a)})">
+    <td style="font-weight:600">${htmlEscape(a.nome)}</td>
+    <td style="font-family:monospace;font-size:0.8rem">${htmlEscape(a.icao||"—")}</td>
+    <td>${htmlEscape(a.municipio)}</td>
+    <td style="font-family:monospace;font-size:0.8rem">${htmlEscape(a.pista_desig)}</td>
+    <td style="text-align:right">${htmlEscape(a.comprimento)}</td>
+    <td>${htmlEscape(a.superficie)}</td>
+    <td><span style="font-size:0.72rem;font-weight:700;color:${a.rbac107==="AP-2"?"#C0392B":a.rbac107==="AP-1"?"#F5A623":"#2D8540"}">${htmlEscape(a.rbac107)}</span></td>
+    <td style="font-size:0.78rem">${htmlEscape(a.operacao)}</td>
+  </tr>`).join("") || `<tr><td colspan="8" style="text-align:center;color:var(--cinza-aux);padding:1.5rem">Sem resultados</td></tr>`;
 }
 
 function filterAerodromos() {
-  const gj = HUB.state.aerodromos; if (!gj) return;
-  const q = ($("#aeBusca").value || "").toLowerCase();
-  const f = (gj.features || []).filter(ft => {
-    const p = ft.properties || {};
-    return [p.NOME, p.nome, p.ICAO, p.MUNICIPIO, p.municipio].some(v => (v || "").toString().toLowerCase().includes(q));
+  const q = (document.getElementById("aeBusca")?.value || "").toLowerCase();
+  const fonte = document.getElementById("aeFiltroFonte")?.value || "";
+  const f = AE_DATA.filter(a => {
+    if (fonte && a.fonte !== fonte) return false;
+    if (!q) return true;
+    return [a.nome, a.icao, a.ciad, a.municipio].some(v => (v || "").toLowerCase().includes(q));
   });
   renderAerodromosTable(f);
 }
