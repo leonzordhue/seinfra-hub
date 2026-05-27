@@ -1044,15 +1044,67 @@ async function loadGeoJSON(file) {
   }
 }
 
+/* Carrega rodovias direto via Sheets API v4 — mesma fonte do index_rodovia.html
+   Planilha: 1bYf2anVF4un84-lusSOeSRaNLiod9fq0joUEnbgHxnM, range A:S
+   Colunas: Código SER | Rodovia | Extensão | Início | Final | Tipo de Revestimento
+            col L (faixa domínio) | col Q (Pavimentação: PAV/DUP/LEI/PLA)           */
+async function loadRodoviasSheet() {
+  if (HUB.state.rodovias) return;
+  try {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEETS.rodovias.id}/values/A:S?key=${API_KEY}`;
+    const resp = await fetch(url);
+    const data = await resp.json();
+    if (!data.values || data.values.length < 2) return;
+
+    const cab  = data.values[0];
+    const rows = data.values.slice(1);
+
+    // localiza colunas pelo cabeçalho (igual ao index_rodovia.html)
+    const fi = k => cab.findIndex(c => new RegExp(k, "i").test(c));
+    const idx = {
+      codigo:       fi("código|codigo"),
+      rodovia:      fi("rodovia"),
+      extensao:     fi("extensão|extensao"),
+      inicio:       fi("início|inicio"),
+      final:        fi("final"),
+      revestimento: fi("revestimento"),
+      faixaDominio: 11,   // coluna L (hardcoded, igual ao index)
+      pavimentacao: 16,   // coluna Q: PAV / DUP / LEI / PLA
+    };
+
+    HUB.state.rodovias = rows.map(l => {
+      const ext = parseFloat((l[idx.extensao] || "0").toString().replace(",", ".")) || 0;
+      const pav = (l[idx.pavimentacao] || "").toString().trim().toUpperCase();
+      return {
+        codigo:        l[idx.codigo]       || "",
+        rodovia:       l[idx.rodovia]      || "",
+        extensao:      ext,
+        extensao_km:   ext,
+        inicio:        l[idx.inicio]       || "",
+        final:         l[idx.final]        || "",
+        revestimento:  l[idx.revestimento] || "",
+        faixaDominio:  l[idx.faixaDominio] || "",
+        pavimentacao:  pav,
+        // aliases para compatibilidade com o restante do hub
+        nome:    l[idx.rodovia]      || "",
+        cod:     l[idx.codigo]       || "",
+        pavimento: l[idx.revestimento] || "",
+        situacao:    pav,
+      };
+    }).filter(r => r.rodovia);
+  } catch(e) {
+    console.warn("loadRodoviasSheet:", e);
+  }
+}
+
 async function loadCoreData() {
   try {
-    const [rod, ger, sin, ic] = await Promise.allSettled([
-      gvizFetch(SHEETS.rodovias.id,  SHEETS.rodovias.gid),
+    const [, ger, sin, ic] = await Promise.allSettled([
+      loadRodoviasSheet(),                                // Sheets API v4 direto
       gvizFetch(SHEETS.geral.id,     SHEETS.geral.gid),
       gvizFetch(SHEETS.sinistros.id, SHEETS.sinistros.gid),
       gvizFetch(SHEETS.icm.id,       SHEETS.icm.gid),
     ]);
-    if (rod.status === "fulfilled") HUB.state.rodovias  = rod.value;
     if (ger.status === "fulfilled") HUB.state.contratos = ger.value;
     if (sin.status === "fulfilled") HUB.state.sinistros = sin.value;
     if (ic.status  === "fulfilled") HUB.state.icm       = ic.value;
@@ -1099,6 +1151,16 @@ function mkMap(id, opts) {
     HUB.state.maps[id] = map;
     return map;
   } catch (e) { console.warn("mkMap", id, e); return null; }
+}
+
+/* Chip de situação para rodovias (PAV / DUP / LEI / PLA) */
+function chipSituacaoRod(sit) {
+  const s = (sit || "").toString().toUpperCase().trim();
+  if (s === "PAV" || /PAVIMENT/i.test(s)) return `<span class="chip chip-vigente">Pavimentada</span>`;
+  if (s === "DUP" || /DUPLIC/i.test(s))   return `<span class="chip chip-vigente" style="background:#EBF0FA;color:#1A2B5E">Duplicada</span>`;
+  if (s === "LEI" || /LEITO/i.test(s))    return `<span class="chip chip-atrasada">Leito Natural</span>`;
+  if (s === "PLA" || /PLANEJ/i.test(s))   return `<span class="chip chip-paralisada">Planejada</span>`;
+  return sit ? `<span class="chip">${htmlEscape(sit)}</span>` : `<span class="chip" style="color:var(--cinza-aux)">—</span>`;
 }
 
 /* Cor utilitária para situações de contrato */
@@ -1600,9 +1662,9 @@ async function initRodovias() {
   const icm = HUB.state.icm || [];
 
   // KPIs
-  const ext = rod.reduce((a, r) => a + parseNum(r.extensao_km || r.extensao || r.km), 0);
+  const ext = rod.reduce((a, r) => a + (r.extensao || r.extensao_km || 0), 0);
   const icmCrit = icm.filter(r => parseNum(r.iri || r.icm || r.indice) > 4.0).length;
-  const uniqueRods = new Set(rod.map(r => (r.codigo || r.cod || r.rodovia || "").toString().toUpperCase().trim().replace(/[\s-]/g,"")).filter(Boolean));
+  const uniqueRods = new Set(rod.map(r => (r.rodovia || r.nome || r.codigo || "").toString().toUpperCase().trim()).filter(Boolean));
   $("#rk-rod").textContent = fmtNum(uniqueRods.size || rod.length);
   $("#rk-ext").textContent = fmtNum(Math.round(ext));
   $("#rk-sin").textContent = fmtNum(sin.length);
@@ -1619,27 +1681,42 @@ async function initRodovias() {
     });
   });
 
-  // chart situação
+  // chart situação — usa pavimentacao (PAV/DUP/LEI/PLA) da planilha
+  const COR_PAV = { "PAV": "#2D8540", "DUP": "#1A2B5E", "LEI": "#F5A623", "PLA": "#8896A8" };
+  const LABEL_PAV = { "PAV": "Pavimentada", "DUP": "Duplicada", "LEI": "Leito Natural", "PLA": "Planejada" };
   const sitMap = {};
   rod.forEach(r => {
-    const s = (r.situacao || r.status || "Indefinido").toString();
-    sitMap[s] = (sitMap[s] || 0) + parseNum(r.extensao_km || r.extensao || r.km);
+    const s = (r.pavimentacao || r.situacao || "Indef.").toString().toUpperCase().trim();
+    const key = LABEL_PAV[s] || s || "Indefinido";
+    sitMap[key] = (sitMap[key] || 0) + (r.extensao || r.extensao_km || 0);
   });
   const sitLabels = Object.keys(sitMap);
   const sitData   = sitLabels.map(k => Math.round(sitMap[k]));
+  const sitCores  = sitLabels.map(k => {
+    if (k === "Pavimentada") return "#2D8540";
+    if (k === "Duplicada")   return "#1A2B5E";
+    if (k === "Leito Natural") return "#F5A623";
+    if (k === "Planejada")   return "#8896A8";
+    return "#0E7490";
+  });
   mkChart("chRodSit", {
     type: "doughnut",
-    data: { labels: sitLabels, datasets: [{ data: sitData, backgroundColor: ["#1A2B5E", "#2D8540", "#F5A623", "#C0392B", "#0E7490", "#5B21B6"] }] },
+    data: { labels: sitLabels, datasets: [{ data: sitData, backgroundColor: sitCores, borderWidth: 2, borderColor: "#fff" }] },
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom", labels: { font: { family: "Lexend Deca", size: 11 } } } } }
   });
 
-  // chart top 10
-  const sorted = rod.slice().sort((a, b) => parseNum(b.extensao_km || b.extensao || b.km) - parseNum(a.extensao_km || a.extensao || a.km)).slice(0, 10);
+  // chart top 10 — agrega por rodovia única, soma extensão dos trechos
+  const rodExtMap = {};
+  rod.forEach(r => {
+    const k = (r.rodovia || r.nome || r.codigo || "—").toString().trim();
+    rodExtMap[k] = (rodExtMap[k] || 0) + (r.extensao || r.extensao_km || 0);
+  });
+  const top10 = Object.entries(rodExtMap).sort((a,b) => b[1]-a[1]).slice(0,10);
   mkChart("chRodTop", {
     type: "bar",
     data: {
-      labels: sorted.map(r => (r.rodovia || r.codigo || r.nome || "—").toString().slice(0, 16)),
-      datasets: [{ label: "Extensão (km)", data: sorted.map(r => Math.round(parseNum(r.extensao_km || r.extensao || r.km))), backgroundColor: "#1A2B5E" }]
+      labels: top10.map(x => x[0].length > 18 ? x[0].slice(0,16)+"…" : x[0]),
+      datasets: [{ label: "Extensão (km)", data: top10.map(x => Math.round(x[1])), backgroundColor: "#1A2B5E", borderRadius: 4 }]
     },
     options: { responsive: true, maintainAspectRatio: false, indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true } } }
   });
@@ -1707,11 +1784,11 @@ async function initRodovias() {
 
 function renderRodoviasTable(rows) {
   const body = rows.slice(0, 200).map(r => `<tr>
-    <td>${htmlEscape(r.codigo || r.cod || "—")}</td>
+    <td style="font-family:var(--font-cond);font-weight:700;color:var(--azul)">${htmlEscape(r.codigo || "—")}</td>
     <td>${htmlEscape(r.rodovia || r.nome || "—")}</td>
-    <td>${fmtNum(parseNum(r.extensao_km || r.extensao || r.km), 1)}</td>
-    <td>${statusChip(r.situacao || r.status)}</td>
-    <td>${htmlEscape(r.pavimento || r.tipo_pavimento || "—")}</td>
+    <td>${fmtNum(r.extensao || r.extensao_km || 0, 1)}</td>
+    <td>${chipSituacaoRod(r.pavimentacao || r.situacao)}</td>
+    <td style="font-size:0.8rem">${htmlEscape(r.revestimento || r.pavimento || "—")}</td>
   </tr>`).join("");
   const tb = $("#rodTable tbody"); if (tb) tb.innerHTML = body || `<tr><td colspan="5" class="info-state">Sem rodovias cadastradas.</td></tr>`;
 }
@@ -1756,29 +1833,47 @@ async function onSelectRodovia() {
   if (rodRes)   rodRes.style.display   = "block";
   if (rodPlace) rodPlace.style.display = "none";
 
-  const codUp = cod.toUpperCase();
+  const codUp = cod.toUpperCase().trim();
   const rod = HUB.state.rodovias || [];
-  const trechos = rod.filter(r => [r.codigo, r.cod, r.rodovia, r.nome].join(" ").toUpperCase().includes(codUp));
-  const extTotal = trechos.reduce((s, t) => s + parseNum(t.extensao_km || t.extensao || t.km), 0);
-  const pav = trechos.filter(t => /pav|dupli|asf/i.test((t.pavimento || t.tipo_pavimento || t.situacao_fisica || t.situacao || ""))).reduce((s, t) => s + parseNum(t.extensao_km || t.extensao || t.km), 0);
+  // Match tolerante: AM-010, AM010, AM 010
+  const codVariantsUp = [codUp, codUp.replace(/[\s-]/g,""), codUp.replace("-"," ")];
+  const trechos = rod.filter(r => {
+    const vals = [r.codigo, r.rodovia, r.nome].map(v => (v||"").toString().toUpperCase().replace(/[\s-]/g,""));
+    return codVariantsUp.some(cv => vals.some(rv => rv === cv.replace(/[\s-]/g,"") || rv.startsWith(cv.replace(/[\s-]/g,""))));
+  });
+  const extTotal = trechos.reduce((s, t) => s + (t.extensao||t.extensao_km||0), 0);
+
+  // Classificação correta: usa campo 'pavimentacao' (PAV/DUP/LEI/PLA) da planilha
+  const extPav = trechos.filter(t => /^(PAV|DUP)$/.test((t.pavimentacao||"").trim())).reduce((s,t) => s+(t.extensao||t.extensao_km||0),0);
+  const extLei = trechos.filter(t => /^(LEI)$/.test((t.pavimentacao||"").trim())).reduce((s,t) => s+(t.extensao||t.extensao_km||0),0);
+  const extPla = trechos.filter(t => /^(PLA)$/.test((t.pavimentacao||"").trim())).reduce((s,t) => s+(t.extensao||t.extensao_km||0),0);
+
+  // Monta KPIs dinamicamente — só exibe leito/planejada se extensão > 0
+  const kpiCards = [
+    `<div class="kpi-card"><div class="kpi-card-label">Trechos</div><div class="kpi-card-value">${trechos.length}</div><div class="kpi-card-foot">cadastrados</div></div>`,
+    `<div class="kpi-card v"><div class="kpi-card-label">Extensão total</div><div class="kpi-card-value">${fmtNum(extTotal,1)}</div><div class="kpi-card-foot">km</div></div>`,
+  ];
+  if (extPav > 0) kpiCards.push(`<div class="kpi-card v"><div class="kpi-card-label">Pavimentado</div><div class="kpi-card-value">${fmtNum(extPav,1)}</div><div class="kpi-card-foot">km PAV/DUP</div></div>`);
+  if (extLei > 0) kpiCards.push(`<div class="kpi-card a"><div class="kpi-card-label">Leito natural</div><div class="kpi-card-value">${fmtNum(extLei,1)}</div><div class="kpi-card-foot">km LEI</div></div>`);
+  if (extPla > 0) kpiCards.push(`<div class="kpi-card r"><div class="kpi-card-label">Planejada</div><div class="kpi-card-value">${fmtNum(extPla,1)}</div><div class="kpi-card-foot">km PLA</div></div>`);
 
   const kpis = document.getElementById("rodResKpis");
-  if (kpis) kpis.innerHTML = `
-    <div class="kpi-card"><div class="kpi-card-label">Trechos</div><div class="kpi-card-value">${trechos.length}</div><div class="kpi-card-foot">cadastrados</div></div>
-    <div class="kpi-card v"><div class="kpi-card-label">Extensão total</div><div class="kpi-card-value">${fmtNum(extTotal,1)}</div><div class="kpi-card-foot">km</div></div>
-    <div class="kpi-card a"><div class="kpi-card-label">Pavimentado</div><div class="kpi-card-value">${fmtNum(pav,1)}</div><div class="kpi-card-foot">km</div></div>
-    <div class="kpi-card c"><div class="kpi-card-label">Leito natural</div><div class="kpi-card-value">${fmtNum(extTotal-pav,1)}</div><div class="kpi-card-foot">km</div></div>`;
+  if (kpis) kpis.innerHTML = kpiCards.join("");
 
+  // Tabela de trechos — mostra: Código | Extensão | Início | Final | Revestimento | Situação
   const tbody = document.querySelector("#rodTrechosTable tbody");
+  const thead = document.querySelector("#rodTrechosTable thead tr");
+  if (thead) thead.innerHTML = `<th>Código</th><th>Extensão (km)</th><th>Início</th><th>Final</th><th>Revestimento</th><th>Situação</th>`;
   if (tbody) tbody.innerHTML = trechos.length
     ? trechos.map(t => `<tr>
-        <td style="font-family:var(--font-cond);font-weight:700;color:var(--azul)">${htmlEscape(t.codigo||t.cod||"—")}</td>
-        <td>${fmtNum(parseNum(t.extensao_km||t.extensao||t.km),1)}</td>
-        <td>${htmlEscape(t.inicio||t.localizacao_inicio||"—")}</td>
-        <td>${htmlEscape(t.fim||t.final||t.localizacao_final||"—")}</td>
-        <td>${htmlEscape(t.pavimento||t.tipo_pavimento||t.situacao_fisica||"—")}</td>
+        <td style="font-family:var(--font-cond);font-weight:700;color:var(--azul)">${htmlEscape(t.codigo||"—")}</td>
+        <td>${fmtNum(t.extensao||t.extensao_km||0,1)}</td>
+        <td style="font-size:0.8rem">${htmlEscape(t.inicio||"—")}</td>
+        <td style="font-size:0.8rem">${htmlEscape(t.final||"—")}</td>
+        <td style="font-size:0.8rem">${htmlEscape(t.revestimento||"—")}</td>
+        <td>${chipSituacaoRod(t.pavimentacao)}</td>
       </tr>`).join("")
-    : `<tr><td colspan="5" class="info-state">Nenhum trecho encontrado para ${htmlEscape(cod)}.</td></tr>`;
+    : `<tr><td colspan="6" class="info-state">Nenhum trecho encontrado para ${htmlEscape(cod)}.</td></tr>`;
 
   // Contratos: busca o código da rodovia dentro de todos os campos de texto
   const ct = HUB.state.contratos || [];
