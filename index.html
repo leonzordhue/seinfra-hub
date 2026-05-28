@@ -612,6 +612,74 @@
     .tab-content { display: none; padding: 1.4rem 1.4rem 1.2rem; background: #fff; }
     .tab-content.active { display: block; }
 
+    /* Carrossel horizontal de rodovias (substitui o dropdown que cortava) */
+    .rod-carrossel-wrap { position: relative; }
+    .rod-carrossel {
+      display: flex; gap: 0.5rem;
+      overflow-x: auto; scroll-behavior: smooth;
+      padding: 0.7rem 3rem; background: var(--cinza-bg);
+      border: 1.5px solid var(--borda); border-radius: 14px;
+      scrollbar-width: thin;
+    }
+    .rod-carrossel::-webkit-scrollbar { height: 7px; }
+    .rod-carrossel::-webkit-scrollbar-thumb { background: var(--azul-borda); border-radius: 8px; }
+    .rod-carrossel-arrow {
+      position: absolute; top: 0; bottom: 0; left: 0; width: 40px;
+      background: linear-gradient(to right, #fff 30%, rgba(255,255,255,0.85) 80%, rgba(255,255,255,0) 100%);
+      border: 1.5px solid var(--borda); border-right: none;
+      border-radius: 14px 0 0 14px;
+      cursor: pointer; font-size: 1.6rem; font-weight: 700; color: var(--azul);
+      display: flex; align-items: center; justify-content: center; z-index: 5;
+      transition: color .15s, background .15s;
+    }
+    .rod-carrossel-arrow.next {
+      left: auto; right: 0; border-right: 1.5px solid var(--borda); border-left: none;
+      background: linear-gradient(to left, #fff 30%, rgba(255,255,255,0.85) 80%, rgba(255,255,255,0) 100%);
+      border-radius: 0 14px 14px 0;
+    }
+    .rod-carrossel-arrow:hover { color: #fff; background: var(--azul); }
+    .rod-chip {
+      padding: 0.55rem 1.1rem; cursor: pointer; border-radius: 99px; flex-shrink: 0;
+      background: #fff; color: var(--azul);
+      border: 1.5px solid var(--azul-borda);
+      font-weight: 700; font-size: 0.82rem; white-space: nowrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,.04);
+      transition: all .18s;
+      user-select: none;
+    }
+    .rod-chip:hover { background: var(--azul-claro); transform: translateY(-1px); }
+    .rod-chip.active {
+      background: var(--azul); color: #fff; border-color: var(--azul);
+      box-shadow: 0 4px 14px rgba(0,45,114,.28); transform: translateY(-1px);
+    }
+    .rod-chip-count { font-size: 0.68rem; font-weight: 500; opacity: 0.75; margin-left: 0.35rem; }
+
+    /* Barra de navegação prev/next no detalhe */
+    .rod-nav-bar {
+      display: flex; align-items: stretch; gap: 0.5rem; margin-bottom: 1rem;
+      background: var(--azul-claro); border-radius: 12px;
+      border: 1.5px solid var(--azul-borda); padding: 0.4rem;
+    }
+    .rod-nav-btn {
+      display: flex; align-items: center; gap: 0.4rem;
+      background: #fff; border: 1px solid var(--azul-borda); border-radius: 8px;
+      padding: 0.55rem 0.9rem; cursor: pointer; font-weight: 600;
+      color: var(--azul); font-size: 0.8rem; transition: all .15s;
+      min-width: 0; flex: 1; max-width: 35%;
+      font-family: inherit;
+    }
+    .rod-nav-btn:hover:not(.disabled) { background: var(--azul); color: #fff; border-color: var(--azul); transform: translateY(-1px); }
+    .rod-nav-btn.disabled { opacity: 0.35; cursor: not-allowed; }
+    .rod-nav-current {
+      flex: 1; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      font-family: var(--font-cond); font-size: 1.05rem; font-weight: 800;
+      color: var(--azul); letter-spacing: 0.04em;
+    }
+    .rod-nav-current-idx { font-size: 0.7rem; font-weight: 500; opacity: 0.6; color: var(--cinza-med); }
+    .rod-nav-btn-prev { justify-content: flex-start; }
+    .rod-nav-btn-next { justify-content: flex-end; }
+    .rod-nav-btn-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
     /* Chart wrap */
     .chart-wrap { position: relative; height: 320px; }
     .chart-wrap.tall { height: 380px; }
@@ -1240,13 +1308,15 @@ function mkMap(id, opts) {
 }
 
 /* Chip de situação para rodovias (PAV / DUP / LEI / PLA) */
-// Chip simplificado em 3 categorias: Pavimentado (PAV/DUP/IMP/TRV),
-// Leito natural (LEI/LEN) e Planejado (PLA).
+// Chip detalhado (6 categorias) — usado na tabela de trechos do Quadro.
 function chipSituacaoRod(sit) {
   const s = (sit || "").toString().toUpperCase().trim();
-  if (/PLA|PLANEJ/.test(s))                                  return `<span class="chip chip-paralisada">Planejado</span>`;
-  if (/LEI|LEN|LEITO/.test(s))                               return `<span class="chip chip-atrasada">Leito Natural</span>`;
-  if (/PAV|DUP|IMP|TRV|PAVIMENT|DUPLIC|IMPLAN|TRAVESS/.test(s)) return `<span class="chip chip-vigente">Pavimentado</span>`;
+  if (s === "DUP" || /DUPLIC/.test(s))   return `<span class="chip" style="background:#EBF0FA;color:#1A2B5E;border:1px solid #C4D0E8">Duplicada</span>`;
+  if (s === "PAV" || /PAVIMENT/.test(s)) return `<span class="chip chip-vigente">Pavimentada</span>`;
+  if (s === "IMP" || /IMPLAN/.test(s))   return `<span class="chip" style="background:#FDECEA;color:#C0392B;border:1px solid #F5C2BB">Em implantação</span>`;
+  if (s === "TRV" || /TRAVESS/.test(s))  return `<span class="chip" style="background:#F1E7F8;color:#6C3483;border:1px solid #D5C0E0">Travessia urbana</span>`;
+  if (s === "LEI" || s === "LEN" || /LEITO/.test(s)) return `<span class="chip chip-atrasada">Leito natural</span>`;
+  if (s === "PLA" || /PLANEJ/.test(s))   return `<span class="chip chip-paralisada">Planejada</span>`;
   return sit ? `<span class="chip">${htmlEscape(sit)}</span>` : `<span class="chip" style="color:var(--cinza-aux)">—</span>`;
 }
 
@@ -1712,21 +1782,18 @@ function getRodoviasHTML() {
 
       <!-- ABA 2: QUADRO DE RODOVIAS — pesquisa -->
       <div class="tab-content" id="rod-rq">
-        <div style="position:relative;margin-bottom:0.6rem" id="rodSearchWrap">
-          <input type="text" id="rodSearch" class="filter-select" style="width:100%;padding:0.75rem 1rem;border-radius:12px;font-size:0.92rem"
-                 placeholder="🔍 Pesquisar rodovia (AM-010, AM-070, AM-151…)"
-                 oninput="filterRodList(this.value)" onfocus="document.getElementById('rodSearchWrap').classList.add('open')"
-                 onblur="setTimeout(()=>document.getElementById('rodSearchWrap').classList.remove('open'),200)" autocomplete="off"/>
-          <div id="rodList" style="position:absolute;right:0;top:100%;min-width:60%;max-width:100%;max-height:320px;overflow-y:auto;background:#fff;border:1px solid var(--azul-borda);border-radius:14px;box-shadow:0 14px 36px rgba(26,43,94,.18),0 2px 8px rgba(0,0,0,.06);z-index:50;margin-top:8px;display:none;padding:6px"></div>
+        <div style="margin-bottom:0.7rem">
+          <input type="text" id="rodSearch" class="filter-select"
+                 style="width:100%;padding:0.75rem 1rem;border-radius:12px;font-size:0.92rem"
+                 placeholder="🔍 Filtrar rodovias por código (AM-010, AM-070, AM-151…)"
+                 oninput="filterRodCarrossel(this.value)" autocomplete="off"/>
         </div>
-        <style>
-          #rodSearchWrap.open #rodList{display:block !important}
-          #rodList > div{transition:background .12s,transform .12s}
-          #rodList > div:hover{background:var(--azul-claro)!important;transform:translateX(2px)}
-          #rodList::-webkit-scrollbar{width:8px}
-          #rodList::-webkit-scrollbar-thumb{background:var(--azul-borda);border-radius:8px}
-          #rodSearch:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 4px rgba(0,45,114,0.10)}
-        </style>
+        <div class="rod-carrossel-wrap" style="margin-bottom:1rem">
+          <button class="rod-carrossel-arrow" onclick="scrollRodCarrossel(-1)" title="Rolar para esquerda">‹</button>
+          <div id="rodCarrossel" class="rod-carrossel"></div>
+          <button class="rod-carrossel-arrow next" onclick="scrollRodCarrossel(1)" title="Rolar para direita">›</button>
+        </div>
+        <style>#rodSearch:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 4px rgba(0,45,114,0.10)}</style>
         <div id="rodQuadroOut">
           <div class="info-state" style="padding:1.6rem 0">Selecione uma rodovia acima para ver trechos, faixa de domínio, mapa e obras vinculadas.</div>
         </div>
@@ -1798,6 +1865,12 @@ function _isObraRodoviaria(c, rodNome) {
   if (!tema.trim()) return false;
   // EXCLUSÃO 1: tema principal é RAMAL/VICINAL (mesmo citando AM-NNN nas margens)
   if (/\bRAMAL\b|\bVICINAL\b/.test(tema) && !/\bAM[\s\-\/]?\d{2,3}\b/.test(tema)) return false;
+  // EXCLUSÃO 2: objeto começa com palavra-chave de OAE (ponte/viaduto isolados — não obras da rodovia em si).
+  // Aplicada a QUALQUER rodovia, conforme regra estendida do operador.
+  // Ex.: "Demolição da ponte antiga existente na AM-010..." → excluir.
+  const objUpper = (c.objeto || "").toUpperCase().trim();
+  const reOAEPrincipal = /^(DEMOLI[CÇ][AÃ]O|CONSTRU[CÇ][AÃ]O|REFORMA|RECUPERA[CÇ][AÃ]O|REVITALIZA[CÇ][AÃ]O|SUBSTITUI[CÇ][AÃ]O|MANUTEN[CÇ][AÃ]O|RESTAURA[CÇ][AÃ]O)\s+(D[AOE]S?\s+)?(PONTE|VIADUTO|OBRA\s+DE\s+ARTE)\b/;
+  if (reOAEPrincipal.test(objUpper)) return false;
   if (!rodNome) {
     return /\bAM[\s\-\/]?\d{2,3}\b/.test(tema)
         || /\bCARLOS\s+BRAGA\b/.test(tema)
@@ -1847,17 +1920,29 @@ function _obrasDaRodovia(rodNome, contratos) {
   return Object.values(seen);
 }
 
-// Apresentação simplificada em 3 categorias (PAV = qualquer pavimento existente,
-// LEI = leito natural, PLA = planejada). Agrupa: PAV+DUP+IMP+TRV → PAV; LEI+LEN → LEI.
+// Siglas reais detectadas na planilha+geojson: PAV, DUP, LEI/LEN (leito natural),
+// PLA (planejada), IMP (em implantação), TRV (travessia urbana).
+// O mapa + tabela + chips usam o detalhamento completo (6 cores distintas no traçado).
+// O doughnut da Visão Geral usa o agrupamento em 3 categorias via _grupo3Sit.
 function _normSit(s) {
   const u = (s || "").toString().toUpperCase();
-  if (u.includes("PLA")) return "PLA";
+  if (u.includes("DUP")) return "DUP";
+  if (u.includes("PAV")) return "PAV";
   if (u.includes("LEI") || u.includes("LEN")) return "LEI";
-  if (u.includes("PAV") || u.includes("DUP") || u.includes("IMP") || u.includes("TRV")) return "PAV";
+  if (u.includes("PLA")) return "PLA";
+  if (u.includes("IMP")) return "IMP";
+  if (u.includes("TRV")) return "TRV";
   return "";
 }
-function _labSit(k) { return ({ PAV:"Pavimentado", LEI:"Leito natural", PLA:"Planejado" })[k] || k; }
-function _corSit(k) { return ({ PAV:"#2D8540", LEI:"#F5A623", PLA:"#8896A8" })[k] || "#8896A8"; }
+function _labSit(k) { return ({ PAV:"Pavimentada", DUP:"Duplicada", LEI:"Leito natural", PLA:"Planejada", IMP:"Em implantação", TRV:"Travessia urbana" })[k] || k; }
+function _corSit(k) { return ({ PAV:"#2D8540", DUP:"#1A2B5E", LEI:"#F5A623", PLA:"#8896A8", IMP:"#C0392B", TRV:"#6C3483" })[k] || "#8896A8"; }
+// Agrupamento em 3 categorias APENAS para o doughnut da Visão Geral
+function _grupo3Sit(k) {
+  if (k === "LEI") return "LEI";
+  if (k === "PLA") return "PLA";
+  if (!k) return "";
+  return "PAV"; // PAV + DUP + IMP + TRV → tudo "Pavimentado"
+}
 function _fmtBRLShort(v) {
   if (!v || isNaN(v)) return "R$ 0";
   if (v >= 1e9) return "R$ " + (v/1e9).toFixed(2) + " bi";
@@ -1970,26 +2055,31 @@ function _buildRodGeral() {
                  tooltip: { callbacks: { label: ctx => "R$ " + ctx.parsed.x.toFixed(1) + " mi — " + (top5[ctx.dataIndex].objeto||"").slice(0,60) + "…" } } },
       scales: { x: { beginAtZero: true, ticks: { callback: v => "R$ " + v + " mi" } } } }
   });
-  // Situação trechos (km) — cobre PAV, DUP, LEI, PLA, IMP, TRV
+  // Situação dos trechos (km) — AGRUPADA em 3 categorias para o doughnut
+  // (Pavimentado = PAV+DUP+IMP+TRV; Leito natural = LEI+LEN; Planejado = PLA).
+  // O mapa/tabela continuam com o detalhamento completo via _normSit/_labSit.
   const rod = HUB.state.rodovias || [];
-  const sit = { PAV:0, DUP:0, LEI:0, PLA:0, IMP:0, TRV:0 };
-  rod.forEach(r => { const k = _normSit(r.pavimentacao); if (k && sit[k] !== undefined) sit[k] += (r.extensao || 0); });
-  // monta dataset só com categorias presentes (>0) para um gráfico mais limpo
-  const ORDER = ["PAV","DUP","LEI","PLA","IMP","TRV"];
-  const presents = ORDER.filter(k => sit[k] > 0);
-  const ext = presents.reduce((s,k) => s + sit[k], 0);
+  const sit3 = { PAV: 0, LEI: 0, PLA: 0 };
+  rod.forEach(r => {
+    const g = _grupo3Sit(_normSit(r.pavimentacao));
+    if (g && sit3[g] !== undefined) sit3[g] += (r.extensao || 0);
+  });
+  const order3 = ["PAV", "LEI", "PLA"];
+  const present3 = order3.filter(k => sit3[k] > 0);
+  const ext3 = present3.reduce((s, k) => s + sit3[k], 0);
+  const labLong = { PAV: "Pavimentado", LEI: "Leito natural", PLA: "Planejado" };
   mkChart("chRodSit", {
     type: "doughnut",
-    data: { labels: presents.map(_labSit),
-            datasets: [{ data: presents.map(k => sit[k]),
-                         backgroundColor: presents.map(_corSit), borderWidth: 2, borderColor:"#fff" }] },
+    data: { labels: present3.map(k => labLong[k]),
+            datasets: [{ data: present3.map(k => sit3[k]),
+                         backgroundColor: present3.map(_corSit), borderWidth: 2, borderColor: "#fff" }] },
     options: { responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position:"bottom", labels: { font: { size: 11 } } },
-                 tooltip: { callbacks: { label: ctx => ctx.label + ": " + fmtNum(ctx.parsed,1) + " km (" + (ext>0 ? (ctx.parsed/ext*100).toFixed(1) : "0") + "%)" } } } }
+      plugins: { legend: { position: "bottom", labels: { font: { size: 12 } } },
+                 tooltip: { callbacks: { label: ctx => ctx.label + ": " + fmtNum(ctx.parsed, 1) + " km (" + (ext3 > 0 ? (ctx.parsed / ext3 * 100).toFixed(1) : "0") + "%)" } } } }
   });
 }
 
-/* ABA 2: QUADRO DE RODOVIAS — dropdown searchable + detalhe + mapa + obras */
+/* ABA 2: QUADRO DE RODOVIAS — carrossel horizontal + detalhe + mapa + obras */
 function _buildRodQuadro() {
   const list = HUB.state.rodovias || [];
   const groups = {};
@@ -2000,30 +2090,76 @@ function _buildRodQuadro() {
     groups[n].trechos.push(r);
   });
   HUB.state.rodAgrupadas = Object.values(groups).sort((a,b) => a.rodovia.localeCompare(b.rodovia));
-  _renderRodList(HUB.state.rodAgrupadas);
+  HUB.state.rodovia_atual = null;
+  _renderRodCarrossel(HUB.state.rodAgrupadas);
 }
 
-function _renderRodList(arr) {
-  const el = document.getElementById("rodList"); if (!el) return;
-  el.innerHTML = arr.length ? arr.map(r => `
-    <div onmousedown="selectRodovia('${r.rodovia.replace(/'/g,"\\'")}')"
-         style="padding:0.6rem 0.9rem;cursor:pointer;border-radius:10px;margin:2px 0;font-size:0.88rem;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-weight:600;color:var(--azul)">${htmlEscape(r.rodovia)}</span>
-      <span style="font-size:0.72rem;color:var(--cinza-aux);background:var(--cinza-bg);padding:0.15em 0.55em;border-radius:99px;border:1px solid var(--borda)">${r.trechos.length} trecho${r.trechos.length>1?'s':''}</span>
-    </div>`).join("") : `<div style="padding:0.8rem;text-align:center;color:var(--cinza-aux);font-size:0.82rem">Sem resultados.</div>`;
+function _renderRodCarrossel(arr) {
+  const el = document.getElementById("rodCarrossel");
+  if (!el) return;
+  const sel = HUB.state.rodovia_atual || "";
+  if (!arr || !arr.length) {
+    el.innerHTML = `<div style="padding:0.5rem 1rem;color:var(--cinza-aux);font-style:italic;font-size:0.85rem">Nenhuma rodovia corresponde ao filtro.</div>`;
+    return;
+  }
+  el.innerHTML = arr.map(r => {
+    const isActive = r.rodovia === sel;
+    const safe = r.rodovia.replace(/'/g, "\\'");
+    return `<div class="rod-chip${isActive ? ' active' : ''}" onclick="selectRodovia('${safe}')">
+      ${htmlEscape(r.rodovia)}<span class="rod-chip-count">${r.trechos.length}T</span>
+    </div>`;
+  }).join("");
+  // Auto-scroll para o chip ativo (centralizado)
+  if (sel) {
+    setTimeout(() => {
+      const chip = el.querySelector(".rod-chip.active");
+      if (chip) chip.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }, 80);
+  }
 }
 
-window.filterRodList = function(q) {
-  const Q = (q||"").trim().toUpperCase();
+window.filterRodCarrossel = function(q) {
+  const Q = (q || "").trim().toUpperCase();
   const arr = (HUB.state.rodAgrupadas || []).filter(r => r.rodovia.includes(Q));
-  _renderRodList(arr);
+  _renderRodCarrossel(arr);
 };
+
+window.scrollRodCarrossel = function(direction) {
+  const el = document.getElementById("rodCarrossel");
+  if (el) el.scrollBy({ left: 260 * direction, behavior: "smooth" });
+};
+
+function _buildRodNavBar(nome) {
+  const list = HUB.state.rodAgrupadas || [];
+  const idx = list.findIndex(x => x.rodovia === nome);
+  if (idx < 0) return "";
+  const prev = idx > 0 ? list[idx - 1].rodovia : null;
+  const next = idx < list.length - 1 ? list[idx + 1].rodovia : null;
+  return `<div class="rod-nav-bar">
+    <button class="rod-nav-btn rod-nav-btn-prev${prev ? '' : ' disabled'}"
+      ${prev ? `onclick="selectRodovia('${prev.replace(/'/g,"\\'")}')"` : ""}
+      title="${prev ? 'Anterior: ' + htmlEscape(prev) : 'Esta é a primeira'}">
+      ‹ <span class="rod-nav-btn-text">${prev ? htmlEscape(prev) : 'Primeira'}</span>
+    </button>
+    <div class="rod-nav-current">
+      ${htmlEscape(nome)}
+      <span class="rod-nav-current-idx">${idx + 1} de ${list.length}</span>
+    </div>
+    <button class="rod-nav-btn rod-nav-btn-next${next ? '' : ' disabled'}"
+      ${next ? `onclick="selectRodovia('${next.replace(/'/g,"\\'")}')"` : ""}
+      title="${next ? 'Próxima: ' + htmlEscape(next) : 'Esta é a última'}">
+      <span class="rod-nav-btn-text">${next ? htmlEscape(next) : 'Última'}</span> ›
+    </button>
+  </div>`;
+}
 
 window.selectRodovia = async function(nome) {
   const r = (HUB.state.rodAgrupadas || []).find(x => x.rodovia === nome);
   if (!r) return;
-  const inp = document.getElementById("rodSearch"); if (inp) inp.value = nome;
-  document.getElementById("rodSearchWrap")?.classList.remove("open");
+  // Atualiza estado e re-renderiza o carrossel para destacar o chip selecionado
+  HUB.state.rodovia_atual = nome;
+  _renderRodCarrossel(HUB.state.rodAgrupadas);
+  const inp = document.getElementById("rodSearch"); if (inp) inp.value = "";
 
   const extTotal = r.trechos.reduce((s,t) => s + (t.extensao||0), 0);
   const inicio = r.trechos[0]?.inicio || "—";
@@ -2044,6 +2180,7 @@ window.selectRodovia = async function(nome) {
   const nomeSafe = nome.replace(/'/g, "\\'");
 
   document.getElementById("rodQuadroOut").innerHTML = `
+    ${_buildRodNavBar(nome)}
     <div style="display:flex;justify-content:flex-end;margin-bottom:0.6rem">
       <button onclick="gerarBriefingRodovia('${nomeSafe}')"
         style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.5em 1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15);transition:background .15s,transform .12s"
