@@ -581,26 +581,35 @@
     .panel-body { padding: 1.2rem 1.4rem; }
     .panel-body.nopad { padding: 0; }
 
-    /* Tabs */
+    /* Tabs — visual de botão (separação clara entre abas e da área de conteúdo) */
     .tab-bar {
-      display: flex; gap: 0.3rem; padding: 0.6rem 0.9rem 0;
-      border-bottom: 1px solid var(--borda); background: #fff;
+      display: flex; gap: 0.5rem; padding: 0.7rem 0.9rem 0;
+      border-bottom: 2px solid var(--borda); background: var(--cinza-bg);
       overflow-x: auto;
     }
     .tab-bar::-webkit-scrollbar { display: none; }
     .tab-item {
+      position: relative;
       font-family: var(--font-cond); font-size: 0.78rem; font-weight: 700;
       letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--cinza-med); background: transparent; border: none;
-      padding: 0.65rem 1.1rem; cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.15s; white-space: nowrap;
+      color: var(--cinza-med); background: #fff;
+      border: 1.5px solid var(--borda); border-bottom: none;
+      padding: 0.72rem 1.35rem; cursor: pointer;
+      border-radius: 10px 10px 0 0;
+      transition: all 0.18s; white-space: nowrap;
+      margin-bottom: -2px;
     }
-    .tab-item:hover { color: var(--azul); }
+    .tab-item:hover { color: var(--azul); background: var(--azul-claro); border-color: var(--azul-borda); }
     .tab-item.active {
-      color: var(--azul); border-bottom-color: var(--amarelo);
+      color: var(--azul); background: #fff;
+      border-color: var(--azul); border-bottom-color: #fff;
+      box-shadow: 0 -3px 14px rgba(0,45,114,0.10);
     }
-    .tab-content { display: none; padding: 1.2rem 1.4rem; }
+    .tab-item.active::before {
+      content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 3px;
+      background: var(--amarelo); border-radius: 8px 8px 0 0;
+    }
+    .tab-content { display: none; padding: 1.4rem 1.4rem 1.2rem; background: #fff; }
     .tab-content.active { display: block; }
 
     /* Chart wrap */
@@ -1231,12 +1240,13 @@ function mkMap(id, opts) {
 }
 
 /* Chip de situação para rodovias (PAV / DUP / LEI / PLA) */
+// Chip simplificado em 3 categorias: Pavimentado (PAV/DUP/IMP/TRV),
+// Leito natural (LEI/LEN) e Planejado (PLA).
 function chipSituacaoRod(sit) {
   const s = (sit || "").toString().toUpperCase().trim();
-  if (s === "PAV" || /PAVIMENT/i.test(s)) return `<span class="chip chip-vigente">Pavimentada</span>`;
-  if (s === "DUP" || /DUPLIC/i.test(s))   return `<span class="chip chip-vigente" style="background:#EBF0FA;color:#1A2B5E">Duplicada</span>`;
-  if (s === "LEI" || /LEITO/i.test(s))    return `<span class="chip chip-atrasada">Leito Natural</span>`;
-  if (s === "PLA" || /PLANEJ/i.test(s))   return `<span class="chip chip-paralisada">Planejada</span>`;
+  if (/PLA|PLANEJ/.test(s))                                  return `<span class="chip chip-paralisada">Planejado</span>`;
+  if (/LEI|LEN|LEITO/.test(s))                               return `<span class="chip chip-atrasada">Leito Natural</span>`;
+  if (/PAV|DUP|IMP|TRV|PAVIMENT|DUPLIC|IMPLAN|TRAVESS/.test(s)) return `<span class="chip chip-vigente">Pavimentado</span>`;
   return sit ? `<span class="chip">${htmlEscape(sit)}</span>` : `<span class="chip" style="color:var(--cinza-aux)">—</span>`;
 }
 
@@ -1440,8 +1450,11 @@ async function initHome() {
 function populateHeroKPIs() {
   const rod = HUB.state.rodovias || [];
   const ext = rod.reduce((acc, r) => acc + parseNum(r.extensao_km || r.extensao || r.km), 0);
+  // Contagem de RODOVIAS ÚNICAS (não trechos) — agrupar por nome.
+  // Antes mostrava 50 (trechos); o correto são 34 rodovias estaduais.
+  const uniqRod = new Set(rod.map(r => (r.rodovia || r.nome || "").toString().toUpperCase().trim()).filter(Boolean));
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set("kpi-rod",   fmtNum(rod.length));
+  set("kpi-rod",   fmtNum(uniqRod.size || rod.length));
   set("kpi-ext",   fmtNum(Math.round(ext)));
   // ramais via geojson lazy: estimativa pelo arquivo de geojson se já carregado
   const ram = HUB.state.geojsons[GEOJSON_FILES.ramais];
@@ -1737,6 +1750,13 @@ function getRodoviasHTML() {
             <option value="">Todos os anos</option>
           </select>
         </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:0.6rem">
+          <button onclick="gerarPDFInvestimentos()"
+            style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.55em 1.1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15);transition:background .15s,transform .12s"
+            onmouseover="this.style.background='var(--azul-hover,#003d9e)';this.style.transform='translateY(-1px)'"
+            onmouseout="this.style.background='var(--azul)';this.style.transform='translateY(0)'"
+            title="Gerar PDF com os investimentos filtrados">📊 Gerar PDF de investimentos</button>
+        </div>
         <div class="kpi-grid" id="invKpis" style="margin-bottom:0.8rem"></div>
         <div id="invList"></div>
       </div>
@@ -1827,20 +1847,17 @@ function _obrasDaRodovia(rodNome, contratos) {
   return Object.values(seen);
 }
 
-// Siglas reais detectadas na planilha+geojson: PAV, DUP, LEI/LEN (leito natural),
-// PLA (planejada), IMP (em implantação), TRV (travessia urbana).
+// Apresentação simplificada em 3 categorias (PAV = qualquer pavimento existente,
+// LEI = leito natural, PLA = planejada). Agrupa: PAV+DUP+IMP+TRV → PAV; LEI+LEN → LEI.
 function _normSit(s) {
   const u = (s || "").toString().toUpperCase();
-  if (u.includes("DUP")) return "DUP";
-  if (u.includes("PAV")) return "PAV";
-  if (u.includes("LEI") || u.includes("LEN")) return "LEI"; // LEI e LEN são ambos "leito natural"
   if (u.includes("PLA")) return "PLA";
-  if (u.includes("IMP")) return "IMP";
-  if (u.includes("TRV")) return "TRV";
+  if (u.includes("LEI") || u.includes("LEN")) return "LEI";
+  if (u.includes("PAV") || u.includes("DUP") || u.includes("IMP") || u.includes("TRV")) return "PAV";
   return "";
 }
-function _labSit(k) { return ({ PAV:"Pavimentada", DUP:"Duplicada", LEI:"Leito natural", PLA:"Planejada", IMP:"Em implantação", TRV:"Travessia urbana" })[k] || k; }
-function _corSit(k) { return ({ PAV:"#2D8540", DUP:"#1A2B5E", LEI:"#F5A623", PLA:"#8896A8", IMP:"#C0392B", TRV:"#6C3483" })[k] || "#8896A8"; }
+function _labSit(k) { return ({ PAV:"Pavimentado", LEI:"Leito natural", PLA:"Planejado" })[k] || k; }
+function _corSit(k) { return ({ PAV:"#2D8540", LEI:"#F5A623", PLA:"#8896A8" })[k] || "#8896A8"; }
 function _fmtBRLShort(v) {
   if (!v || isNaN(v)) return "R$ 0";
   if (v >= 1e9) return "R$ " + (v/1e9).toFixed(2) + " bi";
@@ -4183,6 +4200,19 @@ async function loadImgBase64(url) {
   } catch (e) { return null; }
 }
 
+// Carrega a imagem como dataURL + dimensões naturais (necessário para preservar
+// o aspect ratio do timbrado oficial — esticar deforma o brasão do Governo).
+async function loadImgBase64WithSize(url) {
+  const dataURL = await loadImgBase64(url);
+  if (!dataURL) return null;
+  return new Promise(res => {
+    const im = new Image();
+    im.onload = () => res({ dataURL, w: im.naturalWidth || 1, h: im.naturalHeight || 1 });
+    im.onerror = () => res({ dataURL, w: 0, h: 0 });
+    im.src = dataURL;
+  });
+}
+
 async function exportPDF(title, content) {
   title = title || "Relatório SEINFRA/AM";
   content = content || [];
@@ -4190,33 +4220,54 @@ async function exportPDF(title, content) {
   const { jsPDF } = jspdfNS;
   if (!jsPDF) { alert("Bibliotecas de PDF não carregadas."); return; }
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const pageW = 210, pageH = 297, margin = 15, headerH = 28, footerH = 20;
+  const pageW = 210, pageH = 297, margin = 15;
+  // headerH / footerH = altura MÁXIMA reservada; a imagem real respeita aspect ratio
+  // e fica centralizada dentro dessa caixa (sem deformar o brasão).
+  const headerH = 26, footerH = 18;
 
-  const cabImg = await loadImgBase64(`${CDN_ASSETS}/timbrado_cabecalho.png`);
-  const rodImg = await loadImgBase64(`${CDN_ASSETS}/timbrado_rodape.png`);
+  const cab = await loadImgBase64WithSize(`${CDN_ASSETS}/timbrado_cabecalho.png`);
+  const rod = await loadImgBase64WithSize(`${CDN_ASSETS}/timbrado_rodape.png`);
 
-  function addHeader() { if (cabImg) doc.addImage(cabImg, "PNG", 0, 0, pageW, headerH); }
-  function addFooter() { if (rodImg) doc.addImage(rodImg, "PNG", 0, pageH - footerH, pageW, footerH); }
+  function addImageProporcional(im, slotH, top) {
+    if (!im || !im.dataURL || !im.w || !im.h) return;
+    const ratio = im.w / im.h;
+    // Tenta ocupar a largura da página; se a altura calculada exceder o slot,
+    // recalcula limitando pela altura (centralizado horizontalmente).
+    let w = pageW, h = w / ratio;
+    if (h > slotH) { h = slotH; w = h * ratio; }
+    const x = (pageW - w) / 2;
+    const y = top + (slotH - h) / 2; // centralizado verticalmente no slot
+    doc.addImage(im.dataURL, "PNG", x, y, w, h);
+  }
+  function addHeader() { addImageProporcional(cab, headerH, 0); }
+  function addFooter() { addImageProporcional(rod, footerH, pageH - footerH); }
 
   addHeader();
+  // Título: respiro maior abaixo do cabeçalho
+  const titleY = headerH + 12;
   doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(26, 43, 94);
-  doc.text(title, margin, headerH + 14);
+  doc.text(title, margin, titleY);
   doc.setDrawColor(26, 43, 94); doc.setLineWidth(0.4);
-  doc.line(margin, headerH + 17, pageW - margin, headerH + 17);
+  doc.line(margin, titleY + 3, pageW - margin, titleY + 3);
 
-  let y = headerH + 24;
+  // Espaçamentos ABNT: linha 6mm (~1.5 entrelinhas em 10pt),
+  // espaço ANTES do heading 5mm (separa de seção anterior),
+  // espaço APÓS heading 4.5mm (encosta no conteúdo seguinte).
+  let y = titleY + 12;
   doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(26, 37, 64);
   for (const block of content) {
     if (block.type === "text") {
       const lines = doc.splitTextToSize(block.value, pageW - 2 * margin);
       for (const line of lines) {
-        if (y > pageH - footerH - 10) { addFooter(); doc.addPage(); addHeader(); y = headerH + 12; }
-        doc.text(line, margin, y); y += 5.5;
+        if (y > pageH - footerH - 10) { addFooter(); doc.addPage(); addHeader(); y = headerH + 14; }
+        doc.text(line, margin, y); y += 6;
       }
     } else if (block.type === "heading") {
-      if (y > pageH - footerH - 20) { addFooter(); doc.addPage(); addHeader(); y = headerH + 12; }
-      doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(26, 43, 94);
-      doc.text(block.value, margin, y); y += 8;
+      if (y > pageH - footerH - 25) { addFooter(); doc.addPage(); addHeader(); y = headerH + 14; }
+      y += 5; // espaço ANTES — destaca o início de nova seção
+      doc.setFont("helvetica", "bold"); doc.setFontSize(12); doc.setTextColor(26, 43, 94);
+      doc.text(block.value, margin, y);
+      y += 4.5; // espaço APÓS — pequeno para aproximar do conteúdo (tabela/texto)
       doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(26, 37, 64);
     } else if (block.type === "table" && block.headers && block.rows && doc.autoTable) {
       doc.autoTable({
@@ -4416,9 +4467,128 @@ async function gerarBriefingRodovia(nome) {
   await exportPDF(`Briefing da Rodovia ${nome} — SEINFRA/AM`, content);
 }
 
+/* ── PDF DE INVESTIMENTOS — usa os filtros atuais da aba Investimentos ── */
+async function gerarPDFInvestimentos() {
+  // Lê filtros vigentes na aba Investimentos
+  const q  = (document.getElementById("invQ")?.value || "").toLowerCase();
+  const st = document.getElementById("invStatus")?.value || "";
+  const an = document.getElementById("invAno")?.value || "";
+  const rd = (document.getElementById("invRodovia")?.value || "").toUpperCase();
+
+  // Reaplica filtros (espelhando renderInvestList p/ garantir paridade)
+  const filtered = (HUB.state.contratosRod || []).filter(o => {
+    if (q) {
+      const hay = ((o.objeto||"") + " " + (o.contrato||"") + " " + (o.empresa||"") + " " + (o.municipio||"")).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (an && String(o.ano) !== String(an)) return false;
+    if (rd) {
+      const rods = _extractRodoviasDeObra(o);
+      if (!rods.includes(rd)) return false;
+    }
+    if (st) {
+      const s = ((o.situacao_eobras||"") + " " + (o.situacao_real||"")).toLowerCase();
+      if (st === "concluido"  && !(s.includes("conclu") || s.includes("inaug"))) return false;
+      if (st === "andamento"  && !(s.includes("execu")  || s.includes("andamento") || s.includes("vigent"))) return false;
+      if (st === "paralisado" && !(s.includes("paralis") || s.includes("atras"))) return false;
+    }
+    return true;
+  });
+
+  if (!filtered.length) { alert("Nenhuma obra nos filtros — ajuste antes de gerar o PDF."); return; }
+
+  const total = filtered.reduce((s, o) => s + o.valor, 0);
+  const sorted = [...filtered].sort((a, b) => b.valor - a.valor);
+
+  // Distribuição por situação simplificada (3 categorias)
+  const sitMap = {};
+  filtered.forEach(o => {
+    const s = ((o.situacao_eobras||"") + " " + (o.situacao_real||"")).toLowerCase();
+    let cat = "Outros";
+    if (s.includes("conclu") || s.includes("inaug")) cat = "Concluído/Inaugurado";
+    else if (s.includes("paralis") || s.includes("atras")) cat = "Paralisado/Atrasado";
+    else if (s.includes("execu") || s.includes("andamento") || s.includes("vigent")) cat = "Em andamento";
+    if (!sitMap[cat]) sitMap[cat] = { n: 0, v: 0 };
+    sitMap[cat].n += 1; sitMap[cat].v += o.valor;
+  });
+
+  // Distribuição por ano
+  const anoMap = {};
+  filtered.forEach(o => { if (o.ano > 0) { if (!anoMap[o.ano]) anoMap[o.ano] = { n: 0, v: 0 }; anoMap[o.ano].n++; anoMap[o.ano].v += o.valor; } });
+
+  const filtros = [];
+  if (rd) filtros.push("Rodovia: " + rd);
+  if (st) filtros.push("Situação: " + ({ andamento:"em andamento", concluido:"concluído/inaugurado", paralisado:"paralisado/atrasado" }[st] || st));
+  if (an) filtros.push("Ano: " + an);
+  if (q)  filtros.push("Busca: \"" + q + "\"");
+
+  const titulo = rd
+    ? `Investimentos em ${rd} — SEINFRA/AM`
+    : "Relatório de Investimentos em Rodovias — SEINFRA/AM";
+
+  const content = [
+    { type: "heading", value: "1. Visão executiva" },
+    { type: "text", value: `Obras analisadas: ${filtered.length}` },
+    { type: "text", value: `Investimento somado: ${fmtBRL(total)}` },
+    { type: "text", value: `Investimento médio por obra: ${fmtBRL(total / filtered.length)}` },
+    { type: "text", value: `Data de emissão: ${new Date().toLocaleDateString("pt-BR")}` },
+  ];
+  if (filtros.length) content.push({ type: "text", value: "Filtros aplicados: " + filtros.join("  ·  ") });
+
+  content.push({ type: "heading", value: "2. Distribuição por situação" });
+  content.push({
+    type: "table",
+    headers: ["Situação", "Obras", "Valor", "% do total"],
+    rows: Object.entries(sitMap).sort((a, b) => b[1].v - a[1].v).map(([k, v]) => [
+      k, v.n, fmtBRL(v.v), total > 0 ? (v.v / total * 100).toFixed(1) + "%" : "—"
+    ])
+  });
+
+  if (Object.keys(anoMap).length > 1) {
+    content.push({ type: "heading", value: "3. Distribuição por ano de contratação" });
+    content.push({
+      type: "table",
+      headers: ["Ano", "Obras", "Valor", "% do total"],
+      rows: Object.entries(anoMap).sort((a, b) => a[0] - b[0]).map(([k, v]) => [
+        k, v.n, fmtBRL(v.v), total > 0 ? (v.v / total * 100).toFixed(1) + "%" : "—"
+      ])
+    });
+  }
+
+  content.push({ type: "heading", value: "4. Top 10 obras por investimento" });
+  content.push({
+    type: "table",
+    headers: ["Contrato", "Objeto", "Município", "Empresa", "Valor"],
+    rows: sorted.slice(0, 10).map(o => [
+      o.contrato || "—",
+      (o.objeto || "—").slice(0, 50),
+      (o.municipio || "—").toString().slice(0, 20),
+      (o.empresa || "—").toString().slice(0, 30),
+      fmtBRL(o.valor),
+    ])
+  });
+
+  content.push({ type: "heading", value: `5. Lista completa de obras (${filtered.length})` });
+  content.push({
+    type: "table",
+    headers: ["Contrato", "Objeto", "Município", "Ano", "Situação", "Valor"],
+    rows: sorted.map(o => [
+      o.contrato || "—",
+      (o.objeto || "—").slice(0, 42),
+      (o.municipio || "—").toString().slice(0, 18),
+      o.ano || "—",
+      ((o.situacao_eobras || o.situacao_real || "—") + "").slice(0, 22),
+      fmtBRL(o.valor),
+    ])
+  });
+
+  await exportPDF(titulo, content);
+}
+
 // Expostos para onclick dos cards
 window.gerarBriefingObra = gerarBriefingObra;
 window.gerarBriefingRodovia = gerarBriefingRodovia;
+window.gerarPDFInvestimentos = gerarPDFInvestimentos;
 
 async function exportCurrentPDF() {
   const id = HUB.activeModule;
