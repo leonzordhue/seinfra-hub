@@ -1075,7 +1075,8 @@ function parseCSV(text) {
     return obj;
   });
 }
-// EXPORT CSV — dados crus completos (gviz pode truncar planilhas com filtros internos)
+// EXPORT CSV — dados crus completos (servidor only; o endpoint export?format=csv NÃO envia
+// header CORS, então fetch() do browser é bloqueado. Mantido como utilitário e referência.)
 async function csvFetch(sheetId, gid) {
   const gidPart = gid ? `&gid=${gid}` : "";
   const url = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv${gidPart}`;
@@ -1083,6 +1084,22 @@ async function csvFetch(sheetId, gid) {
   if (!r.ok) throw new Error("CSV fetch falhou: HTTP " + r.status);
   const text = await r.text();
   return parseCSV(text);
+}
+// SHEETS API v4 — CORS-friendly; lê range específico (formato `'Nome da aba'!A:DB`)
+// Necessário quando a planilha tem uma aba 'Planilha1' com QUERY filtrando os dados crus
+// (caso da Planilha Geral SEINFRA — gviz lê a query e devolve só 4 linhas).
+async function sheetsApiFetch(sheetId, range) {
+  const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${encodeURIComponent(range)}?key=${API_KEY}`;
+  const r = await fetch(url);
+  if (!r.ok) throw new Error("Sheets API: HTTP " + r.status);
+  const data = await r.json();
+  if (!data.values || data.values.length < 2) return [];
+  const header = data.values[0].map(normalizeKey);
+  return data.values.slice(1).map(row => {
+    const obj = {};
+    header.forEach((h, i) => { if (h) obj[h] = (row[i] != null ? row[i] : ""); });
+    return obj;
+  });
 }
 // gviz (out:json) — mantido para sheets pequenas que não sofrem com filtros internos
 async function gvizFetch(sheetId, gid) {
@@ -1126,7 +1143,8 @@ async function loadGeoJSON(file) {
 async function loadRodoviasSheet() {
   if (HUB.state.rodovias) return;
   try {
-    const rows = await csvFetch(SHEETS.rodovias.id, SHEETS.rodovias.gid);
+    // gviz funciona para o sheet de rodovias (50 linhas; sem aba-query filtrando).
+    const rows = await gvizFetch(SHEETS.rodovias.id, SHEETS.rodovias.gid);
     if (!rows.length) return;
     // detectores tolerantes a variações no cabeçalho
     const pick = (r, ...keys) => { for (const k of keys) { for (const rk of Object.keys(r)) if (rk.includes(k)) return r[rk]; } return ""; };
@@ -1154,11 +1172,13 @@ async function loadRodoviasSheet() {
 
 async function loadCoreData() {
   try {
-    // GERAL via EXPORT CSV (gviz trunca p/ 4 linhas — não usar gviz nessa planilha).
-    // SINISTROS e ICM seguem em gviz (sem problema de truncamento).
+    // GERAL via Sheets API v4 (CORS-friendly). O gviz lê a aba 'Planilha1' que tem
+    // uma QUERY filtrando, devolvendo só 4 linhas; export?format=csv funciona mas é
+    // bloqueado por CORS no browser. Sheets API v4 lendo a aba 'Planilha Geral'
+    // resolve ambos os problemas (478 obras completas, CORS OK).
     const [, ger, sin, ic] = await Promise.allSettled([
-      loadRodoviasSheet(),                                       // CSV export (sem key)
-      csvFetch(SHEETS.geral.id,      SHEETS.geral.gid || "724762331"),
+      loadRodoviasSheet(),                                       // gviz (50 rodovias)
+      sheetsApiFetch(SHEETS.geral.id, "Planilha Geral!A:DB"),    // Sheets API v4
       gvizFetch(SHEETS.sinistros.id, SHEETS.sinistros.gid),
       gvizFetch(SHEETS.icm.id,       SHEETS.icm.gid),
     ]);
