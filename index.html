@@ -1766,6 +1766,10 @@ function getRodoviasHTML() {
 
       <!-- ABA 1: VISÃO GERAL — gráficos -->
       <div class="tab-content active" id="rod-rg">
+        <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:0.55rem 0.85rem;font-size:0.72rem;color:var(--cinza-med);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
+          <span style="font-size:1rem">📋</span>
+          <span>Fonte: <strong>Relatório de Investimentos em Mobilidade — Governo Wilson Lima 2019–2026 (v5)</strong> · SEINFRA/DMOB · 19 contratos rodoviários consolidados</span>
+        </div>
         <div class="panel-title" style="margin-bottom:0.6rem">Evolução do investimento em rodovias (desde 2019)</div>
         <div class="chart-wrap tall"><canvas id="chRodEvol"></canvas></div>
         <div class="chart-grid-2" style="margin-top:1.2rem">
@@ -1832,6 +1836,25 @@ function getRodoviasHTML() {
 }
 
 /* ───────────────── HELPERS DO MÓDULO RODOVIAS ───────────────── */
+// SOURCE OF TRUTH: 19 contratos rodoviários consolidados pela SEINFRA/DMOB,
+// conforme "Relatório de Investimentos em Mobilidade — Governo Wilson Lima
+// 2019-2026 (v5, mai/2026)". Esta lista governa quais obras aparecem no módulo
+// Rodovias (Visão Geral, Investimentos) e seus totais — a heurística textual
+// nunca bate 100% com a classificação editorial do relatório (ex.: retorno na
+// AM-010 vai para Viário Urbano, não Rodovias). Atualizar quando sair v6+.
+const CONTRATOS_OFICIAIS_RODOVIAS = [
+  "CT-00093/2012-SEINFRA", "CT-00144/2013-SEINFRA",
+  "CT-00035/2017-SEINFRA", "CT-00067/2018-SEINFRA",
+  "CT-00004/2019-SEINFRA", "CT-00009/2019-SEINFRA",
+  "CT-00027/2019-SEINFRA", "CT-00028/2019-SEINFRA",
+  "CT-00001/2020-SEINFRA", "CT-00004/2020-SEINFRA",
+  "CT-00006/2020-SEINFRA", "CT-00007/2020-SEINFRA",
+  "CT-00037/2020-SEINFRA", "CT-00047/2020-SEINFRA",
+  "CT-00057/2022-SEINFRA", "CT-00069/2022-SEINFRA",
+  "CT-00076/2022-SEINFRA", "CT-00008/2023-SEINFRA",
+  "CT-00006/2026-SEINFRA",
+];
+
 // Mapeia row crú do CSV em objeto contrato limpo
 function _mapContrato(r) {
   return {
@@ -1979,17 +2002,28 @@ function _renderObraCard(o) {
 async function initRodovias() {
   if (!HUB.state.rodovias || !HUB.state.contratos) await loadCoreData();
 
-  // Normaliza contratos uma única vez (mapContrato), pré-filtra os rodoviários
-  // E dedupica por nº de contrato mantendo o de MAIOR valor (mesmo CT vem 2x: inicial + aditivo)
+  // Normaliza contratos uma única vez (mapContrato)
   if (!HUB.state.contratosObra) {
     HUB.state.contratosObra = (HUB.state.contratos || []).map(_mapContrato);
-    const rd = HUB.state.contratosObra.filter(c => _isObraRodoviaria(c, null));
-    const seen = {};
-    for (const c of rd) {
-      const k = c.contrato || ((c.objeto||"").slice(0,40) + "|" + (c.empresa||""));
-      if (!seen[k] || c.valor > seen[k].valor) seen[k] = c;
+  }
+  // Constrói lista oficial Rodovias usando WHITELIST do relatório + SOMA de sub-objetos.
+  // (A planilha tem múltiplas LINHAS para o mesmo CT representando sub-objetos —
+  // ex.: CT-00144/2013 = Duplicação Tarumã + Viaduto Lydia = R$ 250 mi consolidado.
+  // O relatório oficial SOMA esses sub-objetos; pegar só o MAIOR subestimava o total.)
+  if (!HUB.state.contratosRod) {
+    const oficiaisSet = new Set(CONTRATOS_OFICIAIS_RODOVIAS);
+    const agg = {};
+    for (const c of HUB.state.contratosObra) {
+      if (!oficiaisSet.has(c.contrato)) continue;
+      if (!agg[c.contrato]) {
+        agg[c.contrato] = { ...c, valor: 0, _subobjetos: [] };
+      }
+      agg[c.contrato].valor += (c.valor || 0);
+      agg[c.contrato]._subobjetos.push(c);
+      // Mantém metadados do PRIMEIRO sub-objeto (objeto, situação) — descrição mais geral
+      if (!agg[c.contrato].objeto && c.objeto) agg[c.contrato].objeto = c.objeto;
     }
-    HUB.state.contratosRod = Object.values(seen);
+    HUB.state.contratosRod = Object.values(agg);
   }
 
   _buildRodTopKpis();
