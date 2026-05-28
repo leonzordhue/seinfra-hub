@@ -1700,13 +1700,20 @@ function getRodoviasHTML() {
       <!-- ABA 2: QUADRO DE RODOVIAS — pesquisa -->
       <div class="tab-content" id="rod-rq">
         <div style="position:relative;margin-bottom:0.6rem" id="rodSearchWrap">
-          <input type="text" id="rodSearch" class="filter-select" style="width:100%;padding:0.7rem 0.9rem"
-                 placeholder="Pesquisar rodovia (AM-010, AM-070, AM-151…)"
+          <input type="text" id="rodSearch" class="filter-select" style="width:100%;padding:0.75rem 1rem;border-radius:12px;font-size:0.92rem"
+                 placeholder="🔍 Pesquisar rodovia (AM-010, AM-070, AM-151…)"
                  oninput="filterRodList(this.value)" onfocus="document.getElementById('rodSearchWrap').classList.add('open')"
                  onblur="setTimeout(()=>document.getElementById('rodSearchWrap').classList.remove('open'),200)" autocomplete="off"/>
-          <div id="rodList" style="position:absolute;left:0;right:0;top:100%;max-height:280px;overflow-y:auto;background:#fff;border:1px solid var(--borda);border-radius:6px;box-shadow:0 6px 20px rgba(0,0,0,.08);z-index:50;margin-top:4px;display:none"></div>
+          <div id="rodList" style="position:absolute;right:0;top:100%;min-width:60%;max-width:100%;max-height:320px;overflow-y:auto;background:#fff;border:1px solid var(--azul-borda);border-radius:14px;box-shadow:0 14px 36px rgba(26,43,94,.18),0 2px 8px rgba(0,0,0,.06);z-index:50;margin-top:8px;display:none;padding:6px"></div>
         </div>
-        <style>#rodSearchWrap.open #rodList{display:block !important}</style>
+        <style>
+          #rodSearchWrap.open #rodList{display:block !important}
+          #rodList > div{transition:background .12s,transform .12s}
+          #rodList > div:hover{background:var(--azul-claro)!important;transform:translateX(2px)}
+          #rodList::-webkit-scrollbar{width:8px}
+          #rodList::-webkit-scrollbar-thumb{background:var(--azul-borda);border-radius:8px}
+          #rodSearch:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 4px rgba(0,45,114,0.10)}
+        </style>
         <div id="rodQuadroOut">
           <div class="info-state" style="padding:1.6rem 0">Selecione uma rodovia acima para ver trechos, faixa de domínio, mapa e obras vinculadas.</div>
         </div>
@@ -1715,15 +1722,18 @@ function getRodoviasHTML() {
       <!-- ABA 3: INVESTIMENTOS — pesquisa obras rodoviárias -->
       <div class="tab-content" id="rod-ri">
         <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem;margin-bottom:0.6rem">
-          <input type="text" id="invQ" class="filter-select" style="flex:1;min-width:220px;padding:0.65rem 0.8rem"
-                 placeholder="Buscar obra (objeto, contrato, empresa, município)…" oninput="renderInvestList()"/>
-          <select id="invStatus" class="filter-select" onchange="renderInvestList()">
+          <input type="text" id="invQ" class="filter-select" style="flex:2;min-width:220px;padding:0.65rem 0.8rem;border-radius:10px"
+                 placeholder="🔍 Buscar por objeto, nº de contrato (CT-), empresa ou município…" oninput="renderInvestList()"/>
+          <select id="invRodovia" class="filter-select" onchange="renderInvestList()" style="border-radius:10px">
+            <option value="">Todas as rodovias</option>
+          </select>
+          <select id="invStatus" class="filter-select" onchange="renderInvestList()" style="border-radius:10px">
             <option value="">Todas as situações</option>
             <option value="andamento">Em andamento</option>
             <option value="concluido">Concluído / Inaugurado</option>
             <option value="paralisado">Paralisado / Atrasado</option>
           </select>
-          <select id="invAno" class="filter-select" onchange="renderInvestList()">
+          <select id="invAno" class="filter-select" onchange="renderInvestList()" style="border-radius:10px">
             <option value="">Todos os anos</option>
           </select>
         </div>
@@ -1840,17 +1850,25 @@ function _fmtBRLShort(v) {
 }
 
 function _renderObraCard(o) {
-  return `<div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:0.7rem 1rem">
+  const ctSafe = (o.contrato || "").replace(/'/g, "\\'");
+  return `<div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:10px;padding:0.75rem 1rem">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.6rem;margin-bottom:0.3rem;flex-wrap:wrap">
       <span style="font-size:0.7rem;font-weight:700;color:var(--azul)">${htmlEscape(o.contrato||"—")}</span>
       <span style="font-size:0.85rem;font-weight:800;color:var(--azul)">${_fmtBRLShort(o.valor)}</span>
     </div>
-    <div style="font-size:0.85rem;font-weight:500;line-height:1.4;margin-bottom:0.3rem">${htmlEscape((o.objeto||"—").slice(0,220))}${(o.objeto||"").length>220?"…":""}</div>
-    <div style="font-size:0.72rem;color:var(--cinza-med);display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center">
-      <span>${htmlEscape(o.municipio||"—")}</span><span>·</span>
-      <span>${htmlEscape(o.empresa||"—")}</span>
-      ${o.ano ? `<span>·</span><span>${o.ano}</span>` : ""}
-      ${statusChip(o.situacao_eobras||o.situacao_real||"")}
+    <div style="font-size:0.85rem;font-weight:500;line-height:1.4;margin-bottom:0.4rem">${htmlEscape((o.objeto||"—").slice(0,220))}${(o.objeto||"").length>220?"…":""}</div>
+    <div style="font-size:0.72rem;color:var(--cinza-med);display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;justify-content:space-between">
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
+        <span>${htmlEscape(o.municipio||"—")}</span><span>·</span>
+        <span>${htmlEscape(o.empresa||"—")}</span>
+        ${o.ano ? `<span>·</span><span>${o.ano}</span>` : ""}
+        ${statusChip(o.situacao_eobras||o.situacao_real||"")}
+      </div>
+      <button onclick="event.stopPropagation();gerarBriefingObra('${ctSafe}')"
+        style="font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--azul);background:#fff;border:1.5px solid var(--azul-borda);padding:0.32em 0.75em;border-radius:6px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;transition:background .15s,color .15s"
+        onmouseover="this.style.background='var(--azul)';this.style.color='#fff'"
+        onmouseout="this.style.background='#fff';this.style.color='var(--azul)'"
+        title="Gerar briefing PDF desta obra">📄 Briefing</button>
     </div>
   </div>`;
 }
@@ -1972,11 +1990,10 @@ function _renderRodList(arr) {
   const el = document.getElementById("rodList"); if (!el) return;
   el.innerHTML = arr.length ? arr.map(r => `
     <div onmousedown="selectRodovia('${r.rodovia.replace(/'/g,"\\'")}')"
-         style="padding:0.55rem 0.8rem;cursor:pointer;border-bottom:1px solid var(--borda);font-size:0.86rem;display:flex;justify-content:space-between;align-items:center"
-         onmouseover="this.style.background='var(--azul-claro)'" onmouseout="this.style.background=''">
+         style="padding:0.6rem 0.9rem;cursor:pointer;border-radius:10px;margin:2px 0;font-size:0.88rem;display:flex;justify-content:space-between;align-items:center">
       <span style="font-weight:600;color:var(--azul)">${htmlEscape(r.rodovia)}</span>
-      <span style="font-size:0.72rem;color:var(--cinza-aux)">${r.trechos.length} trecho${r.trechos.length>1?'s':''}</span>
-    </div>`).join("") : `<div style="padding:0.6rem 0.8rem;color:var(--cinza-aux);font-size:0.82rem">Sem resultados.</div>`;
+      <span style="font-size:0.72rem;color:var(--cinza-aux);background:var(--cinza-bg);padding:0.15em 0.55em;border-radius:99px;border:1px solid var(--borda)">${r.trechos.length} trecho${r.trechos.length>1?'s':''}</span>
+    </div>`).join("") : `<div style="padding:0.8rem;text-align:center;color:var(--cinza-aux);font-size:0.82rem">Sem resultados.</div>`;
 }
 
 window.filterRodList = function(q) {
@@ -1994,26 +2011,60 @@ window.selectRodovia = async function(nome) {
   const extTotal = r.trechos.reduce((s,t) => s + (t.extensao||0), 0);
   const inicio = r.trechos[0]?.inicio || "—";
   const fim    = r.trechos[r.trechos.length-1]?.final || "—";
-  const fdT    = r.trechos.find(t => t.faixaDominio) || {};
+  // TODAS as faixas de domínio únicas (não só a 1ª — antes mostrava só uma p/ AM-010 mesmo tendo 3)
+  const faixas = [...new Set(r.trechos.map(t => (t.faixaDominio||"").trim()).filter(Boolean))];
+  // Mapa faixa→trechos (p/ saber em quais trechos cada faixa aparece)
+  const faixaMap = {};
+  r.trechos.forEach(t => {
+    const f = (t.faixaDominio||"").trim();
+    if (!f) return;
+    if (!faixaMap[f]) faixaMap[f] = [];
+    faixaMap[f].push(t.codigo || ("Trecho " + (r.trechos.indexOf(t)+1)));
+  });
   const sitPres = [...new Set(r.trechos.map(t => _normSit(t.pavimentacao)).filter(Boolean))];
   const obras = _obrasDaRodovia(nome, HUB.state.contratosRod || []);
   const totInv = obras.reduce((s,o) => s+o.valor, 0);
+  const nomeSafe = nome.replace(/'/g, "\\'");
 
   document.getElementById("rodQuadroOut").innerHTML = `
+    <div style="display:flex;justify-content:flex-end;margin-bottom:0.6rem">
+      <button onclick="gerarBriefingRodovia('${nomeSafe}')"
+        style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.5em 1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15);transition:background .15s,transform .12s"
+        onmouseover="this.style.background='var(--azul-hover,#003d9e)';this.style.transform='translateY(-1px)'"
+        onmouseout="this.style.background='var(--azul)';this.style.transform='translateY(0)'"
+        title="Gerar briefing PDF desta rodovia">📄 Gerar briefing PDF da ${htmlEscape(nome)}</button>
+    </div>
     <div class="kpi-grid" style="margin-bottom:0.8rem">
       <div class="kpi-card"><div class="kpi-card-label">Trechos</div><div class="kpi-card-value">${r.trechos.length}</div><div class="kpi-card-foot">cadastrados</div></div>
       <div class="kpi-card v"><div class="kpi-card-label">Extensão total</div><div class="kpi-card-value">${fmtNum(extTotal,1)}</div><div class="kpi-card-foot">km</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Faixa de domínio</div><div class="kpi-card-value" style="font-size:1.05rem">${htmlEscape((fdT.faixaDominio||"—").toString().slice(0,28))}</div><div class="kpi-card-foot">${fdT.faixaDominio?"":"sem registro"}</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Faixa${faixas.length>1?'s':''} de domínio</div><div class="kpi-card-value" style="font-size:${faixas.length>1?'1.6rem':'1.05rem'}">${faixas.length === 0 ? "—" : faixas.length === 1 ? htmlEscape(faixas[0].slice(0,28)) : faixas.length}</div><div class="kpi-card-foot">${faixas.length === 0 ? "sem registro" : faixas.length === 1 ? "registro único" : "faixas distintas"}</div></div>
       <div class="kpi-card r"><div class="kpi-card-label">Investimento</div><div class="kpi-card-value">${_fmtBRLShort(totInv)}</div><div class="kpi-card-foot">${obras.length} obra${obras.length!==1?'s':''}</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1rem">
-      <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);padding:0.7rem 0.9rem;border-radius:8px">
+      <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);padding:0.7rem 0.9rem;border-radius:10px">
         <div style="font-size:0.62rem;color:var(--azul);font-weight:700;letter-spacing:0.08em;text-transform:uppercase">Início</div>
         <div style="font-size:0.88rem;margin-top:0.15rem">${htmlEscape(inicio)}</div></div>
-      <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);padding:0.7rem 0.9rem;border-radius:8px">
+      <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);padding:0.7rem 0.9rem;border-radius:10px">
         <div style="font-size:0.62rem;color:var(--azul);font-weight:700;letter-spacing:0.08em;text-transform:uppercase">Fim</div>
         <div style="font-size:0.88rem;margin-top:0.15rem">${htmlEscape(fim)}</div></div>
     </div>
+    ${faixas.length > 0 ? `
+    <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1rem">
+      <div style="font-size:0.62rem;color:var(--azul);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.5rem">
+        ${faixas.length === 1 ? "Faixa de domínio" : `Faixas de domínio cadastradas (${faixas.length})`}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:0.4rem">
+        ${Object.entries(faixaMap).map(([f, codes]) => `
+          <div style="display:flex;gap:0.7rem;align-items:flex-start;font-size:0.82rem">
+            <span style="display:inline-block;min-width:1.5rem;color:var(--cinza-aux);font-weight:700">•</span>
+            <div style="flex:1">
+              <div style="font-weight:600;color:var(--cinza-txt)">${htmlEscape(f)}</div>
+              <div style="font-size:0.72rem;color:var(--cinza-med);margin-top:0.1rem">Trecho${codes.length>1?'s':''}: ${codes.map(c=>htmlEscape(c)).join(", ")}</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    </div>` : ""}
     <div class="panel-title" style="margin:0.4rem 0 0.4rem">Traçado no mapa ${sitPres.length>1 ? '<span style="font-size:0.7rem;color:var(--cinza-aux);font-weight:500">(múltiplas situações)</span>' : ''}</div>
     <div>
       <div id="rodQuadroMap" class="map-wrap" style="height:380px"></div>
@@ -2073,11 +2124,30 @@ async function _renderRodQuadroMap(nome) {
   setTimeout(() => map.invalidateSize(), 200);
 }
 
+/* Extrai todos os códigos AM-XXX mencionados no tema da obra (objeto+resumo+segmento+localização) */
+function _extractRodoviasDeObra(o) {
+  const tema = ((o.objeto||"") + " " + (o.resumo||"") + " " + (o.segmento||"") + " " + (o.localizacao||"")).toUpperCase();
+  const codes = new Set();
+  const re = /AM[\s\-\/]?(\d{1,3})/g;
+  let m; while ((m = re.exec(tema)) !== null) codes.add("AM-" + m[1].padStart(3, "0"));
+  if (/\bCARLOS\s+BRAGA\b/.test(tema)) codes.add("AM-151");
+  if (/\bANEL\s+SUL\b/.test(tema) && tema.includes("MANAUS")) codes.add("AM-450");
+  return [...codes];
+}
+
 /* ABA 3: INVESTIMENTOS — pesquisa obras rodoviárias */
 function _buildRodInvest() {
-  const anos = [...new Set((HUB.state.contratosRod || []).map(o => o.ano).filter(a => a > 0))].sort((a,b) => b-a);
-  const sel = document.getElementById("invAno");
-  if (sel) { sel.innerHTML = `<option value="">Todos os anos</option>` + anos.map(a => `<option value="${a}">${a}</option>`).join(""); }
+  const obras = HUB.state.contratosRod || [];
+  // Anos
+  const anos = [...new Set(obras.map(o => o.ano).filter(a => a > 0))].sort((a,b) => b-a);
+  const selA = document.getElementById("invAno");
+  if (selA) selA.innerHTML = `<option value="">Todos os anos</option>` + anos.map(a => `<option value="${a}">${a}</option>`).join("");
+  // Rodovias mencionadas
+  const rodSet = new Set();
+  obras.forEach(o => _extractRodoviasDeObra(o).forEach(c => rodSet.add(c)));
+  const rodArr = [...rodSet].sort();
+  const selR = document.getElementById("invRodovia");
+  if (selR) selR.innerHTML = `<option value="">Todas as rodovias (${rodArr.length})</option>` + rodArr.map(c => `<option value="${c}">${c}</option>`).join("");
   renderInvestList();
 }
 
@@ -2085,12 +2155,17 @@ window.renderInvestList = function() {
   const q  = (document.getElementById("invQ")?.value || "").toLowerCase();
   const st = document.getElementById("invStatus")?.value || "";
   const an = document.getElementById("invAno")?.value || "";
+  const rd = (document.getElementById("invRodovia")?.value || "").toUpperCase();
   const filtered = (HUB.state.contratosRod || []).filter(o => {
     if (q) {
       const hay = ((o.objeto||"") + " " + (o.contrato||"") + " " + (o.empresa||"") + " " + (o.municipio||"")).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     if (an && String(o.ano) !== String(an)) return false;
+    if (rd) {
+      const rods = _extractRodoviasDeObra(o);
+      if (!rods.includes(rd)) return false;
+    }
     if (st) {
       const s = ((o.situacao_eobras||"") + " " + (o.situacao_real||"")).toLowerCase();
       if (st === "concluido"  && !(s.includes("conclu") || s.includes("inaug"))) return false;
@@ -4135,11 +4210,19 @@ async function exportPDF(title, content) {
     } else if (block.type === "table" && block.headers && block.rows && doc.autoTable) {
       doc.autoTable({
         head: [block.headers], body: block.rows,
-        startY: y, margin: { left: margin, right: margin, bottom: footerH + 5 },
+        startY: y,
+        // margin.top é CRÍTICO: sem isso, em quebra de página o cabeçalho do PDF é
+        // sobreposto pela tabela. headerH=28 + folga de 8 = 36mm de margem superior.
+        margin: { top: headerH + 8, left: margin, right: margin, bottom: footerH + 5 },
         headStyles: { fillColor: [26, 43, 94], textColor: 255, fontStyle: "bold", fontSize: 9 },
         bodyStyles: { fontSize: 8, textColor: [26, 37, 64] },
         alternateRowStyles: { fillColor: [245, 247, 251] },
-        didDrawPage: () => { addHeader(); addFooter(); }
+        didDrawPage: (data) => {
+          // Em todas as páginas (inclusive a primeira) o autoTable chama este hook
+          // ANTES de desenhar o conteúdo da página → header/footer ficam atrás.
+          addHeader();
+          addFooter();
+        }
       });
       y = doc.lastAutoTable.finalY + 6;
     }
@@ -4147,6 +4230,176 @@ async function exportPDF(title, content) {
   addFooter();
   doc.save(`${title.replace(/[^a-zA-Z0-9]/g, "_")}_SEINFRA_${new Date().toISOString().slice(0, 10)}.pdf`);
 }
+
+/* ── INVENTÁRIO RODOVIÁRIO — agrupado por rodovia, com totais e faixas ── */
+async function gerarInventarioRodoviario() {
+  const rod = HUB.state.rodovias || [];
+  // Agrupa trechos por rodovia
+  const grouped = {};
+  rod.forEach(t => {
+    const n = (t.rodovia || "").trim().toUpperCase();
+    if (!n) return;
+    if (!grouped[n]) grouped[n] = { nome: n, trechos: [], faixas: new Set(), sits: new Set(), extTotal: 0 };
+    const g = grouped[n];
+    g.trechos.push(t);
+    g.extTotal += (t.extensao || 0);
+    if (t.faixaDominio && String(t.faixaDominio).trim()) g.faixas.add(String(t.faixaDominio).trim());
+    const k = _normSit(t.pavimentacao);
+    if (k) g.sits.add(_labSit(k));
+  });
+  const lista = Object.values(grouped).sort((a, b) => a.nome.localeCompare(b.nome));
+  const extTotal = lista.reduce((s, g) => s + g.extTotal, 0);
+  const totTrechos = lista.reduce((s, g) => s + g.trechos.length, 0);
+  // KPIs de situação consolidados
+  const sitKm = { PAV: 0, DUP: 0, LEI: 0, PLA: 0, IMP: 0, TRV: 0 };
+  rod.forEach(t => { const k = _normSit(t.pavimentacao); if (k) sitKm[k] = (sitKm[k] || 0) + (t.extensao || 0); });
+
+  const content = [
+    { type: "heading", value: "1. Resumo Geral" },
+    { type: "text", value: `Rodovias estaduais cadastradas: ${lista.length}` },
+    { type: "text", value: `Total de trechos: ${totTrechos}` },
+    { type: "text", value: `Extensão total da malha: ${fmtNum(extTotal, 2)} km` },
+    { type: "text", value: `Data de emissão: ${new Date().toLocaleDateString("pt-BR")}` },
+    { type: "heading", value: "2. Distribuição por situação (km)" },
+    {
+      type: "table",
+      headers: ["Situação", "Extensão (km)", "% da malha"],
+      rows: Object.entries(sitKm).filter(([, v]) => v > 0)
+        .sort((a, b) => b[1] - a[1])
+        .map(([k, v]) => [_labSit(k), fmtNum(v, 2), (extTotal > 0 ? (v / extTotal * 100).toFixed(1) : "0") + "%"]),
+    },
+    { type: "heading", value: "3. Síntese por rodovia" },
+    {
+      type: "table",
+      headers: ["Rodovia", "Trechos", "Extensão (km)", "Situações"],
+      rows: lista.map(g => [g.nome, g.trechos.length, fmtNum(g.extTotal, 2), [...g.sits].join(", ") || "—"]),
+    },
+    { type: "heading", value: "4. Detalhamento por rodovia" },
+  ];
+
+  // Uma seção por rodovia
+  lista.forEach(g => {
+    content.push({ type: "heading", value: `${g.nome} — ${g.trechos.length} trecho${g.trechos.length > 1 ? "s" : ""} · ${fmtNum(g.extTotal, 2)} km` });
+    if (g.faixas.size) {
+      const faixasArr = [...g.faixas];
+      content.push({ type: "text", value: "Faixa(s) de domínio: " + faixasArr.join("  |  ") });
+    }
+    content.push({
+      type: "table",
+      headers: ["Código SNV", "Início", "Fim", "Ext. (km)", "Pavimento", "Faixa Dom.", "Situação"],
+      rows: g.trechos
+        .sort((a, b) => (parseFloat(a.km_inicial || 0) - parseFloat(b.km_inicial || 0)) || 0)
+        .map(t => [
+          t.codigo || "—",
+          (t.inicio || "—").toString().slice(0, 32),
+          (t.final || "—").toString().slice(0, 32),
+          fmtNum(t.extensao || 0, 2),
+          (t.revestimento || "—").toString().slice(0, 20),
+          (t.faixaDominio || "—").toString().slice(0, 22),
+          _labSit(_normSit(t.pavimentacao)) || (t.pavimentacao || "—"),
+        ]),
+    });
+  });
+
+  await exportPDF("Inventário das Rodovias Estaduais — SEINFRA/AM", content);
+}
+
+/* ── BRIEFING DE OBRA — pdf com timbrado, por contrato ── */
+async function gerarBriefingObra(obraOrIndex) {
+  let o = obraOrIndex;
+  if (typeof obraOrIndex === "number") {
+    o = (HUB.state.contratosRod || HUB.state.contratosObra || [])[obraOrIndex];
+  } else if (typeof obraOrIndex === "string") {
+    // chave = índice no contratosRod
+    const list = HUB.state.contratosRod || [];
+    o = list[parseInt(obraOrIndex, 10)] || list.find(c => c.contrato === obraOrIndex);
+  }
+  if (!o) { alert("Obra não encontrada."); return; }
+
+  const fmtPct = v => (v == null || v === "" ? "—" : (Number(v).toFixed(1) + "%"));
+  const content = [
+    { type: "heading", value: "1. Identificação" },
+    { type: "text", value: "Contrato/Convênio: " + (o.contrato || "—") },
+    { type: "text", value: "Objeto: " + (o.objeto || "—") },
+    { type: "text", value: "Município(s): " + (o.municipio || "—") },
+    { type: "text", value: "Contratada / Convenente: " + (o.empresa || "—") },
+    { type: "text", value: "Tipo: " + (o.tipo || "—") + "    Segmento: " + (o.segmento || "—") },
+    { type: "heading", value: "2. Dados Financeiros" },
+    { type: "text", value: "Valor global da obra (com aditivos): " + fmtBRL(o.valor || 0) },
+    { type: "text", value: "Avanço físico: " + fmtPct(o.pct_fisico) },
+    { type: "heading", value: "3. Vigência e Situação" },
+    { type: "text", value: "Ano de contratação: " + (o.ano || "—") },
+    { type: "text", value: "Situação (E-Obras): " + (o.situacao_eobras || "—") },
+    { type: "text", value: "Situação real: " + (o.situacao_real || "—") },
+  ];
+  if (o.resumo) {
+    content.push({ type: "heading", value: "4. Resumo do Objeto" });
+    content.push({ type: "text", value: o.resumo });
+  }
+  if (o.localizacao) {
+    content.push({ type: "heading", value: "5. Localização" });
+    content.push({ type: "text", value: o.localizacao });
+  }
+  const titulo = "Briefing de Obra — " + (o.contrato || (o.objeto || "").slice(0, 40));
+  await exportPDF(titulo, content);
+}
+
+/* ── BRIEFING DE RODOVIA — pdf com timbrado, por AM-XXX ── */
+async function gerarBriefingRodovia(nome) {
+  const r = (HUB.state.rodAgrupadas || []).find(x => x.rodovia === nome);
+  if (!r) { alert("Rodovia não encontrada."); return; }
+  const obras = _obrasDaRodovia(nome, HUB.state.contratosRod || []);
+  const extTotal = r.trechos.reduce((s, t) => s + (t.extensao || 0), 0);
+  const totInv = obras.reduce((s, o) => s + o.valor, 0);
+  const faixas = [...new Set(r.trechos.map(t => (t.faixaDominio || "").trim()).filter(Boolean))];
+  const sits = [...new Set(r.trechos.map(t => _labSit(_normSit(t.pavimentacao))).filter(Boolean))];
+
+  const content = [
+    { type: "heading", value: "1. Identificação" },
+    { type: "text", value: "Rodovia: " + nome },
+    { type: "text", value: "Trechos cadastrados: " + r.trechos.length },
+    { type: "text", value: "Extensão total: " + fmtNum(extTotal, 2) + " km" },
+    { type: "text", value: "Início: " + (r.trechos[0]?.inicio || "—") },
+    { type: "text", value: "Fim: " + (r.trechos[r.trechos.length - 1]?.final || "—") },
+    { type: "text", value: "Situações presentes: " + (sits.join(", ") || "—") },
+    { type: "text", value: "Faixa(s) de domínio: " + (faixas.join("  |  ") || "—") },
+    { type: "heading", value: "2. Trechos" },
+    {
+      type: "table",
+      headers: ["Código SNV", "Início", "Fim", "Ext. (km)", "Pavimento", "Situação"],
+      rows: r.trechos.map(t => [
+        t.codigo || "—",
+        (t.inicio || "—").toString().slice(0, 32),
+        (t.final || "—").toString().slice(0, 32),
+        fmtNum(t.extensao || 0, 2),
+        (t.revestimento || "—").toString().slice(0, 22),
+        _labSit(_normSit(t.pavimentacao)) || (t.pavimentacao || "—"),
+      ]),
+    },
+    { type: "heading", value: `3. Obras vinculadas (${obras.length}) — Investimento total: ${_fmtBRLShort(totInv)}` },
+  ];
+  if (obras.length) {
+    content.push({
+      type: "table",
+      headers: ["Contrato", "Objeto", "Valor", "Município", "Ano", "Situação"],
+      rows: obras.sort((a, b) => b.valor - a.valor).map(o => [
+        o.contrato || "—",
+        (o.objeto || "—").slice(0, 60),
+        _fmtBRLShort(o.valor),
+        (o.municipio || "—").toString().slice(0, 22),
+        o.ano || "—",
+        (o.situacao_eobras || o.situacao_real || "—").toString().slice(0, 22),
+      ]),
+    });
+  } else {
+    content.push({ type: "text", value: "Sem obras rodoviárias vinculadas no momento." });
+  }
+  await exportPDF(`Briefing da Rodovia ${nome} — SEINFRA/AM`, content);
+}
+
+// Expostos para onclick dos cards
+window.gerarBriefingObra = gerarBriefingObra;
+window.gerarBriefingRodovia = gerarBriefingRodovia;
 
 async function exportCurrentPDF() {
   const id = HUB.activeModule;
@@ -4169,12 +4422,7 @@ async function exportCurrentPDF() {
     return;
   }
   if (id === "rodovias") {
-    const rod = HUB.state.rodovias || [];
-    await exportPDF("Inventário rodoviário — SEINFRA/AM", [
-      { type: "heading", value: "Resumo" },
-      { type: "text", value: `Rodovias cadastradas: ${rod.length}.` },
-      { type: "table", headers: ["Código", "Rodovia", "Extensão (km)", "Situação"], rows: rod.slice(0, 80).map(r => [r.codigo || "—", (r.rodovia || r.nome || "—").toString().slice(0, 40), fmtNum(parseNum(r.extensao_km || r.extensao || r.km), 1), (r.situacao || "—").toString()]) }
-    ]);
+    await gerarInventarioRodoviario();
     return;
   }
   // genérico
