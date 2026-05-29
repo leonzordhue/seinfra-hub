@@ -5482,14 +5482,17 @@ async function exportObraPDF(idx) {
 // do HUB.state em tempo real (dados já carregados).
 function _atlasMunPopup(p) {
   const nome = p.NM_MUN || p.nome || p.NAME || "Município";
-  const nomeUp = nome.toUpperCase();
+  // Match robusto via _normMun (accent-fold, repara mojibake, upper, trim).
+  // Sem isso, "Alvarães" do geojson não casa com "ALVARÃES" da planilha
+  // quando o geojson tem mojibake.
+  const nomeKey = _normMun(nome);
   const ibge = p.CD_MUN || p.geocodigo || p.CODIGO || "";
   const obrasCt = (HUB.state.contratos || []).filter(c =>
-    (c.municipio || "").toString().toUpperCase().includes(nomeUp));
+    _normMun(c.municipio || "").includes(nomeKey));
   const ramaisCt = (HUB.state.ramaisSheet || []).filter(r =>
-    (r.municipio || "") === nomeUp);
+    _normMun(r.municipio || "") === nomeKey);
   const aeroCt = (typeof AE_DATA !== "undefined" ? AE_DATA : []).filter(a =>
-    (a.municipio || "").toUpperCase() === nomeUp);
+    _normMun(a.municipio || "") === nomeKey);
   const extRamais = ramaisCt.reduce((s, r) => s + (r.extensao || 0), 0);
   const invObras = obrasCt.reduce((s, o) => s + parseNum(
     o.valor_global_inicial_aditivos_reajustes_da_obra ||
@@ -5815,6 +5818,11 @@ async function atlasLoadLayer(map, key) {
       ? { weight: 2.5, opacity: 1, fillOpacity: 0.14 }
       : { weight: (baseStyle.weight || 2.4) + 1.5, opacity: 1 };
 
+    // IMPORTANTE: bindPopup recebe FUNÇÃO em vez de string para que o popup
+    // seja regenerado a cada clique. Sem isso, popups agregando dados de
+    // HUB.state.contratos/ramaisSheet ficam congelados nos valores que
+    // existiam no momento do load do mapa (geralmente zero, pois os dados
+    // chegam em background depois).
     if (def.type === "pointIcon") {
       const ico = def.icon || "●";
       const col = def.color || "#1A2B5E";
@@ -5827,14 +5835,14 @@ async function atlasLoadLayer(map, key) {
             iconSize: [26,26], iconAnchor: [13,13], popupAnchor: [0, -13]
           })
         }),
-        onEachFeature: (f, lyr) => lyr.bindPopup(popHtml(f.properties || {}), { maxWidth: 320 })
+        onEachFeature: (f, lyr) => lyr.bindPopup(() => popHtml(f.properties || {}), { maxWidth: 320 })
       });
     } else {
       layer = L.geoJSON(gj, {
         filter: def.filter,
         style: baseStyle,
         onEachFeature: (f, lyr) => {
-          lyr.bindPopup(popHtml(f.properties || {}), { maxWidth: 360 });
+          lyr.bindPopup(() => popHtml(f.properties || {}), { maxWidth: 360 });
           lyr.on("mouseover", e => e.target.setStyle(hoverStyle));
           lyr.on("mouseout",  e => e.target.setStyle(baseStyle));
         }
