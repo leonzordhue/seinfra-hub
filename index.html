@@ -1252,25 +1252,38 @@ async function loadRodoviasSheet() {
   } catch (e) { console.warn("loadRodoviasSheet:", e); }
 }
 
-async function loadCoreData() {
-  try {
-    // GERAL via Sheets API v4 (CORS-friendly). O gviz lê a aba 'Planilha1' que tem
-    // uma QUERY filtrando, devolvendo só 4 linhas; export?format=csv funciona mas é
-    // bloqueado por CORS no browser. Sheets API v4 lendo a aba 'Planilha Geral'
-    // resolve ambos os problemas (478 obras completas, CORS OK).
-    const [, ger, sin, ic] = await Promise.allSettled([
-      loadRodoviasSheet(),                                       // gviz (50 rodovias)
-      sheetsApiFetch(SHEETS.geral.id, "Planilha Geral!A:DB"),    // Sheets API v4
-      gvizFetch(SHEETS.sinistros.id, SHEETS.sinistros.gid),
-      gvizFetch(SHEETS.icm.id,       SHEETS.icm.gid),
-    ]);
-    if (ger.status === "fulfilled") HUB.state.contratos = ger.value;
-    if (sin.status === "fulfilled") HUB.state.sinistros = sin.value;
-    if (ic.status  === "fulfilled") HUB.state.icm       = ic.value;
-    HUB.state.lastUpdate = new Date();
-  } catch (e) {
-    console.warn("loadCoreData", e);
+// Single-flight: se já existe um carregamento em andamento (ou concluído),
+// retorna a MESMA promise para evitar fetches duplicados quando o usuário
+// navega para um módulo antes dos dados do home terminarem de chegar.
+let _loadCoreDataPromise = null;
+function loadCoreData() {
+  if (_loadCoreDataPromise) return _loadCoreDataPromise;
+  // Se os dados já estão em cache (state populado), retorna promise resolvida.
+  if (HUB.state.contratos && HUB.state.rodovias) {
+    _loadCoreDataPromise = Promise.resolve();
+    return _loadCoreDataPromise;
   }
+  _loadCoreDataPromise = (async () => {
+    try {
+      // GERAL via Sheets API v4 (CORS-friendly). O gviz lê a aba 'Planilha1' que tem
+      // uma QUERY filtrando, devolvendo só 4 linhas; export?format=csv funciona mas é
+      // bloqueado por CORS no browser. Sheets API v4 lendo a aba 'Planilha Geral'
+      // resolve ambos os problemas (478 obras completas, CORS OK).
+      const [, ger, sin, ic] = await Promise.allSettled([
+        loadRodoviasSheet(),                                       // gviz (50 rodovias)
+        sheetsApiFetch(SHEETS.geral.id, "Planilha Geral!A:DB"),    // Sheets API v4
+        gvizFetch(SHEETS.sinistros.id, SHEETS.sinistros.gid),
+        gvizFetch(SHEETS.icm.id,       SHEETS.icm.gid),
+      ]);
+      if (ger.status === "fulfilled") HUB.state.contratos = ger.value;
+      if (sin.status === "fulfilled") HUB.state.sinistros = sin.value;
+      if (ic.status  === "fulfilled") HUB.state.icm       = ic.value;
+      HUB.state.lastUpdate = new Date();
+    } catch (e) {
+      console.warn("loadCoreData", e);
+    }
+  })();
+  return _loadCoreDataPromise;
 }
 
 /* ═════════════════════════════════════════════════════════════════
@@ -1569,12 +1582,28 @@ function hexAlpha(hex, alpha) {
 }
 
 async function initHome() {
-  // garantia: dados core
-  if (!HUB.state.rodovias && !HUB.state.contratos) await loadCoreData();
+  // Render imediato com placeholders. Se os dados ainda estão chegando,
+  // espera a promise em curso (sem disparar novo fetch). Quando data chegar,
+  // os populates rodam de novo via _refreshHomeIfActive().
   populateHeroKPIs();
   populateModuleCardSubs();
   populateTimeline();
   initHomeMap();
+  if (HUB.dataReady && (!HUB.state.contratos || !HUB.state.rodovias)) {
+    try { await HUB.dataReady; } catch (e) {}
+    // Re-popula com os dados reais (só se ainda na home)
+    if (!HUB.activeModule) {
+      populateHeroKPIs(); populateModuleCardSubs(); populateTimeline();
+    }
+  }
+}
+
+// Re-render dos KPIs/cards/timeline da home — chamado quando o
+// loadCoreData em background termina depois da home já estar visível.
+function _refreshHomeIfActive() {
+  if (HUB.activeModule) return; // usuário já mudou de módulo
+  try { populateHeroKPIs(); populateModuleCardSubs(); populateTimeline(); }
+  catch (e) { console.warn("_refreshHomeIfActive:", e); }
 }
 
 function populateHeroKPIs() {
@@ -3151,11 +3180,6 @@ function getViarioHTML() {
 
       <!-- ABA 1: VISÃO GERAL -->
       <div class="tab-content active" id="via-vag">
-        <div style="background:#FEF3DC;border:1px solid #F5C878;border-radius:8px;padding:0.55rem 0.85rem;font-size:0.72rem;color:var(--cinza-med);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
-          <span style="font-size:1rem">📋</span>
-          <span>Fonte: <strong>Relatório de Investimentos em Mobilidade — Governo Wilson Lima 2019–2026 (v5)</strong> · SEINFRA/DMOB · 78 contratos de viário urbano consolidados</span>
-        </div>
-
         <div class="chart-grid-2">
           <div>
             <div class="panel-title" style="margin-bottom:0.6rem">Capital × Interior — Distribuição de investimento</div>
@@ -5683,15 +5707,19 @@ async function exportCurrentPDF() {
 /* ═════════════════════════════════════════════════════════════════
    BOOT
    ═════════════════════════════════════════════════════════════════ */
-window.addEventListener("DOMContentLoaded", async () => {
-  // 1. dados core
-  await loadCoreData();
-  // 2. restaura ou home
+window.addEventListener("DOMContentLoaded", () => {
+  // 1. PRIMEIRO renderiza a home (placeholders) — paint instantâneo.
   HUB.restore();
-  // 3. liga listeners globais
+  // 2. liga listeners globais
   window.addEventListener("resize", () => {
     Object.values(HUB.state.maps).forEach(m => { try { m && m.invalidateSize(); } catch (e) {} });
   });
+  // 3. Dados core em background — quando chegarem, refresh dos KPIs da home.
+  //    HUB.dataReady é a promise compartilhada: initHome também a aguarda
+  //    para evitar fetch duplicado.
+  HUB.dataReady = loadCoreData().then(() => {
+    _refreshHomeIfActive();
+  }).catch(e => console.warn("loadCoreData (bg):", e));
 });
 </script>
 </body>
