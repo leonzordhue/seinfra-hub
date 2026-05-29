@@ -426,31 +426,45 @@
       font-size: 0.72rem; color: var(--cinza-med); line-height: 1.4;
       min-height: 32px;
     }
-    /* Estatística destacada dentro do card (padrão BI:
-       "34 rodovias estaduais / 3458 km de extensão") */
-    .module-card-stat {
-      display: flex; flex-direction: column; gap: .15rem;
-      margin-top: .55rem; padding-top: .55rem;
-      border-top: 1px dashed var(--borda);
+    /* ─────────────────────────────────────
+       Resumo geral (faixa de KPIs no topo da home)
+       ───────────────────────────────────── */
+    .home-resumo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
     }
-    .module-card-stat-row {
-      display: flex; align-items: baseline; gap: .35rem;
+    .home-resumo-item {
+      background: #fff; border: 1px solid var(--borda);
+      border-radius: 12px; padding: 0.85rem 1rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
     }
-    .module-card-stat-val {
-      font-family: var(--font-head); font-size: 1.25rem; font-weight: 800;
-      color: var(--azul); line-height: 1; letter-spacing: -0.02em;
+    .home-resumo-item:hover {
+      box-shadow: 0 8px 24px rgba(26,43,94,0.10);
+      transform: translateY(-2px);
+      border-color: var(--azul-borda);
     }
-    .module-card-stat-lbl {
-      font-size: .65rem; color: var(--cinza-med);
-      font-weight: 600; letter-spacing: 0;
+    .home-resumo-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
     }
-    .module-card.k-verde    .module-card-stat-val { color: var(--verde, #2D8540); }
-    .module-card.k-amarelo  .module-card-stat-val { color: #D4A017; }
-    .module-card.k-laranja  .module-card-stat-val { color: #B45309; }
-    .module-card.k-ciano    .module-card-stat-val { color: #0E7490; }
-    .module-card.k-azul     .module-card-stat-val { color: #0077b6; }
-    .module-card.k-vermelho .module-card-stat-val { color: #C0392B; }
-    .module-card.k-roxo     .module-card-stat-val { color: #6C3483; }
+    .home-resumo-body { flex: 1; min-width: 0; }
+    .home-resumo-label {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--cinza-med);
+      margin-bottom: 0.1rem;
+    }
+    .home-resumo-val {
+      font-family: var(--font-head); font-size: 1.45rem; font-weight: 800;
+      color: var(--azul-dk); line-height: 1; letter-spacing: -0.02em;
+    }
+    .home-resumo-foot {
+      font-size: 0.7rem; color: var(--cinza-aux); margin-top: 0.15rem;
+    }
+    .home-resumo-foot span { font-weight: 700; color: var(--cinza-med); }
     .module-card-foot {
       display: flex; align-items: center; justify-content: space-between;
       margin-top: 0.7rem; gap: 0.4rem;
@@ -1670,19 +1684,12 @@ function refreshModule() {
    HOME (Dashboard)
    ═════════════════════════════════════════════════════════════════ */
 function getHomeHTML() {
-  // Cor accent por módulo — usado no padrão "k-*"
-  const moduleAccent = {
-    rodovias: "", ramais: "k-verde", viario: "k-laranja",
-    aerodromos: "k-ciano", terminais: "k-azul",
-    obras: "k-vermelho", atlas: "", planejamento: "k-roxo",
-    bi: "k-amarelo", briefings: "k-verde",
-  };
+  // Cards limpos — sem stats embutidos. KPIs vão num resumo geral acima.
   const cards = Object.values(HUB.modules).map(m => `
-    <div class="module-card ${moduleAccent[m.id] || ''}" onclick="loadModule('${m.id}')">
+    <div class="module-card" onclick="loadModule('${m.id}')">
       <div class="module-card-icon" style="background:${hexAlpha(m.color, 0.12)}; color:${m.color}">${m.icon}</div>
       <div class="module-card-name">${m.label}</div>
       <div class="module-card-sub" id="mc-sub-${m.id}">Carregando dados…</div>
-      <div class="module-card-stat" id="mc-stat-${m.id}" style="display:none"></div>
       <div class="module-card-foot">
         <span class="module-card-chip" id="mc-chip-${m.id}">Disponível</span>
         <div class="module-card-arrow">&rarr;</div>
@@ -1714,9 +1721,83 @@ function getHomeHTML() {
         </div>
       </section>
 
+      <!-- ─── RESUMO GERAL ──────────────────────────────────────────
+           Painel sintético com totais-chave de todos os módulos.
+           Substitui a estratégia anterior de embutir KPIs em cada card. -->
+      <div class="section-title-wrap">
+        <div class="section-title"><span class="section-title-bar"></span>Resumo geral</div>
+        <div class="section-title-sub">Totais consolidados em tempo real</div>
+      </div>
+      <div class="home-resumo">
+        <div class="home-resumo-item">
+          <div class="home-resumo-icon" style="background:#1A2B5E22;color:#1A2B5E">🛣</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Rodovias Estaduais</div>
+            <div class="home-resumo-val" id="rg-rod">—</div>
+            <div class="home-resumo-foot"><span id="rg-rod-ext">—</span> km de extensão</div>
+          </div>
+        </div>
+        <div class="home-resumo-item">
+          <div class="home-resumo-icon" style="background:#2D854022;color:#2D8540">🌿</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Ramais</div>
+            <div class="home-resumo-val" id="rg-ram">—</div>
+            <div class="home-resumo-foot"><span id="rg-ram-mun">—</span> municípios</div>
+          </div>
+        </div>
+        <div class="home-resumo-item">
+          <div class="home-resumo-icon" style="background:#B4530922;color:#B45309">🏙</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Viário Urbano</div>
+            <div class="home-resumo-val" id="rg-via">78</div>
+            <div class="home-resumo-foot">contratos consolidados</div>
+          </div>
+        </div>
+        <div class="home-resumo-item">
+          <div class="home-resumo-icon" style="background:#0E749022;color:#0E7490">✈</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Aeródromos</div>
+            <div class="home-resumo-val" id="rg-aero">—</div>
+            <div class="home-resumo-foot"><span id="rg-aero-mun">—</span> municípios atendidos</div>
+          </div>
+        </div>
+        <div class="home-resumo-item">
+          <div class="home-resumo-icon" style="background:#0077b622;color:#0077b6">⚓</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Terminais Flutuantes</div>
+            <div class="home-resumo-val" id="rg-term">—</div>
+            <div class="home-resumo-foot"><span id="rg-term-mun">—</span> municípios atendidos</div>
+          </div>
+        </div>
+        <div class="home-resumo-item">
+          <div class="home-resumo-icon" style="background:#C0392B22;color:#C0392B">🏗</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Obras / Contratos</div>
+            <div class="home-resumo-val" id="rg-ct">—</div>
+            <div class="home-resumo-foot"><span id="rg-exec">—</span> em execução</div>
+          </div>
+        </div>
+        <div class="home-resumo-item">
+          <div class="home-resumo-icon" style="background:#D4A01722;color:#D4A017">💰</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Investimento Total</div>
+            <div class="home-resumo-val" id="rg-inv">—</div>
+            <div class="home-resumo-foot">contratado · todos contratos</div>
+          </div>
+        </div>
+        <div class="home-resumo-item">
+          <div class="home-resumo-icon" style="background:#6C348322;color:#6C3483">🗺</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Municípios</div>
+            <div class="home-resumo-val">62</div>
+            <div class="home-resumo-foot">do estado do Amazonas</div>
+          </div>
+        </div>
+      </div>
+
       <div class="section-title-wrap">
         <div class="section-title"><span class="section-title-bar"></span>Módulos disponíveis</div>
-        <div class="section-title-sub">${Object.keys(HUB.modules).length} módulos · estatísticas em tempo real</div>
+        <div class="section-title-sub">${Object.keys(HUB.modules).length} módulos · navegue para detalhes</div>
       </div>
       <div class="module-grid">${cards}</div>
 
@@ -1784,23 +1865,50 @@ function _refreshHomeIfActive() {
   catch (e) { console.warn("_refreshHomeIfActive:", e); }
 }
 
-// Stub mantido por compatibilidade — a faixa horizontal de KPIs foi
-// substituída pelos KPIs dentro de cada module-card (padrão BI).
-function populateHeroKPIs() { /* no-op */ }
-
-// Helper: monta o bloco de estatística destacada dentro do module-card.
-// Estilo BI: 2 linhas "valor + rótulo" (ex.: "34  Rodovias Estaduais",
-// "3.458  km de Extensão"). Aceita 1 ou 2 stats por módulo.
-function _setModStat(mid, stats) {
-  const el = document.getElementById(`mc-stat-${mid}`);
-  if (!el) return;
-  if (!stats || !stats.length) { el.style.display = "none"; return; }
-  el.style.display = "flex";
-  el.innerHTML = stats.map(([val, lbl]) => `
-    <div class="module-card-stat-row">
-      <span class="module-card-stat-val">${val}</span>
-      <span class="module-card-stat-lbl">${lbl}</span>
-    </div>`).join("");
+// Popula o painel "Resumo geral" no topo da home com totais consolidados
+// de cada módulo. Substitui a antiga faixa horizontal de mini-KPIs.
+function populateHeroKPIs() {
+  const setEl = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const rod = HUB.state.rodovias || [];
+  const ct  = HUB.state.contratos || [];
+  // Rodovias
+  const ext = rod.reduce((acc, r) => acc + parseNum(r.extensao_km || r.extensao || r.km), 0);
+  const uniqRod = new Set(rod.map(r => (r.rodovia || r.nome || "").toString().toUpperCase().trim()).filter(Boolean));
+  setEl("rg-rod", uniqRod.size ? fmtNum(uniqRod.size) : "—");
+  setEl("rg-rod-ext", ext ? fmtNum(Math.round(ext)) : "—");
+  // Ramais (via geojson lazy)
+  const ram = HUB.state.geojsons[GEOJSON_FILES.ramais];
+  if (ram) {
+    const feats = ram.features || [];
+    setEl("rg-ram", fmtNum(feats.length));
+    const muns = new Set(feats.map(f => _normMun(f.properties?.MUNICIPIO || f.properties?.municipio || "")).filter(Boolean));
+    setEl("rg-ram-mun", fmtNum(muns.size));
+  } else {
+    setEl("rg-ram", "1.200+");
+    setEl("rg-ram-mun", "—");
+  }
+  // Aeródromos
+  if (typeof AE_DATA !== "undefined") {
+    setEl("rg-aero", fmtNum(AE_DATA.length));
+    setEl("rg-aero-mun", fmtNum(new Set(AE_DATA.map(a => a.municipio)).size));
+  }
+  // Terminais
+  if (typeof TM_DATA !== "undefined") {
+    setEl("rg-term", fmtNum(TM_DATA.length));
+    setEl("rg-term-mun", fmtNum(new Set(TM_DATA.map(t => t.localidade)).size));
+  }
+  // Obras / Investimento
+  setEl("rg-ct", fmtNum(ct.length));
+  const exec = ct.filter(r => {
+    const s = (r.situacao_eobras || r.situacao_real || r.situacao || "").toString().toLowerCase();
+    return s.includes("vigent") || s.includes("execu") || s.includes("andamento");
+  });
+  setEl("rg-exec", fmtNum(exec.length));
+  const inv = ct.reduce((a, r) => a + parseNum(
+    r.valor_global_inicial_aditivos_reajustes_da_obra ||
+    r.valor_global_inicial_aditivos_reajustes ||
+    r.valor_atualizado || r.valor_contratual || r.valor || 0), 0);
+  setEl("rg-inv", inv ? (inv >= 1e9 ? "R$ " + (inv/1e9).toFixed(2) + " bi" : "R$ " + (inv/1e6).toFixed(1) + " mi") : "—");
 }
 
 function populateModuleCardSubs() {
@@ -1810,77 +1918,16 @@ function populateModuleCardSubs() {
     if (s) s.textContent = sub;
     if (c) c.textContent = chip || "Disponível";
   };
-  const rod = HUB.state.rodovias || [];
-  const ct  = HUB.state.contratos || [];
-  // ─── RODOVIAS ─────────────────────────────────────────
-  const ext = rod.reduce((acc, r) => acc + parseNum(r.extensao_km || r.extensao || r.km), 0);
-  const uniqRod = new Set(rod.map(r => (r.rodovia || r.nome || "").toString().toUpperCase().trim()).filter(Boolean));
-  setSub("rodovias", "Rede estadual e federal");
-  _setModStat("rodovias", uniqRod.size ? [
-    [fmtNum(uniqRod.size), "Rodovias Estaduais"],
-    [fmtNum(Math.round(ext)), "km de Extensão"],
-  ] : null);
-  // ─── RAMAIS ───────────────────────────────────────────
-  const ram = HUB.state.geojsons[GEOJSON_FILES.ramais];
-  const ramCount = ram ? (ram.features || []).length : null;
-  const ramMuns = ram ? new Set((ram.features || []).map(f => (f.properties?.MUNICIPIO || f.properties?.municipio || "").toUpperCase()).filter(Boolean)).size : 0;
-  setSub("ramais", "Atlas de ramais por município");
-  _setModStat("ramais", [
-    [ramCount ? fmtNum(ramCount) : "1.200+", "Ramais"],
-    ...(ramMuns ? [[fmtNum(ramMuns), "Municípios"]] : []),
-  ]);
-  // ─── VIÁRIO ───────────────────────────────────────────
-  setSub("viario", "Sistema viário urbano municipal");
-  _setModStat("viario", [
-    ["78", "Contratos consolidados"],
-    ["62", "Municípios"],
-  ]);
-  // ─── AERÓDROMOS ───────────────────────────────────────
-  if (typeof AE_DATA !== "undefined") {
-    const aeMuns = new Set(AE_DATA.map(a => a.municipio)).size;
-    setSub("aerodromos", "Aeródromos estaduais e federais");
-    _setModStat("aerodromos", [
-      [fmtNum(AE_DATA.length), "Aeródromos"],
-      [fmtNum(aeMuns), "Municípios atendidos"],
-    ]);
-  } else {
-    setSub("aerodromos", "Pontos cadastrados com infraestrutura");
-    _setModStat("aerodromos", null);
-  }
-  // ─── TERMINAIS ────────────────────────────────────────
-  if (typeof TM_DATA !== "undefined") {
-    const tmMuns = new Set(TM_DATA.map(t => t.localidade)).size;
-    setSub("terminais", "Terminais hidroviários flutuantes");
-    _setModStat("terminais", [
-      [fmtNum(TM_DATA.length), "Terminais Flutuantes"],
-      [fmtNum(tmMuns), "Municípios atendidos"],
-    ]);
-  } else {
-    setSub("terminais", "Terminais fluviais e portos");
-    _setModStat("terminais", null);
-  }
-  // ─── OBRAS ────────────────────────────────────────────
-  const exec = ct.filter(r => {
-    const s = (r.situacao_eobras || r.situacao_real || r.situacao || "").toString().toLowerCase();
-    return s.includes("vigent") || s.includes("execu") || s.includes("andamento");
-  });
-  setSub("obras", "Contratos e obras em execução");
-  _setModStat("obras", ct.length ? [
-    [fmtNum(ct.length), "Contratos cadastrados"],
-    [fmtNum(exec.length), "Em execução"],
-  ] : null);
-  // ─── ATLAS ────────────────────────────────────────────
+  setSub("rodovias", "Rede estadual e federal — visão geral, quadro, investimentos");
+  setSub("ramais", "Atlas de ramais por município — busca, mapa, obras");
+  setSub("viario", "Sistema viário urbano municipal — 62 municípios");
+  setSub("aerodromos", "Aeródromos estaduais (SEINFRA) e públicos federais");
+  setSub("terminais", "Terminais hidroviários flutuantes nas comunidades");
+  setSub("obras", "Contratos e obras em execução — gestão executiva");
   setSub("atlas", "Camadas geoespaciais toggleáveis");
-  _setModStat("atlas", [["9", "Camadas integradas"]]);
-  // ─── PLANEJAMENTO ─────────────────────────────────────
   setSub("planejamento", "Metas e priorização orçamentária");
-  _setModStat("planejamento", null);
-  // ─── BI ───────────────────────────────────────────────
-  setSub("bi", "Indicadores consolidados + alertas");
-  _setModStat("bi", null);
-  // ─── BRIEFINGS ────────────────────────────────────────
-  setSub("briefings", "PDFs executivos por obra");
-  _setModStat("briefings", ct.length ? [[fmtNum(ct.length), "Briefings disponíveis"]] : null);
+  setSub("bi", "Indicadores consolidados e alertas");
+  setSub("briefings", "PDFs executivos por obra · timbrado oficial");
 }
 
 function populateTimeline() {
@@ -2932,7 +2979,13 @@ async function _loadRamaisSheet() {
       ponto_referencia: r.ponto_de_referencia || "",
       local_inicio: r.local_de_inicio || "",
       local_termino: r.local_termino || "",
-      municipio: (r.municipio || "").toString().toUpperCase().trim(),
+      // Normaliza município: remove NBSP / zero-width / espaços duplicados
+      // (sem isso, "MANAUS" e "MANAUS " deduplicam para 2 entradas → 63 ao
+      // invés dos 62 oficiais do AM).
+      municipio: (r.municipio || "").toString()
+        .replace(/ |​|‌|‍|﻿/g, " ")
+        .replace(/\s+/g, " ")
+        .toUpperCase().trim(),
       extensao: parseNum(r.extensao_km || r.extensao || 0),
       latitude_ini: parseFloat(r.latitude_inicial) || null,
       longitude_ini: parseFloat(r.longitude_inicial) || null,
@@ -3008,7 +3061,8 @@ function _buildRamTopKpis() {
   const ramais = HUB.state.ramaisSheet || [];
   const obras = HUB.state.contratosRam || [];
   const ext = ramais.reduce((s,r) => s + (r.extensao || 0), 0);
-  const muns = new Set(ramais.map(r => r.municipio).filter(Boolean));
+  // Dedup por chave normalizada (mesmo fix aplicado em _buildRamQuadro)
+  const muns = new Set(ramais.map(r => r.municipio).filter(Boolean).map(_normMun));
   const tot = obras.reduce((s,o) => s + o.valor, 0);
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   set("rmk-tot", fmtNum(ramais.length));
@@ -3147,7 +3201,17 @@ function _buildRamGeral() {
 /* ABA 2: QUADRO DE RAMAIS */
 function _buildRamQuadro() {
   const ramais = HUB.state.ramaisSheet || [];
-  const muns = [...new Set(ramais.map(r => r.municipio).filter(Boolean))].sort();
+  // Dedup robusto: agrupa por chave normalizada (sem acentos/caso) e mantém
+  // o primeiro nome encontrado. Sem isso, variações de acentuação/espaçamento
+  // criam municípios fantasmas (ex.: 63 ao invés de 62 oficiais do AM).
+  const munMap = new Map();
+  ramais.forEach(r => {
+    const m = r.municipio;
+    if (!m) return;
+    const key = _normMun(m);
+    if (!munMap.has(key)) munMap.set(key, m);
+  });
+  const muns = [...munMap.values()].sort();
   const sel = document.getElementById("ramMunSel");
   if (sel) sel.innerHTML = `<option value="">Município (todos · ${muns.length})</option>` + muns.map(m => `<option value="${m}">${m}</option>`).join("");
   HUB.state.ramaisAtuais = ramais;
@@ -3284,21 +3348,30 @@ window.selectRamal = async function(key) {
   }, 100);
 };
 
+// Bbox do Amazonas: lat [-10, 3], lon [-73, -56]. Coordenadas FORA disso são
+// lixo/zero/swap e seriam o ponto vermelho "no meio do oceano" reclamado.
+function _coordValidaAM(lat, lon) {
+  if (lat == null || lon == null) return false;
+  const la = Number(lat), lo = Number(lon);
+  if (!isFinite(la) || !isFinite(lo)) return false;
+  if (la === 0 && lo === 0) return false;
+  return (la >= -10 && la <= 3 && lo >= -73 && lo <= -56);
+}
+
 async function _renderRamQuadroMap(r) {
   const map = mkMap("ramQuadroMap", { center: [-4, -62], zoom: 6 });
   if (!map) return;
   HUB.state.maps = HUB.state.maps || {};
   HUB.state.maps.ramQuadroMap = map;
 
-  let bounds = null;
-  // Tenta o traçado real via geojson
+  let geoBounds = null;
+  // 1) Tenta o traçado real via geojson — fonte preferencial
   const gj = await loadGeoJSON(GEOJSON_FILES.ramais);
   if (gj) {
     const feats = (gj.features || []).filter(f => {
       const p = f.properties || {};
-      // Múltiplas variantes de chave para encoding inconsistente
-      const cods = [p["CÓDIGO"], p["CODIGO"], p["CÓDIGO"], p.codigo].map(v => (v||"").toString().trim().toUpperCase());
-      const nums = [p["Número"], p["Numero"], p["Número"], p["Número_2"], p.numero].map(v => String(v||"").trim());
+      const cods = [p["CÓDIGO"], p["CODIGO"], p.codigo].map(v => (v||"").toString().trim().toUpperCase());
+      const nums = [p["Número"], p["Numero"], p["Número_2"], p.numero].map(v => String(v||"").trim());
       return cods.includes(r.codigo.toUpperCase()) && nums.includes(String(r.numero));
     });
     if (feats.length) {
@@ -3310,36 +3383,45 @@ async function _renderRamQuadroMap(r) {
           <div class="pop-row">Situação: ${htmlEscape(r.situacao||"—")}</div>
           <div class="pop-row">Revestimento: ${htmlEscape(r.revestimento||"—")}</div>`)
       }).addTo(map);
-      bounds = lyr.getBounds();
+      try { geoBounds = lyr.getBounds(); } catch (e) {}
     }
   }
 
-  // Marcador início
-  if (r.latitude_ini && r.longitude_ini) {
+  // 2) Marcadores início/fim — SOMENTE se as coordenadas forem válidas DENTRO DO AM.
+  //    Bug anterior: a planilha tem ramais com lat_fim=0 ou trocada → ponto no oceano
+  //    e bounds.extend() forçava o mapa a abrir até a vista do Brasil inteiro.
+  //    Agora: valida bbox AM antes; se traçado existe, EXIGE que o ponto esteja a
+  //    no máx 0,5° do bbox do traçado (evita pontos órfãos a centenas de km).
+  function _pontoNoTrecho(la, lo) {
+    if (!geoBounds) return _coordValidaAM(la, lo);
+    if (!_coordValidaAM(la, lo)) return false;
+    const sw = geoBounds.getSouthWest(), ne = geoBounds.getNorthEast();
+    return (la >= sw.lat - 0.5 && la <= ne.lat + 0.5 && lo >= sw.lng - 0.5 && lo <= ne.lng + 0.5);
+  }
+
+  let markersBounds = null;
+  if (_pontoNoTrecho(r.latitude_ini, r.longitude_ini)) {
     L.circleMarker([r.latitude_ini, r.longitude_ini], {
       radius: 9, color: "#fff", fillColor: "#2D8540", fillOpacity: 1, weight: 2.5
     }).bindPopup(`<div class="pop-title">▶ Início</div><div class="pop-row">${htmlEscape(r.local_inicio||"—")}</div>`).addTo(map);
-    if (!bounds) bounds = L.latLngBounds([[r.latitude_ini, r.longitude_ini]]);
-    else bounds.extend([r.latitude_ini, r.longitude_ini]);
+    markersBounds = L.latLngBounds([[r.latitude_ini, r.longitude_ini]]);
   }
-  // Marcador fim
-  if (r.latitude_fim && r.longitude_fim) {
+  if (_pontoNoTrecho(r.latitude_fim, r.longitude_fim)) {
     L.circleMarker([r.latitude_fim, r.longitude_fim], {
       radius: 9, color: "#fff", fillColor: "#C0392B", fillOpacity: 1, weight: 2.5
     }).bindPopup(`<div class="pop-title">■ Fim</div><div class="pop-row">${htmlEscape(r.local_termino||"—")}</div>`).addTo(map);
-    if (!bounds) bounds = L.latLngBounds([[r.latitude_fim, r.longitude_fim]]);
-    else bounds.extend([r.latitude_fim, r.longitude_fim]);
+    if (markersBounds) markersBounds.extend([r.latitude_fim, r.longitude_fim]);
+    else markersBounds = L.latLngBounds([[r.latitude_fim, r.longitude_fim]]);
   }
 
-  if (bounds && bounds.isValid()) {
-    // maxZoom 17 (era 14) — agora o ramal fica enquadrado de perto sem precisar
-    // aproximar manualmente. Se o ramal for grande, o fitBounds limita o zoom
-    // automaticamente para caber a extensão inteira.
-    try { map.fitBounds(bounds, { padding: [40, 40], maxZoom: 17 }); } catch (e) {}
+  // 3) Zoom: PREFERE o traçado real. Se não tem traçado, usa marcadores válidos.
+  //    Nunca mistura — evita que um ponto problemático aberte o mapa demais.
+  const useBounds = geoBounds || markersBounds;
+  if (useBounds && useBounds.isValid()) {
+    try { map.fitBounds(useBounds, { padding: [40, 40], maxZoom: 15 }); } catch (e) {}
   } else {
     map.setView([-4, -62], 6);
   }
-  // Re-invalida tamanho (essencial quando o mapa nasce dentro de tab oculta)
   setTimeout(() => { map.invalidateSize(); }, 200);
   setTimeout(() => { map.invalidateSize(); }, 600);
 }
@@ -3863,12 +3945,27 @@ function _viaPointInRing(point, ring) {
   }
   return inside;
 }
+// Normaliza nome de município para comparação resiliente:
+// - remove acentos (NFD + filtra combining marks)
+// - corrige mojibake comum em geojsons salvos como cp1252/Windows-1252
+//   ("AlvarÃ£es" → "Alvarães" → "alvaraes")
+// - upper, trim
+function _normMun(s) {
+  let v = String(s || "");
+  // Repara mojibake típico: bytes UTF-8 lidos como cp1252 e re-codificados
+  if (/[ÃÂ][-¿]/.test(v)) {
+    try { v = decodeURIComponent(escape(v)); } catch (e) {}
+  }
+  return v.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().trim();
+}
+
 function _viaRuasDoMunicipio(gjRuas, gjPolig, mun) {
   if (!gjRuas || !gjPolig) return { polF: null, ruas: [] };
-  const munLower = (mun || "").trim().toLowerCase();
+  const munN = _normMun(mun);
   const polF = (gjPolig.features || []).find(f => {
-    const n = (f.properties && (f.properties.name || f.properties.NM_MUN || f.properties.NAME) || "").toString().trim().toLowerCase();
-    return n === munLower;
+    const p = f.properties || {};
+    const n = _normMun(p.name || p.NM_MUN || p.NAME || "");
+    return n === munN;
   });
   if (!polF) return { polF: null, ruas: [] };
   const ring = _viaGetOuterRing(polF);
@@ -3913,10 +4010,11 @@ async function _renderViaQuadroMap(mun) {
     }).addTo(map);
   } else if (gjMun) {
     // 2) fallback: polígono do IBGE (AM_MUNICIPIOS, chave NM_MUN)
+    const munN = _normMun(mun);
     const feats = (gjMun.features || []).filter(f => {
       const p = f.properties || {};
-      const nome = (p.NM_MUN || p.nome || p.NAME || "").toString().toUpperCase().trim();
-      return nome === mun;
+      const nome = _normMun(p.NM_MUN || p.nome || p.NAME || "");
+      return nome === munN;
     });
     if (feats.length) {
       polLayer = L.geoJSON({ type: "FeatureCollection", features: feats }, {
@@ -4054,10 +4152,10 @@ async function gerarPDFInvestimentosViario() {
     headers: ["Contrato", "Objeto", "Município", "Ano", "Situação", "Valor"],
     rows: sorted.map(o => [
       o.contrato || "—",
-      (o.objeto || "—").slice(0, 42),
-      (o.municipio || "—").toString().slice(0, 20),
+      o.objeto || "—",
+      o.municipio || "—",
       o.ano || "—",
-      ((o.situacao_eobras || o.situacao_real || "—") + "").slice(0, 22),
+      (o.situacao_eobras || o.situacao_real || "—"),
       fmtBRL(o.valor),
     ])
   });
@@ -4086,9 +4184,9 @@ async function gerarBriefingMunicipioViario(mun) {
       headers: ["Contrato", "Objeto", "Ano", "Situação", "Valor"],
       rows: obras.sort((a,b) => b.valor - a.valor).map(o => [
         o.contrato || "—",
-        (o.objeto || "—").slice(0, 55),
+        o.objeto || "—",
         o.ano || "—",
-        ((o.situacao_eobras || o.situacao_real || "—") + "").slice(0, 22),
+        (o.situacao_eobras || o.situacao_real || "—"),
         fmtBRL(o.valor),
       ])
     });
@@ -4538,24 +4636,69 @@ function filterAerodromos() {
   if (activeTab === "publico") _renderAeTableTipo("aeTablePublico", f, false);
 }
 
+// Expõe explicitamente ao window — onclick="..." inline busca no escopo global,
+// e algumas configurações de bundler/CSP não auto-vinculam function declarations.
+window.abrirModalAero = abrirModalAero;
+window.setAeFilter    = setAeFilter;
+window.filterAerodromos = filterAerodromos;
+window.abrirModalTerminal = abrirModalTerminal;
+window.filterTerminais    = filterTerminais;
+
 /* ──────────────────────────────────────────────
    MÓDULO HIDROVIAS
    ────────────────────────────────────────────── */
 function getHidroviasHTML() {
   return `
   <div class="mod-wrap">
-    ${modHero("hidrovias", "Rede hidroviária navegável · extensão, classificação e mapa")}
-    <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-card-label">Trechos</div><div class="kpi-card-value" id="hd-trc">—</div><div class="kpi-card-foot">cadastrados</div></div>
-      <div class="kpi-card v"><div class="kpi-card-label">Extensão</div><div class="kpi-card-value" id="hd-ext">—</div><div class="kpi-card-foot">km navegáveis</div></div>
-      <div class="kpi-card c"><div class="kpi-card-label">Bacias</div><div class="kpi-card-value" id="hd-bac">—</div><div class="kpi-card-foot">hidrográficas</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Maior trecho</div><div class="kpi-card-value" id="hd-max">—</div><div class="kpi-card-foot">km</div></div>
+    ${modHero("hidrovias", "Rede hidroviária navegável · extensão, classificação e bacias do Amazonas")}
+
+    <!-- Hero hidroviário decorativo -->
+    <div class="panel-card" style="background:linear-gradient(135deg,#012a4a 0%,#023e8a 50%,#0077b6 100%);border:none;padding:1.3rem 1.5rem;color:#fff;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(60deg,transparent 0 28px,rgba(255,255,255,.04) 28px 30px);pointer-events:none"></div>
+      <div style="position:relative;display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:.45rem;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:.3rem .8rem;border-radius:999px;margin-bottom:.6rem">
+            <span class="pulse-dot" style="width:8px;height:8px;border-radius:50%;background:#90e0ef"></span>
+            Hidroviário · SEINFRA/AM
+          </div>
+          <div style="font-family:var(--font-head);font-size:1.5rem;font-weight:800;letter-spacing:-.02em">Rede <em style="color:#90e0ef;font-style:normal;font-weight:300">Hidroviária</em></div>
+          <div style="font-size:.78rem;opacity:.78;margin-top:.35rem;max-width:520px;line-height:1.5">A rede fluvial é a principal via de transporte no Amazonas. Mais de 20 mil km de rios navegáveis conectam comunidades, distritos e municípios.</div>
+        </div>
+      </div>
     </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card c"><div class="kpi-card-label">Trechos</div><div class="kpi-card-value" id="hd-trc">—</div><div class="kpi-card-foot">cadastrados</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Extensão total</div><div class="kpi-card-value" id="hd-ext">—</div><div class="kpi-card-foot">km navegáveis</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Bacias</div><div class="kpi-card-value" id="hd-bac">—</div><div class="kpi-card-foot">hidrográficas</div></div>
+      <div class="kpi-card r"><div class="kpi-card-label">Maior trecho</div><div class="kpi-card-value" id="hd-max">—</div><div class="kpi-card-foot">km</div></div>
+    </div>
+
     <div class="panel-card">
-      <div class="panel-header"><div class="panel-title">Mapa hidroviário</div></div>
-      <div id="hdMap" class="map-wrap tall"></div>
+      <div class="panel-header" style="flex-wrap:wrap;gap:.6rem">
+        <div class="panel-title">Mapa hidroviário do Amazonas</div>
+        <div id="hdLegend" style="display:flex;gap:.6rem;font-size:.7rem;color:var(--cinza-med);flex-wrap:wrap"></div>
+      </div>
+      <div id="hdMap" class="map-wrap tall" style="height:480px"></div>
+    </div>
+
+    <div class="chart-grid-2" style="margin-top:1rem">
+      <div class="panel-card">
+        <div class="panel-title" style="margin-bottom:.6rem">Distribuição por bacia hidrográfica</div>
+        <div class="chart-wrap" style="height:280px"><canvas id="chHdBacia"></canvas></div>
+      </div>
+      <div class="panel-card">
+        <div class="panel-title" style="margin-bottom:.6rem">Top 10 trechos por extensão (km)</div>
+        <div class="chart-wrap" style="height:280px"><canvas id="chHdTop"></canvas></div>
+      </div>
     </div>
   </div>`;
+}
+
+// Paleta por bacia (consistente entre mapa, popup e gráfico)
+const _HD_BACIA_COLORS = ["#0077b6","#023e8a","#0096c7","#48cae4","#48bfe3","#5390d9","#3a86ff","#1d4ed8"];
+function _hdBaciaColor(bacia, baciaIdx) {
+  return _HD_BACIA_COLORS[baciaIdx % _HD_BACIA_COLORS.length];
 }
 
 async function initHidrovias() {
@@ -4563,27 +4706,94 @@ async function initHidrovias() {
   const gj = await loadGeoJSON(GEOJSON_FILES.hidrovias);
   if (!gj) return;
   const feats = gj.features || [];
+
+  // Agrega: total extensão, maior trecho, distribuição por bacia
   let total = 0, max = 0;
-  const bacias = new Set();
+  const baciaMap = {}; // bacia → {n, ext}
+  const rios = [];     // para top 10
   feats.forEach(f => {
     const p = f.properties || {};
     const ext = parseNum(p.EXTENSAO || p.extensao || p.COMPRIMENT || p.LENGTH || 0);
     total += ext; if (ext > max) max = ext;
-    if (p.BACIA || p.bacia) bacias.add((p.BACIA || p.bacia).toString());
+    const bacia = (p.BACIA || p.bacia || p.bacia_hidrografica || "Não informada").toString().trim() || "Não informada";
+    if (!baciaMap[bacia]) baciaMap[bacia] = { n: 0, ext: 0 };
+    baciaMap[bacia].n += 1; baciaMap[bacia].ext += ext;
+    rios.push({ nome: p.NOME || p.RIO || p.nome_rio || "Hidrovia", ext, bacia });
   });
+  const bacias = Object.keys(baciaMap).sort((a,b) => baciaMap[b].ext - baciaMap[a].ext);
   $("#hd-trc").textContent = fmtNum(feats.length);
   $("#hd-ext").textContent = fmtNum(Math.round(total));
-  $("#hd-bac").textContent = fmtNum(bacias.size || 3);
+  $("#hd-bac").textContent = fmtNum(bacias.length);
   $("#hd-max").textContent = fmtNum(Math.round(max));
 
+  // Renderiza camada com cor por bacia
+  const baciaIdxMap = {}; bacias.forEach((b, i) => baciaIdxMap[b] = i);
   L.geoJSON(gj, {
-    style: { color: "#0077b6", weight: 2.4, opacity: 0.88 },
+    style: f => {
+      const p = f.properties || {};
+      const bacia = (p.BACIA || p.bacia || "Não informada").toString().trim() || "Não informada";
+      return { color: _hdBaciaColor(bacia, baciaIdxMap[bacia] || 0), weight: 2.5, opacity: 0.88, lineJoin: "round" };
+    },
     onEachFeature: (f, lyr) => {
       const p = f.properties || {};
-      lyr.bindPopup(`<div class="pop-title">${htmlEscape(p.NOME || p.RIO || "Hidrovia")}</div><div class="pop-row">${fmtKm(parseNum(p.EXTENSAO || p.extensao || 0))}</div>`);
+      const nome = p.NOME || p.RIO || p.nome_rio || "Hidrovia";
+      const ext  = parseNum(p.EXTENSAO || p.extensao || 0);
+      const bacia = (p.BACIA || p.bacia || "Não informada").toString();
+      const cor = _hdBaciaColor(bacia, baciaIdxMap[bacia] || 0);
+      lyr.bindPopup(
+        `<div style="font-family:Outfit,sans-serif;min-width:200px">
+           <div style="font-weight:800;color:${cor};font-size:.95rem;margin-bottom:.25rem">${htmlEscape(nome)}</div>
+           <div style="display:grid;grid-template-columns:auto 1fr;gap:.2rem .55rem;font-size:.72rem">
+             <span style="color:#8896a8">Extensão:</span><strong>${fmtKm(ext)}</strong>
+             <span style="color:#8896a8">Bacia:</span><strong>${htmlEscape(bacia)}</strong>
+             ${p.NAVEGABILIDADE || p.navegabilidade ? `<span style="color:#8896a8">Naveg.:</span><strong>${htmlEscape(p.NAVEGABILIDADE || p.navegabilidade)}</strong>` : ""}
+           </div>
+         </div>`,
+        { maxWidth: 240 }
+      );
     }
   }).addTo(map);
   try { map.fitBounds(L.geoJSON(gj).getBounds(), { padding: [20, 20] }); } catch (e) {}
+
+  // Legenda dinâmica
+  const legend = document.getElementById("hdLegend");
+  if (legend) {
+    legend.innerHTML = bacias.slice(0, 6).map(b => `
+      <span style="display:inline-flex;align-items:center;gap:.3rem">
+        <span style="width:14px;height:3px;background:${_hdBaciaColor(b, baciaIdxMap[b])};border-radius:2px"></span>${htmlEscape(b)}
+      </span>`).join("");
+  }
+
+  // Gráfico bacia (doughnut)
+  mkChart("chHdBacia", {
+    type: "doughnut",
+    data: {
+      labels: bacias,
+      datasets: [{
+        data: bacias.map(b => baciaMap[b].ext),
+        backgroundColor: bacias.map((b, i) => _hdBaciaColor(b, i)),
+        borderWidth: 2, borderColor: "#fff",
+      }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, cutout: "55%",
+      plugins: { legend: { position: "bottom", labels: { font: { size: 10 } } } } }
+  });
+
+  // Top 10 trechos
+  const top = rios.sort((a,b) => b.ext - a.ext).slice(0, 10);
+  mkChart("chHdTop", {
+    type: "bar",
+    data: {
+      labels: top.map(r => r.nome.length > 18 ? r.nome.slice(0,16) + "…" : r.nome),
+      datasets: [{ data: top.map(r => Math.round(r.ext)),
+        backgroundColor: top.map(r => _hdBaciaColor(r.bacia, baciaIdxMap[r.bacia] || 0)),
+        borderRadius: 4 }]
+    },
+    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { beginAtZero: true, ticks: { font: { size: 9 } } },
+                y: { ticks: { font: { size: 9 } } } } }
+  });
 }
 
 /* ──────────────────────────────────────────────
@@ -5742,10 +5952,10 @@ async function exportBriefingExecutivoPDF() {
   const conc= ct.filter(c=>/conclu/i.test(c.situacao_eobras||c.situacao||"")).length;
   const paral=ct.filter(c=>/paral|atras/i.test(c.situacao_eobras||c.situacao||"")).length;
   const rows= ct.slice(0,80).map(c=>[
-    (c.contrato||c.numero_contrato||"—").toString().slice(0,18),
-    (c.objeto||c.nome_obra||"—").toString().slice(0,55),
+    (c.contrato||c.numero_contrato||"—").toString(),
+    (c.objeto||c.nome_obra||"—").toString(),
     (c.municipio||"—").toString(),
-    (c.situacao_eobras||c.situacao||"—").toString().slice(0,20),
+    (c.situacao_eobras||c.situacao||"—").toString(),
     fmtBRL(parseNum(c.valor_atualizado||c.valor_contratual||0))
   ]);
   await exportPDF(`Relatório Executivo — Portfólio SEINFRA/AM`, [
@@ -5766,9 +5976,9 @@ async function exportBriefingMunicipalPDF(mun) {
   const ram = (HUB.state.ramaisSheet||[]).filter(r=>r.municipio?.toUpperCase()===mun.toUpperCase());
   const inv = ct.reduce((a,c)=>a+parseNum(c.valor_atualizado||c.valor_contratual||0),0);
   const ctRows = ct.map(c=>[
-    (c.contrato||c.numero_contrato||"—").toString().slice(0,18),
-    (c.objeto||c.nome_obra||"—").toString().slice(0,55),
-    (c.situacao_eobras||c.situacao||"—").toString().slice(0,20),
+    (c.contrato||c.numero_contrato||"—").toString(),
+    (c.objeto||c.nome_obra||"—").toString(),
+    (c.situacao_eobras||c.situacao||"—").toString(),
     fmtBRL(parseNum(c.valor_atualizado||c.valor_contratual||0))
   ]);
   await exportPDF(`Briefing Municipal — ${mun} · SEINFRA/AM`, [
@@ -5862,14 +6072,33 @@ async function exportPDF(title, content) {
       y += 4.5; // espaço APÓS — pequeno para aproximar do conteúdo (tabela/texto)
       doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(26, 37, 64);
     } else if (block.type === "table" && block.headers && block.rows && doc.autoTable) {
+      // Detecta coluna "Objeto" — dá maior largura e habilita wrap automático.
+      // Colunas que costumam ser curtas (Contrato/Ano/Valor) ganham largura mínima.
+      const colStyles = {};
+      block.headers.forEach((h, idx) => {
+        const k = (h || "").toString().toLowerCase();
+        if (k.includes("objeto") || k.includes("descri")) {
+          colStyles[idx] = { cellWidth: 70, overflow: 'linebreak' };
+        } else if (k.includes("contrato")) {
+          colStyles[idx] = { cellWidth: 24, overflow: 'linebreak' };
+        } else if (k === "ano") {
+          colStyles[idx] = { cellWidth: 12, halign: 'center' };
+        } else if (k === "valor") {
+          colStyles[idx] = { cellWidth: 24, halign: 'right' };
+        } else if (k.includes("situa")) {
+          colStyles[idx] = { cellWidth: 24, overflow: 'linebreak' };
+        }
+      });
       doc.autoTable({
         head: [block.headers], body: block.rows,
         startY: y,
         // margin.top é CRÍTICO: sem isso, em quebra de página o cabeçalho do PDF é
         // sobreposto pela tabela. headerH=28 + folga de 8 = 36mm de margem superior.
         margin: { top: headerH + 8, left: margin, right: margin, bottom: footerH + 5 },
-        headStyles: { fillColor: [26, 43, 94], textColor: 255, fontStyle: "bold", fontSize: 9 },
-        bodyStyles: { fontSize: 8, textColor: [26, 37, 64] },
+        styles: { overflow: 'linebreak', cellWidth: 'wrap', valign: 'top' },
+        headStyles: { fillColor: [26, 43, 94], textColor: 255, fontStyle: "bold", fontSize: 9, halign: 'left' },
+        bodyStyles: { fontSize: 8, textColor: [26, 37, 64], cellPadding: 1.6 },
+        columnStyles: colStyles,
         alternateRowStyles: { fillColor: [245, 247, 251] },
         didDrawPage: (data) => {
           // Em todas as páginas (inclusive a primeira) o autoTable chama este hook
@@ -6046,11 +6275,11 @@ async function gerarBriefingRodovia(nome) {
       headers: ["Contrato", "Objeto", "Valor", "Município", "Ano", "Situação"],
       rows: obras.sort((a, b) => b.valor - a.valor).map(o => [
         o.contrato || "—",
-        (o.objeto || "—").slice(0, 60),
+        o.objeto || "—",
         _fmtBRLShort(o.valor),
-        (o.municipio || "—").toString().slice(0, 22),
+        o.municipio || "—",
         o.ano || "—",
-        (o.situacao_eobras || o.situacao_real || "—").toString().slice(0, 22),
+        (o.situacao_eobras || o.situacao_real || "—"),
       ]),
     });
   } else {
@@ -6153,9 +6382,9 @@ async function gerarPDFInvestimentos() {
     headers: ["Contrato", "Objeto", "Município", "Empresa", "Valor"],
     rows: sorted.slice(0, 10).map(o => [
       o.contrato || "—",
-      (o.objeto || "—").slice(0, 50),
-      (o.municipio || "—").toString().slice(0, 20),
-      (o.empresa || "—").toString().slice(0, 30),
+      o.objeto || "—",
+      o.municipio || "—",
+      o.empresa || "—",
       fmtBRL(o.valor),
     ])
   });
@@ -6166,10 +6395,10 @@ async function gerarPDFInvestimentos() {
     headers: ["Contrato", "Objeto", "Município", "Ano", "Situação", "Valor"],
     rows: sorted.map(o => [
       o.contrato || "—",
-      (o.objeto || "—").slice(0, 42),
-      (o.municipio || "—").toString().slice(0, 18),
+      o.objeto || "—",
+      o.municipio || "—",
       o.ano || "—",
-      ((o.situacao_eobras || o.situacao_real || "—") + "").slice(0, 22),
+      (o.situacao_eobras || o.situacao_real || "—"),
       fmtBRL(o.valor),
     ])
   });
@@ -6188,8 +6417,8 @@ async function exportCurrentPDF() {
   if (id === "obras" || id === "briefings") {
     const ct = HUB.state.contratos || [];
     const rows = ct.slice(0, 50).map(c => [
-      (c.contrato || c.numero_contrato || "").toString().slice(0, 18),
-      (c.objeto || c.nome_obra || "").toString().slice(0, 60),
+      (c.contrato || c.numero_contrato || "").toString(),
+      (c.objeto || c.nome_obra || "").toString(),
       (c.municipio || "").toString(),
       (c.situacao_eobras || c.situacao || "").toString(),
       fmtBRL(parseNum(c.valor_atualizado || c.valor_contratual || 0))
