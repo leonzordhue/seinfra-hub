@@ -5800,7 +5800,10 @@ async function atlasLoadLayer(map, key) {
     const popFn = def.popup || (p => `<div class="pop-title">${htmlEscape(p.NOME || p.nome || "—")}</div>`);
     const popHtml = (p) => {
       const r = popFn(p);
-      return r && r.startsWith("<") ? r : `<div class="pop-title">${htmlEscape(r || "—")}</div>`;
+      if (!r) return `<div class="pop-title">—</div>`;
+      // Detecta se é HTML (pode ter whitespace/newlines no início)
+      const trimmed = r.trim();
+      return trimmed.startsWith("<") ? trimmed : `<div class="pop-title">${htmlEscape(r)}</div>`;
     };
 
     // Hover effect padrão para linhas/polígonos
