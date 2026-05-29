@@ -573,6 +573,69 @@
       font-size: 0.82rem; color: var(--cinza-med); margin-top: 0.18rem;
     }
 
+    /* ─────────────────────────────────────────────────────
+       MOD-HERO-PRO — hero gradient temático por módulo
+       Substitui mod-hero antigo; mesmo estilo do Hidrovias.
+       ───────────────────────────────────────────────────── */
+    .mod-hero-pro {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, var(--g1) 0%, var(--g2) 50%, var(--g3) 100%);
+      color: #fff; border-radius: 18px;
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    }
+    .mod-hero-pro-pattern {
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(60deg, transparent 0 28px, rgba(255,255,255,.05) 28px 30px);
+      pointer-events: none; z-index: 0;
+    }
+    .mod-hero-pro-glow {
+      position: absolute; top: -40%; right: -10%;
+      width: 360px; height: 360px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.16), transparent 60%);
+      pointer-events: none; z-index: 0;
+    }
+    .mod-hero-pro-inner {
+      position: relative; z-index: 1;
+      display: flex; gap: 1.4rem; align-items: center;
+      flex-wrap: wrap;
+    }
+    .mod-hero-pro-side {
+      display: flex; flex-direction: column; gap: .6rem;
+      align-items: flex-start;
+    }
+    .mod-hero-pro-icon {
+      width: 60px; height: 60px; border-radius: 16px;
+      background: rgba(255,255,255,0.16);
+      border: 1.5px solid rgba(255,255,255,0.28);
+      backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+    }
+    .mod-hero-pro-chip {
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .65rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.22);
+      padding: .3rem .8rem; border-radius: 999px;
+    }
+    .mod-hero-pro-body { flex: 1; min-width: 240px; }
+    .mod-hero-pro-title {
+      font-family: var(--font-head); font-size: 1.7rem; font-weight: 800;
+      letter-spacing: -0.02em; line-height: 1.05;
+    }
+    .mod-hero-pro-title em {
+      color: var(--g4, #fff); font-style: normal; font-weight: 300;
+      margin-left: .35rem;
+    }
+    .mod-hero-pro-sub {
+      font-size: .82rem; opacity: .85; margin-top: .4rem;
+      line-height: 1.5; max-width: 620px;
+    }
+
     .kpi-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem;
       margin-bottom: 1.25rem;
@@ -1145,21 +1208,21 @@
       <nav class="sidebar-nav" id="sidebarNav">
         <div class="sidebar-section-label">Dashboard</div>
         <div class="sidebar-item" data-mod="__home" onclick="goHome()">
-          <span class="sidebar-icon">&#127968;</span><span>Início</span>
+          <span class="sidebar-icon" data-ic="inicio"></span><span>Início</span>
         </div>
         <div class="sidebar-section-label">Modais</div>
-        <div class="sidebar-item" data-mod="rodovias"     onclick="loadModule('rodovias')">     <span class="sidebar-icon">&#128739;</span><span>Rodovias</span></div>
-        <div class="sidebar-item" data-mod="ramais"       onclick="loadModule('ramais')">       <span class="sidebar-icon">&#127807;</span><span>Ramais</span></div>
-        <div class="sidebar-item" data-mod="viario"       onclick="loadModule('viario')">       <span class="sidebar-icon">&#127961;</span><span>Viário Urbano</span></div>
-        <div class="sidebar-item" data-mod="aerodromos"   onclick="loadModule('aerodromos')">   <span class="sidebar-icon">&#9992;</span><span>Aeródromos</span></div>
-        <div class="sidebar-item" data-mod="terminais"    onclick="loadModule('terminais')">    <span class="sidebar-icon">&#9875;</span><span>Terminais</span></div>
+        <div class="sidebar-item" data-mod="rodovias"     onclick="loadModule('rodovias')">     <span class="sidebar-icon" data-ic="rodovias"></span><span>Rodovias</span></div>
+        <div class="sidebar-item" data-mod="ramais"       onclick="loadModule('ramais')">       <span class="sidebar-icon" data-ic="ramais"></span><span>Ramais</span></div>
+        <div class="sidebar-item" data-mod="viario"       onclick="loadModule('viario')">       <span class="sidebar-icon" data-ic="viario"></span><span>Viário Urbano</span></div>
+        <div class="sidebar-item" data-mod="aerodromos"   onclick="loadModule('aerodromos')">   <span class="sidebar-icon" data-ic="aerodromos"></span><span>Aeródromos</span></div>
+        <div class="sidebar-item" data-mod="terminais"    onclick="loadModule('terminais')">    <span class="sidebar-icon" data-ic="terminais"></span><span>Terminais</span></div>
         <div class="sidebar-section-label">Operações</div>
-        <div class="sidebar-item" data-mod="obras"        onclick="loadModule('obras')">        <span class="sidebar-icon">&#128736;</span><span>Obras</span></div>
-        <div class="sidebar-item" data-mod="atlas"        onclick="loadModule('atlas')">        <span class="sidebar-icon">&#128506;</span><span>Atlas</span></div>
-        <div class="sidebar-item" data-mod="planejamento" onclick="loadModule('planejamento')"> <span class="sidebar-icon">&#128203;</span><span>Planejamento</span></div>
+        <div class="sidebar-item" data-mod="obras"        onclick="loadModule('obras')">        <span class="sidebar-icon" data-ic="obras"></span><span>Obras</span></div>
+        <div class="sidebar-item" data-mod="atlas"        onclick="loadModule('atlas')">        <span class="sidebar-icon" data-ic="atlas"></span><span>Atlas</span></div>
+        <div class="sidebar-item" data-mod="planejamento" onclick="loadModule('planejamento')"> <span class="sidebar-icon" data-ic="planejamento"></span><span>Planejamento</span></div>
         <div class="sidebar-section-label">Inteligência</div>
-        <div class="sidebar-item" data-mod="bi"           onclick="loadModule('bi')">           <span class="sidebar-icon">&#128202;</span><span>BI &amp; Analytics</span></div>
-        <div class="sidebar-item" data-mod="briefings"    onclick="loadModule('briefings')">    <span class="sidebar-icon">&#128196;</span><span>Briefings</span></div>
+        <div class="sidebar-item" data-mod="bi"           onclick="loadModule('bi')">           <span class="sidebar-icon" data-ic="bi"></span><span>BI &amp; Analytics</span></div>
+        <div class="sidebar-item" data-mod="briefings"    onclick="loadModule('briefings')">    <span class="sidebar-icon" data-ic="briefings"></span><span>Briefings</span></div>
       </nav>
       <div class="sidebar-footer">
         <strong>AKE/UFT-1.0</strong>
@@ -1243,8 +1306,10 @@ const GEOJSON_FILES = {
   terminais:    "TERMINAIS_FLUTUANTES_SEINFRA.geojson",
   municipios:   "AM_MUNICIPIOS.geojson",
   sistemas:     "SISTEMAS_VIARIOS_AMAZONAS1.geojson",
-  viario_ruas:  "SISTEMAS_VIARIOS_AMAZONAS3.geojson",
-  viario_polig: "SISTEMAS_VIARIOS_AMAZONAS2.geojson",
+  // Viário usa o geojson_base novo (local), via fetch relativo.
+  // Estrutura: {properties:{categoria:'viario', tipo:'rua|marco_municipio|perimetro_urbano',
+  //   nome, extensao_m, extensao_km, municipio (opcional)}}
+  viario_local: "geojson/viario.geojson",
 };
 
 /* ── HUB (núcleo, BIOS) ── */
@@ -1285,6 +1350,33 @@ const HUB = {
 
 /* ── Util ── */
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ═════════════════════════════════════════════════════════════════
+   SVG ICONS — biblioteca customizada (substitui emojis dispersos)
+   Cada icone usa currentColor → herda a cor do contexto.
+   ViewBox 24x24, stroke 1.7, linecap/linejoin round (visual coerente).
+   ═════════════════════════════════════════════════════════════════ */
+const _ICON_PATHS = {
+  inicio: '<path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6h-6v6H5a2 2 0 0 1-2-2v-9z"/>',
+  rodovias: '<path d="M8 3l-4 18M16 3l4 18M12 4v3M12 10v3M12 16v3"/>',
+  ramais: '<path d="M5 21l4-10 5 3 3-7 2 4M9 11l-2 4M14 14l-1 4M17 11l1 5"/>',
+  viario: '<path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/><path d="M10 6.5h4M10 17.5h4M6.5 10v4M17.5 10v4"/>',
+  aerodromos: '<path d="M21 16l-9-5V4a1 1 0 0 0-2 0v7l-9 5v2l9-3v5l-2 1v2l3-1 3 1v-2l-2-1v-5l9 3v-2z"/>',
+  terminais: '<path d="M12 3a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3zM12 9v12M5 15a7 7 0 0 0 14 0M8 12h8"/>',
+  obras: '<path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6M9 12h6"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/>',
+  atlas: '<path d="M3 5l6-2 6 2 6-2v16l-6 2-6-2-6 2V5zM9 3v16M15 5v16"/>',
+  planejamento: '<path d="M9 3h6v3H9zM6 6h12v15H6zM9 11h6M9 14h6M9 17h4"/><path d="M9 3a1 1 0 0 0-1 1v2h8V4a1 1 0 0 0-1-1H9z"/>',
+  bi: '<path d="M3 3v18h18M7 17l4-5 4 3 5-7"/><circle cx="7" cy="17" r="1.4" fill="currentColor"/><circle cx="11" cy="12" r="1.4" fill="currentColor"/><circle cx="15" cy="15" r="1.4" fill="currentColor"/><circle cx="20" cy="8" r="1.4" fill="currentColor"/>',
+  briefings: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
+  hidrovias: '<path d="M3 8c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2M3 14c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2M3 20c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2"/>',
+};
+
+function iconSvg(id, opts) {
+  const path = _ICON_PATHS[id] || _ICON_PATHS.inicio;
+  const size = (opts && opts.size) || 22;
+  const stroke = (opts && opts.stroke) || 1.7;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" style="display:block">${path}</svg>`;
+}
 function $(sel, root) { return (root || document).querySelector(sel); }
 function $$(sel, root) { return Array.from((root || document).querySelectorAll(sel)); }
 function fmtNum(n, dec) {
@@ -1404,7 +1496,11 @@ async function gvizFetch(sheetId, gid) {
 async function loadGeoJSON(file) {
   if (HUB.state.geojsons[file]) return HUB.state.geojsons[file];
   try {
-    const r = await fetch(`${CDN_GEOJSON}/${file}`);
+    // Caminho local (começa com "geojson/") usa fetch relativo;
+    // demais arquivos usam o CDN atlas-amazonas.
+    const url = file.startsWith("geojson/") ? file : `${CDN_GEOJSON}/${file}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error("HTTP " + r.status);
     const j = await r.json();
     HUB.state.geojsons[file] = j;
     return j;
@@ -1687,7 +1783,7 @@ function getHomeHTML() {
   // Cards limpos — sem stats embutidos. KPIs vão num resumo geral acima.
   const cards = Object.values(HUB.modules).map(m => `
     <div class="module-card" onclick="loadModule('${m.id}')">
-      <div class="module-card-icon" style="background:${hexAlpha(m.color, 0.12)}; color:${m.color}">${m.icon}</div>
+      <div class="module-card-icon" style="background:${hexAlpha(m.color, 0.12)}; color:${m.color}">${iconSvg(m.id, { size: 22 })}</div>
       <div class="module-card-name">${m.label}</div>
       <div class="module-card-sub" id="mc-sub-${m.id}">Carregando dados…</div>
       <div class="module-card-foot">
@@ -2058,14 +2154,40 @@ function searchHub(q) {
 /* ═════════════════════════════════════════════════════════════════
    MODULE HTML — getModuleHTML(id)
    ═════════════════════════════════════════════════════════════════ */
+// Gradientes temáticos por módulo (estilo hidrovias).
+// 3 stops: ESCURO → MÉDIO → CLARO (a cor primária do módulo).
+const _MOD_GRADS = {
+  rodovias:     ["#0c1733", "#1a2b5e", "#2c4a8f", "#7fa4d6"],
+  ramais:       ["#15311c", "#1f5b30", "#2D8540", "#9ee8b0"],
+  viario:       ["#5c2a04", "#844006", "#B45309", "#fbc88a"],
+  aerodromos:   ["#073a48", "#0a5870", "#0E7490", "#90e0ef"],
+  terminais:    ["#012a4a", "#01497c", "#0077b6", "#90e0ef"],
+  obras:        ["#5c1610", "#8b2317", "#C0392B", "#f3a89f"],
+  atlas:        ["#0c1733", "#1a2b5e", "#2c4a8f", "#7fa4d6"],
+  planejamento: ["#2c1349", "#4a1f73", "#6C3483", "#d1b3e8"],
+  bi:           ["#5a4106", "#917013", "#D4A017", "#fbe7a1"],
+  briefings:    ["#15311c", "#1f5b30", "#2D8540", "#9ee8b0"],
+  hidrovias:    ["#012a4a", "#01497c", "#0077b6", "#90e0ef"],
+};
 function modHero(id, subtitle) {
   const m = HUB.modules[id];
+  const g = _MOD_GRADS[id] || _MOD_GRADS.rodovias;
   return `
-    <div class="mod-hero">
-      <div class="mod-hero-icon" style="background:${m.color}">${m.icon}</div>
-      <div class="mod-hero-body">
-        <div class="mod-hero-title">${m.label}</div>
-        <div class="mod-hero-sub">${subtitle}</div>
+    <div class="mod-hero-pro" style="--g1:${g[0]};--g2:${g[1]};--g3:${g[2]};--g4:${g[3]}">
+      <div class="mod-hero-pro-pattern"></div>
+      <div class="mod-hero-pro-glow"></div>
+      <div class="mod-hero-pro-inner">
+        <div class="mod-hero-pro-side">
+          <div class="mod-hero-pro-icon">${iconSvg(id, { size: 30, stroke: 1.8 })}</div>
+          <div class="mod-hero-pro-chip">
+            <span class="pulse-dot" style="width:7px;height:7px;border-radius:50%;background:${g[3]}"></span>
+            ${htmlEscape(m.label.toUpperCase())} · SEINFRA/AM
+          </div>
+        </div>
+        <div class="mod-hero-pro-body">
+          <div class="mod-hero-pro-title">${m.label.split(" ")[0]} <em>${m.label.split(" ").slice(1).join(" ") || ""}</em></div>
+          <div class="mod-hero-pro-sub">${subtitle}</div>
+        </div>
       </div>
     </div>`;
 }
@@ -2127,10 +2249,6 @@ function getRodoviasHTML() {
 
       <!-- ABA 1: VISÃO GERAL — gráficos -->
       <div class="tab-content active" id="rod-rg">
-        <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:0.55rem 0.85rem;font-size:0.72rem;color:var(--cinza-med);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
-          <span style="font-size:1rem">📋</span>
-          <span>Fonte: <strong>Relatório de Investimentos em Mobilidade — Governo Wilson Lima 2019–2026 (v5)</strong> · SEINFRA/DMOB · 19 contratos rodoviários consolidados</span>
-        </div>
         <div class="panel-title" style="margin-bottom:0.6rem">Evolução do investimento em rodovias (desde 2019)</div>
         <div class="chart-wrap tall"><canvas id="chRodEvol"></canvas></div>
         <div class="chart-grid-2" style="margin-top:1.2rem">
@@ -2840,10 +2958,6 @@ function getRamaisHTML() {
 
       <!-- ABA 1: VISÃO GERAL - KPIs estratégicos e gráficos -->
       <div class="tab-content active" id="ram-rmg">
-        <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:0.55rem 0.85rem;font-size:0.72rem;color:var(--cinza-med);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
-          <span style="font-size:1rem">📋</span>
-          <span>Fonte de obras: <strong>Relatório de Investimentos em Mobilidade — Governo Wilson Lima 2019–2026 (v5)</strong> · SEINFRA/DMOB · 39 contratos de ramais e estradas consolidados</span>
-        </div>
         <div class="chart-grid-2">
           <div>
             <div class="panel-title" style="margin-bottom:0.6rem">Distribuição por situação (cadastro)</div>
@@ -2979,13 +3093,12 @@ async function _loadRamaisSheet() {
       ponto_referencia: r.ponto_de_referencia || "",
       local_inicio: r.local_de_inicio || "",
       local_termino: r.local_termino || "",
-      // Normaliza município: remove NBSP / zero-width / espaços duplicados
-      // (sem isso, "MANAUS" e "MANAUS " deduplicam para 2 entradas → 63 ao
-      // invés dos 62 oficiais do AM).
-      municipio: (r.municipio || "").toString()
+      // Normaliza município: remove NBSP / zero-width / espaços duplicados,
+      // depois aplica alias de typos da planilha (BARRERINHA → BARREIRINHA etc.).
+      municipio: _aplicaAliasMun((r.municipio || "").toString()
         .replace(/ |​|‌|‍|﻿/g, " ")
         .replace(/\s+/g, " ")
-        .toUpperCase().trim(),
+        .toUpperCase().trim()),
       extensao: parseNum(r.extensao_km || r.extensao || 0),
       latitude_ini: parseFloat(r.latitude_inicial) || null,
       longitude_ini: parseFloat(r.longitude_inicial) || null,
@@ -3950,6 +4063,23 @@ function _viaPointInRing(point, ring) {
 // - corrige mojibake comum em geojsons salvos como cp1252/Windows-1252
 //   ("AlvarÃ£es" → "Alvarães" → "alvaraes")
 // - upper, trim
+// Alias map para typos conhecidos na planilha de ramais.
+// 3 nomes na planilha não batem com os 62 oficiais do AM (IBGE):
+//   BARRERINHA      → BARREIRINHA       (typo: faltam letras)
+//   NOVA ARIPUANÃ   → NOVO ARIPUANÃ     (gênero errado)
+//   SANTO ANTÔNIO DO IÇÃ → SANTO ANTÔNIO DO IÇÁ  (Ã ao invés de Á no final)
+// Aplicado APÓS toda normalização (NFC/upper/trim/strip-invisíveis),
+// antes do uso em filtros/dropdowns/agregações.
+const _MUN_ALIAS = {
+  "BARRERINHA": "BARREIRINHA",
+  "NOVA ARIPUANÃ": "NOVO ARIPUANÃ",
+  "SANTO ANTÔNIO DO IÇÃ": "SANTO ANTÔNIO DO IÇÁ",
+};
+function _aplicaAliasMun(nome) {
+  const u = (nome || "").toString().toUpperCase().trim();
+  return _MUN_ALIAS[u] || u;
+}
+
 function _normMun(s) {
   let v = String(s || "");
   // Repara mojibake típico: bytes UTF-8 lidos como cp1252 e re-codificados
@@ -3959,23 +4089,43 @@ function _normMun(s) {
   return v.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().trim();
 }
 
-function _viaRuasDoMunicipio(gjRuas, gjPolig, mun) {
-  if (!gjRuas || !gjPolig) return { polF: null, ruas: [] };
+// Filtra ruas de um município usando o geojson_base novo:
+// 1) match direto por properties.municipio quando presente (rápido, ~282 ruas)
+// 2) point-in-polygon dentro do perimetro_urbano daquele município (fallback)
+function _viaRuasDoMunicipio(gj, mun) {
+  if (!gj) return { polF: null, ruas: [] };
   const munN = _normMun(mun);
-  const polF = (gjPolig.features || []).find(f => {
+  const feats = gj.features || [];
+
+  // Polígono do município (tipo perimetro_urbano, com fallback para marco_municipio)
+  const polF = feats.find(f => {
     const p = f.properties || {};
-    const n = _normMun(p.name || p.NM_MUN || p.NAME || "");
-    return n === munN;
+    if (p.tipo !== "perimetro_urbano" && p.tipo !== "marco_municipio") return false;
+    return _normMun(p.municipio || "") === munN;
+  }) || feats.find(f => {
+    const p = f.properties || {};
+    return p.tipo === "marco_municipio" && _normMun(p.municipio || "") === munN;
   });
+
+  // (a) Match rápido: ruas com municipio atribuído na fonte
+  const ruasDiretas = feats.filter(f => {
+    const p = f.properties || {};
+    return p.tipo === "rua" && p.municipio && _normMun(p.municipio) === munN;
+  });
+  if (ruasDiretas.length) return { polF, ruas: ruasDiretas };
+
+  // (b) Fallback: point-in-polygon usando o polígono do município
   if (!polF) return { polF: null, ruas: [] };
   const ring = _viaGetOuterRing(polF);
   if (!ring) return { polF, ruas: [] };
   const xs = ring.map(c => c[0]), ys = ring.map(c => c[1]);
   const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
-  const ruas = (gjRuas.features || []).filter(rua => {
-    const coords = rua.geometry && rua.geometry.coordinates;
+
+  const ruas = feats.filter(f => {
+    if ((f.properties || {}).tipo !== "rua") return false;
+    const coords = f.geometry && f.geometry.coordinates;
     if (!coords || !coords.length) return false;
-    // amostra ponto do meio do LineString (ou primeiro ponto do primeiro segmento)
+    // LineString → coords[i] = [lon,lat]; MultiLineString → coords[i][j] = [lon,lat]
     const sample = Array.isArray(coords[0][0]) ? coords[Math.floor(coords.length / 2)][0] : coords[Math.floor(coords.length / 2)];
     if (!sample || sample.length < 2) return false;
     const [px, py] = sample;
@@ -3991,10 +4141,9 @@ async function _renderViaQuadroMap(mun) {
   HUB.state.maps = HUB.state.maps || {};
   HUB.state.maps.viaQuadroMap = map;
 
-  // Carrega em paralelo: polígonos do viário (chave: name) + ruas + fallback IBGE
-  const [gjPolig, gjRuas, gjMun] = await Promise.all([
-    loadGeoJSON(GEOJSON_FILES.viario_polig),
-    loadGeoJSON(GEOJSON_FILES.viario_ruas),
+  // Carrega: geojson único (viario_local com ruas+polígonos) + fallback IBGE
+  const [gj, gjMun] = await Promise.all([
+    loadGeoJSON(GEOJSON_FILES.viario_local),
     loadGeoJSON(GEOJSON_FILES.municipios),
   ]);
 
@@ -4002,39 +4151,39 @@ async function _renderViaQuadroMap(mun) {
   let polLayer = null;
   let ruasLayer = null;
 
-  // 1) tenta polígono do viário (match por properties.name)
-  const { polF, ruas } = _viaRuasDoMunicipio(gjRuas, gjPolig, mun);
+  // 1) Polígono do viário + ruas (geojson novo, mesmo arquivo)
+  const { polF, ruas } = _viaRuasDoMunicipio(gj, mun);
   if (polF) {
     polLayer = L.geoJSON(polF, {
-      style: { color: "#B45309", weight: 2, opacity: 0.7, fillColor: "#B45309", fillOpacity: 0.06 }
+      style: { color: "#B45309", weight: 2, opacity: 0.75, fillColor: "#B45309", fillOpacity: 0.08, dashArray: "4 2" }
     }).addTo(map);
   } else if (gjMun) {
-    // 2) fallback: polígono do IBGE (AM_MUNICIPIOS, chave NM_MUN)
+    // 2) Fallback: polígono do IBGE (AM_MUNICIPIOS, chave NM_MUN)
     const munN = _normMun(mun);
     const feats = (gjMun.features || []).filter(f => {
       const p = f.properties || {};
-      const nome = _normMun(p.NM_MUN || p.nome || p.NAME || "");
-      return nome === munN;
+      return _normMun(p.NM_MUN || p.nome || p.NAME || "") === munN;
     });
     if (feats.length) {
       polLayer = L.geoJSON({ type: "FeatureCollection", features: feats }, {
-        style: { color: "#B45309", weight: 2, opacity: 0.7, fillColor: "#B45309", fillOpacity: 0.06 }
+        style: { color: "#B45309", weight: 2, opacity: 0.75, fillColor: "#B45309", fillOpacity: 0.06, dashArray: "4 2" }
       }).addTo(map);
     }
   }
 
-  // 3) ruas filtradas pelo polígono — destaque laranja
+  // 3) Ruas filtradas pelo polígono — destaque laranja
   if (ruas && ruas.length) {
     ruasLayer = L.geoJSON({ type: "FeatureCollection", features: ruas }, {
       style: { color: "#F5A623", weight: 3, opacity: 0.92, lineJoin: "round", lineCap: "round" },
       onEachFeature: (feat, lyr) => {
         const p = feat.properties || {};
-        const nome = p.name || p.NAME || "Sem nome";
-        const desc = p.description || "";
+        const nome = p.nome || p.name || "Sem nome";
+        const extKm = p.extensao_km != null ? `${Number(p.extensao_km).toFixed(2)} km` : "";
+        const extM  = p.extensao_m != null ? `${Number(p.extensao_m).toFixed(0)} m` : "";
         lyr.bindPopup(
           `<div style="font-family:Outfit,sans-serif;font-size:0.82rem;max-width:220px">
-             <div style="font-weight:800;color:#1A2540;margin-bottom:4px">${htmlEscape(nome)}</div>
-             ${desc ? `<div style="color:#4A5568;font-size:0.75rem">${htmlEscape(desc).slice(0,280)}</div>` : ""}
+             <div style="font-weight:800;color:#B45309;margin-bottom:4px">${htmlEscape(nome)}</div>
+             ${extKm ? `<div style="color:#4A5568;font-size:0.74rem">Extensão: <strong>${extKm}</strong> ${extM ? `· ${extM}` : ""}</div>` : ""}
            </div>`,
           { maxWidth: 240 }
         );
@@ -4042,22 +4191,25 @@ async function _renderViaQuadroMap(mun) {
     }).addTo(map);
   }
 
-  // 4) Zoom — preferir o bbox das ruas; senão o polígono
-  if (ruasLayer) {
-    try { bounds = ruasLayer.getBounds(); } catch (e) {}
-  }
-  if ((!bounds || !bounds.isValid()) && polLayer) {
-    try { bounds = polLayer.getBounds(); } catch (e) {}
-  }
+  // 4) Zoom — preferir bbox das ruas, senão polígono, senão fitView Brasil
+  if (ruasLayer) { try { bounds = ruasLayer.getBounds(); } catch (e) {} }
+  if ((!bounds || !bounds.isValid()) && polLayer) { try { bounds = polLayer.getBounds(); } catch (e) {} }
   if (bounds && bounds.isValid()) {
     try { map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 }); } catch (e) {}
   } else {
     map.setView([-4, -62], 6);
   }
 
-  // Atualiza badge de ruas mapeadas (informação extra ao lado do mapa)
+  // Badge informativo
   const badge = document.getElementById("viaQuadroMapBadge");
-  if (badge) badge.textContent = ruas && ruas.length ? `${ruas.length} ruas mapeadas` : "Sem ruas mapeadas no GeoJSON";
+  if (badge) {
+    if (ruas && ruas.length) {
+      const totalExt = ruas.reduce((s, r) => s + Number(r.properties?.extensao_km || 0), 0);
+      badge.textContent = `${ruas.length} ruas · ${totalExt.toFixed(1)} km`;
+    } else {
+      badge.textContent = "sem ruas mapeadas na fonte";
+    }
+  }
 
   setTimeout(() => map.invalidateSize(), 200);
   setTimeout(() => map.invalidateSize(), 600);
@@ -4650,22 +4802,7 @@ window.filterTerminais    = filterTerminais;
 function getHidroviasHTML() {
   return `
   <div class="mod-wrap">
-    ${modHero("hidrovias", "Rede hidroviária navegável · extensão, classificação e bacias do Amazonas")}
-
-    <!-- Hero hidroviário decorativo -->
-    <div class="panel-card" style="background:linear-gradient(135deg,#012a4a 0%,#023e8a 50%,#0077b6 100%);border:none;padding:1.3rem 1.5rem;color:#fff;position:relative;overflow:hidden">
-      <div style="position:absolute;inset:0;background:repeating-linear-gradient(60deg,transparent 0 28px,rgba(255,255,255,.04) 28px 30px);pointer-events:none"></div>
-      <div style="position:relative;display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between">
-        <div>
-          <div style="display:inline-flex;align-items:center;gap:.45rem;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:.3rem .8rem;border-radius:999px;margin-bottom:.6rem">
-            <span class="pulse-dot" style="width:8px;height:8px;border-radius:50%;background:#90e0ef"></span>
-            Hidroviário · SEINFRA/AM
-          </div>
-          <div style="font-family:var(--font-head);font-size:1.5rem;font-weight:800;letter-spacing:-.02em">Rede <em style="color:#90e0ef;font-style:normal;font-weight:300">Hidroviária</em></div>
-          <div style="font-size:.78rem;opacity:.78;margin-top:.35rem;max-width:520px;line-height:1.5">A rede fluvial é a principal via de transporte no Amazonas. Mais de 20 mil km de rios navegáveis conectam comunidades, distritos e municípios.</div>
-        </div>
-      </div>
-    </div>
+    ${modHero("hidrovias", "Rede hidroviária navegável · A rede fluvial é a principal via de transporte no Amazonas. Mais de 20 mil km de rios conectam comunidades, distritos e municípios.")}
 
     <div class="kpi-grid">
       <div class="kpi-card c"><div class="kpi-card-label">Trechos</div><div class="kpi-card-value" id="hd-trc">—</div><div class="kpi-card-foot">cadastrados</div></div>
@@ -4845,40 +4982,7 @@ function getTerminaisHTML() {
   <div class="mod-wrap">
     ${modHero("terminais", "Terminais hidroviários flutuantes · embarque e desembarque nas comunidades e distritos do Amazonas")}
 
-    <!-- Hero hidroviário estilizado -->
-    <div class="panel-card" style="background:linear-gradient(135deg,#012a4a 0%,#023e8a 55%,#0077b6 100%);border:none;padding:1.4rem 1.6rem;color:#fff;position:relative;overflow:hidden">
-      <div style="position:absolute;inset:0;background:repeating-linear-gradient(60deg,transparent 0,transparent 28px,rgba(255,255,255,.04) 28px,rgba(255,255,255,.04) 30px);pointer-events:none"></div>
-      <div style="position:relative;display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between">
-        <div>
-          <div style="display:inline-flex;align-items:center;gap:.45rem;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:.3rem .8rem;border-radius:999px;margin-bottom:.7rem">
-            <span class="pulse-dot" style="width:8px;height:8px;border-radius:50%;background:#90e0ef"></span>
-            Hidroviário · SEINFRA/AM
-          </div>
-          <div style="font-family:var(--font-head);font-size:1.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1">
-            Terminais <em style="color:#90e0ef;font-style:normal;font-weight:300">Flutuantes</em>
-          </div>
-          <div style="font-size:.82rem;opacity:.78;margin-top:.4rem;max-width:520px;line-height:1.5">
-            Estruturas de embarque e desembarque às margens dos rios do Amazonas, garantindo conectividade entre municípios-sede e suas comunidades e distritos no interior.
-          </div>
-        </div>
-        <div style="display:flex;gap:1.6rem;align-items:center">
-          <div style="text-align:center">
-            <div style="font-family:var(--font-head);font-size:2.3rem;font-weight:800;color:#fff;line-height:1">${TM_DATA.length}</div>
-            <div style="font-size:.66rem;font-weight:700;letter-spacing:.1em;opacity:.7;text-transform:uppercase;margin-top:.15rem">Terminais</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-family:var(--font-head);font-size:2.3rem;font-weight:800;color:#90e0ef;line-height:1">${munsCount}</div>
-            <div style="font-size:.66rem;font-weight:700;letter-spacing:.1em;opacity:.7;text-transform:uppercase;margin-top:.15rem">Municípios</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-family:var(--font-head);font-size:2.3rem;font-weight:800;color:#caf0f8;line-height:1">${comuCount}</div>
-            <div style="font-size:.66rem;font-weight:700;letter-spacing:.1em;opacity:.7;text-transform:uppercase;margin-top:.15rem">Comunidades</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- KPI grid complementar -->
+    <!-- KPI grid (hero é fornecido pelo modHero) -->
     <div class="kpi-grid">
       <div class="kpi-card c"><div class="kpi-card-label">Total</div><div class="kpi-card-value">${TM_DATA.length}</div><div class="kpi-card-foot">terminais flutuantes</div></div>
       <div class="kpi-card v"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value">${munsCount}</div><div class="kpi-card-foot">atendidos</div></div>
@@ -6445,7 +6549,22 @@ async function exportCurrentPDF() {
 /* ═════════════════════════════════════════════════════════════════
    BOOT
    ═════════════════════════════════════════════════════════════════ */
+// Injeta SVG icons em qualquer elemento [data-ic="NOME"] que esteja no DOM.
+// Chamado: (a) na inicialização — para sidebar; (b) após cada loadModule —
+// caso o módulo gere markup com data-ic.
+function injectSvgIcons(root) {
+  const scope = root || document;
+  scope.querySelectorAll("[data-ic]").forEach(el => {
+    if (el._ic_done) return;
+    el.innerHTML = iconSvg(el.dataset.ic);
+    el._ic_done = true;
+  });
+}
+window.injectSvgIcons = injectSvgIcons;
+
 window.addEventListener("DOMContentLoaded", () => {
+  // 0. Injeta SVG icons no sidebar (estáticos).
+  injectSvgIcons();
   // 1. PRIMEIRO renderiza a home (placeholders) — paint instantâneo.
   HUB.restore();
   // 2. liga listeners globais
