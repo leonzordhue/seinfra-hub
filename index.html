@@ -426,6 +426,31 @@
       font-size: 0.72rem; color: var(--cinza-med); line-height: 1.4;
       min-height: 32px;
     }
+    /* Estatística destacada dentro do card (padrão BI:
+       "34 rodovias estaduais / 3458 km de extensão") */
+    .module-card-stat {
+      display: flex; flex-direction: column; gap: .15rem;
+      margin-top: .55rem; padding-top: .55rem;
+      border-top: 1px dashed var(--borda);
+    }
+    .module-card-stat-row {
+      display: flex; align-items: baseline; gap: .35rem;
+    }
+    .module-card-stat-val {
+      font-family: var(--font-head); font-size: 1.25rem; font-weight: 800;
+      color: var(--azul); line-height: 1; letter-spacing: -0.02em;
+    }
+    .module-card-stat-lbl {
+      font-size: .65rem; color: var(--cinza-med);
+      font-weight: 600; letter-spacing: 0;
+    }
+    .module-card.k-verde    .module-card-stat-val { color: var(--verde, #2D8540); }
+    .module-card.k-amarelo  .module-card-stat-val { color: #D4A017; }
+    .module-card.k-laranja  .module-card-stat-val { color: #B45309; }
+    .module-card.k-ciano    .module-card-stat-val { color: #0E7490; }
+    .module-card.k-azul     .module-card-stat-val { color: #0077b6; }
+    .module-card.k-vermelho .module-card-stat-val { color: #C0392B; }
+    .module-card.k-roxo     .module-card-stat-val { color: #6C3483; }
     .module-card-foot {
       display: flex; align-items: center; justify-content: space-between;
       margin-top: 0.7rem; gap: 0.4rem;
@@ -903,6 +928,164 @@
       font-size: 0.85rem;
     }
     .info-state-icon { font-size: 2rem; margin-bottom: 0.4rem; }
+
+    /* ─────────────────────────────────────────────────────
+       MODAIS RICOS (Aeródromos / Terminais)
+       Estrutura com header gradiente + seções temáticas
+       ───────────────────────────────────────────────────── */
+    .modal-ov {
+      position: fixed; inset: 0; background: rgba(0,0,0,.55);
+      backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+      z-index: 99999; display: none; align-items: center; justify-content: center;
+      padding: 1rem; opacity: 0; transition: opacity .25s ease;
+    }
+    .modal-ov.open { display: flex; opacity: 1; }
+    .modal-rich {
+      background: #fff; border-radius: 20px; width: 100%; max-width: 720px;
+      max-height: 92vh; overflow-y: auto; box-shadow: 0 30px 80px rgba(0,0,0,.35);
+      transform: translateY(20px); opacity: 0;
+      transition: transform .28s ease, opacity .28s ease;
+      position: relative;
+    }
+    .modal-ov.open .modal-rich { transform: none; opacity: 1; }
+    .modal-rich .mr-close {
+      position: absolute; top: 1rem; right: 1rem; z-index: 2;
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.25);
+      color: #fff; font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .modal-rich .mr-close:hover { background: rgba(255,255,255,.32); }
+    .modal-rich .mr-hdr {
+      padding: 1.4rem 1.5rem 1.2rem; color: #fff;
+      border-radius: 20px 20px 0 0;
+      position: relative; overflow: hidden;
+    }
+    .modal-rich .mr-hdr::before {
+      /* Padrão decorativo sutil — linhas diagonais */
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(circle at 100% 0%, rgba(255,255,255,.12), transparent 60%),
+        repeating-linear-gradient(60deg, transparent 0 28px, rgba(255,255,255,.04) 28px 30px);
+      pointer-events: none; z-index: 0;
+    }
+    .modal-rich .mr-hdr > * { position: relative; z-index: 1; }
+    /* Ícone-avatar grande, decorativo, no canto superior-direito */
+    .modal-rich .mr-hdr-icon {
+      position: absolute; top: 1.1rem; right: 3.2rem;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; color: #fff; z-index: 1;
+      box-shadow: 0 4px 16px rgba(0,0,0,.25);
+    }
+    .modal-rich .mr-hdr.gov-estado  { background: linear-gradient(135deg, #1a0a33, #3b0764); }
+    .modal-rich .mr-hdr.gov-publico { background: linear-gradient(135deg, #002D72, #003d9e); }
+    .modal-rich .mr-hdr.gov-hidro   { background: linear-gradient(135deg, #012a4a, #023e8a); }
+    .modal-rich .mr-hdr.gov-rodovia { background: linear-gradient(135deg, #1A2B5E, #2c4a8f); }
+    .modal-rich .mr-hdr.gov-ramal   { background: linear-gradient(135deg, #1f5b30, #2D8540); }
+    .modal-rich .mr-icao-row {
+      display: flex; align-items: center; gap: .55rem;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: .85rem; opacity: .85; margin-bottom: .55rem;
+    }
+    .modal-rich .mr-icao-sep { opacity: .35; }
+    .modal-rich .mr-title { font-family: var(--font-head); font-size: 1.5rem; font-weight: 800; letter-spacing: -0.01em; }
+    .modal-rich .mr-mun   { font-size: .82rem; opacity: .75; margin-top: .2rem; }
+    .modal-rich .mr-badges { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .8rem; }
+    .modal-rich .mr-badge {
+      font-size: .7rem; font-weight: 700; letter-spacing: .05em;
+      padding: .22rem .65rem; border-radius: 999px; text-transform: uppercase;
+      background: rgba(255,255,255,.16); color: #fff;
+      border: 1px solid rgba(255,255,255,.22);
+    }
+    .modal-rich .mr-badge.ifr  { background: #f59e0b; color: #1a0a00; border-color: #f59e0b; }
+    .modal-rich .mr-badge.ap2  { background: #c0392b; color: #fff; border-color: #c0392b; }
+    .modal-rich .mr-badge.ap1  { background: rgba(255,255,255,.92); color: #002D72; border-color: rgba(255,255,255,.92); }
+    .modal-rich .mr-body { padding: 1.2rem 1.5rem 1.5rem; }
+    .modal-rich .mr-section { margin-bottom: 1.3rem; }
+    .modal-rich .mr-section:last-child { margin-bottom: 0; }
+    .modal-rich .mr-section-title {
+      font-family: var(--font-head); font-size: .75rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase; color: var(--azul);
+      margin-bottom: .55rem; padding-bottom: .35rem;
+      border-bottom: 1px solid var(--borda);
+    }
+    .modal-rich .mr-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: .55rem;
+    }
+    .modal-rich .mr-field {
+      background: #f5f7fb; border: 1px solid #e0e6f0;
+      border-radius: 10px; padding: .55rem .75rem;
+    }
+    .modal-rich .mr-field-label {
+      font-size: .6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .08em; color: var(--cinza-aux); margin-bottom: .15rem;
+    }
+    .modal-rich .mr-field-value {
+      font-size: .88rem; font-weight: 600; color: var(--azul-dk);
+      word-break: break-word;
+    }
+    .modal-rich .mr-field-value.mono { font-family: 'JetBrains Mono', Consolas, monospace; font-size: .82rem; }
+    /* Pista visual proporcional */
+    .modal-rich .pista-vis {
+      background: linear-gradient(180deg, #f5f7fb 0%, #ecf0f8 100%);
+      border: 1px solid #e0e6f0; border-radius: 12px; padding: .9rem 1rem;
+      margin-bottom: .8rem;
+    }
+    .modal-rich .pista-desig {
+      font-family: 'JetBrains Mono', Consolas, monospace; font-size: .85rem;
+      font-weight: 700; color: var(--azul); margin-bottom: .55rem;
+    }
+    .modal-rich .pista-bar-wrap {
+      background: rgba(0,45,114,.07); height: 22px; border-radius: 6px;
+      position: relative; overflow: hidden; margin-bottom: .35rem;
+    }
+    .modal-rich .pista-bar {
+      height: 100%; background: linear-gradient(90deg, var(--azul), #3b5fbf);
+      width: 0; border-radius: 6px;
+      transition: width .8s cubic-bezier(.2,.7,.1,1);
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: .55rem; color: #fff; font-size: .72rem; font-weight: 700;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+    .modal-rich .pista-lbl {
+      display: flex; justify-content: space-between;
+      font-size: .72rem; color: var(--cinza-med);
+    }
+    /* Ato normativo (portaria) — botão */
+    .modal-rich .mr-portaria {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: var(--azul-claro); border: 1px solid var(--azul-borda);
+      color: var(--azul); text-decoration: none; padding: .55rem .9rem;
+      border-radius: 10px; font-size: .82rem; font-weight: 600;
+      transition: background .15s, transform .15s;
+    }
+    .modal-rich .mr-portaria:hover { background: #d8e3f2; transform: translateX(2px); }
+    /* Observações (medidas administrativas) */
+    .modal-rich .mr-obs {
+      background: #FEF3DC; border-left: 4px solid #F5A623;
+      padding: .7rem .9rem; border-radius: 8px; font-size: .8rem;
+      color: #6E4906; line-height: 1.55;
+    }
+    .modal-rich .mr-obs strong { color: #B45309; }
+    /* Context box */
+    .modal-rich .mr-context {
+      background: var(--azul-claro); border: 1px dashed var(--azul-borda);
+      padding: .7rem .9rem; border-radius: 8px; font-size: .78rem;
+      color: var(--cinza-med); line-height: 1.55;
+    }
+    .modal-rich .mr-context.gov-estado { background: #f3e8ff; border-color: #d6bcfa; color: #4c1d6f; }
+
+    /* ─────────────────────────────────────────────────────
+       Animação fade-in para listas (cards de terminal etc.)
+       ───────────────────────────────────────────────────── */
+    @keyframes mrUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .anim-up { animation: mrUp .38s ease forwards; opacity: 0; }
+    @keyframes mrPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .45; transform: scale(.82); } }
+    .pulse-dot { animation: mrPulse 2s infinite; }
 
     /* Print */
     @media print {
@@ -1487,11 +1670,19 @@ function refreshModule() {
    HOME (Dashboard)
    ═════════════════════════════════════════════════════════════════ */
 function getHomeHTML() {
+  // Cor accent por módulo — usado no padrão "k-*"
+  const moduleAccent = {
+    rodovias: "", ramais: "k-verde", viario: "k-laranja",
+    aerodromos: "k-ciano", terminais: "k-azul",
+    obras: "k-vermelho", atlas: "", planejamento: "k-roxo",
+    bi: "k-amarelo", briefings: "k-verde",
+  };
   const cards = Object.values(HUB.modules).map(m => `
-    <div class="module-card" onclick="loadModule('${m.id}')">
+    <div class="module-card ${moduleAccent[m.id] || ''}" onclick="loadModule('${m.id}')">
       <div class="module-card-icon" style="background:${hexAlpha(m.color, 0.12)}; color:${m.color}">${m.icon}</div>
       <div class="module-card-name">${m.label}</div>
       <div class="module-card-sub" id="mc-sub-${m.id}">Carregando dados…</div>
+      <div class="module-card-stat" id="mc-stat-${m.id}" style="display:none"></div>
       <div class="module-card-foot">
         <span class="module-card-chip" id="mc-chip-${m.id}">Disponível</span>
         <div class="module-card-arrow">&rarr;</div>
@@ -1523,22 +1714,9 @@ function getHomeHTML() {
         </div>
       </section>
 
-      <div class="hero-kpi-strip" id="heroKpis">
-        <div class="kpi-mini"><div class="kpi-mini-label">Rodovias</div><div class="kpi-mini-value" id="kpi-rod">—</div><div class="kpi-mini-unit">estaduais</div></div>
-        <div class="kpi-mini k-verde"><div class="kpi-mini-label">Extensão</div><div class="kpi-mini-value" id="kpi-ext">—</div><div class="kpi-mini-unit">km totais</div></div>
-        <div class="kpi-mini k-amarelo"><div class="kpi-mini-label">Ramais</div><div class="kpi-mini-value" id="kpi-ram">—</div><div class="kpi-mini-unit">cadastrados</div></div>
-        <div class="kpi-mini k-ciano"><div class="kpi-mini-label">Aeródromos</div><div class="kpi-mini-value" id="kpi-aero">—</div><div class="kpi-mini-unit">pontos</div></div>
-        <div class="kpi-mini k-roxo"><div class="kpi-mini-label">Sinistros</div><div class="kpi-mini-value" id="kpi-sin">—</div><div class="kpi-mini-unit">registrados</div></div>
-        <div class="kpi-mini k-laranja"><div class="kpi-mini-label">Terminais</div><div class="kpi-mini-value" id="kpi-term">—</div><div class="kpi-mini-unit">fluviais</div></div>
-        <div class="kpi-mini k-vermelho"><div class="kpi-mini-label">Contratos</div><div class="kpi-mini-value" id="kpi-ct">—</div><div class="kpi-mini-unit">ativos</div></div>
-        <div class="kpi-mini k-amarelo"><div class="kpi-mini-label">Investimento</div><div class="kpi-mini-value" id="kpi-inv">—</div><div class="kpi-mini-unit">R$ contratual</div></div>
-        <div class="kpi-mini k-verde"><div class="kpi-mini-label">Municípios</div><div class="kpi-mini-value" id="kpi-mun">62</div><div class="kpi-mini-unit">no estado</div></div>
-        <div class="kpi-mini"><div class="kpi-mini-label">Obras</div><div class="kpi-mini-value" id="kpi-obras">—</div><div class="kpi-mini-unit">em execução</div></div>
-      </div>
-
       <div class="section-title-wrap">
         <div class="section-title"><span class="section-title-bar"></span>Módulos disponíveis</div>
-        <div class="section-title-sub">9 módulos ativos</div>
+        <div class="section-title-sub">${Object.keys(HUB.modules).length} módulos · estatísticas em tempo real</div>
       </div>
       <div class="module-grid">${cards}</div>
 
@@ -1606,41 +1784,27 @@ function _refreshHomeIfActive() {
   catch (e) { console.warn("_refreshHomeIfActive:", e); }
 }
 
-function populateHeroKPIs() {
-  const rod = HUB.state.rodovias || [];
-  const ext = rod.reduce((acc, r) => acc + parseNum(r.extensao_km || r.extensao || r.km), 0);
-  // Contagem de RODOVIAS ÚNICAS (não trechos) — agrupar por nome.
-  // Antes mostrava 50 (trechos); o correto são 34 rodovias estaduais.
-  const uniqRod = new Set(rod.map(r => (r.rodovia || r.nome || "").toString().toUpperCase().trim()).filter(Boolean));
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set("kpi-rod",   fmtNum(uniqRod.size || rod.length));
-  set("kpi-ext",   fmtNum(Math.round(ext)));
-  // ramais via geojson lazy: estimativa pelo arquivo de geojson se já carregado
-  const ram = HUB.state.geojsons[GEOJSON_FILES.ramais];
-  set("kpi-ram", ram ? fmtNum((ram.features || []).length) : "1.200+");
-  const aer = HUB.state.geojsons[GEOJSON_FILES.aerodromos];
-  set("kpi-aero", aer ? fmtNum((aer.features || []).length) : "120+");
-  set("kpi-sin", fmtNum((HUB.state.sinistros || []).length));
-  const term = HUB.state.geojsons[GEOJSON_FILES.terminais];
-  set("kpi-term", term ? fmtNum((term.features || []).length) : "—");
-  const ct = HUB.state.contratos || [];
-  set("kpi-ct", fmtNum(ct.length));
-  // chave real da geral (export CSV normalizado): valor_global_inicial_aditivos_reajustes_da_obra
-  const inv = ct.reduce((a, r) => a + parseNum(
-    r.valor_global_inicial_aditivos_reajustes_da_obra ||
-    r.valor_global_inicial_aditivos_reajustes ||
-    r.valor_atualizado || r.valor_contratual || r.valor || 0), 0);
-  set("kpi-inv", inv ? (inv >= 1e9 ? (inv/1e9).toFixed(2) + " bi" : (inv/1e6).toFixed(1) + " mi") : "—");
-  set("kpi-mun", "62");
-  const exec = ct.filter(r => {
-    const s = (r.situacao_eobras || r.situacao_real || r.situacao || "").toString().toLowerCase();
-    return s.includes("vigent") || s.includes("execu") || s.includes("andamento");
-  });
-  set("kpi-obras", fmtNum(exec.length));
+// Stub mantido por compatibilidade — a faixa horizontal de KPIs foi
+// substituída pelos KPIs dentro de cada module-card (padrão BI).
+function populateHeroKPIs() { /* no-op */ }
+
+// Helper: monta o bloco de estatística destacada dentro do module-card.
+// Estilo BI: 2 linhas "valor + rótulo" (ex.: "34  Rodovias Estaduais",
+// "3.458  km de Extensão"). Aceita 1 ou 2 stats por módulo.
+function _setModStat(mid, stats) {
+  const el = document.getElementById(`mc-stat-${mid}`);
+  if (!el) return;
+  if (!stats || !stats.length) { el.style.display = "none"; return; }
+  el.style.display = "flex";
+  el.innerHTML = stats.map(([val, lbl]) => `
+    <div class="module-card-stat-row">
+      <span class="module-card-stat-val">${val}</span>
+      <span class="module-card-stat-lbl">${lbl}</span>
+    </div>`).join("");
 }
 
 function populateModuleCardSubs() {
-  const set = (mid, sub, chip) => {
+  const setSub = (mid, sub, chip) => {
     const s = document.getElementById(`mc-sub-${mid}`);
     const c = document.getElementById(`mc-chip-${mid}`);
     if (s) s.textContent = sub;
@@ -1648,16 +1812,75 @@ function populateModuleCardSubs() {
   };
   const rod = HUB.state.rodovias || [];
   const ct  = HUB.state.contratos || [];
-  set("rodovias", `${rod.length} rodovias estaduais cadastradas`);
-  set("ramais", "Atlas de ramais por município");
-  set("aerodromos", "Pontos cadastrados com infraestrutura");
-  set("hidrovias", "Rede navegável estadual e federal");
-  set("terminais", "Terminais fluviais e portos");
-  set("obras", `${ct.length} contratos · gestão executiva`);
-  set("atlas", "9 camadas geoespaciais toggleáveis");
-  set("planejamento", "Metas e priorização orçamentária");
-  set("bi", "Indicadores consolidados + alertas");
-  set("briefings", `${ct.length} obras · PDF com timbrado`);
+  // ─── RODOVIAS ─────────────────────────────────────────
+  const ext = rod.reduce((acc, r) => acc + parseNum(r.extensao_km || r.extensao || r.km), 0);
+  const uniqRod = new Set(rod.map(r => (r.rodovia || r.nome || "").toString().toUpperCase().trim()).filter(Boolean));
+  setSub("rodovias", "Rede estadual e federal");
+  _setModStat("rodovias", uniqRod.size ? [
+    [fmtNum(uniqRod.size), "Rodovias Estaduais"],
+    [fmtNum(Math.round(ext)), "km de Extensão"],
+  ] : null);
+  // ─── RAMAIS ───────────────────────────────────────────
+  const ram = HUB.state.geojsons[GEOJSON_FILES.ramais];
+  const ramCount = ram ? (ram.features || []).length : null;
+  const ramMuns = ram ? new Set((ram.features || []).map(f => (f.properties?.MUNICIPIO || f.properties?.municipio || "").toUpperCase()).filter(Boolean)).size : 0;
+  setSub("ramais", "Atlas de ramais por município");
+  _setModStat("ramais", [
+    [ramCount ? fmtNum(ramCount) : "1.200+", "Ramais"],
+    ...(ramMuns ? [[fmtNum(ramMuns), "Municípios"]] : []),
+  ]);
+  // ─── VIÁRIO ───────────────────────────────────────────
+  setSub("viario", "Sistema viário urbano municipal");
+  _setModStat("viario", [
+    ["78", "Contratos consolidados"],
+    ["62", "Municípios"],
+  ]);
+  // ─── AERÓDROMOS ───────────────────────────────────────
+  if (typeof AE_DATA !== "undefined") {
+    const aeMuns = new Set(AE_DATA.map(a => a.municipio)).size;
+    setSub("aerodromos", "Aeródromos estaduais e federais");
+    _setModStat("aerodromos", [
+      [fmtNum(AE_DATA.length), "Aeródromos"],
+      [fmtNum(aeMuns), "Municípios atendidos"],
+    ]);
+  } else {
+    setSub("aerodromos", "Pontos cadastrados com infraestrutura");
+    _setModStat("aerodromos", null);
+  }
+  // ─── TERMINAIS ────────────────────────────────────────
+  if (typeof TM_DATA !== "undefined") {
+    const tmMuns = new Set(TM_DATA.map(t => t.localidade)).size;
+    setSub("terminais", "Terminais hidroviários flutuantes");
+    _setModStat("terminais", [
+      [fmtNum(TM_DATA.length), "Terminais Flutuantes"],
+      [fmtNum(tmMuns), "Municípios atendidos"],
+    ]);
+  } else {
+    setSub("terminais", "Terminais fluviais e portos");
+    _setModStat("terminais", null);
+  }
+  // ─── OBRAS ────────────────────────────────────────────
+  const exec = ct.filter(r => {
+    const s = (r.situacao_eobras || r.situacao_real || r.situacao || "").toString().toLowerCase();
+    return s.includes("vigent") || s.includes("execu") || s.includes("andamento");
+  });
+  setSub("obras", "Contratos e obras em execução");
+  _setModStat("obras", ct.length ? [
+    [fmtNum(ct.length), "Contratos cadastrados"],
+    [fmtNum(exec.length), "Em execução"],
+  ] : null);
+  // ─── ATLAS ────────────────────────────────────────────
+  setSub("atlas", "Camadas geoespaciais toggleáveis");
+  _setModStat("atlas", [["9", "Camadas integradas"]]);
+  // ─── PLANEJAMENTO ─────────────────────────────────────
+  setSub("planejamento", "Metas e priorização orçamentária");
+  _setModStat("planejamento", null);
+  // ─── BI ───────────────────────────────────────────────
+  setSub("bi", "Indicadores consolidados + alertas");
+  _setModStat("bi", null);
+  // ─── BRIEFINGS ────────────────────────────────────────
+  setSub("briefings", "PDFs executivos por obra");
+  _setModStat("briefings", ct.length ? [[fmtNum(ct.length), "Briefings disponíveis"]] : null);
 }
 
 function populateTimeline() {
@@ -1709,9 +1932,9 @@ async function initHomeMap() {
     const gj = await loadGeoJSON(file);
     if (!gj) return null;
     const styleMap = {
-      rodovias_est: { color: "#1A2B5E", weight: 2 },
-      rodovias_fed: { color: "#2D8540", weight: 2 },
-      hidrovias:    { color: "#5B21B6", weight: 2 },
+      rodovias_est: { color: "#1A2B5E", weight: 2 },   // azul-marinho — estaduais
+      rodovias_fed: { color: "#C0392B", weight: 2.5 }, // vermelho — federais
+      hidrovias:    { color: "#0077b6", weight: 2 },   // azul hidroviário
     };
     const isPoint = (gj.features || [])[0]?.geometry?.type?.includes("Point");
     let layer;
@@ -2097,6 +2320,21 @@ function _normSit(s) {
   if (u.includes("TRV")) return "TRV";
   return "";
 }
+
+// Overrides de SITUAÇÃO — corrige bugs conhecidos no geojson-fonte
+// (atlas-amazonas/RODOVIAS_ESTADUAIS_AMAZONAS.geojson).
+// AM-020: o geojson tem PAV/DUP invertidos. O trecho Aleixo→KM12.45 (12,45 km,
+// código 020EAM1245) é o duplicado; KM12.45→Puraquequara (4,64 km, 020EAM0464)
+// é o pavimentado simples. Override aplicado por `CÓDIGO S.`.
+const _SIT_OVERRIDES = {
+  "020EAM1245": "DUP",
+  "020EAM0464": "PAV",
+};
+function _sitFromFeature(p) {
+  const codigo = (p["CÓDIGO S."] || p["CÓDIGO S"] || p.CODIGO || p.codigo || "").toString().trim();
+  if (codigo && _SIT_OVERRIDES[codigo]) return _SIT_OVERRIDES[codigo];
+  return (p.SITUAÇÃO || p.SITUACAO || p.situacao || "").toString();
+}
 function _labSit(k) { return ({ PAV:"Pavimentada", DUP:"Duplicada", LEI:"Leito natural", PLA:"Planejada", IMP:"Em implantação", TRV:"Travessia urbana" })[k] || k; }
 function _corSit(k) { return ({ PAV:"#2D8540", DUP:"#1A2B5E", LEI:"#F5A623", PLA:"#8896A8", IMP:"#C0392B", TRV:"#6C3483" })[k] || "#8896A8"; }
 // Agrupamento em 3 categorias APENAS para o doughnut da Visão Geral
@@ -2116,21 +2354,22 @@ function _fmtBRLShort(v) {
 
 function _renderObraCard(o) {
   const ctSafe = (o.contrato || "").replace(/'/g, "\\'");
-  return `<div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:10px;padding:0.75rem 1rem">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.6rem;margin-bottom:0.3rem;flex-wrap:wrap">
-      <span style="font-size:0.7rem;font-weight:700;color:var(--azul)">${htmlEscape(o.contrato||"—")}</span>
-      <span style="font-size:0.85rem;font-weight:800;color:var(--azul)">${_fmtBRLShort(o.valor)}</span>
+  const obj = (o.objeto || "—").trim();
+  return `<div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:10px;padding:0.8rem 1rem">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.6rem;margin-bottom:0.4rem;flex-wrap:wrap">
+      <span style="font-size:0.7rem;font-weight:700;color:var(--azul);letter-spacing:0.02em">${htmlEscape(o.contrato||"—")}</span>
+      <span style="font-size:0.9rem;font-weight:800;color:var(--azul);white-space:nowrap">${_fmtBRLShort(o.valor)}</span>
     </div>
-    <div style="font-size:0.85rem;font-weight:500;line-height:1.4;margin-bottom:0.4rem">${htmlEscape((o.objeto||"—").slice(0,220))}${(o.objeto||"").length>220?"…":""}</div>
+    <div title="${htmlEscape(obj)}" style="font-size:0.85rem;font-weight:500;line-height:1.45;margin-bottom:0.5rem;color:var(--azul-dk);word-wrap:break-word;overflow-wrap:break-word;hyphens:auto">${htmlEscape(obj)}</div>
     <div style="font-size:0.72rem;color:var(--cinza-med);display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;justify-content:space-between">
-      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center">
-        <span>${htmlEscape(o.municipio||"—")}</span><span>·</span>
-        <span>${htmlEscape(o.empresa||"—")}</span>
+      <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;flex:1;min-width:0">
+        <span style="font-weight:600">${htmlEscape(o.municipio||"—")}</span><span>·</span>
+        <span style="word-break:break-word">${htmlEscape(o.empresa||"—")}</span>
         ${o.ano ? `<span>·</span><span>${o.ano}</span>` : ""}
         ${statusChip(o.situacao_eobras||o.situacao_real||"")}
       </div>
       <button onclick="event.stopPropagation();gerarBriefingObra('${ctSafe}')"
-        style="font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--azul);background:#fff;border:1.5px solid var(--azul-borda);padding:0.32em 0.75em;border-radius:6px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;transition:background .15s,color .15s"
+        style="font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--azul);background:#fff;border:1.5px solid var(--azul-borda);padding:0.32em 0.75em;border-radius:6px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;transition:background .15s,color .15s;flex-shrink:0"
         onmouseover="this.style.background='var(--azul)';this.style.color='#fff'"
         onmouseout="this.style.background='#fff';this.style.color='var(--azul)'"
         title="Gerar briefing PDF desta obra">📄 Briefing</button>
@@ -2446,15 +2685,17 @@ async function _renderRodQuadroMap(nome) {
   if (!feats.length) { try { map.setView([-4.5,-63.5], 6); } catch(e){} return; }
   const lyr = L.geoJSON({ type: "FeatureCollection", features: feats }, {
     style: f => {
-      const sit = ((f.properties.SITUAÇÃO || f.properties.SITUACAO || f.properties.situacao || "") + "").toUpperCase();
+      const sit = _sitFromFeature(f.properties || {}).toUpperCase();
       const k = _normSit(sit);
       return { color: _corSit(k || "default"), weight: 5, opacity: 0.92 };
     },
     onEachFeature: (f, l) => {
       const p = f.properties || {};
+      const sitEfetiva = _sitFromFeature(p);
+      const k = _normSit(sitEfetiva);
       l.bindPopup(`<div class="pop-title">${htmlEscape(p.RODOVIA || nome)}</div>
                    <div class="pop-row">${htmlEscape(p["CÓDIGO S."] || p.CODIGO || "")}</div>
-                   <div class="pop-row">Situação: ${htmlEscape(p.SITUAÇÃO || p.SITUACAO || "—")}</div>`);
+                   <div class="pop-row">Situação: ${htmlEscape(_labSit(k) || sitEfetiva || "—")}</div>`);
     }
   }).addTo(map);
   try { map.fitBounds(lyr.getBounds(), { padding: [30,30] }); } catch (e) {}
@@ -3147,6 +3388,47 @@ window.renderInvestRamList = function() {
     ? `<div style="display:flex;flex-direction:column;gap:0.5rem">${filtered.sort((a,b) => b.valor-a.valor).map(_renderObraCard).join("")}</div>`
     : `<div class="info-state" style="padding:1.4rem 0">Nenhuma obra encontrada com os filtros atuais.</div>`;
 };
+
+/* ═════════════════════════════════════════════════════════════════
+   AERÓDROMOS — Dataset oficial ANAC (23 aeródromos do AM após dedup)
+   Fonte: index_aero.html standalone — base ANAC consolidada SEINFRA/AM
+   Campos: icao, ciad, nome, municipio, lat, lon, altitude, operacao,
+   pista_desig, comprimento, largura, resistencia, superficie, portaria,
+   rbac107, rbac153, cat_tar, aeronave, observacoes, fonte, portaria_link
+   ═════════════════════════════════════════════════════════════════ */
+const _AE_TODOS = [
+  {icao:"SBMY",ciad:"AM0015",nome:"MANICORÉ",municipio:"MANICORÉ",lat:-5.81111,lon:-61.27833,altitude:"53 m",operacao:"VFR Diurno",pista_desig:"05/23",comprimento:"1265 m",largura:"30 m",resistencia:"PCR 90/F/D/X/T",superficie:"Asfalto",portaria:"PA2022-9831",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"ESTADO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2022-9831.pdf"},
+  {icao:"SWBC",ciad:"AM0017",nome:"BARCELOS",municipio:"BARCELOS",lat:-0.98111,lon:-62.91944,altitude:"34 m",operacao:"VFR Diurno",pista_desig:"09/27",comprimento:"1500 m",largura:"30 m",resistencia:"PCN 17/F/B/Y/T",superficie:"Asfalto",portaria:"PA2022-9172",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"Portaria n° 15.059/2024 revogação de medida cautelar de proibição de operações ao aeródromo público Barcelos, CIAD AM0017.",fonte:"ESTADO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2022-9172.pdf"},
+  {icao:"SWCA",ciad:"AM0007",nome:"CARAUARI",municipio:"CARAUARI",lat:-4.87139,lon:-66.8975,altitude:"108 m",operacao:"VFR Diurno",pista_desig:"04/22",comprimento:"1665 m",largura:"18 m",resistencia:"PCN 12/F/C/Y/T",superficie:"Asfalto",portaria:"PA2017-3045",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"4ª",aeronave:"",observacoes:"",fonte:"ESTADO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2017-3045.pdf"},
+  {icao:"SWEI",ciad:"AM0009",nome:"EIRUNEPÉ",municipio:"EIRUNEPÉ",lat:-6.63944,lon:-69.87972,altitude:"127 m",operacao:"VFR Diurno",pista_desig:"16/34",comprimento:"2210 m",largura:"45 m",resistencia:"PCN 30/F/C/X/U",superficie:"Asfalto",portaria:"PA2023-10.757",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"Portaria n° 15.308/2024/SIA revogação de medida administrativa cautelar ao aeródromo público de Eirunepé, CIAD AM0009.",fonte:"ESTADO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2023-10.757.pdf"},
+  {icao:"SWMW",ciad:"AM0020",nome:"MAUÉS",municipio:"MAUÉS",lat:-3.37194,lon:-57.72472,altitude:"21 m",operacao:"VFR Diurno",pista_desig:"01/19",comprimento:"1200 m",largura:"30 m",resistencia:"PCN 11/F/B/Y/T",superficie:"Asfalto",portaria:"PA2022-9655",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"ESTADO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2022-9655.pdf"},
+  {icao:"SWOB",ciad:"AM0014",nome:"FONTE BOA",municipio:"FONTE BOA",lat:-2.5325,lon:-66.08333,altitude:"63 m",operacao:"VFR Diurno",pista_desig:"18/36",comprimento:"1300 m",largura:"24 m",resistencia:"PCR 40/R/B/Z/T",superficie:"Asfalto",portaria:"PA2023-11.691",rbac107:"AP-0",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"Portaria SIA n° 15.500/2024 revogação de medida cautelar de proibição de operações na pista 18/36, exceto emergências médicas.",fonte:"ESTADO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2023-11.691.pdf"},
+  {icao:"SWII",ciad:"AM0013",nome:"IPIRANGA",municipio:"SANTO ANTÔNIO DO IÇÁ",lat:-2.94028,lon:-69.69417,altitude:"67 m",operacao:"VFR Diurno",pista_desig:"01/19",comprimento:"1500 m",largura:"30 m",resistencia:"PCN 13/R/C/W/U",superficie:"Concreto",portaria:"PA2023-10.581",rbac107:"AP-0",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"ESTADO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2023-10.581.pdf"},
+  {icao:"",ciad:"",nome:"LÁBREA",municipio:"LÁBREA",lat:-7.27889,lon:-64.76944,altitude:"74 m",operacao:"VFR Diurno",pista_desig:"18/36",comprimento:"1200 m",largura:"30 m",resistencia:"PCN 8/F/C/Y/T",superficie:"Asfalto",portaria:"PA2020-3249",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2020-3249.pdf"},
+  {icao:"SBEG",ciad:"",nome:"EDUARDO GOMES",municipio:"MANAUS",lat:-3.04111,lon:-60.05056,altitude:"80 m",operacao:"VFR Diurno/Noturno e IFR Diurno/Noturno",pista_desig:"11/29",comprimento:"2700 m",largura:"45 m",resistencia:"PCR 860/F/A/X/T",superficie:"Asfalto",portaria:"PA2022-7517",rbac107:"AP-2",rbac153:"Classe III",cat_tar:"1ª",aeronave:"4E",observacoes:"Maior aeródromo do Estado do Amazonas. Operações IFR diurnas e noturnas. Aeronave crítica código 4E.",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2022-7517.pdf"},
+  {icao:"SWIY",ciad:"",nome:"ITACOATIARA",municipio:"ITACOATIARA",lat:-3.12639,lon:-58.48167,altitude:"43 m",operacao:"VFR Diurno",pista_desig:"14/32",comprimento:"1520 m",largura:"30 m",resistencia:"PCN 10/F/A/Y/T",superficie:"Asfalto",portaria:"PA2018-2359",rbac107:"AP-0",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2018-2359.pdf"},
+  {icao:"SBTF",ciad:"",nome:"PREFEITO ORLANDO MARINHO",municipio:"TEFÉ",lat:-3.38028,lon:-64.72528,altitude:"57 m",operacao:"VFR Diurno/Noturno e IFR Diurno/Noturno",pista_desig:"15/33",comprimento:"2000 m",largura:"45 m",resistencia:"PCR 360/F/C/X/T",superficie:"Asfalto",portaria:"PA2022-9830",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"2ª",aeronave:"3C",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2022-9830.pdf"},
+  {icao:"SBTT",ciad:"",nome:"TABATINGA",municipio:"TABATINGA",lat:-4.25056,lon:-69.93778,altitude:"80 m",operacao:"VFR Diurno/Noturno e IFR Diurno/Noturno",pista_desig:"12/30",comprimento:"2150 m",largura:"33 m",resistencia:"PCR 330/F/A/X/T",superficie:"Asfalto",portaria:"PA2021-4744",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"2ª",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2021-4744.pdf"},
+  {icao:"SBUA",ciad:"",nome:"SÃO GABRIEL DA CACHOEIRA",municipio:"SÃO GABRIEL DA CACHOEIRA",lat:-0.14806,lon:-66.98583,altitude:"76 m",operacao:"VFR Diurno e IFR Diurno",pista_desig:"05/23",comprimento:"2600 m",largura:"45 m",resistencia:"PCR 280/F/C/X/T",superficie:"Asfalto",portaria:"PA2020-1183",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2020-1183.pdf"},
+  {icao:"SDCG",ciad:"",nome:"SENADORA EUNICE MICHILES",municipio:"SÃO PAULO DE OLIVENÇA",lat:-3.46917,lon:-68.92111,altitude:"102 m",operacao:"VFR Diurno",pista_desig:"04/22",comprimento:"1200 m",largura:"23 m",resistencia:"PCN 6/R/B/Y/T",superficie:"Concreto",portaria:"PA2022-6999",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2022-6999.pdf"},
+  {icao:"SWBR",ciad:"",nome:"BORBA",municipio:"BORBA",lat:-4.40611,lon:-59.6025,altitude:"30 m",operacao:"VFR Diurno",pista_desig:"12/30",comprimento:"1200 m",largura:"23 m",resistencia:"PCN 8/F/C/Y/U",superficie:"Asfalto",portaria:"PA2023-11.217",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2023-11.217.pdf"},
+  {icao:"SWFL",ciad:"",nome:"FLORES",municipio:"MANAUS",lat:-3.07278,lon:-60.02111,altitude:"62 m",operacao:"VFR Diurno",pista_desig:"11/29",comprimento:"799 m",largura:"30 m",resistencia:"5700 kg/0,5 MPa",superficie:"Asfalto",portaria:"PA2017-1581",rbac107:"AP-0",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2017-1581.pdf"},
+  {icao:"SWKO",ciad:"",nome:"COARI",municipio:"COARI",lat:-4.13417,lon:-63.1325,altitude:"40 m",operacao:"VFR Diurno",pista_desig:"10/28",comprimento:"1600 m",largura:"36 m",resistencia:"PCN 29/F/C/X/U",superficie:"Asfalto",portaria:"PA2023-11.806",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"4ª",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2023-11.806.pdf"},
+  {icao:"SWHT",ciad:"",nome:"HUMAITÁ",municipio:"HUMAITÁ",lat:-7.53472,lon:-63.07222,altitude:"70 m",operacao:"VFR Diurno",pista_desig:"14/32",comprimento:"1520 m",largura:"30 m",resistencia:"PCN 7/F/B/Y/U",superficie:"Asfalto",portaria:"PA2023-11.585",rbac107:"AP-0",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2023-11.585.pdf"},
+  {icao:"SWNK",ciad:"",nome:"NOVO CAMPO",municipio:"BOCA DO ACRE",lat:-8.83472,lon:-67.3125,altitude:"120 m",operacao:"VFR Diurno",pista_desig:"18/36",comprimento:"1600 m",largura:"30 m",resistencia:"PCN 19/F/C/Y/U",superficie:"Asfalto",portaria:"PA2021-4603",rbac107:"AP-0",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2021-4603.pdf"},
+  {icao:"SWPI",ciad:"",nome:"PARINTINS",municipio:"PARINTINS",lat:-2.67361,lon:-56.7775,altitude:"25 m",operacao:"VFR Diurno/Noturno",pista_desig:"06/24",comprimento:"1801 m",largura:"30 m",resistencia:"PCN 33/F/B/X/T",superficie:"Asfalto",portaria:"PA2023-11.746",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"3ª",aeronave:"",observacoes:"Portaria SIA n° 16.828/2025 suspensão de medida administrativa cautelar ao aeródromo de Parintins, CIAD AM0006, OACI SWPI.",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2023-11.746.pdf"},
+  {icao:"SWSI",ciad:"",nome:"SANTA ISABEL DO RIO NEGRO",municipio:"SANTA ISABEL DO RIO NEGRO",lat:-0.37861,lon:-64.99306,altitude:"68 m",operacao:"VFR Diurno",pista_desig:"09/27",comprimento:"1200 m",largura:"30 m",resistencia:"PCN 50/F/D/X/T",superficie:"Asfalto",portaria:"PA2022-8873",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2022-8873.pdf"},
+  {icao:"SDFG",ciad:"",nome:"APUÍ",municipio:"APUÍ",lat:-7.17222,lon:-59.83889,altitude:"60 m",operacao:"VFR Diurno",pista_desig:"08/26",comprimento:"1200 m",largura:"23 m",resistencia:"PCN 12/F/B/Y/U",superficie:"Asfalto",portaria:"PA2020-1745",rbac107:"AP-1",rbac153:"Classe I",cat_tar:"",aeronave:"",observacoes:"",fonte:"PÚBLICO",portaria_link:"https://pergamum.anac.gov.br/arquivos/PA2020-1745.pdf"},
+];
+// Dedup por nome+municipio (IPIRANGA aparece 2x em fontes diferentes na base ANAC)
+const AE_DATA = (function _dedup() {
+  const seen = new Set();
+  return _AE_TODOS.filter(a => {
+    const k = (a.nome || "") + "|" + (a.municipio || "");
+    if (seen.has(k)) return false;
+    seen.add(k); return true;
+  });
+})();
 
 function aeCorIcon(a) {
   if (a.operacao && a.operacao.includes("IFR")) return "#F5A623";
@@ -3959,16 +4241,41 @@ function initAerodromos() {
 
   // Mapa
   const map = mkMap("aeMap", { center: [-4.0, -63.5], zoom: 5 });
+  // Guarda referência para zoom programático ao clicar em linha da tabela
+  HUB.state.aeMap = map;
   data.forEach((a, i) => {
     const cor = aeCorIcon(a);
     const icon = L.divIcon({
       className: "",
-      html: `<div style="width:30px;height:30px;border-radius:50%;background:${cor};border:2.5px solid #fff;box-shadow:0 2px 10px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer" title="${a.nome}">✈</div>`,
-      iconSize: [30,30], iconAnchor: [15,15]
+      html: `<div style="width:32px;height:32px;border-radius:50%;background:${cor};border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;cursor:pointer">✈</div>`,
+      iconSize: [32,32], iconAnchor: [16,16], popupAnchor: [0,-16]
     });
-    L.marker([a.lat, a.lon], { icon }).addTo(map)
-      .on("click", e => { L.DomEvent.stopPropagation(e); abrirModalAero(i); });
+    const popupHtml = `
+      <div style="font-family:Outfit,sans-serif;min-width:180px">
+        <div style="font-weight:800;color:${cor};font-size:.9rem;margin-bottom:.25rem">${htmlEscape(a.nome)}</div>
+        <div style="font-size:.72rem;color:#4a5568;margin-bottom:.3rem">📍 ${htmlEscape(a.municipio)}</div>
+        <div style="font-size:.72rem;font-family:monospace;color:#1A2540">
+          Pista ${htmlEscape(a.pista_desig || '—')} · ${htmlEscape(a.comprimento || '—')}
+        </div>
+        <div style="font-size:.7rem;color:#8896a8;margin-top:.2rem">
+          ${htmlEscape(a.rbac107 || '')} ${a.operacao && a.operacao.includes('IFR') ? '· IFR' : ''}
+        </div>
+        <button onclick="abrirModalAero(${i})" style="margin-top:.5rem;width:100%;background:${cor};color:#fff;border:none;padding:.4rem .6rem;border-radius:6px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.04em;text-transform:uppercase">Ver detalhes ▸</button>
+      </div>`;
+    L.marker([a.lat, a.lon], { icon })
+      .addTo(map)
+      .bindPopup(popupHtml, { maxWidth: 240, autoPan: true })
+      .on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        // Zoom suave até o aeródromo antes de mostrar o popup
+        try { map.flyTo([a.lat, a.lon], Math.max(map.getZoom(), 9), { duration: 0.6 }); } catch (err) {}
+      });
   });
+  // fitBounds inicial para enquadrar todos
+  try {
+    const bb = L.latLngBounds(data.map(a => [a.lat, a.lon]));
+    map.fitBounds(bb, { padding: [40, 40], maxZoom: 6 });
+  } catch (e) {}
 
   // Tabelas por aba
   renderAerodromosTable(data);         // tabela "Todos"
@@ -4017,12 +4324,20 @@ function initAerodromos() {
   });
 }
 
+function _aeRowClick(idx) {
+  const a = AE_DATA[idx]; if (!a) return;
+  // Se o mapa está carregado, faz zoom até o aeródromo antes de abrir o modal
+  try { HUB.state.aeMap && HUB.state.aeMap.flyTo([a.lat, a.lon], 9, { duration: 0.5 }); } catch (e) {}
+  setTimeout(() => abrirModalAero(idx), 80);
+}
+window._aeRowClick = _aeRowClick;
+
 function _renderAeTableTipo(tableId, list, mostrarCiad) {
   const tb = document.querySelector(`#${tableId} tbody`); if (!tb) return;
   tb.innerHTML = list.map((a, i) => {
     const globalIdx = AE_DATA.indexOf(a);
     const idStr = mostrarCiad ? `${a.icao||"—"} / ${a.ciad||"—"}` : (a.icao||"—");
-    return `<tr style="cursor:pointer" onclick="abrirModalAero(${globalIdx})">
+    return `<tr style="cursor:pointer" onclick="_aeRowClick(${globalIdx})">
       ${mostrarCiad ? `<td style="font-weight:600">${htmlEscape(a.nome)}</td>` : `<td style="font-weight:600">${htmlEscape(a.nome)}</td>`}
       <td style="font-family:monospace;font-size:0.78rem">${htmlEscape(idStr)}</td>
       <td>${htmlEscape(a.municipio)}</td>
@@ -4041,39 +4356,131 @@ function abrirModalAero(i) {
   const a = AE_DATA[i]; if (!a) return;
   // Remove modal anterior se existir
   document.getElementById("aeModalGlobal")?.remove();
-  const cor = aeCorIcon(a);
-  const tipoLabel = a.fonte === "ESTADO" ? "SEINFRA/Estado" : "Público Federal";
-  const campos = [
-    ["ICAO", a.icao||"—"], ["CIAD", a.ciad||"—"],
-    ["Gestão", tipoLabel], ["Altitude", a.altitude],
-    ["Pista", a.pista_desig], ["Comprimento", a.comprimento],
-    ["Largura", a.largura], ["Superfície", a.superficie],
-    ["Resistência (PCN/PCR)", a.resistencia], ["RBAC 107", a.rbac107],
-    ["Operação", a.operacao], ["Município", a.municipio],
-  ];
+
+  const isEstado = a.fonte === "ESTADO";
+  const isIFR    = (a.operacao || "").includes("IFR");
+  const tipoLabel = isEstado ? "SEINFRA/Estado" : "Público Federal";
+  const compM = parseInt(a.comprimento) || 0;
+  const pistaPct = Math.min(100, Math.max(8, (compM / 2700) * 100)); // EDUARDO GOMES = 2700m = 100%
+
   const div = document.createElement("div");
   div.id = "aeModalGlobal";
-  div.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:99999;display:flex;align-items:center;justify-content:center;padding:1rem";
+  div.className = "modal-ov";
   div.innerHTML = `
-    <div style="background:#fff;border-radius:16px;max-width:520px;width:100%;max-height:85vh;overflow-y:auto;padding:1.5rem;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.25)">
-      <button onclick="document.getElementById('aeModalGlobal').remove();document.body.style.overflow=''" style="position:absolute;top:1rem;right:1rem;background:none;border:none;font-size:1.3rem;cursor:pointer;color:#8896A8;line-height:1">✕</button>
-      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.1rem">
-        <div style="width:46px;height:46px;border-radius:50%;background:${cor};display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,.2)">✈</div>
-        <div>
-          <div style="font-size:1.1rem;font-weight:800;color:#1A2B5E;font-family:'Lexend Zetta',sans-serif">${htmlEscape(a.nome)}</div>
-          <div style="font-size:0.8rem;color:#8896A8;margin-top:2px">${htmlEscape(a.municipio)}</div>
+    <div class="modal-rich" role="dialog" aria-label="${htmlEscape(a.nome)}">
+      <div class="mr-hdr ${isEstado ? 'gov-estado' : 'gov-publico'}">
+        <button class="mr-close" aria-label="Fechar">✕</button>
+        <div class="mr-hdr-icon">✈</div>
+        ${(a.icao || a.ciad) ? `<div class="mr-icao-row">
+          ${a.icao ? `<span>${htmlEscape(a.icao)}</span>` : ''}
+          ${a.icao && a.ciad ? `<span class="mr-icao-sep">|</span>` : ''}
+          ${a.ciad ? `<span>${htmlEscape(a.ciad)}</span>` : ''}
+        </div>` : ''}
+        <div class="mr-title">${htmlEscape(a.nome)}</div>
+        <div class="mr-mun">📍 ${htmlEscape(a.municipio)}</div>
+        <div class="mr-badges">
+          <span class="mr-badge">${isEstado ? 'SEINFRA' : 'PÚBLICO FEDERAL'}</span>
+          ${isIFR ? `<span class="mr-badge ifr">IFR</span>` : `<span class="mr-badge">VFR</span>`}
+          ${a.rbac107 === 'AP-2' ? `<span class="mr-badge ap2">${htmlEscape(a.rbac107)}</span>` :
+            a.rbac107 === 'AP-1' ? `<span class="mr-badge ap1">${htmlEscape(a.rbac107)}</span>` :
+            a.rbac107 ? `<span class="mr-badge">${htmlEscape(a.rbac107)}</span>` : ''}
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">
-        ${campos.map(([l,v]) => `<div style="padding:0.45rem 0.65rem;background:#f5f7fb;border-radius:8px;border:1px solid #e0e6f0">
-          <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;color:#8896A8;letter-spacing:.08em;margin-bottom:2px">${l}</div>
-          <div style="font-size:0.85rem;font-weight:600;color:#1A2540">${htmlEscape(v||"—")}</div>
-        </div>`).join("")}
+
+      <div class="mr-body">
+        <!-- Seção 1: Pista (visual proporcional) -->
+        <div class="mr-section">
+          <div class="mr-section-title">Especificações da Pista</div>
+          <div class="pista-vis">
+            <div class="pista-desig">Pista ${htmlEscape(a.pista_desig || '—')}</div>
+            <div class="pista-bar-wrap">
+              <div class="pista-bar" data-pct="${pistaPct.toFixed(1)}">${htmlEscape(a.comprimento || '—')}</div>
+            </div>
+            <div class="pista-lbl">
+              <span>Comprimento: <strong>${htmlEscape(a.comprimento || '—')}</strong></span>
+              <span>Largura: <strong>${htmlEscape(a.largura || '—')}</strong></span>
+            </div>
+          </div>
+          <div class="mr-grid">
+            <div class="mr-field"><div class="mr-field-label">Superfície</div><div class="mr-field-value">${htmlEscape(a.superficie || '—')}</div></div>
+            <div class="mr-field"><div class="mr-field-label">Resistência</div><div class="mr-field-value mono">${htmlEscape(a.resistencia || '—')}</div></div>
+            <div class="mr-field"><div class="mr-field-label">Altitude</div><div class="mr-field-value">${htmlEscape(a.altitude || '—')}</div></div>
+          </div>
+        </div>
+
+        <!-- Seção 2: Classificação normativa -->
+        <div class="mr-section">
+          <div class="mr-section-title">Classificação Normativa (ANAC)</div>
+          <div class="mr-grid">
+            <div class="mr-field"><div class="mr-field-label">RBAC 107</div><div class="mr-field-value">${htmlEscape(a.rbac107 || '—')}</div></div>
+            <div class="mr-field"><div class="mr-field-label">RBAC 153</div><div class="mr-field-value">${htmlEscape(a.rbac153 || '—')}</div></div>
+            ${a.cat_tar ? `<div class="mr-field"><div class="mr-field-label">Cat. Tarifária</div><div class="mr-field-value">${htmlEscape(a.cat_tar)}</div></div>` : ''}
+            ${a.aeronave ? `<div class="mr-field"><div class="mr-field-label">Aeronave Crítica</div><div class="mr-field-value mono">${htmlEscape(a.aeronave)}</div></div>` : ''}
+            <div class="mr-field"><div class="mr-field-label">Operação</div><div class="mr-field-value" style="font-size:.78rem">${htmlEscape(a.operacao || '—')}</div></div>
+            <div class="mr-field"><div class="mr-field-label">Gestão</div><div class="mr-field-value">${htmlEscape(tipoLabel)}</div></div>
+          </div>
+        </div>
+
+        <!-- Seção 3: Identificação e coordenadas -->
+        <div class="mr-section">
+          <div class="mr-section-title">Identificação e Coordenadas</div>
+          <div class="mr-grid">
+            <div class="mr-field"><div class="mr-field-label">OACI / ICAO</div><div class="mr-field-value mono">${htmlEscape(a.icao || '—')}</div></div>
+            <div class="mr-field"><div class="mr-field-label">CIAD</div><div class="mr-field-value mono">${htmlEscape(a.ciad || '—')}</div></div>
+            <div class="mr-field"><div class="mr-field-label">Município</div><div class="mr-field-value">${htmlEscape(a.municipio || '—')}</div></div>
+            <div class="mr-field"><div class="mr-field-label">Latitude</div><div class="mr-field-value mono">${a.lat.toFixed(5)}°</div></div>
+            <div class="mr-field"><div class="mr-field-label">Longitude</div><div class="mr-field-value mono">${a.lon.toFixed(5)}°</div></div>
+          </div>
+        </div>
+
+        ${a.portaria ? `<!-- Seção 4: Ato normativo -->
+        <div class="mr-section">
+          <div class="mr-section-title">Ato Normativo</div>
+          <a class="mr-portaria" href="${htmlEscape(a.portaria_link || '#')}" target="_blank" rel="noopener">
+            📄 Portaria ${htmlEscape(a.portaria)} — Consultar na ANAC
+          </a>
+        </div>` : ''}
+
+        ${a.observacoes ? `<!-- Seção 5: Observações / medidas administrativas -->
+        <div class="mr-section">
+          <div class="mr-section-title">Observações / Medidas Administrativas</div>
+          <div class="mr-obs">⚠️ <strong>Medida administrativa:</strong> ${htmlEscape(a.observacoes)}</div>
+        </div>` : ''}
+
+        <!-- Seção 6: Context box -->
+        <div class="mr-section">
+          <div class="mr-context ${isEstado ? 'gov-estado' : ''}">
+            <strong>${isEstado ? 'Sobre a gestão estadual:' : 'Sobre a gestão pública federal:'}</strong>
+            ${isEstado
+              ? 'Aeródromo sob gestão direta da SEINFRA/AM, integrante da rede estratégica de transporte aéreo regional do Amazonas. Manutenção, fiscalização e infraestrutura sob responsabilidade do Estado.'
+              : 'Aeródromo público federal administrado pela ANAC ou por entidade delegada, prestando serviço de transporte aéreo regular ou regional no Amazonas.'}
+          </div>
+        </div>
       </div>
     </div>`;
-  div.addEventListener("click", e => { if (e.target === div) { div.remove(); document.body.style.overflow = ""; } });
+
+  // Fechar: overlay, botão ✕ ou ESC
+  const close = () => {
+    div.classList.remove("open");
+    setTimeout(() => { div.remove(); document.body.style.overflow = ""; }, 250);
+    document.removeEventListener("keydown", onEsc);
+  };
+  const onEsc = (e) => { if (e.key === "Escape") close(); };
+  div.addEventListener("click", e => { if (e.target === div) close(); });
+  div.querySelector(".mr-close").addEventListener("click", close);
+  document.addEventListener("keydown", onEsc);
+
   document.body.appendChild(div);
   document.body.style.overflow = "hidden";
+  // Trigger animação após attachment
+  requestAnimationFrame(() => {
+    div.classList.add("open");
+    // anima pista-bar
+    setTimeout(() => {
+      const bar = div.querySelector(".pista-bar");
+      if (bar) bar.style.width = bar.dataset.pct + "%";
+    }, 100);
+  });
 }
 
 function renderAerodromosTable(list) {
@@ -4082,7 +4489,7 @@ function renderAerodromosTable(list) {
     const globalIdx = AE_DATA.indexOf(a);
     const tipoCor = a.fonte === "ESTADO" ? "#6C3483" : "#1A2B5E";
     const tipoLabel = a.fonte === "ESTADO" ? "SEINFRA" : "Público";
-    return `<tr style="cursor:pointer" onclick="abrirModalAero(${globalIdx})">
+    return `<tr style="cursor:pointer" onclick="_aeRowClick(${globalIdx})">
       <td style="font-weight:600">${htmlEscape(a.nome)}</td>
       <td><span style="font-size:0.7rem;font-weight:700;color:${tipoCor};background:${a.fonte==="ESTADO"?"#f3e8ff":"var(--azul-claro)"};padding:2px 7px;border-radius:5px">${tipoLabel}</span></td>
       <td style="font-family:monospace;font-size:0.78rem">${htmlEscape(a.icao||"—")}</td>
@@ -4170,7 +4577,7 @@ async function initHidrovias() {
   $("#hd-max").textContent = fmtNum(Math.round(max));
 
   L.geoJSON(gj, {
-    style: { color: "#5B21B6", weight: 2.2, opacity: 0.85 },
+    style: { color: "#0077b6", weight: 2.4, opacity: 0.88 },
     onEachFeature: (f, lyr) => {
       const p = f.properties || {};
       lyr.bindPopup(`<div class="pop-title">${htmlEscape(p.NOME || p.RIO || "Hidrovia")}</div><div class="pop-row">${fmtKm(parseNum(p.EXTENSAO || p.extensao || 0))}</div>`);
@@ -4221,54 +4628,68 @@ function _cap(s) { if (!s) return ""; return s.charAt(0).toUpperCase() + s.slice
 function _capWords(s) { return s.split(" ").map(w => w.length > 2 ? _cap(w) : w.toLowerCase()).join(" "); }
 
 function getTerminaisHTML() {
+  const munsCount  = new Set(TM_DATA.map(t => t.localidade)).size;
+  const comuCount  = TM_DATA.filter(t=>/comunidade/i.test(t.destino)).length;
+  const distrCount = TM_DATA.filter(t=>/distrito/i.test(t.destino)).length;
   return `
   <div class="mod-wrap">
-    ${modHero("terminais", "Terminais fluviais e portos flutuantes da rede SEINFRA/AM")}
+    ${modHero("terminais", "Terminais hidroviários flutuantes · embarque e desembarque nas comunidades e distritos do Amazonas")}
+
+    <!-- Hero hidroviário estilizado -->
+    <div class="panel-card" style="background:linear-gradient(135deg,#012a4a 0%,#023e8a 55%,#0077b6 100%);border:none;padding:1.4rem 1.6rem;color:#fff;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(60deg,transparent 0,transparent 28px,rgba(255,255,255,.04) 28px,rgba(255,255,255,.04) 30px);pointer-events:none"></div>
+      <div style="position:relative;display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:.45rem;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:.3rem .8rem;border-radius:999px;margin-bottom:.7rem">
+            <span class="pulse-dot" style="width:8px;height:8px;border-radius:50%;background:#90e0ef"></span>
+            Hidroviário · SEINFRA/AM
+          </div>
+          <div style="font-family:var(--font-head);font-size:1.6rem;font-weight:800;letter-spacing:-.02em;line-height:1.1">
+            Terminais <em style="color:#90e0ef;font-style:normal;font-weight:300">Flutuantes</em>
+          </div>
+          <div style="font-size:.82rem;opacity:.78;margin-top:.4rem;max-width:520px;line-height:1.5">
+            Estruturas de embarque e desembarque às margens dos rios do Amazonas, garantindo conectividade entre municípios-sede e suas comunidades e distritos no interior.
+          </div>
+        </div>
+        <div style="display:flex;gap:1.6rem;align-items:center">
+          <div style="text-align:center">
+            <div style="font-family:var(--font-head);font-size:2.3rem;font-weight:800;color:#fff;line-height:1">${TM_DATA.length}</div>
+            <div style="font-size:.66rem;font-weight:700;letter-spacing:.1em;opacity:.7;text-transform:uppercase;margin-top:.15rem">Terminais</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:var(--font-head);font-size:2.3rem;font-weight:800;color:#90e0ef;line-height:1">${munsCount}</div>
+            <div style="font-size:.66rem;font-weight:700;letter-spacing:.1em;opacity:.7;text-transform:uppercase;margin-top:.15rem">Municípios</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:var(--font-head);font-size:2.3rem;font-weight:800;color:#caf0f8;line-height:1">${comuCount}</div>
+            <div style="font-size:.66rem;font-weight:700;letter-spacing:.1em;opacity:.7;text-transform:uppercase;margin-top:.15rem">Comunidades</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI grid complementar -->
     <div class="kpi-grid">
-      <div class="kpi-card c"><div class="kpi-card-label">Terminais</div><div class="kpi-card-value" id="tm-tot">${TM_DATA.length}</div><div class="kpi-card-foot">cadastrados</div></div>
-      <div class="kpi-card v"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="tm-mun">—</div><div class="kpi-card-foot">atendidos</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Flutuantes</div><div class="kpi-card-value">${TM_DATA.length}</div><div class="kpi-card-foot">tipo principal</div></div>
-      <div class="kpi-card"><div class="kpi-card-label">Comunidades</div><div class="kpi-card-value">${TM_DATA.filter(t=>/comunidade/i.test(t.destino)).length}</div><div class="kpi-card-foot">atendidas</div></div>
+      <div class="kpi-card c"><div class="kpi-card-label">Total</div><div class="kpi-card-value">${TM_DATA.length}</div><div class="kpi-card-foot">terminais flutuantes</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value">${munsCount}</div><div class="kpi-card-foot">atendidos</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Comunidades</div><div class="kpi-card-value">${comuCount}</div><div class="kpi-card-foot">ribeirinhas atendidas</div></div>
+      <div class="kpi-card r"><div class="kpi-card-label">Distritos</div><div class="kpi-card-value">${distrCount}</div><div class="kpi-card-foot">com terminal</div></div>
     </div>
+
     <div class="panel-card">
       <div class="panel-header">
-        <div class="panel-title">Mapa de terminais fluviais</div>
-        <span style="font-size:0.7rem;color:var(--cinza-aux)">${TM_DATA.length} terminais · AM</span>
+        <div class="panel-title">Localização dos terminais — Estado do Amazonas</div>
+        <span style="font-size:0.7rem;color:var(--cinza-aux)">${TM_DATA.length} pontos · clique para detalhes</span>
       </div>
-      <div id="tmMap" class="map-wrap" style="height:420px"></div>
+      <div id="tmMap" class="map-wrap" style="height:460px"></div>
     </div>
+
     <div class="panel-card">
-      <div class="panel-header">
-        <div class="panel-title">Lista de terminais</div>
-        <input class="filter-input" id="tmBusca" placeholder="Buscar município ou destino…" oninput="filterTerminais()" style="width:240px"/>
+      <div class="panel-header" style="flex-wrap:wrap;gap:.6rem">
+        <div class="panel-title">Lista de terminais <span id="tmCount" style="font-weight:400;color:var(--cinza-aux);font-size:.78rem">(${TM_DATA.length})</span></div>
+        <input class="filter-input" id="tmBusca" placeholder="🔍 Buscar município ou destino…" oninput="filterTerminais()" style="width:280px;max-width:100%"/>
       </div>
-      <div class="table-wrap"><table class="data-table" id="tmTable">
-        <thead><tr><th>#</th><th>Destino / Comunidade</th><th>Município</th><th>Coordenadas</th></tr></thead>
-        <tbody></tbody>
-      </table></div>
-    </div>
-    <!-- Modal detalhes terminal -->
-    <div id="tmModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:3000;align-items:center;justify-content:center;padding:1rem">
-      <div style="background:#fff;border-radius:16px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,45,114,0.25)">
-        <div style="background:linear-gradient(135deg,#012a4a,#01497c);padding:1.5rem;border-radius:16px 16px 0 0;position:relative">
-          <button onclick="document.getElementById('tmModal').style.display='none'" style="position:absolute;top:0.75rem;right:0.75rem;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.12);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center">×</button>
-          <div style="font-size:1.5rem;margin-bottom:0.4rem">⚓</div>
-          <div id="tmModalTitle" style="font-size:1.1rem;font-weight:900;color:#fff;letter-spacing:-0.02em;margin-bottom:0.2rem"></div>
-          <div id="tmModalMun" style="font-size:0.78rem;color:rgba(255,255,255,0.6)"></div>
-        </div>
-        <div style="padding:1.5rem">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem">
-            <div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.15rem">Município</div><div id="tmModalMunVal" style="font-size:0.88rem;font-weight:600"></div></div>
-            <div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.15rem">Destino</div><div id="tmModalDestino" style="font-size:0.88rem;font-weight:600"></div></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:1rem">
-            <div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.15rem">Latitude</div><div id="tmModalLat" style="font-size:0.85rem;font-weight:600;font-family:monospace"></div></div>
-            <div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.15rem">Longitude</div><div id="tmModalLon" style="font-size:0.85rem;font-weight:600;font-family:monospace"></div></div>
-          </div>
-          <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--cinza-aux);margin-bottom:0.4rem">Localização</div>
-          <div id="tmMinimap" style="height:200px;border-radius:10px;overflow:hidden;border:1px solid var(--borda)"></div>
-        </div>
-      </div>
+      <div id="tmList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.7rem;margin-top:.6rem"></div>
     </div>
   </div>`;
 }
@@ -4276,63 +4697,151 @@ function getTerminaisHTML() {
 let _tmMinimap = null;
 
 function initTerminais() {
-  const muns = new Set(TM_DATA.map(t => t.localidade));
-  const setEl = (id, v) => { const el = document.getElementById(id); if(el) el.textContent = v; };
-  setEl("tm-mun", muns.size);
-
   // Mapa
-  const map = mkMap("tmMap", { center: [-4.5, -63.5], zoom: 5 });
-  const tmIcon = () => L.divIcon({
-    className: "",
-    html: `<div style="width:26px;height:26px;border-radius:50%;background:#0077b6;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff">⚓</div>`,
-    iconSize: [26,26], iconAnchor: [13,13]
-  });
+  const map = mkMap("tmMap", { center: [-4.0, -63.0], zoom: 5 });
+  HUB.state.tmMap = map;
   TM_DATA.forEach((t, i) => {
-    L.marker([t.lat, t.lon], { icon: tmIcon() }).addTo(map)
-      .bindPopup(`<div class="pop-title">${htmlEscape(t.destino)}</div><div class="pop-row">📍 ${htmlEscape(_capWords(t.localidade))}</div><div class="pop-row" style="font-family:monospace;font-size:0.7rem;color:var(--cinza-aux)">${t.lat.toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>`)
-      .on("click", () => abrirModalTerminal(i));
+    const icon = L.divIcon({
+      className: "",
+      html: `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#023e8a);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,119,182,.5);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer">⚓</div>`,
+      iconSize: [32,32], iconAnchor: [16,16], popupAnchor: [0,-16]
+    });
+    const popupHtml = `
+      <div style="font-family:Outfit,sans-serif;min-width:200px">
+        <div style="font-weight:800;color:#0077b6;font-size:.88rem;margin-bottom:.25rem">${htmlEscape(t.destino)}</div>
+        <div style="font-size:.72rem;color:#4a5568;margin-bottom:.35rem">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+        <div style="font-size:.7rem;font-family:monospace;color:#8896a8">${t.lat.toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>
+        <button onclick="abrirModalTerminal(${i})" style="margin-top:.5rem;width:100%;background:linear-gradient(135deg,#0077b6,#023e8a);color:#fff;border:none;padding:.4rem .6rem;border-radius:6px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.04em;text-transform:uppercase">Ver detalhes ▸</button>
+      </div>`;
+    L.marker([t.lat, t.lon], { icon })
+      .addTo(map)
+      .bindPopup(popupHtml, { maxWidth: 240, autoPan: true })
+      .on("click", e => {
+        L.DomEvent.stopPropagation(e);
+        try { map.flyTo([t.lat, t.lon], Math.max(map.getZoom(), 8), { duration: 0.6 }); } catch (err) {}
+      });
   });
-  const latlngs = TM_DATA.map(t => [t.lat, t.lon]);
-  try { map.fitBounds(L.latLngBounds(latlngs), { padding: [30,30] }); } catch(e) {}
+  try { map.fitBounds(L.latLngBounds(TM_DATA.map(t => [t.lat, t.lon])), { padding: [30,30] }); } catch(e) {}
 
-  // Tabela inicial
-  renderTerminaisTable(TM_DATA);
+  // Lista inicial (cards)
+  renderTerminaisList(TM_DATA);
 }
 
 function abrirModalTerminal(i) {
   const t = TM_DATA[i]; if (!t) return;
-  const modal = document.getElementById("tmModal"); if (!modal) return;
-  document.getElementById("tmModalTitle").textContent  = t.destino;
-  document.getElementById("tmModalMun").textContent    = "📍 " + _capWords(t.localidade);
-  document.getElementById("tmModalMunVal").textContent = _capWords(t.localidade);
-  document.getElementById("tmModalDestino").textContent = t.destino;
-  document.getElementById("tmModalLat").textContent    = t.lat.toFixed(5) + "°";
-  document.getElementById("tmModalLon").textContent    = t.lon.toFixed(5) + "°";
-  modal.style.display = "flex";
-  // Minimap
-  const mm = document.getElementById("tmMinimap");
-  if (mm) {
-    if (_tmMinimap) { _tmMinimap.remove(); _tmMinimap = null; }
+  document.getElementById("tmModalGlobal")?.remove();
+  const tipoIcon = /comunidade/i.test(t.destino) ? "🏘️" : /distrito/i.test(t.destino) ? "🏛️" : "⚓";
+  const tipoLabel = /comunidade/i.test(t.destino) ? "Comunidade" : /distrito/i.test(t.destino) ? "Distrito" : "Porto / Terminal";
+
+  const div = document.createElement("div");
+  div.id = "tmModalGlobal";
+  div.className = "modal-ov";
+  div.innerHTML = `
+    <div class="modal-rich" role="dialog" aria-label="${htmlEscape(t.destino)}">
+      <div class="mr-hdr gov-hidro" style="background:linear-gradient(135deg,#012a4a 0%,#01497c 60%,#0077b6 100%)">
+        <button class="mr-close" aria-label="Fechar">✕</button>
+        <div class="mr-hdr-icon">${tipoIcon}</div>
+        <div class="mr-icao-row"><span>${htmlEscape(tipoLabel)}</span></div>
+        <div class="mr-title">${htmlEscape(t.destino)}</div>
+        <div class="mr-mun">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+        <div class="mr-badges">
+          <span class="mr-badge">FLUTUANTE</span>
+          <span class="mr-badge">SEINFRA/AM</span>
+        </div>
+      </div>
+
+      <div class="mr-body">
+        <div class="mr-section">
+          <div class="mr-section-title">Identificação</div>
+          <div class="mr-grid">
+            <div class="mr-field"><div class="mr-field-label">Município-sede</div><div class="mr-field-value">${htmlEscape(_capWords(t.localidade))}</div></div>
+            <div class="mr-field"><div class="mr-field-label">Destino</div><div class="mr-field-value">${htmlEscape(t.destino)}</div></div>
+            <div class="mr-field"><div class="mr-field-label">Tipo</div><div class="mr-field-value">${htmlEscape(tipoLabel)}</div></div>
+          </div>
+        </div>
+
+        <div class="mr-section">
+          <div class="mr-section-title">Coordenadas Geográficas</div>
+          <div class="mr-grid">
+            <div class="mr-field"><div class="mr-field-label">Latitude</div><div class="mr-field-value mono">${t.lat.toFixed(5)}°</div></div>
+            <div class="mr-field"><div class="mr-field-label">Longitude</div><div class="mr-field-value mono">${t.lon.toFixed(5)}°</div></div>
+          </div>
+        </div>
+
+        <div class="mr-section">
+          <div class="mr-section-title">Localização no Mapa</div>
+          <div id="tmMinimap" style="height:220px;border-radius:10px;overflow:hidden;border:1px solid var(--borda)"></div>
+        </div>
+
+        <div class="mr-section">
+          <div class="mr-context">
+            <strong>Sobre o terminal flutuante:</strong> Estrutura hidroviária instalada às margens dos rios, garantindo embarque e desembarque seguros para a população ribeirinha do município de <strong>${htmlEscape(_capWords(t.localidade))}</strong> e conectando-a à sede municipal.
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  const close = () => {
+    div.classList.remove("open");
+    if (_tmMinimap) { try { _tmMinimap.remove(); } catch (e) {} _tmMinimap = null; }
+    setTimeout(() => { div.remove(); document.body.style.overflow = ""; }, 250);
+    document.removeEventListener("keydown", onEsc);
+  };
+  const onEsc = (e) => { if (e.key === "Escape") close(); };
+  div.addEventListener("click", e => { if (e.target === div) close(); });
+  div.querySelector(".mr-close").addEventListener("click", close);
+  document.addEventListener("keydown", onEsc);
+
+  document.body.appendChild(div);
+  document.body.style.overflow = "hidden";
+  requestAnimationFrame(() => {
+    div.classList.add("open");
     setTimeout(() => {
-      _tmMinimap = L.map(mm, { center: [t.lat, t.lon], zoom: 12, zoomControl: false, attributionControl: false });
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(_tmMinimap);
-      L.marker([t.lat, t.lon]).addTo(_tmMinimap);
-      _tmMinimap.invalidateSize();
-    }, 50);
-  }
+      const mm = document.getElementById("tmMinimap");
+      if (mm) {
+        if (_tmMinimap) { try { _tmMinimap.remove(); } catch (e) {} _tmMinimap = null; }
+        _tmMinimap = L.map(mm, { center: [t.lat, t.lon], zoom: 11, zoomControl: true, attributionControl: false });
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(_tmMinimap);
+        L.marker([t.lat, t.lon], {
+          icon: L.divIcon({
+            className: "",
+            html: `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#023e8a);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,119,182,.5);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff">⚓</div>`,
+            iconSize: [30,30], iconAnchor: [15,15]
+          })
+        }).addTo(_tmMinimap);
+        _tmMinimap.invalidateSize();
+      }
+    }, 280);
+  });
 }
 
-function renderTerminaisTable(list) {
-  const tb = document.querySelector("#tmTable tbody"); if (!tb) return;
-  tb.innerHTML = list.map((t, i) => {
+function _tmRowClick(idx) {
+  const t = TM_DATA[idx]; if (!t) return;
+  try { HUB.state.tmMap && HUB.state.tmMap.flyTo([t.lat, t.lon], 8, { duration: 0.5 }); } catch (e) {}
+  setTimeout(() => abrirModalTerminal(idx), 80);
+}
+window._tmRowClick = _tmRowClick;
+
+function renderTerminaisList(list) {
+  const container = document.getElementById("tmList"); if (!container) return;
+  const count = document.getElementById("tmCount");
+  if (count) count.textContent = `(${list.length}${list.length !== TM_DATA.length ? ` de ${TM_DATA.length}` : ''})`;
+  container.innerHTML = list.length ? list.map((t, i) => {
     const globalIdx = TM_DATA.indexOf(t);
-    return `<tr style="cursor:pointer" onclick="abrirModalTerminal(${globalIdx})">
-      <td style="color:var(--cinza-aux);font-size:0.8rem;text-align:right">${(TM_DATA.indexOf(t)+1).toString().padStart(2,"0")}</td>
-      <td style="font-weight:600">${htmlEscape(t.destino)}</td>
-      <td>${htmlEscape(_capWords(t.localidade))}</td>
-      <td style="font-family:monospace;font-size:0.72rem;color:var(--cinza-aux)">${t.lat.toFixed(4)}, ${t.lon.toFixed(4)}</td>
-    </tr>`;
-  }).join("") || `<tr><td colspan="4" class="info-state">Sem terminais encontrados.</td></tr>`;
+    const tipoIcon = /comunidade/i.test(t.destino) ? "🏘️" : /distrito/i.test(t.destino) ? "🏛️" : "⚓";
+    const num = (globalIdx + 1).toString().padStart(2, "0");
+    return `<div class="anim-up" style="animation-delay:${(i*0.025).toFixed(2)}s;background:#fff;border:1px solid var(--borda);border-left:4px solid;border-image:linear-gradient(180deg,#0077b6,#023e8a) 1;border-radius:10px;padding:.75rem .9rem;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s" onmouseover="this.style.transform='translateX(4px)';this.style.boxShadow='0 6px 18px rgba(0,119,182,.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="_tmRowClick(${globalIdx})">
+      <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.3rem">
+        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#023e8a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${tipoIcon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.85rem;font-weight:700;color:var(--azul-dk);line-height:1.25;word-break:break-word">${htmlEscape(t.destino)}</div>
+          <div style="font-size:.7rem;color:var(--cinza-med);margin-top:.1rem">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+        </div>
+        <div style="font-family:var(--font-head);font-size:1rem;font-weight:700;color:#0077b6;opacity:.4">${num}</div>
+      </div>
+      <div style="font-family:monospace;font-size:.68rem;color:var(--cinza-aux);padding-top:.3rem;border-top:1px dashed var(--borda)">${t.lat.toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>
+    </div>`;
+  }).join("") : `<div class="info-state" style="grid-column:1/-1">Nenhum terminal encontrado.</div>`;
 }
 
 function filterTerminais() {
@@ -4340,7 +4849,7 @@ function filterTerminais() {
   const filtered = q ? TM_DATA.filter(t =>
     t.localidade.toLowerCase().includes(q) || t.destino.toLowerCase().includes(q)
   ) : TM_DATA;
-  renderTerminaisTable(filtered);
+  renderTerminaisList(filtered);
 }
 
 /* ──────────────────────────────────────────────
