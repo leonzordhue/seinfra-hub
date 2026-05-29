@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.0/jspdf.plugin.autotable.min.js"></script>
 
@@ -1273,6 +1274,61 @@ async function loadCoreData() {
 /* ═════════════════════════════════════════════════════════════════
    CHART / MAP FACTORIES (com destroy seguro)
    ═════════════════════════════════════════════════════════════════ */
+// Registra o plugin chartjs-plugin-datalabels globalmente para que TODOS os
+// gráficos mostrem os valores diretamente sobre os pontos/fatias/barras
+// (não só ao passar o mouse). Formatadores diferentes por tipo de gráfico.
+(function _registraDataLabels() {
+  if (typeof Chart === "undefined" || typeof ChartDataLabels === "undefined") return;
+  Chart.register(ChartDataLabels);
+  Chart.defaults.set("plugins.datalabels", {
+    color: "#1A2540",
+    font: { weight: 700, size: 10, family: "Outfit, sans-serif" },
+    backgroundColor: "rgba(255,255,255,0.88)",
+    borderRadius: 4,
+    padding: { top: 2, bottom: 2, left: 5, right: 5 },
+    // Auto-formatador: doughnut/pie em %, bar/line em valor abreviado
+    formatter: (value, ctx) => {
+      if (value == null || value === 0) return "";
+      const type = ctx.chart.config.type;
+      if (type === "doughnut" || type === "pie") {
+        const tot = (ctx.dataset.data || []).reduce((a,b) => a + (Number(b)||0), 0);
+        return tot > 0 ? ((value / tot) * 100).toFixed(1) + "%" : "";
+      }
+      // bar / line — valor abreviado (mi/mil)
+      const n = Number(value);
+      if (!isFinite(n)) return String(value);
+      if (Math.abs(n) >= 1e9) return (n/1e9).toFixed(2) + " bi";
+      if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(1) + " mi";
+      if (Math.abs(n) >= 1e3) return n.toLocaleString("pt-BR");
+      return n % 1 === 0 ? n.toFixed(0) : n.toFixed(1);
+    },
+    // Posicionamento por tipo
+    anchor: (ctx) => {
+      const type = ctx.chart.config.type;
+      if (type === "doughnut" || type === "pie") return "center";
+      if (type === "line") return "end";
+      // bar horizontal vs vertical
+      return ctx.chart.config.options?.indexAxis === "y" ? "end" : "end";
+    },
+    align: (ctx) => {
+      const type = ctx.chart.config.type;
+      if (type === "doughnut" || type === "pie") return "center";
+      return ctx.chart.config.options?.indexAxis === "y" ? "right" : "top";
+    },
+    // Esconde labels muito pequenos em doughnut (< 4%) para evitar poluição
+    display: (ctx) => {
+      const type = ctx.chart.config.type;
+      if (type === "doughnut" || type === "pie") {
+        const tot = (ctx.dataset.data || []).reduce((a,b) => a + (Number(b)||0), 0);
+        return tot > 0 && (ctx.dataset.data[ctx.dataIndex] / tot) >= 0.04;
+      }
+      return "auto";
+    },
+    clamp: true,
+    clip: false,
+  });
+})();
+
 function mkChart(id, config) {
   try {
     const el = document.getElementById(id);
