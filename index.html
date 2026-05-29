@@ -565,7 +565,7 @@
 
     .panel-card {
       background: #fff; border-radius: 12px;
-      box-shadow: var(--shadow); overflow: hidden;
+      box-shadow: var(--shadow); overflow: visible;
       margin-bottom: 1.25rem;
     }
     .panel-header {
@@ -1855,6 +1855,55 @@ const CONTRATOS_OFICIAIS_RODOVIAS = [
   "CT-00006/2026-SEINFRA",
 ];
 
+// Whitelist oficial — Ramais e Estradas (39 contratos, R$ 1.048.590.620,30).
+// Mesma fonte: Relatório de Investimentos em Mobilidade WL 2019-2026 v5.
+const CONTRATOS_OFICIAIS_RAMAIS = [
+  "CT-00055/2020-SEINFRA", "CT-00033/2021-SEINFRA", "CT-00002/2022-SEINFRA",
+  "CT-00010/2023-SEINFRA", "CT-00012/2024-SEINFRA", "CT-00091/2014-SEINFRA",
+  "CT-00004/2017-SEINFRA", "CT-00065/2018-SEINFRA", "CT-00034/2019-SEINFRA",
+  "CT-00021/2020-SEINFRA", "CT-00023/2020-SEINFRA", "CT-00041/2020-SEINFRA",
+  "CT-00054/2020-SEINFRA", "CT-00071/2020-SEINFRA", "CT-00012/2021-SEINFRA",
+  "CT-00013/2021-SEINFRA", "CT-00019/2021-SEINFRA", "CT-00029/2021-SEINFRA",
+  "CT-00032/2021-SEINFRA", "CV-00008/2021-SEINFRA", "CV-00027/2021-SEINFRA",
+  "CT-00008/2022-SEINFRA", "CT-00026/2022-SEINFRA", "CT-00036/2022-SEINFRA",
+  "CT-00073/2022-SEINFRA", "CT-00086/2022-SEINFRA", "CT-00089/2022-SEINFRA",
+  "CV-00005/2022-SEINFRA", "CV-00006/2022-SEINFRA", "CV-00009/2022-SEINFRA",
+  "CT-00007/2023-SEINFRA", "CT-00008/2023-SEINFRA", "CT-00009/2023-SEINFRA",
+  "CT-00016/2023-SEINFRA", "CT-00021/2023-SEINFRA", "CT-00004/2024-SEINFRA",
+  "CT-00005/2024-SEINFRA", "CT-00007/2024-SEINFRA", "CT-00007/2026-SEINFRA",
+];
+
+// Whitelist oficial — Viário Urbano (78 contratos, R$ 1.168.587.597,00).
+// Constante pronta para uso quando criarmos módulo Viário (ainda não existe).
+const CONTRATOS_OFICIAIS_VIARIO = [
+  "CT-00165/2013-SEINFRA", "CT-00032/2020-SEINFRA", "CT-00022/2023-SEINFRA",
+  "CT-00011/2025-SEINFRA", "CT-00076/2014-SEINFRA", "CT-00091/2014-SEINFRA",
+  "CT-00012/2018-SEINFRA", "CT-00017/2018-SEINFRA", "CT-00018/2018-SEINFRA",
+  "CT-00022/2018-SEINFRA", "CT-00026/2018-SEINFRA", "CT-00027/2018-SEINFRA",
+  "CT-00028/2018-SEINFRA", "CT-00029/2018-SEINFRA", "CT-00031/2018-SEINFRA",
+  "CT-00035/2018-SEINFRA", "CT-00038/2018-SEINFRA", "CT-00039/2018-SEINFRA",
+  "CT-00042/2018-SEINFRA", "CT-00043/2018-SEINFRA", "CT-00047/2018-SEINFRA",
+  "CT-00048/2018-SEINFRA", "CT-00049/2018-SEINFRA", "CT-00050/2018-SEINFRA",
+  "CT-00051/2018-SEINFRA", "CT-00052/2018-SEINFRA", "CT-00053/2018-SEINFRA",
+  "CT-00054/2018-SEINFRA", "CT-00055/2018-SEINFRA", "CT-00057/2018-SEINFRA",
+  "CT-00066/2018-SEINFRA", "CT-00067/2018-SEINFRA", "CT-00068/2018-SEINFRA",
+  "CT-00072/2018-SEINFRA", "CT-00073/2018-SEINFRA", "CT-00074/2018-SEINFRA",
+  "CT-00075/2018-SEINFRA", "CT-00076/2018-SEINFRA", "CV-00003/2018-SEINFRA",
+  "CV-00004/2018-SEINFRA", "CV-00026/2018-SEINFRA", "CV-00028/2018-SEINFRA",
+  "CV-00047/2018-SEINFRA", "CV-00002/2019-SEINFRA", "CV-00004/2019-SEINFRA",
+  "CV-00007/2019-SEINFRA", "CV-00008/2019-SEINFRA", "CT-00002/2020-SEINFRA",
+  "CT-00003/2020-SEINFRA", "CT-00065/2020-SEINFRA", "CV-00004/2020-SEINFRA",
+  "CV-00008/2020-SEINFRA", "CT-00023/2021-SEINFRA", "CT-00046/2021-SEINFRA",
+  "CT-00047/2021-SEINFRA", "CV-00004/2021-SEINFRA", "CV-00006/2021-SEINFRA",
+  "CV-00007/2021-SEINFRA", "CV-00016/2021-SEINFRA", "CV-00033/2021-SEINFRA",
+  "CV-00034/2021-SEINFRA", "CV-00035/2021-SEINFRA", "CT-00003/2022-SEINFRA",
+  "CT-00012/2022-SEINFRA", "CT-00024/2022-SEINFRA", "CT-00025/2022-SEINFRA",
+  "CT-00059/2022-SEINFRA", "CT-00078/2022-SEINFRA", "CT-00081/2022-SEINFRA",
+  "CT-00089/2022-SEINFRA", "CV-00002/2022-SEINFRA", "CV-00013/2022-SEINFRA",
+  "CV-00014/2022-SEINFRA", "CV-00019/2022-SEINFRA", "CT-00006/2023-SEINFRA",
+  "CT-00012/2023-SEINFRA", "CT-00014/2023-SEINFRA", "CT-00003/2024-SEINFRA",
+];
+
 // Mapeia row crú do CSV em objeto contrato limpo
 function _mapContrato(r) {
   return {
@@ -2403,6 +2452,10 @@ function getRamaisHTML() {
 
       <!-- ABA 1: VISÃO GERAL - KPIs estratégicos e gráficos -->
       <div class="tab-content active" id="ram-rmg">
+        <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:0.55rem 0.85rem;font-size:0.72rem;color:var(--cinza-med);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
+          <span style="font-size:1rem">📋</span>
+          <span>Fonte de obras: <strong>Relatório de Investimentos em Mobilidade — Governo Wilson Lima 2019–2026 (v5)</strong> · SEINFRA/DMOB · 39 contratos de ramais e estradas consolidados</span>
+        </div>
         <div class="chart-grid-2">
           <div>
             <div class="panel-title" style="margin-bottom:0.6rem">Distribuição por situação (cadastro)</div>
@@ -2538,9 +2591,23 @@ async function _loadRamaisSheet() {
 async function initRamais() {
   if (!HUB.state.contratos) await loadCoreData();
   await _loadRamaisSheet();
-  // Pré-filtra obras de ramal/vicinal
+  // Normaliza contratos uma vez (mapContrato) caso ainda não tenha sido feito por initRodovias
+  if (!HUB.state.contratosObra) {
+    HUB.state.contratosObra = (HUB.state.contratos || []).map(_mapContrato);
+  }
+  // Lista oficial Ramais via whitelist + SOMA dos sub-objetos (mesmo padrão de Rodovias).
+  // Fonte: Relatório de Investimentos em Mobilidade WL 2019-2026 v5 — 39 contratos.
   if (!HUB.state.contratosRam) {
-    HUB.state.contratosRam = (HUB.state.contratosObra || []).filter(c => _isObraRamal(c));
+    const oficiaisSet = new Set(CONTRATOS_OFICIAIS_RAMAIS);
+    const agg = {};
+    for (const c of HUB.state.contratosObra) {
+      if (!oficiaisSet.has(c.contrato)) continue;
+      if (!agg[c.contrato]) { agg[c.contrato] = { ...c, valor: 0, _subobjetos: [] }; }
+      agg[c.contrato].valor += (c.valor || 0);
+      agg[c.contrato]._subobjetos.push(c);
+      if (!agg[c.contrato].objeto && c.objeto) agg[c.contrato].objeto = c.objeto;
+    }
+    HUB.state.contratosRam = Object.values(agg);
   }
   _buildRamTopKpis();
   _bindRamTabs();
