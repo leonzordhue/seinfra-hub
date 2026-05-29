@@ -2061,15 +2061,24 @@ async function initRodovias() {
   // O relatório oficial SOMA esses sub-objetos; pegar só o MAIOR subestimava o total.)
   if (!HUB.state.contratosRod) {
     const oficiaisSet = new Set(CONTRATOS_OFICIAIS_RODOVIAS);
+    // CTs multi-segmento: só conta sub-objetos categorizados como "rodovia"
+    // (ex. CT-00067/2018 tem sub-objeto rodovia AM-453 + sub-objeto viário "Sistema Viário Comunidade Bela Vista" — só rodovia entra aqui).
+    const multiSeg = new Set([
+      ...(typeof CONTRATOS_OFICIAIS_RAMAIS !== "undefined" ? CONTRATOS_OFICIAIS_RAMAIS : []),
+      ...(typeof CONTRATOS_OFICIAIS_VIARIO !== "undefined" ? CONTRATOS_OFICIAIS_VIARIO : []),
+    ]);
     const agg = {};
     for (const c of HUB.state.contratosObra) {
       if (!oficiaisSet.has(c.contrato)) continue;
+      if (multiSeg.has(c.contrato)) {
+        const cat = _classificaSubobjeto(c);
+        if (cat === "ramal" || cat === "viario") continue;
+      }
       if (!agg[c.contrato]) {
         agg[c.contrato] = { ...c, valor: 0, _subobjetos: [] };
       }
       agg[c.contrato].valor += (c.valor || 0);
       agg[c.contrato]._subobjetos.push(c);
-      // Mantém metadados do PRIMEIRO sub-objeto (objeto, situação) — descrição mais geral
       if (!agg[c.contrato].objeto && c.objeto) agg[c.contrato].objeto = c.objeto;
     }
     HUB.state.contratosRod = Object.values(agg);
@@ -2548,8 +2557,32 @@ function _isObraRamal(c) {
   const sit = ((c.situacao_eobras||"") + " " + (c.situacao_real||"")).toUpperCase();
   if (sit.includes("RESCIND")) return false;
   const tema = ((c.objeto||"") + " " + (c.resumo||"") + " " + (c.segmento||"") + " " + (c.localizacao||"")).toUpperCase();
-  // Tema principal é ramal/vicinal — exatamente o oposto da exclusão usada em Rodovias
   return /\bRAMAL\b|\bVICINAL\b|\bESTRADA\s+VICINAL\b/.test(tema);
+}
+
+// Classifica o segmento de UM sub-objeto (linha da planilha) com base no resumo
+// e no objeto. Usado para CTs multi-segmento: ex. CT-00091/2014 tem sub-objetos
+// em Viário Urbano E em Ramais — o relatório separa o valor por sub-objeto.
+function _classificaSubobjeto(c) {
+  const tema = ((c.resumo || "") + " ‖ " + (c.objeto || "")).toUpperCase();
+  // Rodovia: "Rodovia AM-XXX" / "Rodovia <nome popular>" / aliases conhecidos
+  if (/\bRODOVIA\b.*AM[\s\-/]?\d{2,3}/.test(tema)
+      || /\bRODOVIA\s+CODAJ[ÁA]S\b/.test(tema)
+      || /\bESTRADA\s+CARLOS\s+BRAGA\b/.test(tema)
+      || /\bANEL\s+SUL\b/.test(tema)
+      || /\bDUPLICA[CÇ][AÃ]O\s+ESTRADA\s+DO\s+TARUM[AÃ]\b/.test(tema)
+      || /\bVIADUTO\s+LYDIA\b/.test(tema))
+    return "rodovia";
+  // Ramal/Vicinal (sem "Rodovia" já filtrado acima)
+  if (/\bRAMAL\b|\bESTRADA\s+VICINAL\b|\bVICINAL\b/.test(tema))
+    return "ramal";
+  // Viário urbano: sistema viário, comunidade, perímetro urbano, ruas, avenidas
+  if (/\bSISTEMA\s+VI[AÁ]RIO\b|\bPERÍMETRO\s+URBANO\b|\bPER[IÍ]METRO\s+URBANO\b/.test(tema)
+      || /\bPAVIMENTA[CÇ][AÃ]O\s+(D[AOE]S?\s+)?(RUAS?|AVENIDAS?|VIA\s+URBANA)/.test(tema)
+      || /\bRECUPERA[CÇ][AÃ]O\s+(D[AOE]\s+)?SISTEMA\s+VI[AÁ]RIO\b/.test(tema)
+      || /\bCOMUNIDADE\b/.test(tema))
+    return "viario";
+  return "outro";
 }
 
 async function _loadRamaisSheet() {
@@ -2595,13 +2628,24 @@ async function initRamais() {
   if (!HUB.state.contratosObra) {
     HUB.state.contratosObra = (HUB.state.contratos || []).map(_mapContrato);
   }
-  // Lista oficial Ramais via whitelist + SOMA dos sub-objetos (mesmo padrão de Rodovias).
+  // Lista oficial Ramais via whitelist + SOMA dos sub-objetos DA CATEGORIA RAMAL.
+  // Para CTs multi-segmento (ex. CT-00091/2014 tem sub-objetos em Viário E Ramais),
+  // classificamos cada linha pelo resumo e somamos apenas as de ramal/vicinal.
   // Fonte: Relatório de Investimentos em Mobilidade WL 2019-2026 v5 — 39 contratos.
   if (!HUB.state.contratosRam) {
     const oficiaisSet = new Set(CONTRATOS_OFICIAIS_RAMAIS);
+    // CTs que aparecem APENAS em Ramais não precisam de classificação por sub-objeto.
+    // CTs multi-segmento (estão também em CONTRATOS_OFICIAIS_RODOVIAS ou _VIARIO) só
+    // contam sub-objetos categorizados como "ramal" (ou "outro" se único na lista).
+    const multiSeg = new Set([...CONTRATOS_OFICIAIS_RODOVIAS, ...CONTRATOS_OFICIAIS_VIARIO]);
     const agg = {};
     for (const c of HUB.state.contratosObra) {
       if (!oficiaisSet.has(c.contrato)) continue;
+      if (multiSeg.has(c.contrato)) {
+        const cat = _classificaSubobjeto(c);
+        // Se o sub-objeto é claramente de OUTRO segmento, pula
+        if (cat === "rodovia" || cat === "viario") continue;
+      }
       if (!agg[c.contrato]) { agg[c.contrato] = { ...c, valor: 0, _subobjetos: [] }; }
       agg[c.contrato].valor += (c.valor || 0);
       agg[c.contrato]._subobjetos.push(c);
@@ -2821,15 +2865,37 @@ window.selectRamal = async function(key) {
   const inp = document.getElementById("ramSearch");
   if (inp) inp.value = `${r.codigo} #${r.numero} — ${r.descricao.slice(0,40)}`;
 
-  // Obras vinculadas: tenta match por descrição/código no objeto+resumo+localização
+  // Obras vinculadas — múltiplas estratégias em ordem de confiança:
+  // 1) Match direto pelo nº de contrato registrado na planilha de ramais (campo r.contrato)
+  //    — ramais concluídos têm o CT executor anotado: prioridade máxima.
+  // 2) Match por descrição/nome do ramal no objeto+resumo+localização (heurística textual).
+  const ctRamalRegistrado = (r.contrato || "").trim().replace(/\s+/g, "");
   const obras = (HUB.state.contratosRam || []).filter(o => {
+    // (1) match exato por CT registrado
+    if (ctRamalRegistrado) {
+      const ctObra = (o.contrato || "").trim().replace(/\s+/g, "");
+      if (ctObra && ctObra === ctRamalRegistrado) return true;
+      // tolerância: número sem prefixo/sufixo
+      if (ctObra && ctObra.replace(/\D/g, "") === ctRamalRegistrado.replace(/\D/g, "")) return true;
+    }
+    // (2) match heurístico por descrição
     const tema = ((o.objeto||"") + " " + (o.resumo||"") + " " + (o.localizacao||"")).toUpperCase();
     const desc = (r.descricao || "").toUpperCase().trim();
-    // Para evitar falsos positivos, exige descrição não-trivial (>8 chars)
     if (desc && desc.length > 8 && tema.includes(desc.slice(0, Math.min(30, desc.length)))) return true;
+    // (3) match por nome da rua/ramal específico no resumo do sub-objeto (cobre CTs grandes
+    // com sub-objetos para vários ramais — ex. CT-00055/2020 lista vários ramais distintos)
+    if (desc && desc.length > 8) {
+      const palavrasChave = desc.split(/\s+/).filter(p => p.length > 4 && !["RAMAL","ESTRADA","VICINAL","DO","DA","DE","DOS","DAS"].includes(p));
+      const matched = palavrasChave.filter(p => tema.includes(p));
+      if (matched.length >= 2) return true; // 2+ palavras-chave únicas no resumo
+    }
     return false;
   });
   const totInv = obras.reduce((s, o) => s + o.valor, 0);
+  // Chip do contrato registrado (quando concluído tem CT executor)
+  const chipContrato = ctRamalRegistrado
+    ? `<span style="background:var(--verde,#2D8540);color:#fff;padding:0.18em 0.6em;border-radius:99px;font-size:0.7rem;font-weight:700;letter-spacing:0.04em">📄 ${htmlEscape(r.contrato)}</span>`
+    : "";
 
   document.getElementById("ramQuadroOut").innerHTML = `
     <div class="kpi-grid" style="margin-bottom:0.8rem">
@@ -2840,7 +2906,10 @@ window.selectRamal = async function(key) {
     </div>
 
     <div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:10px;padding:0.85rem 1.1rem;margin-bottom:1rem">
-      <div style="font-size:0.7rem;color:var(--azul);font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.35rem">Descrição</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;margin-bottom:0.35rem;flex-wrap:wrap">
+        <div style="font-size:0.7rem;color:var(--azul);font-weight:700;letter-spacing:0.06em;text-transform:uppercase">Descrição</div>
+        ${chipContrato}
+      </div>
       <div style="font-size:0.93rem;font-weight:500;line-height:1.5">${htmlEscape(r.descricao || "—")}</div>
     </div>
 
@@ -2877,6 +2946,10 @@ window.selectRamal = async function(key) {
       `<div class="info-state" style="padding:1rem 0">Sem obras contratuais vinculadas a este ramal no momento.</div>`}
   `;
   setTimeout(() => _renderRamQuadroMap(r), 150);
+  // Scroll suave até o detalhe (em telas longas o usuário não precisa subir manualmente)
+  setTimeout(() => {
+    document.getElementById("ramQuadroOut")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, 100);
 };
 
 async function _renderRamQuadroMap(r) {
@@ -2927,11 +3000,16 @@ async function _renderRamQuadroMap(r) {
   }
 
   if (bounds && bounds.isValid()) {
-    try { map.fitBounds(bounds, { padding: [30, 30], maxZoom: 14 }); } catch (e) {}
+    // maxZoom 17 (era 14) — agora o ramal fica enquadrado de perto sem precisar
+    // aproximar manualmente. Se o ramal for grande, o fitBounds limita o zoom
+    // automaticamente para caber a extensão inteira.
+    try { map.fitBounds(bounds, { padding: [40, 40], maxZoom: 17 }); } catch (e) {}
   } else {
     map.setView([-4, -62], 6);
   }
-  setTimeout(() => map.invalidateSize(), 200);
+  // Re-invalida tamanho (essencial quando o mapa nasce dentro de tab oculta)
+  setTimeout(() => { map.invalidateSize(); }, 200);
+  setTimeout(() => { map.invalidateSize(); }, 600);
 }
 
 /* ABA 3: INVESTIMENTOS em ramais/vicinais */
