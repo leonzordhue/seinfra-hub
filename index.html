@@ -1046,6 +1046,8 @@ const GEOJSON_FILES = {
   terminais:    "TERMINAIS_FLUTUANTES_SEINFRA.geojson",
   municipios:   "AM_MUNICIPIOS.geojson",
   sistemas:     "SISTEMAS_VIARIOS_AMAZONAS1.geojson",
+  viario_ruas:  "SISTEMAS_VIARIOS_AMAZONAS3.geojson",
+  viario_polig: "SISTEMAS_VIARIOS_AMAZONAS2.geojson",
 };
 
 /* ── HUB (núcleo, BIOS) ── */
@@ -3486,8 +3488,11 @@ window.filterViaMun = function() {
         title="Briefing PDF do município">📄 Briefing PDF — ${htmlEscape(m)}</button>
     </div>
 
-    <div class="panel-title" style="margin:0.4rem 0 0.4rem">Localização no mapa</div>
-    <div id="viaQuadroMap" class="map-wrap" style="height:340px"></div>
+    <div class="panel-title" style="margin:0.4rem 0 0.4rem;display:flex;align-items:center;justify-content:space-between;gap:0.6rem">
+      <span>Localização e ruas mapeadas</span>
+      <span id="viaQuadroMapBadge" style="font-size:0.7rem;font-weight:600;color:#B45309;background:#FEF3C7;padding:0.18rem 0.6rem;border-radius:999px">carregando...</span>
+    </div>
+    <div id="viaQuadroMap" class="map-wrap" style="height:380px"></div>
 
     <div class="panel-title" style="margin:1.1rem 0 0.4rem">
       Ruas e vias cadastradas (${ruas.length})
@@ -3525,37 +3530,131 @@ window.filterViaRuas = function() {
   });
 };
 
+// Helpers point-in-polygon (porta do index_viário antigo) — usados para filtrar
+// as ruas do GeoJSON pelo polígono do município selecionado.
+function _viaGetOuterRing(feature) {
+  const g = feature.geometry;
+  if (!g) return null;
+  if (g.type === "Polygon") return g.coordinates[0];
+  if (g.type === "MultiPolygon") {
+    return g.coordinates.reduce((best, poly) => {
+      const r = poly[0];
+      const xs = r.map(c => c[0]), ys = r.map(c => c[1]);
+      const a = (Math.max(...xs) - Math.min(...xs)) * (Math.max(...ys) - Math.min(...ys));
+      const bxs = best.map(c => c[0]), bys = best.map(c => c[1]);
+      const ba = (Math.max(...bxs) - Math.min(...bxs)) * (Math.max(...bys) - Math.min(...bys));
+      return a > ba ? r : best;
+    }, g.coordinates[0][0]);
+  }
+  return null;
+}
+function _viaPointInRing(point, ring) {
+  const [x, y] = point; let inside = false, j = ring.length - 1;
+  for (let i = 0; i < ring.length; i++) {
+    const [xi, yi] = ring[i], [xj, yj] = ring[j];
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) inside = !inside;
+    j = i;
+  }
+  return inside;
+}
+function _viaRuasDoMunicipio(gjRuas, gjPolig, mun) {
+  if (!gjRuas || !gjPolig) return { polF: null, ruas: [] };
+  const munLower = (mun || "").trim().toLowerCase();
+  const polF = (gjPolig.features || []).find(f => {
+    const n = (f.properties && (f.properties.name || f.properties.NM_MUN || f.properties.NAME) || "").toString().trim().toLowerCase();
+    return n === munLower;
+  });
+  if (!polF) return { polF: null, ruas: [] };
+  const ring = _viaGetOuterRing(polF);
+  if (!ring) return { polF, ruas: [] };
+  const xs = ring.map(c => c[0]), ys = ring.map(c => c[1]);
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  const ruas = (gjRuas.features || []).filter(rua => {
+    const coords = rua.geometry && rua.geometry.coordinates;
+    if (!coords || !coords.length) return false;
+    // amostra ponto do meio do LineString (ou primeiro ponto do primeiro segmento)
+    const sample = Array.isArray(coords[0][0]) ? coords[Math.floor(coords.length / 2)][0] : coords[Math.floor(coords.length / 2)];
+    if (!sample || sample.length < 2) return false;
+    const [px, py] = sample;
+    if (px < x0 || px > x1 || py < y0 || py > y1) return false;
+    return _viaPointInRing([px, py], ring);
+  });
+  return { polF, ruas };
+}
+
 async function _renderViaQuadroMap(mun) {
   const map = mkMap("viaQuadroMap", { center: [-4, -62], zoom: 6 });
   if (!map) return;
   HUB.state.maps = HUB.state.maps || {};
   HUB.state.maps.viaQuadroMap = map;
-  // Tenta destacar o município no geojson de municípios (perímetro urbano)
-  const gj = await loadGeoJSON(GEOJSON_FILES.municipios);
+
+  // Carrega em paralelo: polígonos do viário (chave: name) + ruas + fallback IBGE
+  const [gjPolig, gjRuas, gjMun] = await Promise.all([
+    loadGeoJSON(GEOJSON_FILES.viario_polig),
+    loadGeoJSON(GEOJSON_FILES.viario_ruas),
+    loadGeoJSON(GEOJSON_FILES.municipios),
+  ]);
+
   let bounds = null;
-  if (gj) {
-    const feats = (gj.features || []).filter(f => {
+  let polLayer = null;
+  let ruasLayer = null;
+
+  // 1) tenta polígono do viário (match por properties.name)
+  const { polF, ruas } = _viaRuasDoMunicipio(gjRuas, gjPolig, mun);
+  if (polF) {
+    polLayer = L.geoJSON(polF, {
+      style: { color: "#B45309", weight: 2, opacity: 0.7, fillColor: "#B45309", fillOpacity: 0.06 }
+    }).addTo(map);
+  } else if (gjMun) {
+    // 2) fallback: polígono do IBGE (AM_MUNICIPIOS, chave NM_MUN)
+    const feats = (gjMun.features || []).filter(f => {
       const p = f.properties || {};
       const nome = (p.NM_MUN || p.nome || p.NAME || "").toString().toUpperCase().trim();
       return nome === mun;
     });
     if (feats.length) {
-      const lyr = L.geoJSON({ type: "FeatureCollection", features: feats }, {
-        style: { color: "#B45309", weight: 2.5, opacity: 0.85, fillOpacity: 0.12, fillColor: "#B45309" },
-        onEachFeature: (f, l) => {
-          const p = f.properties || {};
-          l.bindPopup(`<div class="pop-title">${htmlEscape(p.NM_MUN || mun)}</div>
-            <div class="pop-row">Município com viário urbano cadastrado</div>`);
-        }
+      polLayer = L.geoJSON({ type: "FeatureCollection", features: feats }, {
+        style: { color: "#B45309", weight: 2, opacity: 0.7, fillColor: "#B45309", fillOpacity: 0.06 }
       }).addTo(map);
-      bounds = lyr.getBounds();
     }
   }
+
+  // 3) ruas filtradas pelo polígono — destaque laranja
+  if (ruas && ruas.length) {
+    ruasLayer = L.geoJSON({ type: "FeatureCollection", features: ruas }, {
+      style: { color: "#F5A623", weight: 3, opacity: 0.92, lineJoin: "round", lineCap: "round" },
+      onEachFeature: (feat, lyr) => {
+        const p = feat.properties || {};
+        const nome = p.name || p.NAME || "Sem nome";
+        const desc = p.description || "";
+        lyr.bindPopup(
+          `<div style="font-family:Outfit,sans-serif;font-size:0.82rem;max-width:220px">
+             <div style="font-weight:800;color:#1A2540;margin-bottom:4px">${htmlEscape(nome)}</div>
+             ${desc ? `<div style="color:#4A5568;font-size:0.75rem">${htmlEscape(desc).slice(0,280)}</div>` : ""}
+           </div>`,
+          { maxWidth: 240 }
+        );
+      }
+    }).addTo(map);
+  }
+
+  // 4) Zoom — preferir o bbox das ruas; senão o polígono
+  if (ruasLayer) {
+    try { bounds = ruasLayer.getBounds(); } catch (e) {}
+  }
+  if ((!bounds || !bounds.isValid()) && polLayer) {
+    try { bounds = polLayer.getBounds(); } catch (e) {}
+  }
   if (bounds && bounds.isValid()) {
-    try { map.fitBounds(bounds, { padding: [30, 30], maxZoom: 13 }); } catch (e) {}
+    try { map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 }); } catch (e) {}
   } else {
     map.setView([-4, -62], 6);
   }
+
+  // Atualiza badge de ruas mapeadas (informação extra ao lado do mapa)
+  const badge = document.getElementById("viaQuadroMapBadge");
+  if (badge) badge.textContent = ruas && ruas.length ? `${ruas.length} ruas mapeadas` : "Sem ruas mapeadas no GeoJSON";
+
   setTimeout(() => map.invalidateSize(), 200);
   setTimeout(() => map.invalidateSize(), 600);
 }
