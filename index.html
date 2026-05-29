@@ -1051,6 +1051,7 @@ const HUB = {
   version: "1.0.0",
   modules: {
     rodovias:     { id: "rodovias",     label: "Rodovias",       icon: "\u{1F6E3}",  color: "#1A2B5E" },
+    viario:       { id: "viario",       label: "Viário Urbano",  icon: "\u{1F3D9}",  color: "#B45309" },
     ramais:       { id: "ramais",       label: "Ramais",         icon: "\u{1F33F}",  color: "#2D8540" },
     aerodromos:   { id: "aerodromos",   label: "Aeródromos",     icon: "\u{2708}",   color: "#0E7490" },
     terminais:    { id: "terminais",    label: "Terminais",      icon: "\u{2693}",   color: "#B8620A" },
@@ -1714,6 +1715,7 @@ function modHero(id, subtitle) {
 function getModuleHTML(id) {
   switch (id) {
     case "rodovias":     return getRodoviasHTML();
+    case "viario":       return getViarioHTML();
     case "ramais":       return getRamaisHTML();
     case "aerodromos":   return getAerodromosHTML();
     case "hidrovias":    return getHidroviasHTML();
@@ -1730,6 +1732,7 @@ function getModuleHTML(id) {
 function initModule(id) {
   switch (id) {
     case "rodovias":     return initRodovias();
+    case "viario":       return initViario();
     case "ramais":       return initRamais();
     case "aerodromos":   return initAerodromos();
     case "hidrovias":    return initHidrovias();
@@ -3062,6 +3065,590 @@ function aeCorIcon(a) {
   if (a.fonte === "ESTADO") return "#6C3483";
   return "#1A2B5E";
 }
+
+/* ═════════════════════════════════════════════════════════════════
+   MÓDULO VIÁRIO URBANO — 3 abas no padrão Rodovias/Ramais
+   Whitelist oficial: 78 contratos (R$ 1,17 bi · 822,4 km · 4 capital + 74 interior)
+   Fonte: Relatório de Investimentos em Mobilidade WL 2019-2026 v5
+   ═════════════════════════════════════════════════════════════════ */
+function getViarioHTML() {
+  return `
+  <div class="mod-wrap">
+    ${modHero("viario", "Pavimentação e recuperação do sistema viário municipal · apoio à decisão estratégica")}
+
+    <div class="kpi-grid" id="viaTopKpis">
+      <div class="kpi-card"><div class="kpi-card-label">Contratos</div><div class="kpi-card-value" id="vk-tot">—</div><div class="kpi-card-foot">consolidados oficiais</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Extensão executada</div><div class="kpi-card-value" id="vk-ext">—</div><div class="kpi-card-foot">km totais</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value" id="vk-mun">—</div><div class="kpi-card-foot">capital + interior</div></div>
+      <div class="kpi-card r"><div class="kpi-card-label">Investimento</div><div class="kpi-card-value" id="vk-inv">—</div><div class="kpi-card-foot">R$ contratado</div></div>
+    </div>
+
+    <div class="panel-card">
+      <div class="tab-bar" id="viaTabs">
+        <button class="tab-item active" data-tab="vag">Visão Geral</button>
+        <button class="tab-item" data-tab="vaq">Quadro de Viário</button>
+        <button class="tab-item" data-tab="vai">Investimentos</button>
+      </div>
+
+      <!-- ABA 1: VISÃO GERAL -->
+      <div class="tab-content active" id="via-vag">
+        <div style="background:#FEF3DC;border:1px solid #F5C878;border-radius:8px;padding:0.55rem 0.85rem;font-size:0.72rem;color:var(--cinza-med);margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem">
+          <span style="font-size:1rem">📋</span>
+          <span>Fonte: <strong>Relatório de Investimentos em Mobilidade — Governo Wilson Lima 2019–2026 (v5)</strong> · SEINFRA/DMOB · 78 contratos de viário urbano consolidados</span>
+        </div>
+
+        <div class="chart-grid-2">
+          <div>
+            <div class="panel-title" style="margin-bottom:0.6rem">Capital × Interior — Distribuição de investimento</div>
+            <div class="chart-wrap"><canvas id="chViaCapInt"></canvas></div>
+          </div>
+          <div>
+            <div class="panel-title" style="margin-bottom:0.6rem">Tipo de obra (% do investimento)</div>
+            <div class="chart-wrap"><canvas id="chViaTipo"></canvas></div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.2rem">
+          <div class="panel-title" style="margin-bottom:0.6rem">Evolução do investimento em viário urbano por ano</div>
+          <div class="chart-wrap tall"><canvas id="chViaEvol"></canvas></div>
+        </div>
+
+        <div class="chart-grid-2" style="margin-top:1.2rem">
+          <div>
+            <div class="panel-title" style="margin-bottom:0.6rem;color:#2D8540">Top 5 municípios — <strong>MAIOR</strong> investimento em viário</div>
+            <div class="chart-wrap"><canvas id="chViaTop5Mais"></canvas></div>
+          </div>
+          <div>
+            <div class="panel-title" style="margin-bottom:0.6rem;color:#C0392B">Top 5 municípios atendidos com <strong>MENOR</strong> investimento</div>
+            <div class="chart-wrap"><canvas id="chViaTop5Menos"></canvas></div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.2rem">
+          <div class="panel-title" style="margin-bottom:0.6rem">Apoio à decisão estratégica</div>
+          <div id="viaInsightBox"></div>
+        </div>
+      </div>
+
+      <!-- ABA 2: QUADRO DE VIÁRIO -->
+      <div class="tab-content" id="via-vaq">
+        <div class="filter-row" style="gap:0.5rem;margin-bottom:0.7rem;flex-wrap:wrap">
+          <select id="viaMunSel" class="filter-select" onchange="filterViaMun()" style="flex:1;min-width:240px;border-radius:10px;padding:0.65rem 0.8rem">
+            <option value="">Selecione um município</option>
+          </select>
+        </div>
+        <div id="viaQuadroOut">
+          <div class="info-state" style="padding:1.6rem 0">Selecione um município para ver contratos, ruas cadastradas, extensão e investimento.</div>
+        </div>
+      </div>
+
+      <!-- ABA 3: INVESTIMENTOS -->
+      <div class="tab-content" id="via-vai">
+        <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem;margin-bottom:0.6rem">
+          <input type="text" id="invViaQ" class="filter-select" style="flex:2;min-width:220px;padding:0.65rem 0.8rem;border-radius:10px"
+                 placeholder="🔍 Buscar por objeto, nº contrato, empresa ou município…" oninput="renderInvestViaList()"/>
+          <select id="invViaMun" class="filter-select" onchange="renderInvestViaList()" style="border-radius:10px">
+            <option value="">Todos os municípios</option>
+          </select>
+          <select id="invViaStatus" class="filter-select" onchange="renderInvestViaList()" style="border-radius:10px">
+            <option value="">Todas as situações</option>
+            <option value="andamento">Em andamento</option>
+            <option value="concluido">Concluído / Inaugurado</option>
+            <option value="paralisado">Paralisado / Atrasado</option>
+          </select>
+          <select id="invViaAno" class="filter-select" onchange="renderInvestViaList()" style="border-radius:10px">
+            <option value="">Todos os anos</option>
+          </select>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-bottom:0.6rem">
+          <button onclick="gerarPDFInvestimentosViario()"
+            style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.55em 1.1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15);transition:background .15s,transform .12s"
+            onmouseover="this.style.background='var(--azul-hover,#003d9e)';this.style.transform='translateY(-1px)'"
+            onmouseout="this.style.background='var(--azul)';this.style.transform='translateY(0)'"
+            title="Gerar PDF com os investimentos viários filtrados">📊 Gerar PDF de investimentos</button>
+        </div>
+        <div class="kpi-grid" id="invViaKpis" style="margin-bottom:0.8rem"></div>
+        <div id="invViaList"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ── HELPERS VIÁRIO ─────────────────────────────────────────────────────── */
+// Capital = Manaus; demais = Interior. Usado nos gráficos Capital×Interior.
+function _ehManaus(s) { return (s || "").toString().toUpperCase().includes("MANAUS"); }
+
+async function _loadViarioSheet() {
+  if (HUB.state.viarioSheet && HUB.state.viarioSheet.length) return;
+  try {
+    const rows = await gvizFetch("1xZK1yriI4FUVtTF0TrUPYP05DIxGBfeNzSuxmGR8A5M", null);
+    if (!rows.length) return;
+    HUB.state.viarioSheet = rows.map(r => ({
+      municipio: (r.municipio || "").toString().toUpperCase().trim(),
+      tipo: r.tipo || "",
+      nome_via: r.nome_via || "",
+      extensao_km: parseNum(r.extensao_km || 0),
+    })).filter(r => r.municipio || r.nome_via);
+  } catch (e) { console.warn("_loadViarioSheet:", e); }
+}
+
+/* ── INIT ───────────────────────────────────────────────────────────────── */
+async function initViario() {
+  if (!HUB.state.contratos) await loadCoreData();
+  await _loadViarioSheet();
+  if (!HUB.state.contratosObra) {
+    HUB.state.contratosObra = (HUB.state.contratos || []).map(_mapContrato);
+  }
+  // Lista oficial Viário via whitelist + SOMA dos sub-objetos DA CATEGORIA VIÁRIO.
+  if (!HUB.state.contratosVia) {
+    const oficiaisSet = new Set(CONTRATOS_OFICIAIS_VIARIO);
+    const multiSeg = new Set([...CONTRATOS_OFICIAIS_RODOVIAS, ...CONTRATOS_OFICIAIS_RAMAIS]);
+    const agg = {};
+    for (const c of HUB.state.contratosObra) {
+      if (!oficiaisSet.has(c.contrato)) continue;
+      if (multiSeg.has(c.contrato)) {
+        const cat = _classificaSubobjeto(c);
+        if (cat === "rodovia" || cat === "ramal") continue;
+      }
+      if (!agg[c.contrato]) { agg[c.contrato] = { ...c, valor: 0, _subobjetos: [] }; }
+      agg[c.contrato].valor += (c.valor || 0);
+      agg[c.contrato]._subobjetos.push(c);
+      if (!agg[c.contrato].objeto && c.objeto) agg[c.contrato].objeto = c.objeto;
+    }
+    HUB.state.contratosVia = Object.values(agg);
+  }
+  _buildViarioTopKpis();
+  _bindViarioTabs();
+  _buildViarioGeral();
+  _buildViarioQuadro();
+  _buildViarioInvest();
+}
+
+function _bindViarioTabs() {
+  $$("#viaTabs .tab-item").forEach(btn => {
+    btn.addEventListener("click", () => {
+      $$("#viaTabs .tab-item").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      $$(".tab-content", btn.closest(".panel-card")).forEach(tc => tc.classList.remove("active"));
+      $(`#via-${btn.dataset.tab}`).classList.add("active");
+      setTimeout(() => { if (HUB.state.maps && HUB.state.maps.viaQuadroMap) HUB.state.maps.viaQuadroMap.invalidateSize(); }, 100);
+    });
+  });
+}
+
+function _buildViarioTopKpis() {
+  const obras = HUB.state.contratosVia || [];
+  const totVal = obras.reduce((s, o) => s + o.valor, 0);
+  const muns = new Set();
+  obras.forEach(o => (o.municipio||"").toString().split(/\s*,\s*/).forEach(m => { const t = m.toUpperCase().trim(); if (t) muns.add(t); }));
+  // Extensão total: soma de extensao_km da planilha viário OU 822,4 do relatório (fallback)
+  const via = HUB.state.viarioSheet || [];
+  const ext = via.reduce((s, r) => s + (r.extensao_km || 0), 0) || 822.4;
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set("vk-tot", fmtNum(obras.length));
+  set("vk-ext", fmtNum(Math.round(ext)));
+  set("vk-mun", fmtNum(muns.size));
+  set("vk-inv", _fmtBRLShort(totVal));
+}
+
+/* ABA 1: VISÃO GERAL */
+function _buildViarioGeral() {
+  const obras = HUB.state.contratosVia || [];
+
+  // Capital × Interior — agrega valor por agrupamento
+  const capInt = { Capital: 0, Interior: 0 };
+  obras.forEach(o => {
+    const m = (o.municipio || "").toString();
+    if (_ehManaus(m)) capInt.Capital += o.valor;
+    else capInt.Interior += o.valor;
+  });
+  mkChart("chViaCapInt", {
+    type: "doughnut",
+    data: { labels: ["Capital (Manaus)", "Interior do Estado"], datasets: [{
+      data: [capInt.Capital, capInt.Interior],
+      backgroundColor: ["#B45309", "#2D8540"], borderWidth: 2, borderColor: "#fff" }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom", labels: { font: { size: 12 } } },
+                 tooltip: { callbacks: { label: ctx => ctx.label + ": " + _fmtBRLShort(ctx.parsed) + " (" + (ctx.parsed/(capInt.Capital+capInt.Interior)*100).toFixed(1) + "%)" } } } }
+  });
+
+  // Tipo de obra — agrega por palavra-chave do objeto
+  function _categorizaObra(o) {
+    const t = ((o.objeto || "") + " " + (o.resumo || "")).toUpperCase();
+    if (/RECAPEAMENTO|RECAPAGEM/.test(t)) return "Recapeamento";
+    if (/PAVIMENTA[CÇ][AÃ]O/.test(t)) return "Pavimentação";
+    if (/RECUPERA[CÇ][AÃ]O/.test(t)) return "Recuperação";
+    if (/DRENAGEM/.test(t)) return "Drenagem";
+    if (/CONSTRU[CÇ][AÃ]O/.test(t)) return "Construção";
+    if (/REVITALIZA[CÇ][AÃ]O/.test(t)) return "Revitalização";
+    return "Outros";
+  }
+  const tipoMap = {};
+  obras.forEach(o => { const c = _categorizaObra(o); tipoMap[c] = (tipoMap[c]||0) + o.valor; });
+  const tipoArr = Object.entries(tipoMap).sort((a,b) => b[1]-a[1]);
+  const tipoTot = tipoArr.reduce((s, x) => s + x[1], 0);
+  mkChart("chViaTipo", {
+    type: "doughnut",
+    data: { labels: tipoArr.map(x => x[0]), datasets: [{
+      data: tipoArr.map(x => x[1]),
+      backgroundColor: ["#B45309","#2D8540","#1A2B5E","#0E7490","#C0392B","#6C3483","#8896A8"],
+      borderWidth: 2, borderColor: "#fff" }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: "bottom", labels: { font: { size: 10 } } },
+                 tooltip: { callbacks: { label: ctx => ctx.label + ": " + _fmtBRLShort(ctx.parsed) + " (" + (ctx.parsed/tipoTot*100).toFixed(1) + "%)" } } } }
+  });
+
+  // Evolução por ano
+  const porAno = {};
+  obras.forEach(o => { if (o.ano >= 2018 && o.ano <= 2030) porAno[o.ano] = (porAno[o.ano]||0) + o.valor; });
+  const anos = Object.keys(porAno).sort();
+  mkChart("chViaEvol", {
+    type: "bar",
+    data: { labels: anos, datasets: [{ label: "Investimento (R$ mi)",
+            data: anos.map(a => +(porAno[a]/1e6).toFixed(2)),
+            backgroundColor: "#B45309", borderRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+                 tooltip: { callbacks: { label: ctx => "R$ " + ctx.parsed.y.toFixed(1) + " milhões" } } },
+      scales: { y: { beginAtZero: true, ticks: { callback: v => "R$ " + v + " mi" } } } }
+  });
+
+  // Top 5 municípios — MAIOR e MENOR investimento
+  const porMun = {};
+  obras.forEach(o => {
+    const m = (o.municipio || "").toString().split(/\s*,\s*/)[0].toUpperCase().trim();
+    if (m) porMun[m] = (porMun[m]||0) + o.valor;
+  });
+  const munArr = Object.entries(porMun).sort((a,b) => b[1]-a[1]);
+  const top5Mais = munArr.slice(0, 5);
+  const top5Menos = munArr.slice(-5).reverse();
+  mkChart("chViaTop5Mais", {
+    type: "bar",
+    data: { labels: top5Mais.map(x => x[0]), datasets: [{ label: "R$",
+            data: top5Mais.map(x => +(x[1]/1e6).toFixed(2)),
+            backgroundColor: "#2D8540", borderRadius: 4 }] },
+    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+                 tooltip: { callbacks: { label: ctx => "R$ " + ctx.parsed.x.toFixed(1) + " mi" } } },
+      scales: { x: { beginAtZero: true, ticks: { callback: v => "R$ " + v + " mi" } } } }
+  });
+  mkChart("chViaTop5Menos", {
+    type: "bar",
+    data: { labels: top5Menos.map(x => x[0]), datasets: [{ label: "R$",
+            data: top5Menos.map(x => +(x[1]/1e6).toFixed(2)),
+            backgroundColor: "#C0392B", borderRadius: 4 }] },
+    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+                 tooltip: { callbacks: { label: ctx => "R$ " + ctx.parsed.x.toFixed(2) + " mi" } } },
+      scales: { x: { beginAtZero: true, ticks: { callback: v => "R$ " + v + " mi" } } } }
+  });
+
+  // Insight estratégico — top municípios por contrato vs por investimento
+  const porMunCount = {};
+  obras.forEach(o => {
+    const m = (o.municipio || "").toString().split(/\s*,\s*/)[0].toUpperCase().trim();
+    if (m) porMunCount[m] = (porMunCount[m]||0) + 1;
+  });
+  const concentrados = Object.entries(porMunCount).filter(([m,n]) => n >= 3)
+    .map(([m,n]) => ({ mun: m, contratos: n, valor: porMun[m] || 0 }))
+    .sort((a,b) => b.contratos - a.contratos).slice(0, 5);
+  const baixoInv = munArr.filter(x => x[1] < 5e6).slice(0, 5);
+  document.getElementById("viaInsightBox").innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem">
+      <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.95rem 1.1rem">
+        <div style="font-size:0.78rem;color:#B45309;font-weight:700;margin-bottom:0.5rem">🎯 Concentração de contratos</div>
+        <p style="font-size:0.72rem;color:var(--cinza-med);margin-bottom:0.6rem">Municípios com 3+ contratos — alta priorização SEINFRA. Avaliar saturação x necessidade.</p>
+        <div style="display:flex;flex-direction:column;gap:0.4rem">
+          ${concentrados.map(x => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0.6rem;background:#fff;border:1px solid var(--borda);border-radius:7px;font-size:0.78rem">
+              <span style="font-weight:600">${htmlEscape(x.mun)}</span>
+              <span style="font-size:0.7rem;color:var(--cinza-med)"><strong>${x.contratos}</strong> contratos · ${_fmtBRLShort(x.valor)}</span>
+            </div>`).join("")}
+        </div>
+      </div>
+      <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.95rem 1.1rem">
+        <div style="font-size:0.78rem;color:#C0392B;font-weight:700;margin-bottom:0.5rem">⚠ Municípios com baixo investimento</div>
+        <p style="font-size:0.72rem;color:var(--cinza-med);margin-bottom:0.6rem">Atendidos com menos de R$ 5 mi — candidatos a reforço de investimento.</p>
+        ${baixoInv.length ? `<div style="display:flex;flex-direction:column;gap:0.4rem">
+          ${baixoInv.map(x => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:0.4rem 0.6rem;background:#fff;border:1px solid var(--borda);border-radius:7px;font-size:0.78rem">
+              <span style="font-weight:600">${htmlEscape(x[0])}</span>
+              <span style="font-size:0.7rem;color:#C0392B">${_fmtBRLShort(x[1])}</span>
+            </div>`).join("")}
+        </div>` : `<p style="font-size:0.8rem;color:var(--cinza-aux);font-style:italic">Todos os municípios atendidos têm investimento acima de R$ 5 mi.</p>`}
+      </div>
+    </div>
+  `;
+}
+
+/* ABA 2: QUADRO DE VIÁRIO — seletor de município + ruas + contratos */
+function _buildViarioQuadro() {
+  const obras = HUB.state.contratosVia || [];
+  const via = HUB.state.viarioSheet || [];
+  // Conjunto dos municípios que têm contrato OU rua cadastrada
+  const munsSet = new Set();
+  obras.forEach(o => (o.municipio||"").toString().split(/\s*,\s*/).forEach(m => { const t = m.toUpperCase().trim(); if (t) munsSet.add(t); }));
+  via.forEach(r => { if (r.municipio) munsSet.add(r.municipio); });
+  const muns = [...munsSet].sort();
+  const sel = document.getElementById("viaMunSel");
+  if (sel) sel.innerHTML = `<option value="">Selecione um município (${muns.length})</option>` + muns.map(m => `<option value="${m}">${m}</option>`).join("");
+}
+
+window.filterViaMun = function() {
+  const m = (document.getElementById("viaMunSel").value || "").toUpperCase().trim();
+  if (!m) {
+    document.getElementById("viaQuadroOut").innerHTML = `<div class="info-state" style="padding:1.6rem 0">Selecione um município para ver contratos, ruas cadastradas, extensão e investimento.</div>`;
+    return;
+  }
+  const obras = (HUB.state.contratosVia || []).filter(o => (o.municipio||"").toString().toUpperCase().includes(m));
+  const ruas = (HUB.state.viarioSheet || []).filter(r => r.municipio === m);
+  const extRuas = ruas.reduce((s, r) => s + (r.extensao_km || 0), 0);
+  const totInv = obras.reduce((s, o) => s + o.valor, 0);
+  const ehCapital = _ehManaus(m);
+
+  document.getElementById("viaQuadroOut").innerHTML = `
+    <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.8rem;background:${ehCapital?"#B45309":"var(--azul-claro)"};color:${ehCapital?"#fff":"var(--azul)"};padding:0.7rem 1rem;border-radius:10px">
+      <span style="font-size:1.3rem">${ehCapital?"🏙️":"🌆"}</span>
+      <div style="flex:1">
+        <div style="font-size:0.85rem;font-weight:700;letter-spacing:0.03em">${htmlEscape(m)}</div>
+        <div style="font-size:0.7rem;opacity:0.85;margin-top:0.1rem">${ehCapital ? "Capital" : "Interior do Estado"}</div>
+      </div>
+    </div>
+
+    <div class="kpi-grid" style="margin-bottom:1rem">
+      <div class="kpi-card"><div class="kpi-card-label">Contratos</div><div class="kpi-card-value">${obras.length}</div><div class="kpi-card-foot">no município</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Ruas cadastradas</div><div class="kpi-card-value">${ruas.length}</div><div class="kpi-card-foot">planilha viário</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Extensão cadastrada</div><div class="kpi-card-value">${fmtNum(extRuas, 1)}</div><div class="kpi-card-foot">km</div></div>
+      <div class="kpi-card r"><div class="kpi-card-label">Investimento</div><div class="kpi-card-value">${_fmtBRLShort(totInv)}</div><div class="kpi-card-foot">contratado</div></div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-bottom:0.6rem">
+      <button onclick="gerarBriefingMunicipioViario('${m.replace(/'/g,"\\'")}')"
+        style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.5em 1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15)"
+        onmouseover="this.style.background='var(--azul-hover,#003d9e)'" onmouseout="this.style.background='var(--azul)'"
+        title="Briefing PDF do município">📄 Briefing PDF — ${htmlEscape(m)}</button>
+    </div>
+
+    <div class="panel-title" style="margin:0.4rem 0 0.4rem">Localização no mapa</div>
+    <div id="viaQuadroMap" class="map-wrap" style="height:340px"></div>
+
+    <div class="panel-title" style="margin:1.1rem 0 0.4rem">
+      Ruas e vias cadastradas (${ruas.length})
+    </div>
+    ${ruas.length ? `
+      <div style="position:relative;margin-bottom:0.6rem">
+        <input type="text" id="viaRuaSearch" class="filter-select" style="width:100%;padding:0.65rem 0.9rem;border-radius:10px"
+               placeholder="🔍 Pesquisar rua (nome ou tipo)..." oninput="filterViaRuas()"/>
+      </div>
+      <div class="table-wrap" style="max-height:360px;overflow-y:auto">
+        <table class="data-table" id="viaRuasTable">
+          <thead><tr><th>Nome da via</th><th>Tipo</th><th style="text-align:right">Extensão (km)</th></tr></thead>
+          <tbody>${ruas.sort((a,b) => (b.extensao_km||0) - (a.extensao_km||0)).map(r => `
+            <tr data-busca="${htmlEscape((r.nome_via + ' ' + r.tipo).toLowerCase())}">
+              <td style="font-weight:600">${htmlEscape(r.nome_via)}</td>
+              <td style="font-size:0.82rem;color:var(--cinza-med)">${htmlEscape(r.tipo || "—")}</td>
+              <td style="text-align:right">${fmtNum(r.extensao_km, 2)}</td>
+            </tr>`).join("")}</tbody>
+        </table>
+      </div>` : `<div class="info-state" style="padding:1rem 0">Sem ruas/vias cadastradas para este município na planilha viário.</div>`
+    }
+
+    <div class="panel-title" style="margin:1.1rem 0 0.4rem">Contratos vinculados (${obras.length})</div>
+    ${obras.length ? `<div style="display:flex;flex-direction:column;gap:0.5rem">${obras.sort((a,b) => b.valor-a.valor).map(_renderObraCard).join("")}</div>` :
+      `<div class="info-state" style="padding:1rem 0">Sem contratos viários vinculados a <strong>${htmlEscape(m)}</strong>.</div>`}
+  `;
+  setTimeout(() => _renderViaQuadroMap(m), 150);
+  setTimeout(() => document.getElementById("viaQuadroOut")?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+};
+
+window.filterViaRuas = function() {
+  const q = (document.getElementById("viaRuaSearch")?.value || "").toLowerCase().trim();
+  document.querySelectorAll("#viaRuasTable tbody tr").forEach(tr => {
+    tr.style.display = (!q || tr.dataset.busca.includes(q)) ? "" : "none";
+  });
+};
+
+async function _renderViaQuadroMap(mun) {
+  const map = mkMap("viaQuadroMap", { center: [-4, -62], zoom: 6 });
+  if (!map) return;
+  HUB.state.maps = HUB.state.maps || {};
+  HUB.state.maps.viaQuadroMap = map;
+  // Tenta destacar o município no geojson de municípios (perímetro urbano)
+  const gj = await loadGeoJSON(GEOJSON_FILES.municipios);
+  let bounds = null;
+  if (gj) {
+    const feats = (gj.features || []).filter(f => {
+      const p = f.properties || {};
+      const nome = (p.NM_MUN || p.nome || p.NAME || "").toString().toUpperCase().trim();
+      return nome === mun;
+    });
+    if (feats.length) {
+      const lyr = L.geoJSON({ type: "FeatureCollection", features: feats }, {
+        style: { color: "#B45309", weight: 2.5, opacity: 0.85, fillOpacity: 0.12, fillColor: "#B45309" },
+        onEachFeature: (f, l) => {
+          const p = f.properties || {};
+          l.bindPopup(`<div class="pop-title">${htmlEscape(p.NM_MUN || mun)}</div>
+            <div class="pop-row">Município com viário urbano cadastrado</div>`);
+        }
+      }).addTo(map);
+      bounds = lyr.getBounds();
+    }
+  }
+  if (bounds && bounds.isValid()) {
+    try { map.fitBounds(bounds, { padding: [30, 30], maxZoom: 13 }); } catch (e) {}
+  } else {
+    map.setView([-4, -62], 6);
+  }
+  setTimeout(() => map.invalidateSize(), 200);
+  setTimeout(() => map.invalidateSize(), 600);
+}
+
+/* ABA 3: INVESTIMENTOS */
+function _buildViarioInvest() {
+  const obras = HUB.state.contratosVia || [];
+  const anos = [...new Set(obras.map(o => o.ano).filter(a => a > 0))].sort((a,b) => b-a);
+  const selA = document.getElementById("invViaAno");
+  if (selA) selA.innerHTML = `<option value="">Todos os anos</option>` + anos.map(a => `<option value="${a}">${a}</option>`).join("");
+  const muns = new Set();
+  obras.forEach(o => (o.municipio||"").toString().split(/\s*,\s*/).forEach(m => { const t = m.toUpperCase().trim(); if (t) muns.add(t); }));
+  const mArr = [...muns].sort();
+  const selM = document.getElementById("invViaMun");
+  if (selM) selM.innerHTML = `<option value="">Todos os municípios (${mArr.length})</option>` + mArr.map(m => `<option value="${m}">${m}</option>`).join("");
+  renderInvestViaList();
+}
+
+window.renderInvestViaList = function() {
+  const q = (document.getElementById("invViaQ")?.value || "").toLowerCase();
+  const mu = (document.getElementById("invViaMun")?.value || "").toUpperCase();
+  const an = document.getElementById("invViaAno")?.value || "";
+  const st = document.getElementById("invViaStatus")?.value || "";
+  const filtered = (HUB.state.contratosVia || []).filter(o => {
+    if (q) {
+      const hay = ((o.objeto||"") + " " + (o.contrato||"") + " " + (o.empresa||"") + " " + (o.municipio||"")).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (mu && !(o.municipio||"").toUpperCase().includes(mu)) return false;
+    if (an && String(o.ano) !== String(an)) return false;
+    if (st) {
+      const s = ((o.situacao_eobras||"") + " " + (o.situacao_real||"")).toLowerCase();
+      if (st === "concluido"  && !(s.includes("conclu") || s.includes("inaug"))) return false;
+      if (st === "andamento"  && !(s.includes("execu")  || s.includes("andamento") || s.includes("vigent"))) return false;
+      if (st === "paralisado" && !(s.includes("paralis") || s.includes("atras"))) return false;
+    }
+    return true;
+  });
+  const totVal = filtered.reduce((s,o) => s + o.valor, 0);
+  document.getElementById("invViaKpis").innerHTML = `
+    <div class="kpi-card"><div class="kpi-card-label">Obras filtradas</div><div class="kpi-card-value">${filtered.length}</div><div class="kpi-card-foot">de ${(HUB.state.contratosVia||[]).length} viárias</div></div>
+    <div class="kpi-card v"><div class="kpi-card-label">Investimento somado</div><div class="kpi-card-value">${_fmtBRLShort(totVal)}</div><div class="kpi-card-foot">R$ do filtro</div></div>
+  `;
+  document.getElementById("invViaList").innerHTML = filtered.length
+    ? `<div style="display:flex;flex-direction:column;gap:0.5rem">${filtered.sort((a,b) => b.valor-a.valor).map(_renderObraCard).join("")}</div>`
+    : `<div class="info-state" style="padding:1.4rem 0">Nenhuma obra encontrada com os filtros atuais.</div>`;
+};
+
+/* PDF de investimentos viários — usa filtros vigentes */
+async function gerarPDFInvestimentosViario() {
+  const q  = (document.getElementById("invViaQ")?.value || "").toLowerCase();
+  const mu = (document.getElementById("invViaMun")?.value || "").toUpperCase();
+  const an = document.getElementById("invViaAno")?.value || "";
+  const st = document.getElementById("invViaStatus")?.value || "";
+  const filtered = (HUB.state.contratosVia || []).filter(o => {
+    if (q) {
+      const hay = ((o.objeto||"") + " " + (o.contrato||"") + " " + (o.empresa||"") + " " + (o.municipio||"")).toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    if (mu && !(o.municipio||"").toUpperCase().includes(mu)) return false;
+    if (an && String(o.ano) !== String(an)) return false;
+    if (st) {
+      const s = ((o.situacao_eobras||"") + " " + (o.situacao_real||"")).toLowerCase();
+      if (st === "concluido"  && !(s.includes("conclu") || s.includes("inaug"))) return false;
+      if (st === "andamento"  && !(s.includes("execu")  || s.includes("andamento") || s.includes("vigent"))) return false;
+      if (st === "paralisado" && !(s.includes("paralis") || s.includes("atras"))) return false;
+    }
+    return true;
+  });
+  if (!filtered.length) { alert("Nenhuma obra nos filtros — ajuste antes de gerar o PDF."); return; }
+  const total = filtered.reduce((s, o) => s + o.valor, 0);
+  const sorted = [...filtered].sort((a, b) => b.valor - a.valor);
+  const filtros = [];
+  if (mu) filtros.push("Município: " + mu);
+  if (st) filtros.push("Situação: " + st);
+  if (an) filtros.push("Ano: " + an);
+  if (q)  filtros.push("Busca: \"" + q + "\"");
+  const titulo = mu ? `Investimentos em Viário Urbano — ${mu} — SEINFRA/AM`
+                    : "Relatório de Investimentos em Viário Urbano — SEINFRA/AM";
+  const content = [
+    { type: "heading", value: "1. Visão executiva" },
+    { type: "text", value: `Obras analisadas: ${filtered.length}` },
+    { type: "text", value: `Investimento somado: ${fmtBRL(total)}` },
+    { type: "text", value: `Investimento médio por obra: ${fmtBRL(total / filtered.length)}` },
+    { type: "text", value: `Data de emissão: ${new Date().toLocaleDateString("pt-BR")}` },
+  ];
+  if (filtros.length) content.push({ type: "text", value: "Filtros aplicados: " + filtros.join("  ·  ") });
+  content.push({ type: "heading", value: "2. Lista de obras" });
+  content.push({
+    type: "table",
+    headers: ["Contrato", "Objeto", "Município", "Ano", "Situação", "Valor"],
+    rows: sorted.map(o => [
+      o.contrato || "—",
+      (o.objeto || "—").slice(0, 42),
+      (o.municipio || "—").toString().slice(0, 20),
+      o.ano || "—",
+      ((o.situacao_eobras || o.situacao_real || "—") + "").slice(0, 22),
+      fmtBRL(o.valor),
+    ])
+  });
+  await exportPDF(titulo, content);
+}
+
+/* Briefing PDF por município (Viário) */
+async function gerarBriefingMunicipioViario(mun) {
+  const m = (mun || "").toString().toUpperCase().trim();
+  if (!m) return;
+  const obras = (HUB.state.contratosVia || []).filter(o => (o.municipio||"").toString().toUpperCase().includes(m));
+  const ruas = (HUB.state.viarioSheet || []).filter(r => r.municipio === m);
+  const extRuas = ruas.reduce((s, r) => s + (r.extensao_km || 0), 0);
+  const totInv = obras.reduce((s, o) => s + o.valor, 0);
+  const content = [
+    { type: "heading", value: "1. Identificação" },
+    { type: "text", value: "Município: " + m + (_ehManaus(m) ? "  (Capital)" : "  (Interior)") },
+    { type: "text", value: "Contratos viários: " + obras.length },
+    { type: "text", value: "Ruas cadastradas: " + ruas.length + "  (extensão total: " + fmtNum(extRuas, 2) + " km)" },
+    { type: "text", value: "Investimento contratado: " + fmtBRL(totInv) },
+  ];
+  if (obras.length) {
+    content.push({ type: "heading", value: "2. Contratos" });
+    content.push({
+      type: "table",
+      headers: ["Contrato", "Objeto", "Ano", "Situação", "Valor"],
+      rows: obras.sort((a,b) => b.valor - a.valor).map(o => [
+        o.contrato || "—",
+        (o.objeto || "—").slice(0, 55),
+        o.ano || "—",
+        ((o.situacao_eobras || o.situacao_real || "—") + "").slice(0, 22),
+        fmtBRL(o.valor),
+      ])
+    });
+  }
+  if (ruas.length) {
+    content.push({ type: "heading", value: "3. Ruas e vias cadastradas" });
+    content.push({
+      type: "table",
+      headers: ["Nome da via", "Tipo", "Extensão (km)"],
+      rows: ruas.sort((a,b) => (b.extensao_km||0) - (a.extensao_km||0)).slice(0, 100).map(r => [
+        (r.nome_via || "—").slice(0, 50),
+        (r.tipo || "—").slice(0, 30),
+        fmtNum(r.extensao_km, 2),
+      ])
+    });
+  }
+  await exportPDF(`Briefing Viário Urbano — ${m} — SEINFRA/AM`, content);
+}
+
+window.gerarPDFInvestimentosViario = gerarPDFInvestimentosViario;
+window.gerarBriefingMunicipioViario = gerarBriefingMunicipioViario;
+
 
 function getAerodromosHTML() {
   return `
