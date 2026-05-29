@@ -5504,6 +5504,8 @@ function _atlasMunPopup(p) {
       <div style="font-family:Outfit,sans-serif;font-size:1.05rem;font-weight:800;color:${col||"#1A2B5E"};margin-top:.15rem">${val}</div>
       <div style="font-size:.58rem;font-weight:700;color:#8896a8;letter-spacing:.06em;text-transform:uppercase">${lbl}</div>
     </div>`;
+  // Lista de nomes dos aeródromos do município
+  const aeroNomes = aeroCt.map(a => a.nome).slice(0, 2).join(" · ");
   return `
     <div style="font-family:Outfit,sans-serif;min-width:280px;max-width:340px">
       <div style="font-weight:800;color:#0E8A7D;font-size:1.05rem;line-height:1.1">${htmlEscape(nome)}</div>
@@ -5514,8 +5516,14 @@ function _atlasMunPopup(p) {
         ${stat("📐", extRamais.toFixed(0)+" km", "Ext. ramais", "#1A2B5E")}
         ${aeroCt.length ? stat("✈", aeroCt.length, "Aeroporto", "#0E7490") : ""}
       </div>
+      ${aeroNomes ? `<div style="margin-top:.45rem;font-size:.7rem;color:#0E7490">
+        ✈ <strong>${htmlEscape(aeroNomes)}</strong>${aeroCt.length > 2 ? ` <span style="opacity:.7">+${aeroCt.length-2}</span>` : ""}
+      </div>` : ""}
       ${invObras ? `<div style="margin-top:.55rem;padding-top:.5rem;border-top:1px dashed #e0e6f0;font-size:.74rem;color:#4a5568">
         💰 Investimento contratual: <strong style="color:#1A2B5E">${invObras >= 1e9 ? "R$ "+(invObras/1e9).toFixed(2)+" bi" : "R$ "+(invObras/1e6).toFixed(1)+" mi"}</strong>
+      </div>` : ""}
+      ${!obrasCt.length && !ramaisCt.length ? `<div style="margin-top:.45rem;font-size:.7rem;color:#8896a8;font-style:italic">
+        Carregando dados do município...
       </div>` : ""}
     </div>`;
 }
@@ -5722,6 +5730,12 @@ async function initAtlas() {
   const map = mkMap("atlasMap", { center: [-4.5, -63.5], zoom: 5 });
   HUB.state.atlasMap = map;
   HUB.state.atlasLayers = {};
+
+  // Pré-carrega a planilha de ramais em background — necessária para
+  // os popups dos municípios contarem ramais/extensão corretamente.
+  // (Sem isso, abrir o Atlas direto sem passar pelo módulo Ramais
+  // resulta em popups com '0 ramais' permanentemente.)
+  _loadRamaisSheet().catch(e => console.warn("preload ramais (atlas):", e));
 
   // Injeta SVG icons no painel (grupos + header)
   injectSvgIcons(document.getElementById("atlasMap"));
