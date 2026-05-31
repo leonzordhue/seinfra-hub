@@ -2598,24 +2598,70 @@ const CONTRATOS_OFICIAIS_VIARIO = [
 ];
 
 // Mapeia row crú do CSV em objeto contrato limpo
+// Pick: retorna o primeiro valor não-vazio entre as chaves passadas.
+// Usado pra mapear colunas da planilha geral (cabeçalho multi-linha com variações).
+function _pick(r, ...keys) {
+  for (const k of keys) {
+    if (r[k] != null && r[k] !== "") return r[k];
+  }
+  return "";
+}
+
 function _mapContrato(r) {
   return {
-    contrato: r.n_do_ct_cv || r.no_do_ct_cv || "",
-    objeto: r.objeto || "",
-    resumo: r.resumo_do_objeto || "",
-    situacao_eobras: r.situacao_eobras || "",
-    situacao_real: r.situacao_real || "",
-    municipio: r.municipio || "",
-    empresa: r.contratada_convenente || r.contratada_convenente_resumida || "",
-    valor: parseNum(r.valor_global_inicial_aditivos_reajustes_da_obra
-            || r.valor_global_inicial_aditivos_reajustes
-            || r.valor_inicial_aditivo_da_obra
-            || r.valor_inicial_da_obra || r.valor_inicial || 0),
-    pct_fisico: parseNum(r.fisico || 0),
-    ano: parseInt(r.ano || r.ano_da_o_s || "0", 10) || 0,
-    tipo: r.tipo || "",
-    segmento: r.segmento || "",
-    localizacao: r.localizacao_ramais || "",
+    // Identificação
+    contrato: _pick(r, "n_do_ct_cv", "no_do_ct_cv", "n_ct_cv", "no_ct_cv"),
+    n_obra: _pick(r, "n_da_obra", "num_da_obra", "n_obra"),
+    objeto: _pick(r, "objeto"),
+    resumo: _pick(r, "resumo_do_objeto", "resumo"),
+    descricao_servicos: _pick(r, "descricao_de_servicos", "descricao_servicos"),
+    briefing: _pick(r, "briefing"),
+    // Situação
+    situacao_eobras: _pick(r, "situacao_eobras"),
+    situacao_real: _pick(r, "situacao_real", "situacao"),
+    sinalizador: _pick(r, "sinalizador"),
+    // Localização
+    municipio: _pick(r, "municipio"),
+    municipio2: _pick(r, "municipios_2", "municipio_2"),
+    localizacao: _pick(r, "localizacao_ramais", "localizacao"),
+    interior_capital: _pick(r, "interior_capital"),
+    rmm: _pick(r, "rmm"),
+    // Empresa/fiscalização
+    empresa: _pick(r, "contratada_convenente", "contratada_convenente_resumida"),
+    fiscal: _pick(r, "fiscal"),
+    secretaria: _pick(r, "secretaria"),
+    fonte_recurso: _pick(r, "fonte_do_recurso", "fonte_recurso"),
+    // Financeiro
+    valor: parseNum(_pick(r, "valor_global_inicial_aditivos_reajustes_da_obra",
+                              "valor_global_inicial_aditivos_reajustes",
+                              "valor_global_ct",
+                              "valor_inicial_aditivo_da_obra",
+                              "valor_inicial_da_obra", "valor_inicial")),
+    empenhado: parseNum(_pick(r, "empenhado_r_obra", "empenhado_obra", "empenhado")),
+    liberado:  parseNum(_pick(r, "liberado_r_obra", "liberado_obra", "liberado")),
+    pago:      parseNum(_pick(r, "pago_r_obra", "pago_obra", "pago")),
+    pago_wl:   parseNum(_pick(r, "pago_gestao_wl_obra", "pago_wl")),
+    pct_fisico: parseNum(_pick(r, "fisico", "_fisico")),
+    pct_financeiro: parseNum(_pick(r, "financeiro", "_financeiro")),
+    avanco_previsto: _pick(r, "avanco_previsto_ate_a_data", "avanco_previsto"),
+    // Dimensão
+    dimensao: _pick(r, "dimensao"),
+    unidade: _pick(r, "unidade"),
+    dimensao_executada: _pick(r, "dimensao_executada"),
+    qt_ruas: _pick(r, "qt_ruas"),
+    revestimento: _pick(r, "revestimento_mobilidade", "revestimento"),
+    // Vigência
+    inicio: _pick(r, "inicio_da_vigencia", "inicio_da_execucao", "inicio"),
+    termino: _pick(r, "termino_da_vigencia", "fim_da_execucao", "previsao_de_entrega", "termino"),
+    dias_vencimento: _pick(r, "dias_para_vencimento", "dias_vencimento"),
+    ultima_medicao: _pick(r, "ultima_medicao"),
+    inauguracao: _pick(r, "inauguracao_da_obra", "inauguracao"),
+    conclusao: _pick(r, "conclusao_resumida_da_obra", "conclusao_da_obra", "conclusao"),
+    // Outros
+    empregos: parseNum(_pick(r, "empregos_gerados_diretos", "empregos")),
+    ano: parseInt(_pick(r, "ano", "ano_da_o_s"), 10) || 0,
+    tipo: _pick(r, "tipo"),
+    segmento: _pick(r, "segmento"),
   };
 }
 
@@ -6573,6 +6619,151 @@ async function exportPDF(title, content) {
       doc.text(block.value, margin, y);
       y += 4.5; // espaço APÓS — pequeno para aproximar do conteúdo (tabela/texto)
       doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(26, 37, 64);
+    } else if (block.type === "spacer") {
+      // Espaço vertical (em mm)
+      y += (block.value || 4);
+    } else if (block.type === "coverHeader") {
+      // Capa colorida no estilo briefing — fundo azul, nome + chips + 4 stat boxes
+      const boxH = block.height || 64;
+      // Se não cabe nessa página, vai pra próxima
+      if (y > pageH - footerH - boxH - 6) { addFooter(); doc.addPage(); addHeader(); y = headerH + 14; }
+      const x = margin, w = pageW - 2 * margin;
+      // Fundo gradiente azul (jsPDF não tem gradient nativo — usa duas faixas)
+      doc.setFillColor(12, 23, 51);   doc.rect(x, y, w, boxH, "F");
+      doc.setFillColor(26, 43, 94);   doc.rect(x, y, w, boxH * 0.6, "F");
+      // Chips no topo (pills)
+      let chipY = y + 6;
+      let chipX = x + 5;
+      (block.chips || []).forEach(c => {
+        doc.setFontSize(7); doc.setFont("helvetica", "bold");
+        const tw = doc.getTextWidth(c) + 5;
+        doc.setFillColor(255,255,255); doc.setDrawColor(255,255,255);
+        // pill background semi-transparente (simulado com cor mais clara)
+        doc.setFillColor(56, 89, 168);
+        doc.roundedRect(chipX, chipY - 3, tw, 5.5, 2, 2, "F");
+        doc.setTextColor(255,255,255);
+        doc.text(c, chipX + 2.5, chipY + 0.6);
+        chipX += tw + 2;
+      });
+      // Título principal
+      doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(255,255,255);
+      const titleLines = doc.splitTextToSize(block.title || "", w - 10);
+      doc.text(titleLines.slice(0, 2), x + 5, y + 16);
+      // Subtítulo
+      if (block.subtitle) {
+        doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(180, 200, 230);
+        doc.text(doc.splitTextToSize(block.subtitle, w - 10).slice(0, 1), x + 5, y + 26);
+      }
+      // Stats (até 4 caixas)
+      const stats = block.stats || [];
+      if (stats.length) {
+        const sH = 18;
+        const sY = y + boxH - sH - 5;
+        const sW = (w - 10 - (stats.length - 1) * 3) / stats.length;
+        stats.forEach((s, i) => {
+          const sX = x + 5 + i * (sW + 3);
+          doc.setFillColor(255,255,255); doc.setDrawColor(255,255,255);
+          // box semi-transparente claro
+          doc.setFillColor(36, 56, 110);
+          doc.roundedRect(sX, sY, sW, sH, 2, 2, "F");
+          doc.setFont("helvetica", "bold"); doc.setFontSize(11); doc.setTextColor(255,255,255);
+          const vLines = doc.splitTextToSize(String(s.value || "—"), sW - 4);
+          doc.text(vLines[0] || "—", sX + 2.5, sY + 8);
+          doc.setFont("helvetica", "normal"); doc.setFontSize(6.5); doc.setTextColor(180, 200, 230);
+          doc.text((s.label || "").toUpperCase(), sX + 2.5, sY + sH - 3);
+        });
+      }
+      doc.setTextColor(26, 37, 64); // reset
+      y += boxH + 6;
+    } else if (block.type === "statusBox") {
+      // Box colorido com status + texto
+      if (y > pageH - footerH - 18) { addFooter(); doc.addPage(); addHeader(); y = headerH + 14; }
+      const c = block.color || [45, 133, 64]; // default verde
+      const x = margin, w = pageW - 2 * margin;
+      doc.setFillColor(c[0], c[1], c[2]);
+      doc.roundedRect(x, y, 5, 14, 1, 1, "F");
+      doc.setFillColor(245, 247, 251); doc.setDrawColor(c[0], c[1], c[2]);
+      doc.roundedRect(x + 5, y, w - 5, 14, 1, 1, "F");
+      doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(c[0], c[1], c[2]);
+      doc.text(block.label || "STATUS", x + 9, y + 6);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(26, 37, 64);
+      const txt = doc.splitTextToSize(block.text || "", w - 14);
+      doc.text(txt[0] || "", x + 9, y + 12);
+      y += 18;
+    } else if (block.type === "progressBar") {
+      // Barra de progresso 0-100
+      if (y > pageH - footerH - 14) { addFooter(); doc.addPage(); addHeader(); y = headerH + 14; }
+      const pct = Math.max(0, Math.min(100, Number(block.value) || 0));
+      const c = block.color || [45, 133, 64];
+      const x = margin, w = pageW - 2 * margin;
+      // Label
+      doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(c[0], c[1], c[2]);
+      doc.text(block.label || "", x, y + 3);
+      doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(26, 37, 64);
+      doc.text(pct.toFixed(1) + "%", pageW - margin - doc.getTextWidth(pct.toFixed(1) + "%"), y + 3);
+      // Track
+      doc.setFillColor(230, 235, 245);
+      doc.roundedRect(x, y + 5, w, 4, 1, 1, "F");
+      // Fill
+      doc.setFillColor(c[0], c[1], c[2]);
+      const fillW = (w * pct) / 100;
+      if (fillW > 0) doc.roundedRect(x, y + 5, fillW, 4, 1, 1, "F");
+      // Detail text
+      if (block.detail) {
+        doc.setFontSize(7); doc.setTextColor(136, 150, 168);
+        doc.text(block.detail, x, y + 13);
+      }
+      doc.setTextColor(26, 37, 64);
+      y += block.detail ? 17 : 13;
+    } else if (block.type === "kvgrid") {
+      // Grid de campo:valor — N colunas, 1 ou mais linhas
+      const cols = block.cols || 3;
+      const items = block.items || [];
+      const rowH = 12;
+      const x = margin, w = pageW - 2 * margin;
+      const cellW = (w - (cols - 1) * 2) / cols;
+      for (let i = 0; i < items.length; i += cols) {
+        if (y > pageH - footerH - rowH - 4) { addFooter(); doc.addPage(); addHeader(); y = headerH + 14; }
+        for (let c = 0; c < cols && i + c < items.length; c++) {
+          const it = items[i + c];
+          const cx = x + c * (cellW + 2);
+          // Background suave
+          doc.setFillColor(245, 247, 251);
+          doc.roundedRect(cx, y, cellW, rowH, 1.5, 1.5, "F");
+          // Label
+          doc.setFont("helvetica", "bold"); doc.setFontSize(6); doc.setTextColor(136, 150, 168);
+          doc.text((it.label || "").toUpperCase(), cx + 2, y + 3.5);
+          // Value
+          doc.setFont("helvetica", "bold"); doc.setFontSize(9);
+          doc.setTextColor(...(it.color || [26, 43, 94]));
+          const v = doc.splitTextToSize(String(it.value || "—"), cellW - 4);
+          doc.text(v[0] || "—", cx + 2, y + 9);
+        }
+        y += rowH + 2;
+      }
+      y += 2;
+      doc.setTextColor(26, 37, 64); doc.setFontSize(10);
+    } else if (block.type === "tags") {
+      // Tags inline com background colorido
+      if (!block.items || !block.items.length) continue;
+      if (y > pageH - footerH - 10) { addFooter(); doc.addPage(); addHeader(); y = headerH + 14; }
+      let tagX = margin;
+      const tagY = y;
+      doc.setFontSize(8);
+      for (const t of block.items) {
+        const tw = doc.getTextWidth(t) + 5;
+        if (tagX + tw > pageW - margin) {
+          tagX = margin; y += 7;
+        }
+        const c = block.color || [26, 43, 94];
+        doc.setFillColor(c[0] + 200 > 255 ? 240 : c[0] + 200, c[1] + 200 > 255 ? 240 : c[1] + 200, c[2] + 200 > 255 ? 245 : c[2] + 200);
+        doc.roundedRect(tagX, y, tw, 5.5, 1.5, 1.5, "F");
+        doc.setTextColor(c[0], c[1], c[2]);
+        doc.text(t, tagX + 2.5, y + 4);
+        tagX += tw + 1.5;
+      }
+      y += 9;
+      doc.setTextColor(26, 37, 64);
     } else if (block.type === "table" && block.headers && block.rows && doc.autoTable) {
       // Detecta coluna "Objeto" — dá maior largura e habilita wrap automático.
       // Colunas que costumam ser curtas (Contrato/Ano/Valor) ganham largura mínima.
@@ -6689,50 +6880,234 @@ async function gerarInventarioRodoviario() {
   await exportPDF("Inventário das Rodovias Estaduais — SEINFRA/AM", content);
 }
 
-/* ── BRIEFING DE OBRA — pdf com timbrado, por contrato ── */
+// Detecta status normalizado a partir da situação bruta (estilo index_briefing).
+// Retorna {key, label, color} para uso em statusBox/coverHeader.
+function _detectarStatus(s) {
+  const t = (s || "").toString().toLowerCase();
+  if (/conclu|entregue|finaliz|inaugur/.test(t))   return { key: "concluida", label: "Concluída",   color: [90, 90, 90] };
+  if (/paralis|suspend|atras/.test(t))             return { key: "paralisada", label: "Paralisada", color: [217, 119, 6] };
+  if (/nova|elabor|projeto|licit/.test(t))         return { key: "nova",       label: "Nova / Em Projeto", color: [14, 116, 144] };
+  if (/vigent|execu|andamento/.test(t))            return { key: "andamento",  label: "Em Andamento", color: [45, 133, 64] };
+  return { key: "outros", label: s || "—", color: [136, 150, 168] };
+}
+
+// Detecta modalidade (CT vs CV) a partir do n° do contrato.
+function _detectarModalidade(n) {
+  const t = (n || "").toString().toUpperCase();
+  if (/^CT[-\/ ]?/.test(t) || /\bCT[-\/]/.test(t)) return { key: "CT", label: "Contrato SEINFRA" };
+  if (/^CV[-\/ ]?/.test(t) || /\bCV[-\/]/.test(t)) return { key: "CV", label: "Convênio" };
+  return { key: "", label: "" };
+}
+
+// Formata data BR (recebe 'YYYY-MM-DD' ou 'DD/MM/YYYY' ou Date — devolve DD/MM/YYYY)
+function _fmtData(v) {
+  if (!v) return "";
+  const s = String(v).trim();
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) {
+    const [y, m, d] = s.slice(0, 10).split("-"); return `${d}/${m}/${y}`;
+  }
+  if (/^\d{2}\/\d{2}\/\d{4}/.test(s)) return s.slice(0, 10);
+  return s;
+}
+
+/* ── BRIEFING DE OBRA — pdf rico, baseado em index_briefing.html ── */
 async function gerarBriefingObra(obraOrIndex) {
   let o = obraOrIndex;
-  // Procura por contrato em todas as listas conhecidas (Rodovias, Ramais e geral)
+  // Procura por contrato em todas as listas conhecidas
   if (typeof obraOrIndex === "string") {
     const haystacks = [
-      HUB.state.contratosRod,
-      HUB.state.contratosRam,
-      HUB.state.contratosObra,
+      HUB.state.contratosRod, HUB.state.contratosRam,
+      HUB.state.contratosVia, HUB.state.contratosObra,
     ].filter(Boolean);
     o = null;
     for (const list of haystacks) {
       const found = list.find(c => c.contrato === obraOrIndex);
       if (found) { o = found; break; }
     }
+    // Fallback: contratos brutos (não passados por _mapContrato) → mapeia agora
+    if (!o && HUB.state.contratos) {
+      const raw = HUB.state.contratos.find(c =>
+        (c.n_do_ct_cv || c.no_do_ct_cv || c.n_ct_cv || "") === obraOrIndex);
+      if (raw) o = _mapContrato(raw);
+    }
   } else if (typeof obraOrIndex === "number") {
     o = (HUB.state.contratosRod || HUB.state.contratosRam || HUB.state.contratosObra || [])[obraOrIndex];
   }
   if (!o) { alert("Obra não encontrada."); return; }
 
+  const status = _detectarStatus(o.situacao_eobras || o.situacao_real);
+  const modal  = _detectarModalidade(o.contrato);
+  const ehViario  = /viari|urban/i.test((o.tipo||"") + " " + (o.segmento||"") + " " + (o.objeto||""));
+  const ehRamal   = /ramal|vicinal|estrada/i.test((o.tipo||"") + " " + (o.segmento||"") + " " + (o.objeto||""));
+  const tipoChip = ehRamal ? "Ramal" : ehViario ? "Viário Urbano" : "Rodoviário";
+
   const fmtPct = v => (v == null || v === "" ? "—" : (Number(v).toFixed(1) + "%"));
-  const content = [
-    { type: "heading", value: "1. Identificação" },
-    { type: "text", value: "Contrato/Convênio: " + (o.contrato || "—") },
-    { type: "text", value: "Objeto: " + (o.objeto || "—") },
-    { type: "text", value: "Município(s): " + (o.municipio || "—") },
-    { type: "text", value: "Contratada / Convenente: " + (o.empresa || "—") },
-    { type: "text", value: "Tipo: " + (o.tipo || "—") + "    Segmento: " + (o.segmento || "—") },
-    { type: "heading", value: "2. Dados Financeiros" },
-    { type: "text", value: "Valor global da obra (com aditivos): " + fmtBRL(o.valor || 0) },
-    { type: "text", value: "Avanço físico: " + fmtPct(o.pct_fisico) },
-    { type: "heading", value: "3. Vigência e Situação" },
-    { type: "text", value: "Ano de contratação: " + (o.ano || "—") },
-    { type: "text", value: "Situação (E-Obras): " + (o.situacao_eobras || "—") },
-    { type: "text", value: "Situação real: " + (o.situacao_real || "—") },
+  const fmtBR = v => (v == null || v === "" || v === 0 ? "—" : fmtBRL(v));
+  const dim = (o.dimensao || o.dimensao_executada || "");
+  const dimUnidade = o.unidade || (dim && /km|m|m²|m2/i.test(String(dim)) ? "" : "");
+  const dimStr = dim ? `${dim}${dimUnidade ? " " + dimUnidade : ""}` : "—";
+
+  // Período de execução
+  const ini = _fmtData(o.inicio), fim = _fmtData(o.termino);
+  const periodo = ini ? (fim ? `${ini} → ${fim}` : `A partir de ${ini}`) :
+                  fim ? `Até ${fim}` : "—";
+
+  // Construção do PDF
+  const content = [];
+
+  // ─── CAPA com cover header ────────────────────────────
+  content.push({
+    type: "coverHeader",
+    title: o.objeto || o.resumo || "Obra contratual",
+    subtitle: `${o.contrato || "—"}${o.municipio ? "  ·  " + o.municipio : ""}${o.municipio2 ? " / " + o.municipio2 : ""}`,
+    chips: [
+      tipoChip,
+      modal.label || "Contrato",
+      "Status: " + status.label,
+      "Emitido " + new Date().toLocaleDateString("pt-BR"),
+    ].filter(Boolean),
+    stats: [
+      { label: "Valor Global",      value: fmtBR(o.valor) },
+      { label: "Dimensão / Ext.",   value: dimStr },
+      { label: "Avanço Físico",     value: fmtPct(o.pct_fisico) },
+      { label: "Avanço Financeiro", value: fmtPct(o.pct_financeiro) },
+    ],
+  });
+
+  // ─── Status visual ────────────────────────────────────
+  content.push({
+    type: "statusBox",
+    label: "SITUAÇÃO ATUAL",
+    text: o.situacao_eobras || o.situacao_real || status.label,
+    color: status.color,
+  });
+
+  // ─── 1. Identificação ─────────────────────────────────
+  content.push({ type: "heading", value: "1. Identificação do Contrato" });
+  const id1 = [
+    { label: "N° CT / CV", value: o.contrato || "—", color: [26, 43, 94] },
+    { label: "N° da obra", value: o.n_obra || "—" },
+    { label: "Ano",        value: o.ano || "—" },
+    { label: "Modalidade", value: modal.label || "—" },
+    { label: "Tipo",       value: o.tipo || tipoChip },
+    { label: "Segmento",   value: o.segmento || "—" },
   ];
+  content.push({ type: "kvgrid", cols: 3, items: id1 });
+
+  if (o.municipio || o.municipio2 || o.localizacao || o.rmm) {
+    content.push({ type: "kvgrid", cols: 2, items: [
+      { label: "Município(s)", value: o.municipio + (o.municipio2 ? " / " + o.municipio2 : "") },
+      o.interior_capital ? { label: "Localização", value: o.interior_capital } : null,
+      o.localizacao ? { label: "Endereço / Trecho", value: o.localizacao } : null,
+      o.rmm ? { label: "Código RMM", value: o.rmm } : null,
+    ].filter(Boolean) });
+  }
+
+  // ─── 2. Contratada e Fiscalização ─────────────────────
+  if (o.empresa || o.fiscal || o.secretaria || o.fonte_recurso) {
+    content.push({ type: "heading", value: "2. Contratada e Fiscalização" });
+    content.push({ type: "kvgrid", cols: 2, items: [
+      o.empresa ? { label: "Contratada / Convenente", value: o.empresa } : null,
+      o.fiscal ? { label: "Fiscal", value: o.fiscal } : null,
+      o.secretaria ? { label: "Secretaria", value: o.secretaria } : null,
+      o.fonte_recurso ? { label: "Fonte do Recurso", value: o.fonte_recurso } : null,
+    ].filter(Boolean) });
+  }
+
+  // ─── 3. Financeiro ────────────────────────────────────
+  content.push({ type: "heading", value: "3. Dados Financeiros" });
+  content.push({ type: "kvgrid", cols: 2, items: [
+    { label: "Valor Global (CT + aditivos)", value: fmtBR(o.valor), color: [45, 133, 64] },
+    { label: "Empenhado", value: fmtBR(o.empenhado) },
+    { label: "Liberado",  value: fmtBR(o.liberado) },
+    { label: "Pago",      value: fmtBR(o.pago) },
+    o.pago_wl ? { label: "Pago (Gestão WL)", value: fmtBR(o.pago_wl) } : null,
+    o.empregos ? { label: "Empregos diretos gerados", value: fmtNum(o.empregos) } : null,
+  ].filter(Boolean) });
+
+  // ─── 4. Avanços ───────────────────────────────────────
+  if (o.pct_fisico || o.pct_financeiro || o.avanco_previsto) {
+    content.push({ type: "heading", value: "4. Avanços e Cronograma" });
+    if (o.pct_fisico) {
+      const pf = Number(o.pct_fisico);
+      const detalheF = pf >= 100 ? "Execução física completa" :
+                       pf >= 80  ? "Etapa final de execução" :
+                       pf >= 50  ? "Acima da metade do escopo" :
+                       pf >= 20  ? "Em andamento" : "Início de execução";
+      content.push({ type: "progressBar", label: "AVANÇO FÍSICO", value: pf, color: [45, 133, 64], detail: detalheF });
+    }
+    if (o.pct_financeiro) {
+      const pf = Number(o.pct_financeiro);
+      const detalheF = pf >= 100 ? "Contrato totalmente pago" :
+                       pf >= 75  ? "Pagamentos avançados" :
+                       pf >= 25  ? "Conforme medições e cronograma" : "Início do desembolso";
+      content.push({ type: "progressBar", label: "AVANÇO FINANCEIRO", value: pf, color: [26, 43, 94], detail: detalheF });
+    }
+    if (o.avanco_previsto) {
+      content.push({ type: "text", value: "Avanço previsto até a data: " + o.avanco_previsto });
+    }
+  }
+
+  // ─── 5. Vigência ──────────────────────────────────────
+  if (ini || fim || o.dias_vencimento || o.ultima_medicao) {
+    content.push({ type: "heading", value: "5. Vigência" });
+    content.push({ type: "kvgrid", cols: 2, items: [
+      { label: "Período de Execução", value: periodo },
+      ini ? { label: "Início da Vigência", value: ini } : null,
+      fim ? { label: "Término da Vigência", value: fim } : null,
+      o.dias_vencimento ? { label: "Dias para Vencimento", value: o.dias_vencimento } : null,
+      o.ultima_medicao ? { label: "Última Medição", value: _fmtData(o.ultima_medicao) } : null,
+    ].filter(Boolean) });
+  }
+
+  // ─── 6. Dimensão ──────────────────────────────────────
+  if (o.dimensao || o.dimensao_executada || o.qt_ruas || o.revestimento) {
+    content.push({ type: "heading", value: "6. Características Técnicas" });
+    content.push({ type: "kvgrid", cols: 2, items: [
+      o.dimensao ? { label: "Dimensão Contratada", value: dimStr } : null,
+      o.dimensao_executada ? { label: "Dimensão Executada", value: o.dimensao_executada } : null,
+      o.qt_ruas ? { label: "Qtd. de Ruas", value: o.qt_ruas } : null,
+      o.revestimento ? { label: "Revestimento", value: o.revestimento } : null,
+    ].filter(Boolean) });
+  }
+
+  // ─── 7. Descrição / Objeto ────────────────────────────
   if (o.resumo) {
-    content.push({ type: "heading", value: "4. Resumo do Objeto" });
+    content.push({ type: "heading", value: "7. Descrição do Objeto" });
     content.push({ type: "text", value: o.resumo });
   }
-  if (o.localizacao) {
-    content.push({ type: "heading", value: "5. Localização" });
-    content.push({ type: "text", value: o.localizacao });
+
+  // ─── 8. Serviços (tags) ───────────────────────────────
+  if (o.descricao_servicos) {
+    const servs = String(o.descricao_servicos)
+      .split(/[;,\n]/).map(s => s.trim()).filter(Boolean).slice(0, 16);
+    if (servs.length) {
+      content.push({ type: "heading", value: "8. Serviços" });
+      content.push({ type: "tags", items: servs, color: [26, 43, 94] });
+    }
   }
+
+  // ─── 9. Conclusão (se concluída ou tem texto) ─────────
+  if (o.conclusao || o.inauguracao) {
+    content.push({ type: "heading", value: "9. Conclusão / Inauguração" });
+    if (o.inauguracao) {
+      content.push({ type: "text", value: "Data de inauguração: " + _fmtData(o.inauguracao) });
+    }
+    if (o.conclusao) {
+      content.push({ type: "text", value: o.conclusao });
+    }
+  }
+
+  // ─── 10. Briefing customizado ─────────────────────────
+  if (o.briefing) {
+    content.push({ type: "heading", value: "10. Observações" });
+    content.push({ type: "text", value: o.briefing });
+  }
+  if (o.sinalizador) {
+    content.push({ type: "spacer", value: 2 });
+    content.push({ type: "text", value: "⚠ Sinalizador: " + o.sinalizador });
+  }
+
   const titulo = "Briefing de Obra — " + (o.contrato || (o.objeto || "").slice(0, 40));
   await exportPDF(titulo, content);
 }
