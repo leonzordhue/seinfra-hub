@@ -2607,6 +2607,19 @@ function _pick(r, ...keys) {
   return "";
 }
 
+// _pickPrefix: fallback que escaneia TODAS as chaves do objeto procurando
+// uma que comece com `prefix` (depois de normalizada). Robusto contra
+// variações no header da planilha.
+function _pickPrefix(r, prefix) {
+  for (const k of Object.keys(r)) {
+    if (k.startsWith(prefix) && r[k] != null && r[k] !== "") {
+      const n = parseNum(r[k]);
+      if (n > 0) return r[k];
+    }
+  }
+  return "";
+}
+
 function _mapContrato(r) {
   return {
     // Identificação
@@ -2631,15 +2644,21 @@ function _mapContrato(r) {
     fiscal: _pick(r, "fiscal"),
     secretaria: _pick(r, "secretaria"),
     fonte_recurso: _pick(r, "fonte_do_recurso", "fonte_recurso"),
-    // Financeiro
+    // Financeiro — _pick com lista de keys conhecidas + fallback por prefixo
+    // (resiliente a mudanças sutis no header da planilha).
     valor: parseNum(_pick(r, "valor_global_inicial_aditivos_reajustes_da_obra",
                               "valor_global_inicial_aditivos_reajustes",
                               "valor_global_ct",
                               "valor_inicial_aditivo_da_obra",
-                              "valor_inicial_da_obra", "valor_inicial")),
-    empenhado: parseNum(_pick(r, "empenhado_r_obra", "empenhado_obra", "empenhado")),
-    liberado:  parseNum(_pick(r, "liberado_r_obra", "liberado_obra", "liberado")),
-    pago:      parseNum(_pick(r, "pago_r_obra", "pago_obra", "pago")),
+                              "valor_inicial_da_obra", "valor_inicial")
+                    || _pickPrefix(r, "valor_global")
+                    || _pickPrefix(r, "valor_inicial")),
+    empenhado: parseNum(_pick(r, "empenhado_r_obra", "empenhado_obra", "empenhado")
+                       || _pickPrefix(r, "empenhado")),
+    liberado:  parseNum(_pick(r, "liberado_r_obra", "liberado_obra", "liberado")
+                       || _pickPrefix(r, "liberado")),
+    pago:      parseNum(_pick(r, "pago_r_obra", "pago_obra", "pago")
+                       || _pickPrefix(r, "pago_r")),
     pago_wl:   parseNum(_pick(r, "pago_gestao_wl_obra", "pago_wl")),
     pct_fisico: parseNum(_pick(r, "fisico", "_fisico")),
     pct_financeiro: parseNum(_pick(r, "financeiro", "_financeiro")),
@@ -6227,14 +6246,33 @@ async function initBriefings() {
   HUB.state.contratosObra = (HUB.state.contratos || []).map(_mapContrato);
   const ct = HUB.state.contratosObra;
 
-  // Diagnóstico (visível no console F12) — facilita tracking de problemas de dados
+  // Diagnóstico VISÍVEL no topo do módulo (chip pequeno) + console F12.
+  // Aparece em verde se valor>0, vermelho se 0 (= bug ainda presente).
   const _sumValor = ct.reduce((a,c) => a + (c.valor || 0), 0);
-  console.log(`[Briefings] ${ct.length} contratos · soma valor = ${_sumValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
-  if (ct.length && _sumValor === 0) {
-    console.warn("[Briefings] ATENÇÃO: valor=0 em todos os contratos. Sample raw row:",
-      HUB.state.contratos?.[0]);
-    console.warn("[Briefings] Keys do raw[0]:", Object.keys(HUB.state.contratos?.[0] || {}));
+  const _comValor = ct.filter(c => (c.valor || 0) > 0).length;
+  const _sample = HUB.state.contratos?.[0] || {};
+  const _sampleValorRaw = _sample.valor_global_inicial_aditivos_reajustes_da_obra
+                       || _sample.valor_global_inicial_aditivos_reajustes
+                       || _sample.valor_inicial_da_obra
+                       || _sample.valor_inicial || "(vazio)";
+  console.log(`[Briefings] ${ct.length} contratos · ${_comValor} com valor>0 · soma = ${_sumValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
+  if (_sumValor === 0 && ct.length) {
+    console.warn("[Briefings] BUG: valor=0 em TODOS. Sample raw row[0]:", _sample);
+    console.warn("[Briefings] Keys do raw[0]:", Object.keys(_sample).slice(0, 30), "...");
     console.warn("[Briefings] Sample mapeado:", ct[0]);
+    console.warn("[Briefings] valor_global_..._da_obra:", _sample.valor_global_inicial_aditivos_reajustes_da_obra);
+  }
+  // Chip visual no topo (pra debugar sem precisar abrir F12)
+  const _diagEl = document.getElementById("brResumoExecutivo");
+  if (_diagEl && _sumValor === 0 && ct.length) {
+    setTimeout(() => {
+      _diagEl.insertAdjacentHTML("afterbegin",
+        `<div style="background:#FEF3DC;border:1.5px solid #F5A623;border-radius:8px;padding:.5rem .75rem;margin-bottom:.6rem;font-size:.74rem;color:#8B4513">
+          ⚠ <strong>Diagnóstico:</strong> ${ct.length} contratos carregados, mas <strong>0 com valor numérico</strong>.
+          Sample do raw[0].valor_global_..._da_obra = <code style="background:#fff;padding:0 4px;border-radius:3px">${htmlEscape(String(_sampleValorRaw))}</code>.
+          Veja F12 → Console para diagnóstico completo.
+        </div>`);
+    }, 50);
   }
 
   // KPIs globais (somente obras — sinistros e ICM removidos do módulo)
