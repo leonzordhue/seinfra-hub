@@ -6689,76 +6689,108 @@ async function exportBriefingMunicipalPDF(mun) {
     HUB.state.contratosObra = HUB.state.contratos.map(_mapContrato);
   }
   const ct = (HUB.state.contratosObra || [])
-    .filter(c => (c.municipio || "").toString().toUpperCase().includes(mun.toUpperCase()));
+    .filter(c => (c.municipio || "").toString().toUpperCase().includes(mun.toUpperCase()))
+    .sort((a, b) => (b.valor || 0) - (a.valor || 0));
   const ram = (HUB.state.ramaisSheet || []).filter(r => (r.municipio || "").toUpperCase() === mun.toUpperCase());
   const aero = (typeof AE_DATA !== "undefined" ? AE_DATA : []).filter(a => (a.municipio || "").toUpperCase() === mun.toUpperCase());
 
-  const inv  = ct.reduce((a,c) => a + (c.valor || 0), 0);
-  const pago = ct.reduce((a,c) => a + (c.pago || 0), 0);
+  const inv  = ct.reduce((a, c) => a + (c.valor || 0), 0);
+  const pago = ct.reduce((a, c) => a + (c.pago || 0), 0);
   const exec = ct.filter(_isExec).length;
   const conc = ct.filter(_isConc).length;
-  const empregos = ct.reduce((a,c) => a + (c.empregos || 0), 0);
+  const empregos = ct.reduce((a, c) => a + (c.empregos || 0), 0);
+  const invFmt = inv >= 1e9 ? `R$ ${(inv/1e9).toFixed(2)} bi` :
+                 inv >= 1e6 ? `R$ ${(inv/1e6).toFixed(1)} mi` : fmtBRL(inv);
 
-  const invFmt = inv >= 1e9 ? `R$ ${(inv/1e9).toFixed(2)} bi` : inv >= 1e6 ? `R$ ${(inv/1e6).toFixed(1)} mi` : fmtBRL(inv);
-
-  await exportPDF(`Briefing Municipal — ${mun}`, [
+  // Monta content: capa municipal + resumo + sumário + briefing COMPLETO
+  // de cada obra (separadas por sectionDivider e pageBreak para legibilidade).
+  const content = [
     {
       type: "coverHeader",
       title: mun,
-      subtitle: `Briefing municipal · SEINFRA/AM · ${new Date().toLocaleDateString("pt-BR")}`,
-      chips: ["Briefing Municipal", `${ct.length} contratos`, ram.length ? `${ram.length} ramais` : "", aero.length ? `${aero.length} aeródromos` : ""].filter(Boolean),
+      subtitle: `Briefing Municipal Consolidado · SEINFRA/AM · ${new Date().toLocaleDateString("pt-BR")}`,
+      chips: [
+        "Briefing Municipal",
+        `${ct.length} obra${ct.length !== 1 ? "s" : ""}`,
+        ram.length ? `${ram.length} ramais` : "",
+        aero.length ? `${aero.length} aeródromo${aero.length !== 1 ? "s" : ""}` : "",
+      ].filter(Boolean),
       stats: [
-        { label: "Contratos",   value: fmtNum(ct.length) },
+        { label: "Obras",       value: fmtNum(ct.length) },
         { label: "Investimento",value: invFmt },
         { label: "Em execução", value: fmtNum(exec) },
         { label: "Concluídas",  value: fmtNum(conc) },
       ],
     },
-    { type: "heading", value: "1. Resumo municipal" },
+    { type: "heading", value: "Resumo Municipal" },
     { type: "kvgrid", cols: 3, items: [
       { label: "Município",          value: mun },
-      { label: "Total de contratos", value: fmtNum(ct.length) },
-      { label: "Investimento total", value: invFmt },
+      { label: "Total de obras",     value: fmtNum(ct.length) },
+      { label: "Investimento total", value: invFmt, color: [45, 133, 64] },
       pago > 0  ? { label: "Total pago", value: pago >= 1e6 ? `R$ ${(pago/1e6).toFixed(1)} mi` : fmtBRL(pago) } : null,
       empregos > 0 ? { label: "Empregos diretos", value: fmtNum(empregos) } : null,
       ram.length ? { label: "Ramais cadastrados", value: fmtNum(ram.length) } : null,
       aero.length ? { label: "Aeródromos", value: fmtNum(aero.length) } : null,
+      { label: "Obras em execução",  value: fmtNum(exec) },
+      { label: "Obras concluídas",   value: fmtNum(conc) },
     ].filter(Boolean) },
-    ...(ct.length ? [
-      { type: "heading", value: `2. Contratos (${ct.length})` },
-      {
-        type: "table",
-        headers: ["Contrato", "Objeto", "Situação", "Valor"],
-        rows: ct.sort((a,b)=>(b.valor||0)-(a.valor||0)).map(c => [
-          c.contrato || "—",
-          c.objeto || c.resumo || "—",
-          c.situacao_eobras || c.situacao_real || "—",
-          fmtBRL(c.valor || 0),
-        ]),
-      },
-    ] : []),
-    ...(ram.length ? [
-      { type: "heading", value: `3. Ramais (${ram.length})` },
-      {
-        type: "table",
-        headers: ["Código", "Nome", "Extensão (km)", "Situação"],
-        rows: ram.slice(0, 60).map(r => [
-          [r.codigo, r.numero].filter(Boolean).join("-") || "—",
-          r.nome || "—",
-          r.extensao ? r.extensao.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) : "—",
-          r.situacao || "—",
-        ]),
-      },
-    ] : []),
-    ...(aero.length ? [
-      { type: "heading", value: `4. Aeródromos (${aero.length})` },
-      {
-        type: "table",
-        headers: ["Nome", "ICAO", "Pista", "Comprimento", "RBAC"],
-        rows: aero.map(a => [a.nome, a.icao || "—", a.pista_desig || "—", a.comprimento || "—", a.rbac107 || "—"]),
-      },
-    ] : []),
-  ]);
+  ];
+
+  // Sumário das obras (índice rápido)
+  if (ct.length > 1) {
+    content.push({ type: "heading", value: `Sumário das ${ct.length} Obras` });
+    content.push({
+      type: "table",
+      headers: ["#", "Contrato", "Objeto", "Situação", "Valor"],
+      rows: ct.map((c, i) => [
+        String(i + 1),
+        c.contrato || "—",
+        c.objeto || c.resumo || "—",
+        c.situacao_eobras || c.situacao_real || "—",
+        fmtBRL(c.valor || 0),
+      ]),
+    });
+  }
+
+  // BRIEFING COMPLETO de cada obra — mesma estrutura do briefing individual
+  // (10 seções por obra), iterando com pageBreak entre elas.
+  if (ct.length) {
+    content.push({ type: "pageBreak" });
+    content.push({ type: "heading", value: `Briefings Detalhados (${ct.length})` });
+    ct.forEach((c, i) => {
+      // Concatena o briefing completo (sem capa colorida — usa sectionDivider)
+      const obraBlocks = _buildBriefingObraContent(c, { cover: false, idx: i + 1, total: ct.length });
+      content.push(...obraBlocks);
+      // pageBreak entre obras (exceto última) para legibilidade
+      if (i < ct.length - 1) content.push({ type: "pageBreak" });
+    });
+  }
+
+  // Anexos: ramais e aeródromos (tabelas)
+  if (ram.length) {
+    content.push({ type: "pageBreak" });
+    content.push({ type: "heading", value: `Anexo A — Ramais do Município (${ram.length})` });
+    content.push({
+      type: "table",
+      headers: ["Código", "Nome", "Extensão (km)", "Situação"],
+      rows: ram.slice(0, 80).map(r => [
+        [r.codigo, r.numero].filter(Boolean).join("-") || "—",
+        r.nome || r.descricao || "—",
+        r.extensao ? r.extensao.toLocaleString("pt-BR", { maximumFractionDigits: 2 }) : "—",
+        r.situacao || "—",
+      ]),
+    });
+  }
+  if (aero.length) {
+    content.push({ type: "heading", value: `Anexo B — Aeródromos do Município (${aero.length})` });
+    content.push({
+      type: "table",
+      headers: ["Nome", "ICAO", "Pista", "Comprimento", "RBAC"],
+      rows: aero.map(a => [a.nome, a.icao || "—", a.pista_desig || "—", a.comprimento || "—", a.rbac107 || "—"]),
+    });
+  }
+
+  await exportPDF(`Briefing Municipal — ${mun}`, content);
 }
 
 /* ═════════════════════════════════════════════════════════════════
@@ -6844,6 +6876,32 @@ async function exportPDF(title, content) {
     } else if (block.type === "spacer") {
       // Espaço vertical (em mm)
       y += (block.value || 4);
+    } else if (block.type === "pageBreak") {
+      // Força nova página
+      addFooter(); doc.addPage(); addHeader();
+      y = headerH + 12;
+    } else if (block.type === "sectionDivider") {
+      // Divisor visual entre obras (linha + título de obra na próxima página).
+      // Útil para briefings municipais com múltiplas obras concatenadas.
+      if (y > pageH - footerH - 30) { addFooter(); doc.addPage(); addHeader(); y = headerH + 12; }
+      else { y += 4; }
+      const x = margin, w = pageW - 2 * margin;
+      // Faixa horizontal sutil
+      doc.setFillColor(26, 43, 94);
+      doc.rect(x, y, w, 1.2, "F");
+      y += 4;
+      if (block.label) {
+        doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(136, 150, 168);
+        doc.text(block.label.toUpperCase(), x, y);
+        y += 3;
+      }
+      if (block.title) {
+        doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.setTextColor(26, 43, 94);
+        const lines = doc.splitTextToSize(block.title, w);
+        lines.slice(0, 2).forEach(l => { doc.text(l, x, y); y += 6; });
+      }
+      doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(26, 37, 64);
+      y += 3;
     } else if (block.type === "coverHeader") {
       // Capa colorida no estilo briefing — fundo azul, nome + chips + 4 stat boxes
       const boxH = block.height || 64;
@@ -7132,35 +7190,21 @@ function _fmtData(v) {
   return s;
 }
 
-/* ── BRIEFING DE OBRA — pdf rico, baseado em index_briefing.html ── */
-async function gerarBriefingObra(obraOrIndex) {
-  let o = obraOrIndex;
-  // Procura por contrato em todas as listas conhecidas
-  if (typeof obraOrIndex === "string") {
-    const haystacks = [
-      HUB.state.contratosRod, HUB.state.contratosRam,
-      HUB.state.contratosVia, HUB.state.contratosObra,
-    ].filter(Boolean);
-    o = null;
-    for (const list of haystacks) {
-      const found = list.find(c => c.contrato === obraOrIndex);
-      if (found) { o = found; break; }
-    }
-    // Fallback: contratos brutos (não passados por _mapContrato) → mapeia agora
-    if (!o && HUB.state.contratos) {
-      const raw = HUB.state.contratos.find(c =>
-        (c.n_do_ct_cv || c.no_do_ct_cv || c.n_ct_cv || "") === obraOrIndex);
-      if (raw) o = _mapContrato(raw);
-    }
-  } else if (typeof obraOrIndex === "number") {
-    o = (HUB.state.contratosRod || HUB.state.contratosRam || HUB.state.contratosObra || [])[obraOrIndex];
-  }
-  if (!o) { alert("Obra não encontrada."); return; }
+// Gera o ARRAY de content blocks (capa, status, 10 seções) de UMA obra.
+// Reutilizado por:
+//   - gerarBriefingObra(o)               → 1 obra, com capa colorida
+//   - exportBriefingMunicipalPDF(mun)    → N obras concatenadas, sem capa
+//                                          (em vez disso, sectionDivider)
+function _buildBriefingObraContent(o, opts) {
+  opts = opts || {};
+  const useCover = opts.cover !== false; // default true
+  const idx = opts.idx;                  // numero da obra (1..N) quando em municipal
+  const total = opts.total;              // total de obras quando em municipal
 
   const status = _detectarStatus(o.situacao_eobras || o.situacao_real);
   const modal  = _detectarModalidade(o.contrato);
-  const ehViario  = /viari|urban/i.test((o.tipo||"") + " " + (o.segmento||"") + " " + (o.objeto||""));
-  const ehRamal   = /ramal|vicinal|estrada/i.test((o.tipo||"") + " " + (o.segmento||"") + " " + (o.objeto||""));
+  const ehViario = /viari|urban/i.test((o.tipo||"") + " " + (o.segmento||"") + " " + (o.objeto||""));
+  const ehRamal  = /ramal|vicinal|estrada/i.test((o.tipo||"") + " " + (o.segmento||"") + " " + (o.objeto||""));
   const tipoChip = ehRamal ? "Ramal" : ehViario ? "Viário Urbano" : "Rodoviário";
 
   const fmtPct = v => (v == null || v === "" ? "—" : (Number(v).toFixed(1) + "%"));
@@ -7169,34 +7213,47 @@ async function gerarBriefingObra(obraOrIndex) {
   const dimUnidade = o.unidade || (dim && /km|m|m²|m2/i.test(String(dim)) ? "" : "");
   const dimStr = dim ? `${dim}${dimUnidade ? " " + dimUnidade : ""}` : "—";
 
-  // Período de execução
   const ini = _fmtData(o.inicio), fim = _fmtData(o.termino);
   const periodo = ini ? (fim ? `${ini} → ${fim}` : `A partir de ${ini}`) :
                   fim ? `Até ${fim}` : "—";
 
-  // Construção do PDF
   const content = [];
 
-  // ─── CAPA com cover header ────────────────────────────
-  content.push({
-    type: "coverHeader",
-    title: o.objeto || o.resumo || "Obra contratual",
-    subtitle: `${o.contrato || "—"}${o.municipio ? "  ·  " + o.municipio : ""}${o.municipio2 ? " / " + o.municipio2 : ""}`,
-    chips: [
-      tipoChip,
-      modal.label || "Contrato",
-      "Status: " + status.label,
-      "Emitido " + new Date().toLocaleDateString("pt-BR"),
-    ].filter(Boolean),
-    stats: [
-      { label: "Valor Global",      value: fmtBR(o.valor) },
-      { label: "Dimensão / Ext.",   value: dimStr },
+  if (useCover) {
+    // CAPA grande colorida (briefing individual)
+    content.push({
+      type: "coverHeader",
+      title: o.objeto || o.resumo || "Obra contratual",
+      subtitle: `${o.contrato || "—"}${o.municipio ? "  ·  " + o.municipio : ""}${o.municipio2 ? " / " + o.municipio2 : ""}`,
+      chips: [
+        tipoChip, modal.label || "Contrato",
+        "Status: " + status.label,
+        "Emitido " + new Date().toLocaleDateString("pt-BR"),
+      ].filter(Boolean),
+      stats: [
+        { label: "Valor Global",      value: fmtBR(o.valor) },
+        { label: "Dimensão / Ext.",   value: dimStr },
+        { label: "Avanço Físico",     value: fmtPct(o.pct_fisico) },
+        { label: "Avanço Financeiro", value: fmtPct(o.pct_financeiro) },
+      ],
+    });
+  } else {
+    // Divisor visual entre obras no briefing municipal
+    content.push({
+      type: "sectionDivider",
+      label: idx && total ? `OBRA ${idx} DE ${total}  ·  ${o.contrato || "—"}  ·  ${tipoChip}` : (o.contrato || "—"),
+      title: o.objeto || o.resumo || "Obra contratual",
+    });
+    // Mini-resumo em kvgrid (substitui a capa)
+    content.push({ type: "kvgrid", cols: 4, items: [
+      { label: "Valor Global",      value: fmtBR(o.valor), color: [45, 133, 64] },
+      { label: "Dimensão",          value: dimStr },
       { label: "Avanço Físico",     value: fmtPct(o.pct_fisico) },
       { label: "Avanço Financeiro", value: fmtPct(o.pct_financeiro) },
-    ],
-  });
+    ] });
+  }
 
-  // ─── Status visual ────────────────────────────────────
+  // Status visual
   content.push({
     type: "statusBox",
     label: "SITUAÇÃO ATUAL",
@@ -7204,18 +7261,16 @@ async function gerarBriefingObra(obraOrIndex) {
     color: status.color,
   });
 
-  // ─── 1. Identificação ─────────────────────────────────
+  // 1. Identificação
   content.push({ type: "heading", value: "1. Identificação do Contrato" });
-  const id1 = [
+  content.push({ type: "kvgrid", cols: 3, items: [
     { label: "N° CT / CV", value: o.contrato || "—", color: [26, 43, 94] },
     { label: "N° da obra", value: o.n_obra || "—" },
     { label: "Ano",        value: o.ano || "—" },
     { label: "Modalidade", value: modal.label || "—" },
     { label: "Tipo",       value: o.tipo || tipoChip },
     { label: "Segmento",   value: o.segmento || "—" },
-  ];
-  content.push({ type: "kvgrid", cols: 3, items: id1 });
-
+  ] });
   if (o.municipio || o.municipio2 || o.localizacao || o.rmm) {
     content.push({ type: "kvgrid", cols: 2, items: [
       { label: "Município(s)", value: o.municipio + (o.municipio2 ? " / " + o.municipio2 : "") },
@@ -7225,7 +7280,7 @@ async function gerarBriefingObra(obraOrIndex) {
     ].filter(Boolean) });
   }
 
-  // ─── 2. Contratada e Fiscalização ─────────────────────
+  // 2. Contratada e Fiscalização
   if (o.empresa || o.fiscal || o.secretaria || o.fonte_recurso) {
     content.push({ type: "heading", value: "2. Contratada e Fiscalização" });
     content.push({ type: "kvgrid", cols: 2, items: [
@@ -7236,7 +7291,7 @@ async function gerarBriefingObra(obraOrIndex) {
     ].filter(Boolean) });
   }
 
-  // ─── 3. Financeiro ────────────────────────────────────
+  // 3. Financeiro
   content.push({ type: "heading", value: "3. Dados Financeiros" });
   content.push({ type: "kvgrid", cols: 2, items: [
     { label: "Valor Global (CT + aditivos)", value: fmtBR(o.valor), color: [45, 133, 64] },
@@ -7247,30 +7302,30 @@ async function gerarBriefingObra(obraOrIndex) {
     o.empregos ? { label: "Empregos diretos gerados", value: fmtNum(o.empregos) } : null,
   ].filter(Boolean) });
 
-  // ─── 4. Avanços ───────────────────────────────────────
+  // 4. Avanços
   if (o.pct_fisico || o.pct_financeiro || o.avanco_previsto) {
     content.push({ type: "heading", value: "4. Avanços e Cronograma" });
     if (o.pct_fisico) {
       const pf = Number(o.pct_fisico);
-      const detalheF = pf >= 100 ? "Execução física completa" :
-                       pf >= 80  ? "Etapa final de execução" :
-                       pf >= 50  ? "Acima da metade do escopo" :
-                       pf >= 20  ? "Em andamento" : "Início de execução";
-      content.push({ type: "progressBar", label: "AVANÇO FÍSICO", value: pf, color: [45, 133, 64], detail: detalheF });
+      const det = pf >= 100 ? "Execução física completa" :
+                  pf >= 80  ? "Etapa final de execução" :
+                  pf >= 50  ? "Acima da metade do escopo" :
+                  pf >= 20  ? "Em andamento" : "Início de execução";
+      content.push({ type: "progressBar", label: "AVANÇO FÍSICO", value: pf, color: [45, 133, 64], detail: det });
     }
     if (o.pct_financeiro) {
       const pf = Number(o.pct_financeiro);
-      const detalheF = pf >= 100 ? "Contrato totalmente pago" :
-                       pf >= 75  ? "Pagamentos avançados" :
-                       pf >= 25  ? "Conforme medições e cronograma" : "Início do desembolso";
-      content.push({ type: "progressBar", label: "AVANÇO FINANCEIRO", value: pf, color: [26, 43, 94], detail: detalheF });
+      const det = pf >= 100 ? "Contrato totalmente pago" :
+                  pf >= 75  ? "Pagamentos avançados" :
+                  pf >= 25  ? "Conforme medições e cronograma" : "Início do desembolso";
+      content.push({ type: "progressBar", label: "AVANÇO FINANCEIRO", value: pf, color: [26, 43, 94], detail: det });
     }
     if (o.avanco_previsto) {
       content.push({ type: "text", value: "Avanço previsto até a data: " + o.avanco_previsto });
     }
   }
 
-  // ─── 5. Vigência ──────────────────────────────────────
+  // 5. Vigência
   if (ini || fim || o.dias_vencimento || o.ultima_medicao) {
     content.push({ type: "heading", value: "5. Vigência" });
     content.push({ type: "kvgrid", cols: 2, items: [
@@ -7282,7 +7337,7 @@ async function gerarBriefingObra(obraOrIndex) {
     ].filter(Boolean) });
   }
 
-  // ─── 6. Dimensão ──────────────────────────────────────
+  // 6. Dimensão
   if (o.dimensao || o.dimensao_executada || o.qt_ruas || o.revestimento) {
     content.push({ type: "heading", value: "6. Características Técnicas" });
     content.push({ type: "kvgrid", cols: 2, items: [
@@ -7293,34 +7348,29 @@ async function gerarBriefingObra(obraOrIndex) {
     ].filter(Boolean) });
   }
 
-  // ─── 7. Descrição / Objeto ────────────────────────────
+  // 7. Descrição / Objeto
   if (o.resumo) {
     content.push({ type: "heading", value: "7. Descrição do Objeto" });
     content.push({ type: "text", value: o.resumo });
   }
 
-  // ─── 8. Serviços (tags) ───────────────────────────────
+  // 8. Serviços (tags)
   if (o.descricao_servicos) {
-    const servs = String(o.descricao_servicos)
-      .split(/[;,\n]/).map(s => s.trim()).filter(Boolean).slice(0, 16);
+    const servs = String(o.descricao_servicos).split(/[;,\n]/).map(s => s.trim()).filter(Boolean).slice(0, 16);
     if (servs.length) {
       content.push({ type: "heading", value: "8. Serviços" });
       content.push({ type: "tags", items: servs, color: [26, 43, 94] });
     }
   }
 
-  // ─── 9. Conclusão (se concluída ou tem texto) ─────────
+  // 9. Conclusão / Inauguração
   if (o.conclusao || o.inauguracao) {
     content.push({ type: "heading", value: "9. Conclusão / Inauguração" });
-    if (o.inauguracao) {
-      content.push({ type: "text", value: "Data de inauguração: " + _fmtData(o.inauguracao) });
-    }
-    if (o.conclusao) {
-      content.push({ type: "text", value: o.conclusao });
-    }
+    if (o.inauguracao) content.push({ type: "text", value: "Data de inauguração: " + _fmtData(o.inauguracao) });
+    if (o.conclusao)   content.push({ type: "text", value: o.conclusao });
   }
 
-  // ─── 10. Briefing customizado ─────────────────────────
+  // 10. Observações / Sinalizador
   if (o.briefing) {
     content.push({ type: "heading", value: "10. Observações" });
     content.push({ type: "text", value: o.briefing });
@@ -7330,6 +7380,33 @@ async function gerarBriefingObra(obraOrIndex) {
     content.push({ type: "text", value: "⚠ Sinalizador: " + o.sinalizador });
   }
 
+  return content;
+}
+
+/* ── BRIEFING DE OBRA — pdf rico, baseado em index_briefing.html ── */
+async function gerarBriefingObra(obraOrIndex) {
+  let o = obraOrIndex;
+  if (typeof obraOrIndex === "string") {
+    const haystacks = [
+      HUB.state.contratosRod, HUB.state.contratosRam,
+      HUB.state.contratosVia, HUB.state.contratosObra,
+    ].filter(Boolean);
+    o = null;
+    for (const list of haystacks) {
+      const found = list.find(c => c.contrato === obraOrIndex);
+      if (found) { o = found; break; }
+    }
+    if (!o && HUB.state.contratos) {
+      const raw = HUB.state.contratos.find(c =>
+        (c.n_do_ct_cv || c.no_do_ct_cv || c.n_ct_cv || "") === obraOrIndex);
+      if (raw) o = _mapContrato(raw);
+    }
+  } else if (typeof obraOrIndex === "number") {
+    o = (HUB.state.contratosRod || HUB.state.contratosRam || HUB.state.contratosObra || [])[obraOrIndex];
+  }
+  if (!o) { alert("Obra não encontrada."); return; }
+
+  const content = _buildBriefingObraContent(o, { cover: true });
   const titulo = "Briefing de Obra — " + (o.contrato || (o.objeto || "").slice(0, 40));
   await exportPDF(titulo, content);
 }
