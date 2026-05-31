@@ -6889,19 +6889,19 @@ async function exportPDF(title, content) {
       // Faixa horizontal sutil
       doc.setFillColor(26, 43, 94);
       doc.rect(x, y, w, 1.2, "F");
-      y += 4;
+      y += 6;  // respiro entre a faixa e o label (era 4)
       if (block.label) {
         doc.setFont("helvetica", "bold"); doc.setFontSize(9); doc.setTextColor(136, 150, 168);
         doc.text(block.label.toUpperCase(), x, y);
-        y += 3;
+        y += 7;  // espaço label→título (era 3, ficava colado no texto longo do título)
       }
       if (block.title) {
         doc.setFont("helvetica", "bold"); doc.setFontSize(13); doc.setTextColor(26, 43, 94);
         const lines = doc.splitTextToSize(block.title, w);
-        lines.slice(0, 2).forEach(l => { doc.text(l, x, y); y += 6; });
+        lines.slice(0, 3).forEach(l => { doc.text(l, x, y); y += 6.5; });
       }
       doc.setFont("helvetica", "normal"); doc.setFontSize(10); doc.setTextColor(26, 37, 64);
-      y += 3;
+      y += 4;  // respiro após o título antes do próximo bloco (era 3)
     } else if (block.type === "coverHeader") {
       // Capa colorida no estilo briefing — fundo azul, nome + chips + 4 stat boxes
       const boxH = block.height || 64;
