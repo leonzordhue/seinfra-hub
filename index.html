@@ -6215,16 +6215,27 @@ function getBriefingsHTML() {
 }
 
 async function initBriefings() {
-  if (!HUB.state.contratos) await loadCoreData();
+  // IMPORTANTE: força reload se contratos vier vazio (array []) — `if (!arr)`
+  // é FALSE para empty array, então o check antigo `if (!HUB.state.contratos)`
+  // falhava em re-carregar quando o fetch retornou [].
+  if (!HUB.state.contratos || !HUB.state.contratos.length) await loadCoreData();
 
-  // Garante o array mapeado (campos parsed: .valor, .municipio, .empresa, etc.)
-  // SEM esse mapeamento, valor_atualizado/valor_contratual NÃO EXISTEM no raw
-  // (a planilha geral usa valor_global_inicial_aditivos_reajustes_da_obra)
-  // — por isso os KPIs apareciam zerados.
-  if (!HUB.state.contratosObra) {
-    HUB.state.contratosObra = (HUB.state.contratos || []).map(_mapContrato);
-  }
+  // SEMPRE re-mapeia contratosObra ao entrar no briefings — garante que está
+  // alinhado com a versão atual de _mapContrato (schema novo com .valor,
+  // .empenhado, .pago, .pct_financeiro etc.). Sem isso, se algum outro módulo
+  // criou contratosObra ANTES com schema antigo, os campos novos vinham undefined.
+  HUB.state.contratosObra = (HUB.state.contratos || []).map(_mapContrato);
   const ct = HUB.state.contratosObra;
+
+  // Diagnóstico (visível no console F12) — facilita tracking de problemas de dados
+  const _sumValor = ct.reduce((a,c) => a + (c.valor || 0), 0);
+  console.log(`[Briefings] ${ct.length} contratos · soma valor = ${_sumValor.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`);
+  if (ct.length && _sumValor === 0) {
+    console.warn("[Briefings] ATENÇÃO: valor=0 em todos os contratos. Sample raw row:",
+      HUB.state.contratos?.[0]);
+    console.warn("[Briefings] Keys do raw[0]:", Object.keys(HUB.state.contratos?.[0] || {}));
+    console.warn("[Briefings] Sample mapeado:", ct[0]);
+  }
 
   // KPIs globais (somente obras — sinistros e ICM removidos do módulo)
   const exec    = ct.filter(_isExec);
