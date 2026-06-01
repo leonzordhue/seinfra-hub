@@ -1641,6 +1641,84 @@ async function gvizFetch(sheetId, gid) {
   return rows;
 }
 
+// ─────────────────────────────────────────────────────────────────
+// LICITAÇÕES — Planilha pública SEAPLANC/SEINFRA (em planejamento)
+// URL pub: /pub?gid=...&single=true&output=csv (formato 'publicar na web')
+// Estrutura: header começa na linha ~4 (3 linhas em branco/sumário antes),
+// múltiplas abas (2024, 2025/2026).
+// Campos principais: OBJETO DA OBRA, MUNICÍPIO, STATUS, PRIORIDADE,
+// № MEMO, № Processo, VALOR ESTIMADO, TIPO DE OBRA, OBSERVAÇAO.
+// ─────────────────────────────────────────────────────────────────
+const LICITACOES_PUB = {
+  base: "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8TaCyviHwgIVX4pYCFec13YRBNfwDgfY_eJlI7cVN-uFqdyp-UK7EckBrLr2MdpTRrRTmKPGxknfe",
+  abas: [
+    { gid: 32069800,   ano: "2025/2026" },
+    { gid: 1412213776, ano: "2024" },
+  ],
+};
+
+// Parser CSV "raw" — retorna array de arrays (sem aplicar header).
+// Necessário para licitações onde o header não está na linha 0.
+function _parseCsvRaw(text) {
+  const rows = []; let cur = [], field = "", inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (inQ) {
+      if (ch === '"') { if (text[i+1] === '"') { field += '"'; i++; } else inQ = false; }
+      else field += ch;
+    } else {
+      if (ch === '"') inQ = true;
+      else if (ch === ',') { cur.push(field); field = ""; }
+      else if (ch === '\n' || ch === '\r') {
+        if (ch === '\r' && text[i+1] === '\n') i++;
+        cur.push(field); field = "";
+        rows.push(cur); cur = [];
+      } else field += ch;
+    }
+  }
+  if (field !== "" || cur.length) { cur.push(field); rows.push(cur); }
+  return rows;
+}
+
+// Carrega licitações em planejamento de TODAS as abas configuradas.
+// Cache em HUB.state.licitacoes — single-flight via promise compartilhada.
+let _licitacoesPromise = null;
+function _loadLicitacoes() {
+  if (HUB.state.licitacoes) return Promise.resolve(HUB.state.licitacoes);
+  if (_licitacoesPromise) return _licitacoesPromise;
+  _licitacoesPromise = (async () => {
+    const todas = [];
+    for (const aba of LICITACOES_PUB.abas) {
+      try {
+        const url = `${LICITACOES_PUB.base}/pub?gid=${aba.gid}&single=true&output=csv`;
+        const r = await fetch(url);
+        if (!r.ok) continue;
+        const text = await r.text();
+        const raw = _parseCsvRaw(text);
+        // Acha a linha do header (contém "OBJETO DA OBRA")
+        const hdrIdx = raw.findIndex(row => row.some(c => /OBJETO DA OBRA/i.test(c || "")));
+        if (hdrIdx < 0) continue;
+        const headers = raw[hdrIdx].map(normalizeKey);
+        for (let i = hdrIdx + 1; i < raw.length; i++) {
+          const row = raw[i];
+          if (!row || !row.length) continue;
+          const obj = {};
+          headers.forEach((h, j) => { if (h) obj[h] = (row[j] || "").trim(); });
+          // Só conta linha se tem OBJETO DA OBRA preenchido (filtra rows vazios/sumário)
+          if (obj.objeto_da_obra && obj.objeto_da_obra.length > 5) {
+            obj._ano_planejamento = aba.ano;
+            todas.push(obj);
+          }
+        }
+      } catch (e) { console.warn(`[licitações] aba ${aba.gid} falhou:`, e); }
+    }
+    HUB.state.licitacoes = todas;
+    console.log(`[licitações] ${todas.length} processos em planejamento carregados`);
+    return todas;
+  })();
+  return _licitacoesPromise;
+}
+
 async function loadGeoJSON(file) {
   if (HUB.state.geojsons[file]) return HUB.state.geojsons[file];
   try {
@@ -6246,6 +6324,10 @@ async function initBriefings() {
   HUB.state.contratosObra = (HUB.state.contratos || []).map(_mapContrato);
   const ct = HUB.state.contratosObra;
 
+  // Preload licitações em planejamento (planilha pública SEAPLANC) em background
+  // — usadas em renderBriefingMunicipal e exportBriefingMunicipalPDF.
+  _loadLicitacoes().catch(e => console.warn("preload licitações:", e));
+
   // Diagnóstico VISÍVEL no topo do módulo (chip pequeno) + console F12.
   // Aparece em verde se valor>0, vermelho se 0 (= bug ainda presente).
   const _sumValor = ct.reduce((a,c) => a + (c.valor || 0), 0);
@@ -6605,10 +6687,104 @@ function renderBriefingMunicipal() {
         </tr>`).join("")}</tbody>
       </table></div>
     </div>` : ""}
+
+    <!-- Bloco de Licitações em Planejamento (populado async) -->
+    <div id="brLicitacoes" style="margin-top:1.2rem">
+      <div style="font-size:.78rem;color:var(--cinza-aux);font-style:italic">⏳ Carregando licitações em planejamento…</div>
+    </div>
+
     <div style="margin-top:1rem;text-align:right">
       <button class="module-action-btn" style="font-size:0.78rem" onclick="exportBriefingMunicipalPDF('${htmlEscape(mun)}')">&#128196; Briefing municipal PDF</button>
     </div>`;
+
+  // Popula o bloco de licitações assim que a planilha carregar (background fetch).
+  _renderLicitacoesMunUI(mun);
 }
+
+// Filtra licitações da planilha pública pelo município (substring tolerante a
+// caso/acento). Inclui também rows onde o município aparece dentro do OBJETO
+// (planilha tem casos como "...localizado no Município de Manaus/AM").
+function _filtrarLicitacoesMun(licit, mun) {
+  if (!licit || !licit.length) return [];
+  const munN = _normMun(mun);
+  return licit.filter(l => {
+    const m1 = _normMun(l.municipio || "");
+    if (m1.includes(munN)) return true;
+    const obj = _normMun(l.objeto_da_obra || "");
+    // Match no objeto só se o nome do município for distintivo (>4 chars) pra
+    // evitar falsos positivos com nomes curtos tipo "BORBA" dentro de "BORBOREMA"
+    if (munN.length >= 5 && obj.includes(munN)) return true;
+    return false;
+  });
+}
+
+// Status colorido para chip de licitação
+function _licitStatusChip(status) {
+  const t = (status || "").toString().toUpperCase().trim();
+  let cor, bg, label = t || "—";
+  if (/PLANEJ/.test(t))          { cor = "#0E7490"; bg = "#dff5fb"; }
+  else if (/LICIT/.test(t))      { cor = "#B45309"; bg = "#FEF3DC"; }
+  else if (/HOMOLOG|ADJUDIC/.test(t)) { cor = "#2D8540"; bg = "#e7f5e9"; }
+  else if (/SUSPEND|CANCEL/.test(t))  { cor = "#C0392B"; bg = "#FDE4E0"; }
+  else if (/AGUARD|ANALIS/.test(t))   { cor = "#6C3483"; bg = "#f3e8ff"; }
+  else if (/APROV/.test(t))           { cor = "#2D8540"; bg = "#e7f5e9"; }
+  else                                { cor = "#475569"; bg = "#f1f5f9"; }
+  return `<span style="font-size:.7rem;font-weight:700;color:${cor};background:${bg};border:1px solid ${cor}33;padding:.18rem .5rem;border-radius:99px;letter-spacing:.02em">${htmlEscape(label)}</span>`;
+}
+
+async function _renderLicitacoesMunUI(mun) {
+  const el = document.getElementById("brLicitacoes"); if (!el) return;
+  let licit;
+  try { licit = await _loadLicitacoes(); }
+  catch (e) { el.innerHTML = `<div class="info-state" style="padding:.6rem 0;color:var(--vermelho)">Falha ao carregar planilha de licitações.</div>`; return; }
+  const munLicit = _filtrarLicitacoesMun(licit, mun);
+  if (!munLicit.length) {
+    el.innerHTML = `
+      <div class="panel-title" style="font-size:0.85rem;margin-bottom:0.5rem">Licitações em Planejamento</div>
+      <div class="info-state" style="padding:.7rem 0">Nenhum processo de licitação em planejamento encontrado para <strong>${htmlEscape(mun)}</strong>.</div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="panel-title" style="font-size:0.85rem;margin-bottom:0.5rem;display:flex;align-items:center;gap:.5rem">
+      <span>Licitações em Planejamento</span>
+      <span style="font-size:.65rem;font-weight:700;color:#fff;background:#6C3483;padding:.15rem .55rem;border-radius:99px;letter-spacing:.04em">${munLicit.length} processo${munLicit.length!==1?'s':''}</span>
+      <span style="font-size:.62rem;color:var(--cinza-aux);font-style:italic;margin-left:auto">Fonte: SEAPLANC/SEINFRA (planilha pública)</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.5rem">
+      ${munLicit.map(l => {
+        const prio    = (l.prioridade || "").trim();
+        const memo    = (l.n_memo || "").split(/\n|MEMO/i).filter(Boolean).slice(0,1).join("").replace(/^[\s°º]+/, "MEMO").trim();
+        const proc    = (l.n_processo || "").split(/[,\n]/)[0].trim();
+        const valor   = parseNum(l.valor_estimado || l.valor_pb || 0);
+        const tipo    = (l.tipo_de_obra || "").trim();
+        const ano     = l._ano_planejamento;
+        return `
+        <div style="background:#fff;border:1px solid var(--borda);border-left:4px solid #6C3483;border-radius:8px;padding:.7rem .95rem">
+          <div style="display:flex;gap:.6rem;align-items:flex-start;flex-wrap:wrap;margin-bottom:.35rem">
+            <div style="flex:1;min-width:200px">
+              <div style="display:flex;gap:.4rem;align-items:center;flex-wrap:wrap;margin-bottom:.25rem">
+                ${_licitStatusChip(l.status)}
+                ${prio ? `<span style="font-size:.65rem;font-weight:700;color:#6C3483;background:#f3e8ff;padding:.15rem .5rem;border-radius:4px;font-family:var(--font-cond)">Prioridade ${htmlEscape(prio)}</span>` : ""}
+                ${ano ? `<span style="font-size:.6rem;color:var(--cinza-aux);font-family:var(--font-cond);font-weight:700">Planej. ${htmlEscape(ano)}</span>` : ""}
+                ${tipo ? `<span style="font-size:.65rem;color:var(--cinza-med);background:var(--cinza-bg);border:1px solid var(--borda);padding:.15rem .5rem;border-radius:4px">${htmlEscape(tipo)}</span>` : ""}
+              </div>
+              <div style="font-size:.85rem;font-weight:700;color:var(--cinza-txt);line-height:1.35">${htmlEscape(l.objeto_da_obra)}</div>
+            </div>
+            ${valor > 0 ? `<div style="text-align:right;flex-shrink:0">
+              <div style="font-size:.6rem;color:var(--cinza-aux);letter-spacing:.06em;text-transform:uppercase">Valor estimado</div>
+              <div style="font-size:.95rem;font-weight:800;color:var(--azul);font-family:var(--font-head)">${fmtBRL(valor)}</div>
+            </div>` : ""}
+          </div>
+          ${(memo || proc) ? `<div style="font-size:.7rem;color:var(--cinza-aux);font-family:var(--font-cond);margin-top:.3rem;padding-top:.3rem;border-top:1px dashed var(--borda);display:flex;flex-wrap:wrap;gap:.8rem">
+            ${memo ? `<span>📝 ${htmlEscape(memo)}</span>` : ""}
+            ${proc ? `<span>📂 Processo ${htmlEscape(proc)}</span>` : ""}
+          </div>` : ""}
+          ${l.observacao ? `<div style="font-size:.72rem;color:var(--cinza-med);margin-top:.3rem;line-height:1.4">⚙ ${htmlEscape(l.observacao.slice(0, 280))}${l.observacao.length>280?'…':''}</div>` : ""}
+        </div>`;
+      }).join("")}
+    </div>`;
+}
+window._renderLicitacoesMunUI = _renderLicitacoesMunUI;
 
 async function exportBriefingExecutivoPDF() {
   // Garante contratos mapeados (.valor, .empresa, etc.)
@@ -6688,11 +6864,15 @@ async function exportBriefingMunicipalPDF(mun) {
   if (!HUB.state.contratosObra && HUB.state.contratos) {
     HUB.state.contratosObra = HUB.state.contratos.map(_mapContrato);
   }
+  // Pré-carrega licitações (caso ainda não tenha vindo) — promise compartilhada
+  try { await _loadLicitacoes(); } catch (e) {}
+
   const ct = (HUB.state.contratosObra || [])
     .filter(c => (c.municipio || "").toString().toUpperCase().includes(mun.toUpperCase()))
     .sort((a, b) => (b.valor || 0) - (a.valor || 0));
   const ram = (HUB.state.ramaisSheet || []).filter(r => (r.municipio || "").toUpperCase() === mun.toUpperCase());
   const aero = (typeof AE_DATA !== "undefined" ? AE_DATA : []).filter(a => (a.municipio || "").toUpperCase() === mun.toUpperCase());
+  const _licitCount = _filtrarLicitacoesMun(HUB.state.licitacoes || [], mun).length;
 
   const inv  = ct.reduce((a, c) => a + (c.valor || 0), 0);
   const pago = ct.reduce((a, c) => a + (c.pago || 0), 0);
@@ -6712,6 +6892,7 @@ async function exportBriefingMunicipalPDF(mun) {
       chips: [
         "Briefing Municipal",
         `${ct.length} obra${ct.length !== 1 ? "s" : ""}`,
+        _licitCount ? `${_licitCount} licitaç${_licitCount !== 1 ? "ões" : "ão"}` : "",
         ram.length ? `${ram.length} ramais` : "",
         aero.length ? `${aero.length} aeródromo${aero.length !== 1 ? "s" : ""}` : "",
       ].filter(Boolean),
@@ -6763,6 +6944,70 @@ async function exportBriefingMunicipalPDF(mun) {
       content.push(...obraBlocks);
       // pageBreak entre obras (exceto última) para legibilidade
       if (i < ct.length - 1) content.push({ type: "pageBreak" });
+    });
+  }
+
+  // ─── LICITAÇÕES EM PLANEJAMENTO ────────────────────────
+  // Carrega planilha pública SEAPLANC e filtra por município.
+  // Apresenta o pipeline de obras NÃO contratadas ainda (em fase de
+  // planejamento/licitação) — complementa o briefing de obras contratadas.
+  let licit = [];
+  try { licit = await _loadLicitacoes(); } catch (e) { console.warn("licit PDF:", e); }
+  const licitMun = _filtrarLicitacoesMun(licit, mun);
+
+  if (licitMun.length) {
+    content.push({ type: "pageBreak" });
+    content.push({ type: "heading", value: `Licitações em Planejamento (${licitMun.length})` });
+    content.push({ type: "text", value: "Pipeline de obras em processo de licitação pelos órgãos da SEINFRA/AM. Estes processos ainda não foram contratados — encontram-se em fase de planejamento, ETP, análise de risco ou aguardando procedimento licitatório formal." });
+    content.push({ type: "text", value: "Fonte: SEAPLANC/SEINFRA · planilha pública de planejamento de obras." });
+
+    // Tabela compacta dos processos
+    content.push({
+      type: "table",
+      headers: ["#", "Objeto", "Status", "Prioridade", "Tipo", "Planej.", "Valor estimado"],
+      rows: licitMun.map((l, i) => [
+        String(i + 1),
+        l.objeto_da_obra || "—",
+        (l.status || "—").slice(0, 28),
+        (l.prioridade || "—"),
+        (l.tipo_de_obra || "—").slice(0, 22),
+        l._ano_planejamento || "—",
+        (() => { const v = parseNum(l.valor_estimado || l.valor_pb || 0); return v > 0 ? fmtBRL(v) : "—"; })(),
+      ]),
+    });
+
+    // Detalhes de cada licitação (kvgrid + observação)
+    content.push({ type: "spacer", value: 4 });
+    licitMun.forEach((l, i) => {
+      const valor = parseNum(l.valor_estimado || l.valor_pb || 0);
+      const memo = (l.n_memo || "").split(/\n/)[0].trim();
+      const proc = (l.n_processo || "").split(/[\n,]/)[0].trim();
+
+      content.push({
+        type: "sectionDivider",
+        label: `PROCESSO ${i + 1} DE ${licitMun.length}  ·  PLANEJ. ${l._ano_planejamento || "—"}  ·  ${(l.tipo_de_obra || "Obra").toUpperCase()}`,
+        title: l.objeto_da_obra || "—",
+      });
+
+      content.push({ type: "kvgrid", cols: 3, items: [
+        l.status      ? { label: "Status",      value: l.status, color: [108, 52, 131] } : null,
+        l.prioridade  ? { label: "Prioridade",  value: l.prioridade } : null,
+        l.secretaria  ? { label: "Secretaria",  value: l.secretaria } : null,
+        memo          ? { label: "N° Memo",     value: memo } : null,
+        proc          ? { label: "N° Processo", value: proc } : null,
+        valor > 0     ? { label: "Valor estimado", value: fmtBRL(valor), color: [45, 133, 64] } : null,
+        l.area_construida_e_ou_extensao ? { label: "Área / Extensão", value: l.area_construida_e_ou_extensao + (l.unidade ? " " + l.unidade : "") } : null,
+        l.dfd         ? { label: "DFD",  value: l.dfd } : null,
+        l.etp         ? { label: "ETP",  value: l.etp } : null,
+        l.analise_de_risco ? { label: "Análise de Risco", value: l.analise_de_risco } : null,
+        l.n_dfd_etp_mr ? { label: "Nº DFD/ETP/MR", value: l.n_dfd_etp_mr } : null,
+        l.planejamento ? { label: "Planejamento", value: l.planejamento } : null,
+      ].filter(Boolean) });
+
+      if (l.observacao) {
+        content.push({ type: "heading", value: "Observação" });
+        content.push({ type: "text", value: l.observacao });
+      }
     });
   }
 
