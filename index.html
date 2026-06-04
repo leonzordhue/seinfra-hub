@@ -1071,6 +1071,113 @@
     .atlas-bm-btn.active { background: var(--azul); color: #fff; }
     .atlas-bm-btn:hover:not(.active) { background: var(--azul-claro); color: var(--azul); }
 
+    /* Rosa-dos-ventos (canto superior esquerdo) */
+    .atlas-compass {
+      position: absolute; top: 12px; left: 12px; z-index: 800;
+      width: 48px; height: 48px;
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.18));
+      pointer-events: none;
+    }
+
+    /* Ferramentas (toolbar lateral esquerda, abaixo da rosa) */
+    .atlas-tools {
+      position: absolute; top: 72px; left: 12px; z-index: 800;
+      display: flex; flex-direction: column; gap: .35rem;
+      background: rgba(255,255,255,0.96);
+      border-radius: 10px; padding: .35rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+    }
+    .atlas-tool-btn {
+      display: flex; align-items: center; gap: .4rem;
+      padding: .32em .55em; border-radius: 7px; border: none;
+      background: transparent; color: var(--cinza-med);
+      font-family: var(--font); font-size: .68rem; font-weight: 700;
+      letter-spacing: .03em; cursor: pointer; transition: all .15s; white-space: nowrap;
+    }
+    .atlas-tool-btn:hover { background: var(--azul-claro); color: var(--azul); }
+    .atlas-tool-btn.active { background: var(--vermelho); color: #fff; }
+    .atlas-tool-lbl { font-size: .62rem; letter-spacing: .04em; text-transform: uppercase; }
+    @media (max-width: 720px) {
+      .atlas-tool-lbl { display: none; }
+      .atlas-tool-btn { padding: .35em .45em; }
+    }
+
+    /* Coordenadas live + zoom (canto inferior central) */
+    .atlas-coord-box {
+      position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 800;
+      background: rgba(26,43,94,0.92); color: #fff;
+      padding: .32em .85em; border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace; font-size: .65rem; font-weight: 600;
+      letter-spacing: .03em;
+      box-shadow: 0 4px 14px rgba(0,0,0,.22);
+      display: flex; align-items: center; gap: .45rem;
+      pointer-events: none;
+    }
+    .atlas-coord-lbl { font-size: .55rem; opacity: .55; text-transform: uppercase; letter-spacing: .1em; font-weight: 800; }
+    .atlas-coord-val { font-variant-numeric: tabular-nums; min-width: 150px; text-align: center; }
+    .atlas-coord-sep { opacity: .35; }
+    .atlas-coord-z { background: var(--amarelo); color: #1A2B5E; padding: 0.05em 0.45em; border-radius: 999px; font-size: .58rem; font-weight: 800; }
+    @media (max-width: 640px) {
+      .atlas-coord-lbl, .atlas-coord-sep { display: none; }
+      .atlas-coord-val { min-width: 0; font-size: .58rem; }
+    }
+
+    /* Legenda dinâmica (canto inferior esquerdo, acima da barra de basemaps) */
+    .atlas-legend {
+      position: absolute; bottom: 56px; left: 14px; z-index: 800;
+      background: rgba(255,255,255,0.97);
+      border-radius: 10px; box-shadow: 0 4px 14px rgba(0,0,0,.18);
+      padding: 0; min-width: 180px; max-width: 260px; max-height: 40vh; overflow: hidden;
+      display: none; flex-direction: column;
+      backdrop-filter: blur(6px);
+    }
+    @media (max-width: 720px) { .atlas-legend { max-width: 180px; max-height: 32vh; } }
+    .atlas-legend.show { display: flex; }
+    .atlas-leg-hdr {
+      padding: .35em .7em;
+      background: linear-gradient(135deg, #0c1733, #1A2B5E);
+      color: #fff; font-size: .58rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase;
+    }
+    .atlas-leg-body { padding: .35rem .5rem; overflow-y: auto; max-height: calc(50vh - 30px); }
+    .atlas-leg-row {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .2rem 0;
+      font-size: .68rem; font-weight: 600; color: var(--cinza-med);
+    }
+    .atlas-leg-sw { flex-shrink: 0; }
+    .atlas-leg-divider { border-top: 1px solid var(--borda); margin: .35rem -.5rem; }
+    .atlas-leg-mini-title {
+      font-size: .55rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--cinza-aux); padding: .2rem 0;
+    }
+
+    /* Labels permanentes nos features (bairros, ruas, municípios) — controlados por zoom */
+    .atlas-lbl-mun, .atlas-lbl-bairro, .atlas-lbl-rua {
+      background: transparent !important; border: none !important; box-shadow: none !important;
+      pointer-events: none;
+      font-family: var(--font); font-weight: 700;
+      text-shadow: 0 0 3px #fff, 0 0 3px #fff, 0 0 3px #fff, 0 0 5px rgba(255,255,255,.8);
+      white-space: nowrap;
+    }
+    .atlas-lbl-mun {
+      font-size: .68rem; color: #0E8A7D;
+      display: none;
+    }
+    .atlas-lbl-bairro {
+      font-size: .58rem; color: #6C3483; letter-spacing: -.01em;
+      display: none;
+    }
+    .atlas-lbl-rua {
+      font-size: .52rem; color: #7A4F00; font-weight: 600; letter-spacing: -.01em;
+      display: none;
+    }
+    .atlas-map[data-lbl-mun]    .atlas-lbl-mun    { display: block; }
+    .atlas-map[data-lbl-bairro] .atlas-lbl-bairro { display: block; }
+    .atlas-map[data-lbl-rua]    .atlas-lbl-rua    { display: block; }
+    /* Esconde a "ponta" do tooltip do Leaflet (visual mais limpo) */
+    .atlas-lbl-mun::before, .atlas-lbl-bairro::before, .atlas-lbl-rua::before { display: none !important; }
+
     /* Popup do Leaflet sobrescrito (visual mais clean) */
     .leaflet-popup-content-wrapper { border-radius: 14px !important; box-shadow: 0 12px 32px rgba(0,0,0,.22) !important; }
     .leaflet-popup-content { margin: 0.85rem 1rem !important; line-height: 1.4 !important; }
@@ -1365,12 +1472,11 @@
         <div class="sidebar-item" data-mod="aerodromos"   onclick="loadModule('aerodromos')">   <span class="sidebar-icon" data-ic="aerodromos"></span><span>Aeródromos</span></div>
         <div class="sidebar-item" data-mod="terminais"    onclick="loadModule('terminais')">    <span class="sidebar-icon" data-ic="terminais"></span><span>Terminais</span></div>
         <div class="sidebar-section-label">Operações</div>
-        <div class="sidebar-item" data-mod="obras"        onclick="loadModule('obras')">        <span class="sidebar-icon" data-ic="obras"></span><span>Obras</span></div>
+        <div class="sidebar-item" data-mod="briefings"    onclick="loadModule('briefings')">    <span class="sidebar-icon" data-ic="briefings"></span><span>Briefings</span></div>
         <div class="sidebar-item" data-mod="atlas"        onclick="loadModule('atlas')">        <span class="sidebar-icon" data-ic="atlas"></span><span>Atlas</span></div>
         <div class="sidebar-item" data-mod="planejamento" onclick="loadModule('planejamento')"> <span class="sidebar-icon" data-ic="planejamento"></span><span>Planejamento</span></div>
         <div class="sidebar-section-label">Inteligência</div>
         <div class="sidebar-item" data-mod="bi"           onclick="loadModule('bi')">           <span class="sidebar-icon" data-ic="bi"></span><span>BI &amp; Analytics</span></div>
-        <div class="sidebar-item" data-mod="briefings"    onclick="loadModule('briefings')">    <span class="sidebar-icon" data-ic="briefings"></span><span>Briefings</span></div>
       </nav>
       <div class="sidebar-footer">
         <strong>AKE/UFT-1.0</strong>
@@ -1458,6 +1564,10 @@ const GEOJSON_FILES = {
   // Estrutura: {properties:{categoria:'viario', tipo:'rua|marco_municipio|perimetro_urbano',
   //   nome, extensao_m, extensao_km, municipio (opcional)}}
   viario_local: "geojson/viario.geojson",
+  // Camadas Atlas v2 — densificação urbana (SEDECTI-grade)
+  bairros:      "BAIRROS.geojson",
+  uc:           "UNIDADE_DE_CONSERVACAO.geojson",
+  sitios:       "SITIOS_ARQ_-_IPHAN.geojson",
 };
 
 /* ── HUB (núcleo, BIOS) ── */
@@ -1469,11 +1579,10 @@ const HUB = {
     viario:       { id: "viario",       label: "Viário Urbano",  icon: "\u{1F3D9}",  color: "#B45309" },
     aerodromos:   { id: "aerodromos",   label: "Aeródromos",     icon: "\u{2708}",   color: "#0E7490" },
     terminais:    { id: "terminais",    label: "Terminais",      icon: "\u{2693}",   color: "#B8620A" },
-    obras:        { id: "obras",        label: "Obras",          icon: "\u{1F3D7}",  color: "#C0392B" },
+    briefings:    { id: "briefings",    label: "Briefings",      icon: "\u{1F4C4}",  color: "#C0392B" },
     atlas:        { id: "atlas",        label: "Atlas",          icon: "\u{1F5FA}",  color: "#1A2B5E" },
     planejamento: { id: "planejamento", label: "Planejamento",   icon: "\u{1F4CB}",  color: "#6C3483" },
     bi:           { id: "bi",           label: "BI & Analytics", icon: "\u{1F4CA}",  color: "#D4A017" },
-    briefings:    { id: "briefings",    label: "Briefings",      icon: "\u{1F4C4}",  color: "#2D8540" },
   },
   activeModule: null,
   state: {
@@ -2269,11 +2378,10 @@ function populateModuleCardSubs() {
   setSub("viario", "Sistema viário urbano municipal — 62 municípios");
   setSub("aerodromos", "Aeródromos estaduais (SEINFRA) e públicos federais");
   setSub("terminais", "Terminais hidroviários flutuantes nas comunidades");
-  setSub("obras", "Contratos e obras em execução — gestão executiva");
+  setSub("briefings", "Briefings executivos por obra/município · PDFs com timbrado");
   setSub("atlas", "Camadas geoespaciais toggleáveis");
   setSub("planejamento", "Metas e priorização orçamentária");
   setSub("bi", "Indicadores consolidados e alertas");
-  setSub("briefings", "PDFs executivos por obra · timbrado oficial");
 }
 
 function populateTimeline() {
@@ -5623,6 +5731,44 @@ async function exportObraPDF(idx) {
    ────────────────────────────────────────────── */
 // Popup-builder rico para municípios — agrega obras, ramais, aeródromos
 // do HUB.state em tempo real (dados já carregados).
+/* ──────────────────────────────────────────────────────────────
+   ATLAS v2 — densificação SEDECTI: indicadores, zonas, patrimônio
+   ────────────────────────────────────────────────────────────── */
+
+// Indicadores demográficos dos 62 municípios (pop · IDH · área urbana km²).
+// Fonte: IBGE Censo 2022 + Atlas Brasil 2013. Usado em popups + painel de detalhes.
+const MUN_DATA = {"BARCELOS":{"pop":"18834","idh":"0.5","ext":"31.574"},"SANTA ISABEL DO RIO NEGRO":{"pop":"14164","idh":"0.555","ext":"48.769"},"SAO GABRIEL DA CACHOEIRA":{"pop":"51795","idh":"0.663","ext":"71.683"},"BENJAMIN CONSTANT":{"pop":"37648","idh":"0.574","ext":"63.201"},"SANTO ANTONIO DO ICA":{"pop":"28211","idh":"0.571","ext":"43.92"},"SAO PAULO DE OLIVENCA":{"pop":"32967","idh":"0.59","ext":"38.931"},"TONANTINS":{"pop":"19247","idh":"0.571","ext":"35.846"},"TABATINGA":{"pop":"66764","idh":"0.616","ext":"126.921"},"AMATURA":{"pop":"10819","idh":"0.565","ext":"27.028"},"ATALAIA DO NORTE":{"pop":"15314","idh":"0.542","ext":"26.181"},"BARREIRINHA":{"pop":"31051","idh":"0.556","ext":"27.606"},"BOA VISTA DO RAMOS":{"pop":"23785","idh":"0.594","ext":"70.01"},"NHAMUNDA":{"pop":"20136","idh":"0.586","ext":"12.631"},"PARINTINS":{"pop":"96372","idh":"0.658","ext":"199.189"},"SAO SEBASTIAO DO UATUMA":{"pop":"11670","idh":"0.585","ext":"37.801"},"URUCARA":{"pop":"18631","idh":"0.588","ext":"57.585"},"CARAUARI":{"pop":"28742","idh":"0.593","ext":"70.694"},"EIRUNEPE":{"pop":"33170","idh":"0.624","ext":"68.575"},"ENVIRA":{"pop":"17186","idh":"0.56","ext":"64.579"},"GUAJARA":{"pop":"13815","idh":"0.569","ext":"30.83"},"IPIXUNA":{"pop":"24311","idh":"0.555","ext":"33.004"},"ITAMARATI":{"pop":"10937","idh":"0.554","ext":"15.676"},"BORBA":{"pop":"33080","idh":"0.575","ext":"44.14"},"HUMAITA":{"pop":"57473","idh":"0.605","ext":"146.114"},"MANICORE":{"pop":"53914","idh":"0.567","ext":"93.9"},"NOVO ARIPUANA":{"pop":"23818","idh":"0.567","ext":"47.143"},"APUI":{"pop":"20647","idh":"0.637","ext":"98.525"},"ITACOATIARA":{"pop":"103598","idh":"0.644","ext":"164.826"},"ITAPIRANGA":{"pop":"10162","idh":"0.622","ext":"45.61"},"MAUES":{"pop":"61204","idh":"0.593","ext":"74.231"},"NOVA OLINDA DO NORTE":{"pop":"27062","idh":"0.602","ext":"58.686"},"PRESIDENTE FIGUEIREDO":{"pop":"30668","idh":"0.647","ext":"68.915"},"SILVES":{"pop":"11559","idh":"0.613","ext":"22.469"},"URUCURITUBA":{"pop":"23945","idh":"0.598","ext":"53.555"},"BOCA DO ACRE":{"pop":"35447","idh":"0.588","ext":"64.648"},"CANUTAMA":{"pop":"16869","idh":"0.587","ext":"23.282"},"LABREA":{"pop":"45448","idh":"0.553","ext":"95.608"},"PAUINI":{"pop":"19373","idh":"0.588","ext":"28.743"},"TAPAUA":{"pop":"19599","idh":"0.572","ext":"15.993"},"BERURI":{"pop":"20718","idh":"0.593","ext":"31.926"},"CAAPIRANGA":{"pop":"13469","idh":"0.587","ext":"38.079"},"CAREIRO":{"pop":"30792","idh":"0.571","ext":"32.217"},"CAREIRO DA VARZEA":{"pop":"19637","idh":"0.55","ext":"24.31"},"COARI":{"pop":"70616","idh":"0.586","ext":"120.202"},"CODAJAS":{"pop":"23549","idh":"0.558","ext":"40.324"},"IRANDUBA":{"pop":"61163","idh":"0.646","ext":"45.027"},"MANACAPURU":{"pop":"101883","idh":"0.614","ext":"83.077"},"MANAQUIRI":{"pop":"17107","idh":"0.602","ext":"18.614"},"NOVO AIRAO":{"pop":"15761","idh":"0.621","ext":"55.156"},"RIO PRETO DA EVA":{"pop":"24936","idh":"0.622","ext":"109.712"},"ANAMA":{"pop":"9962","idh":"0.594","ext":"10.893"},"ANORI":{"pop":"17194","idh":"0.594","ext":"35.619"},"AUTAZES":{"pop":"41564","idh":"0.592","ext":"88.673"},"FONTE BOA":{"pop":"25871","idh":"0.55","ext":"61.157"},"JAPURA":{"pop":"8858","idh":"0.542","ext":"18.003"},"JURUA":{"pop":"10742","idh":"0.575","ext":"25.336"},"JUTAI":{"pop":"25172","idh":"0.566","ext":"40.412"},"MARAA":{"pop":"15529","idh":"0.566","ext":"19.745"},"TEFE":{"pop":"73669","idh":"0.639","ext":"84.479"},"UARINI":{"pop":"14431","idh":"0.573","ext":"38.976"},"ALVARAES":{"pop":"15866","idh":"0.564","ext":"20.001"},"MANAUS":{"pop":"2063547","idh":"0.737","ext":""}};
+
+// Zonas Administrativas de Manaus (Lei Municipal 1.401/2010 atualizada).
+// 6 zonas. Bairro → chave da zona. Match via _normMun para resiliência.
+const _MAN_ZONAS_RAW = {
+  "NORTE":["Cidade de Deus","Cidade Nova","Colônia Santo Antônio","Colônia Terra Nova","Lago Azul","Manoa","Monte das Oliveiras","Nossa Senhora da Conceição","Nova Cidade","Novo Israel","Santa Etelvina","Santa Inês"],
+  "SUL":["Cachoeirinha","Centro","Colônia Oliveira Machado","Crespo","Distrito Industrial I","Educandos","Japiim","Morro da Liberdade","Nossa Senhora Aparecida","Petrópolis","Praça 14 de Janeiro","Presidente Vargas","Raiz","Santa Luzia","São Francisco","São Lázaro","São Raimundo","Vila Buriti"],
+  "LESTE":["Armando Mendes","Colônia Antônio Aleixo","Coroado","Distrito Industrial II","Gilberto Mestrinho","Jorge Teixeira","Mauazinho","Puraquequara","São José Operário","Tancredo Neves","Zumbi dos Palmares"],
+  "OESTE":["Compensa","Glória","Santo Antônio","São Jorge","Tarumã","Tarumã-Açu","Vila da Prata"],
+  "CENTRO-SUL":["Adrianópolis","Aleixo","Chapada","Nossa Senhora das Graças","Parque 10 de Novembro","São Geraldo"],
+  "CENTRO-OESTE":["Alvorada","Da Paz","Dom Pedro I","Flores","Lírio do Vale","Nova Esperança","Planalto","Santo Agostinho"],
+};
+const MAN_ZONA = (function _build() {
+  const m = {};
+  for (const z in _MAN_ZONAS_RAW) _MAN_ZONAS_RAW[z].forEach(b => { m[_normMun(b)] = z; });
+  return m;
+})();
+// Identidade visual das zonas — paleta inspirada no mapa SEDECTI.
+const ZONA_INFO = {
+  "NORTE":        { color: "#F8BBD0", fill: "#F8BBD0", txt: "#880E4F", label: "Zona Norte" },
+  "SUL":          { color: "#FFE082", fill: "#FFE082", txt: "#7B5C00", label: "Zona Sul" },
+  "LESTE":        { color: "#F48FB1", fill: "#F48FB1", txt: "#7A1B41", label: "Zona Leste" },
+  "OESTE":        { color: "#FFCC80", fill: "#FFCC80", txt: "#7A4600", label: "Zona Oeste" },
+  "CENTRO-SUL":   { color: "#CE93D8", fill: "#CE93D8", txt: "#5B2A6B", label: "Zona Centro-Sul" },
+  "CENTRO-OESTE": { color: "#80DEEA", fill: "#80DEEA", txt: "#005662", label: "Zona Centro-Oeste" },
+  "_":            { color: "#B0BEC5", fill: "#B0BEC5", txt: "#37474F", label: "Não classificado" },
+};
+// Resolve a zona a partir do nome do bairro (NM_BAIRRO).
+function zonaDoBairro(nmBairro) {
+  return MAN_ZONA[_normMun(nmBairro || "")] || null;
+}
+
 function _atlasMunPopup(p) {
   const nome = p.NM_MUN || p.nome || p.NAME || "Município";
   // Match robusto via _normMun (accent-fold, repara mojibake, upper, trim).
@@ -5632,14 +5778,24 @@ function _atlasMunPopup(p) {
   const ibge = p.CD_MUN || p.geocodigo || p.CODIGO || "";
   const obrasCt = (HUB.state.contratos || []).filter(c =>
     _normMun(c.municipio || "").includes(nomeKey));
-  const ramaisCt = (HUB.state.ramaisSheet || []).filter(r =>
-    _normMun(r.municipio || "") === nomeKey);
+  // ramaisLoaded distingue "ainda não chegou" (mostra …) de "Manaus com 0 ramais" (mostra 0).
+  // O popup é re-renderizado em popupopen quando os dados aterrissam (ver atlasLoadLayer).
+  const ramaisLoaded = !!(HUB.state.ramaisSheet && HUB.state.ramaisSheet.length);
+  const ramaisCt = ramaisLoaded ? HUB.state.ramaisSheet.filter(r =>
+    _normMun(r.municipio || "") === nomeKey) : [];
   const aeroCt = (typeof AE_DATA !== "undefined" ? AE_DATA : []).filter(a =>
     _normMun(a.municipio || "") === nomeKey);
+  // Indicadores demográficos (IBGE/Atlas) — chave normalizada para evitar mojibake
+  const ind = MUN_DATA[nomeKey] || null;
   const extRamais = ramaisCt.reduce((s, r) => s + (r.extensao || 0), 0);
+  // Ramais pavimentados / sem pavimento (revestimento) — útil para diagnóstico
+  const ramaisPav = ramaisCt.filter(r => /pav/i.test(r.revestimento || "")).length;
   const invObras = obrasCt.reduce((s, o) => s + parseNum(
     o.valor_global_inicial_aditivos_reajustes_da_obra ||
     o.valor_atualizado || o.valor_contratual || 0), 0);
+  // Valores de exibição — "…" enquanto a planilha ainda não chegou
+  const ramaisNDisplay   = ramaisLoaded ? ramaisCt.length : "…";
+  const ramaisExtDisplay = ramaisLoaded ? (extRamais >= 1000 ? (extRamais/1000).toFixed(2) + " mil km" : extRamais.toFixed(1) + " km") : "…";
 
   const stat = (icon, val, lbl, col) => `
     <div style="background:#f5f7fb;border:1px solid #e0e6f0;border-radius:8px;padding:.4rem .55rem;text-align:center;min-width:74px">
@@ -5649,14 +5805,49 @@ function _atlasMunPopup(p) {
     </div>`;
   // Lista de nomes dos aeródromos do município
   const aeroNomes = aeroCt.map(a => a.nome).slice(0, 2).join(" · ");
+  // Render do bloco IBGE: começa com dado estático e atualiza após fetch live
+  const ibgeBoxId = `_ibge_${(ibge||"").toString().slice(0,7)}_${Math.floor(Math.random()*1e6)}`;
+  const popLocal = ind && ind.pop ? Number(ind.pop) : null;
+  const idhLocal = ind && ind.idh ? Number(ind.idh) : null;
+  // Dispara fetch IBGE live (projeção populacional + área) — preenche o box quando responde
+  if (ibge) setTimeout(() => _ibgeMunFill(String(ibge).slice(0,7), ibgeBoxId, popLocal), 60);
+
   return `
-    <div style="font-family:Outfit,sans-serif;min-width:280px;max-width:340px">
+    <div style="font-family:Outfit,sans-serif;min-width:300px;max-width:360px">
       <div style="font-weight:800;color:#0E8A7D;font-size:1.05rem;line-height:1.1">${htmlEscape(nome)}</div>
       ${ibge ? `<div style="font-size:.68rem;color:#8896a8;font-family:monospace;margin-top:.15rem">IBGE ${htmlEscape(String(ibge))}</div>` : ""}
-      <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.7rem">
+
+      <!-- Indicadores demográficos (estilo SEDECTI) -->
+      <div id="${ibgeBoxId}" style="margin-top:.55rem;padding:.5rem .6rem;background:linear-gradient(180deg,#f0f7ff,#e9f0fa);border:1px solid #c4d0e8;border-radius:8px">
+        <div style="font-size:.55rem;font-weight:800;color:#0E8A7D;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem">Indicadores · IBGE</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap" data-ibge-grid>
+          ${popLocal ? `<div><div style="font-size:.95rem;font-weight:900;color:#1A2B5E">${popLocal.toLocaleString("pt-BR")}</div><div style="font-size:.52rem;color:#8896a8;font-weight:700;text-transform:uppercase">Habitantes</div></div>` : ""}
+          ${idhLocal ? `<div><div style="font-size:.95rem;font-weight:900;color:#${idhLocal>=0.7?"2D8540":idhLocal>=0.6?"D4A017":"C0392B"}">${idhLocal.toFixed(3)}</div><div style="font-size:.52rem;color:#8896a8;font-weight:700;text-transform:uppercase">IDHM 2013</div></div>` : ""}
+          <div data-ibge-area><div style="font-size:.9rem;font-weight:800;color:#4a5568">…</div><div style="font-size:.52rem;color:#8896a8;font-weight:700;text-transform:uppercase">Área km²</div></div>
+        </div>
+      </div>
+
+      <!-- Bloco RAMAIS destacado (estilo placa SEDECTI) — total + extensão sempre visíveis -->
+      <div style="margin-top:.55rem;padding:.55rem .7rem;background:linear-gradient(135deg,#E6F4ED,#F0F9F2);border:1px solid #bfe1cb;border-left:4px solid #2D8540;border-radius:8px">
+        <div style="font-size:.55rem;font-weight:800;color:#2D8540;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.25rem">🌿 Ramais SEINFRA</div>
+        <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap">
+          <div>
+            <div style="font-family:Outfit,sans-serif;font-size:1.45rem;font-weight:900;color:#1B5E20;line-height:1">${ramaisNDisplay}</div>
+            <div style="font-size:.55rem;color:#4a5568;font-weight:700;letter-spacing:.04em;text-transform:uppercase">Ramais cadastrados</div>
+          </div>
+          <div style="border-left:1px solid #bfe1cb;padding-left:1rem">
+            <div style="font-family:Outfit,sans-serif;font-size:1.45rem;font-weight:900;color:#1B5E20;line-height:1">${ramaisExtDisplay}</div>
+            <div style="font-size:.55rem;color:#4a5568;font-weight:700;letter-spacing:.04em;text-transform:uppercase">Extensão total</div>
+          </div>
+          ${ramaisLoaded && ramaisPav > 0 ? `<div style="border-left:1px solid #bfe1cb;padding-left:1rem">
+            <div style="font-family:Outfit,sans-serif;font-size:1rem;font-weight:900;color:#7A4F00;line-height:1">${ramaisPav}<span style="font-size:.65rem;color:#8896a8;font-weight:700">/${ramaisCt.length}</span></div>
+            <div style="font-size:.55rem;color:#4a5568;font-weight:700;letter-spacing:.04em;text-transform:uppercase">Pavimentados</div>
+          </div>` : ""}
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.55rem">
         ${stat("🏗", obrasCt.length, "Obras", "#C0392B")}
-        ${stat("🌿", ramaisCt.length, "Ramais", "#2D8540")}
-        ${stat("📐", extRamais.toFixed(0)+" km", "Ext. ramais", "#1A2B5E")}
         ${aeroCt.length ? stat("✈", aeroCt.length, "Aeroporto", "#0E7490") : ""}
       </div>
       ${aeroNomes ? `<div style="margin-top:.45rem;font-size:.7rem;color:#0E7490">
@@ -5665,10 +5856,146 @@ function _atlasMunPopup(p) {
       ${invObras ? `<div style="margin-top:.55rem;padding-top:.5rem;border-top:1px dashed #e0e6f0;font-size:.74rem;color:#4a5568">
         💰 Investimento contratual: <strong style="color:#1A2B5E">${invObras >= 1e9 ? "R$ "+(invObras/1e9).toFixed(2)+" bi" : "R$ "+(invObras/1e6).toFixed(1)+" mi"}</strong>
       </div>` : ""}
-      ${!obrasCt.length && !ramaisCt.length ? `<div style="margin-top:.45rem;font-size:.7rem;color:#8896a8;font-style:italic">
-        Carregando dados do município...
-      </div>` : ""}
+      ${!ramaisLoaded ? `<div style="margin-top:.45rem;font-size:.65rem;color:#8896a8;font-style:italic">⏳ Aguardando planilha de ramais...</div>` : ""}
+      ${ramaisLoaded && ramaisCt.length === 0 && HUB.state.ramaisSheet.length > 0 ? `<details style="margin-top:.45rem;font-size:.6rem;color:#8896a8"><summary style="cursor:pointer">diagnóstico match</summary><div style="font-family:monospace;background:#fdedec;border:1px solid #f5b5ae;padding:.3rem;border-radius:6px;margin-top:.25rem;font-size:.55rem;color:#7A1B41">key=&quot;${htmlEscape(nomeKey)}&quot; · sheet=${HUB.state.ramaisSheet.length} ramais · exemplos: ${HUB.state.ramaisSheet.slice(0,3).map(r => "&quot;"+htmlEscape(_normMun(r.municipio||""))+"&quot;").join(", ")}</div></details>` : ""}
     </div>`;
+}
+
+/* ── IBGE live (single-flight + cache) ──
+   Endpoints (públicos, sem chave):
+   • /api/v1/projecoes/populacao/{geoc} → projeção populacional atual
+   • /api/v1/localidades/municipios/{geoc} → metadados (nome, microregião)
+   Falha silenciosamente (não polui UI) — popup mostra valor estático do MUN_DATA. */
+const _IBGE_CACHE = {};
+function _ibgeFetchMun(geoc) {
+  if (_IBGE_CACHE[geoc]) return _IBGE_CACHE[geoc];
+  _IBGE_CACHE[geoc] = (async () => {
+    try {
+      const [proj, loc] = await Promise.all([
+        fetch(`https://servicodados.ibge.gov.br/api/v1/projecoes/populacao/${geoc}`).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/municipios/${geoc}`).then(r => r.ok ? r.json() : null).catch(() => null),
+      ]);
+      return { proj, loc };
+    } catch (e) { return null; }
+  })();
+  return _IBGE_CACHE[geoc];
+}
+async function _ibgeMunFill(geoc, boxId, popFallback) {
+  const data = await _ibgeFetchMun(geoc);
+  const box = document.getElementById(boxId);
+  if (!box || !data) return;
+  const grid = box.querySelector("[data-ibge-grid]");
+  const areaCell = box.querySelector("[data-ibge-area] div:first-child");
+  // População da projeção atual (ano corrente)
+  if (data.proj && data.proj.projecao && data.proj.projecao.populacao) {
+    const popLive = Number(data.proj.projecao.populacao);
+    if (popLive > 0 && grid) {
+      // substitui o primeiro stat (habitantes) — preserva ordem
+      const first = grid.querySelector("div:first-child div:first-child");
+      if (first) {
+        first.textContent = popLive.toLocaleString("pt-BR");
+        first.style.color = "#0E8A7D";
+        const sub = first.nextElementSibling;
+        if (sub) sub.textContent = "Habitantes · IBGE projeção";
+      }
+    }
+  }
+  // Área via microregião (não vem direto, mas tentamos do MUN_DATA estático como bk)
+  if (areaCell) areaCell.textContent = "—";
+}
+
+function _atlasBairroPopup(p) {
+  const nome = p.NM_BAIRRO || p.NOME || p.nome || "Bairro";
+  const mun = p.NM_MUN || p.municipio || "—";
+  const dist = p.NM_DIST || "";
+  const ibgeB = p.CD_BAIRRO || "";
+  const zona = mun && _normMun(mun) === "MANAUS" ? zonaDoBairro(nome) : null;
+  const z = zona ? ZONA_INFO[zona] : null;
+  return `<div style="font-family:Outfit,sans-serif;min-width:240px">
+    <div style="font-weight:800;color:#6C3483;font-size:1rem;line-height:1.1">${htmlEscape(nome)}</div>
+    <div style="font-size:.68rem;color:#8896a8;margin-top:.15rem">📍 ${htmlEscape(mun)}${dist && dist !== nome ? " · " + htmlEscape(dist) : ""}</div>
+    ${z ? `<div style="margin-top:.45rem;display:inline-block;background:${z.fill};color:${z.txt};padding:.28em .65em;border-radius:999px;font-size:.62rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase">${z.label}</div>` : ""}
+    ${ibgeB ? `<div style="font-size:.6rem;font-family:monospace;color:#8896a8;margin-top:.4rem">IBGE ${htmlEscape(String(ibgeB))}</div>` : ""}
+  </div>`;
+}
+
+function _atlasZonaPopup(p) {
+  // p é uma feature de bairro Manaus colorida pela zona — destacamos a zona
+  const nome = p.NM_BAIRRO || p.nome || "—";
+  const zona = zonaDoBairro(nome);
+  const z = zona ? ZONA_INFO[zona] : ZONA_INFO._;
+  // Conta bairros e área aprox da zona
+  const bairrosNaZona = zona && _MAN_ZONAS_RAW[zona] ? _MAN_ZONAS_RAW[zona].length : 0;
+  return `<div style="font-family:Outfit,sans-serif;min-width:240px">
+    <div style="display:inline-block;background:${z.fill};color:${z.txt};padding:.32em .8em;border-radius:999px;font-size:.7rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase">${z.label}</div>
+    <div style="margin-top:.5rem;font-weight:700;color:#1A2540;font-size:.84rem">Bairro: ${htmlEscape(nome)}</div>
+    ${bairrosNaZona ? `<div style="font-size:.7rem;color:#4a5568;margin-top:.3rem">📦 <strong>${bairrosNaZona}</strong> bairros nesta zona administrativa</div>` : ""}
+    <div style="font-size:.62rem;color:#8896a8;margin-top:.35rem;font-style:italic">Lei Municipal 1.401/2010 (Manaus)</div>
+  </div>`;
+}
+
+function _atlasUcPopup(p) {
+  const nome = (p.nome || p.NOME || "Unidade de Conservação").toString();
+  // Capitaliza "RESERVA..." → "Reserva..."
+  const nomeCap = nome.replace(/\b([A-ZÁÉÍÓÚÂÊÔÃÕÇ])([A-ZÁÉÍÓÚÂÊÔÃÕÇ]+)/g, (m, a, b) => a + b.toLowerCase());
+  const grupoFull = p.grupo === "PI" ? "Proteção Integral" : p.grupo === "US" ? "Uso Sustentável" : (p.grupo || "—");
+  return `<div style="font-family:Outfit,sans-serif;min-width:230px;max-width:320px">
+    <div style="font-weight:800;color:#2D8540;font-size:.92rem;line-height:1.15">${htmlEscape(nomeCap)}</div>
+    <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
+      ${p.categoria ? `<div>🏞 ${htmlEscape(p.categoria)}</div>` : ""}
+      ${p.grupo ? `<div>📋 Grupo: <strong>${htmlEscape(grupoFull)}</strong></div>` : ""}
+      ${p.esfera ? `<div>🏛 Esfera: ${htmlEscape(p.esfera)}</div>` : ""}
+      ${p.ano_cria ? `<div>📅 Criação: ${htmlEscape(String(p.ano_cria))}</div>` : ""}
+    </div>
+  </div>`;
+}
+
+function _atlasSitioPopup(p) {
+  const nome = p.identifica || p.NOME || "Sítio Arqueológico";
+  return `<div style="font-family:Outfit,sans-serif;min-width:230px;max-width:320px">
+    <div style="font-weight:800;color:#C2185B;font-size:.92rem;line-height:1.15">${htmlEscape(nome)}</div>
+    <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
+      ${p.ds_naturez ? `<div>🏺 Natureza: ${htmlEscape(p.ds_naturez)}</div>` : ""}
+      ${p.ds_classif ? `<div>🏷 Classificação: <strong>${htmlEscape(p.ds_classif)}</strong></div>` : ""}
+      ${p.ds_tipo_be ? `<div>📦 Tipo: ${htmlEscape(p.ds_tipo_be)}</div>` : ""}
+      ${p.co_iphan ? `<div style="font-family:monospace;color:#8896a8">IPHAN ${htmlEscape(p.co_iphan)}</div>` : ""}
+      ${p.dt_cadastr ? `<div>📅 Cadastro: ${htmlEscape(String(p.dt_cadastr))}</div>` : ""}
+    </div>
+  </div>`;
+}
+
+function _atlasMarcoPopup(p) {
+  // Marco municipal — ponto de centro/sede do município (do viario.geojson)
+  return `<div style="font-family:Outfit,sans-serif;min-width:180px">
+    <div style="font-weight:800;color:#1A2B5E;font-size:.88rem">📍 Sede municipal</div>
+    ${p.municipio ? `<div style="font-size:.78rem;color:#1A2B5E;margin-top:.25rem;font-weight:700">${htmlEscape(p.municipio)}</div>` : ""}
+    <div style="font-size:.6rem;color:#8896a8;margin-top:.35rem;font-style:italic">Marco de referência geográfico</div>
+  </div>`;
+}
+
+function _atlasPerimUrbPopup(p) {
+  return `<div style="font-family:Outfit,sans-serif;min-width:180px">
+    <div style="font-weight:800;color:#B45309;font-size:.88rem">🏘 Perímetro urbano</div>
+    ${p.municipio ? `<div style="font-size:.74rem;color:#4a5568;margin-top:.25rem">📍 ${htmlEscape(p.municipio)}</div>` : ""}
+    <div style="font-size:.6rem;color:#8896a8;margin-top:.35rem;font-style:italic">Limite oficial da área urbana</div>
+  </div>`;
+}
+
+// Popup de RUA com nome em destaque — atende ao pedido "nome das ruas"
+function _atlasRuaPopup(p) {
+  const nome = p.nome || p.NOME || "(via sem nome cadastrado)";
+  const ext = Number(p.extensao_km || 0);
+  const extM = Number(p.extensao_m || 0);
+  return `<div style="font-family:Outfit,sans-serif;min-width:200px">
+    <div style="display:flex;align-items:center;gap:.4rem">
+      <span style="display:inline-block;width:6px;height:18px;border-radius:3px;background:#B45309"></span>
+      <div style="font-weight:800;color:#7A4F00;font-size:.95rem;line-height:1.15">${htmlEscape(nome)}</div>
+    </div>
+    <div style="font-size:.72rem;color:#4a5568;margin-top:.4rem;display:flex;gap:.7rem;flex-wrap:wrap">
+      ${ext > 0 ? `<span>📏 <strong>${ext.toFixed(2)} km</strong>${extM ? ` <span style="color:#8896a8">(${Math.round(extM)} m)</span>` : ""}</span>` : ""}
+      ${p.municipio ? `<span>📍 ${htmlEscape(p.municipio)}</span>` : ""}
+    </div>
+  </div>`;
 }
 
 // Popup-builder genérico para rodovia (estadual)
@@ -5747,41 +6074,86 @@ function _atlasViarioPopup(p) {
 }
 
 const ATLAS_GROUPS = [
+  // 1. Administrativo — limites, divisões e zonas (SEDECTI-grade)
+  {
+    id: "administrativo", label: "Administrativo", color: "#0E8A7D",
+    layers: [
+      { key: "municipios", label: "Divisas Municipais (62)", color: "#0E8A7D", sw: "pg", type: "poly",
+        file: "municipios", popup: _atlasMunPopup, defaultOn: true,
+        labelField: "NM_MUN", labelClass: "atlas-lbl-mun", labelMinZoom: 8 },
+      { key: "bairros", label: "Bairros (469)", color: "#6C3483", sw: "pg", type: "poly",
+        file: "bairros", popup: _atlasBairroPopup,
+        styleFn: () => ({ color: "#6C3483", weight: 0.7, opacity: 0.55, fillColor: "#6C3483", fillOpacity: 0.06 }),
+        labelField: "NM_BAIRRO", labelClass: "atlas-lbl-bairro", labelMinZoom: 12 },
+      { key: "zonas_manaus", label: "Zonas Adm. de Manaus (6)", color: "#7B5C00", sw: "pg", type: "poly",
+        file: "bairros", popup: _atlasZonaPopup,
+        // Filtra só Manaus e estiliza pela zona administrativa
+        filter: f => _normMun((f.properties||{}).NM_MUN || "") === "MANAUS",
+        styleFn: f => {
+          const z = zonaDoBairro((f.properties||{}).NM_BAIRRO) || "_";
+          const i = ZONA_INFO[z] || ZONA_INFO._;
+          return { color: i.txt, weight: 1, opacity: 0.85, fillColor: i.fill, fillOpacity: 0.55 };
+        }},
+      { key: "perim_urb", label: "Perímetros urbanos", color: "#B45309", sw: "ld", type: "line",
+        file: "viario_local", popup: _atlasPerimUrbPopup,
+        filter: f => (f.properties || {}).tipo === "perimetro_urbano" },
+      { key: "marcos_mun", label: "Sedes municipais", color: "#1A2B5E", sw: "pt", type: "pointIcon", icon: "★",
+        file: "viario_local", popup: _atlasMarcoPopup,
+        filter: f => (f.properties || {}).tipo === "marco_municipio" },
+    ]
+  },
+  // 2. Rodoviário — agora com "Ruas com nome" separado para densidade urbana
   {
     id: "rodoviario", label: "Rodoviário", color: "#1A2B5E",
     layers: [
-      { key: "rodovias_est", label: "Rodovias Estaduais", color: "#1A2B5E", sw: "ln", type: "line",
+      { key: "rodovias_est", label: "Rodovias Estaduais (50)", color: "#1A2B5E", sw: "ln", type: "line",
         file: "rodovias_est", popup: _atlasRodEstPopup, defaultOn: true },
-      { key: "rodovias_fed", label: "Rodovias Federais", color: "#C0392B", sw: "ln", type: "line",
+      { key: "rodovias_fed", label: "Rodovias Federais (237)", color: "#C0392B", sw: "ln", type: "line",
         file: "rodovias_fed", popup: _atlasRodFedPopup },
-      { key: "ramais", label: "Ramais SEINFRA", color: "#2D8540", sw: "ld", type: "line",
+      { key: "ramais", label: "Ramais SEINFRA (907)", color: "#2D8540", sw: "ld", type: "line",
         file: "ramais", popup: _atlasRamalPopup },
-      { key: "viario_local", label: "Viário urbano", color: "#B45309", sw: "ln", type: "line",
+      { key: "viario_local", label: "Viário urbano (todas)", color: "#B45309", sw: "ln", type: "line",
         file: "viario_local", popup: _atlasViarioPopup,
         filter: f => (f.properties || {}).tipo === "rua" },
+      { key: "ruas_nomes", label: "Ruas com nome (rótulo)", color: "#7A4F00", sw: "ln", type: "line",
+        file: "viario_local", popup: _atlasRuaPopup,
+        filter: f => (f.properties || {}).tipo === "rua" && (f.properties || {}).nome,
+        styleFn: () => ({ color: "#7A4F00", weight: 1.6, opacity: 0.78 }),
+        labelField: "nome", labelClass: "atlas-lbl-rua", labelMinZoom: 15 },
     ]
   },
+  // 3. Aquaviário
   {
-    id: "hidroviario", label: "Hidroviário", color: "#0077b6",
+    id: "hidroviario", label: "Aquaviário", color: "#0077b6",
     layers: [
-      { key: "hidrovias", label: "Hidrovias", color: "#0077b6", sw: "ln", type: "line",
+      { key: "hidrovias", label: "Hidrovias (14)", color: "#0077b6", sw: "ln", type: "line",
         file: "hidrovias", popup: _atlasHidroPopup },
-      { key: "terminais", label: "Terminais Flutuantes", color: "#023e8a", sw: "pt", type: "pointIcon", icon: "⚓",
+      { key: "terminais", label: "Terminais Flutuantes (31)", color: "#023e8a", sw: "pt", type: "pointIcon", icon: "⚓",
         file: "terminais", popup: _atlasTermPopup },
     ]
   },
+  // 4. Aeroportuário
   {
     id: "aeroportuario", label: "Aeroportuário", color: "#0E7490",
     layers: [
-      { key: "aerodromos", label: "Aeródromos SEINFRA", color: "#0E7490", sw: "pt", type: "pointIcon", icon: "✈",
+      { key: "aerodromos", label: "Aeródromos SEINFRA (23)", color: "#0E7490", sw: "pt", type: "pointIcon", icon: "✈",
         file: "aerodromos", popup: _atlasAeroPopup },
     ]
   },
+  // 5. Conservação e Patrimônio (NOVO)
   {
-    id: "territorial", label: "Territorial", color: "#0E8A7D",
+    id: "patrimonio", label: "Conservação & Patrimônio", color: "#C2185B",
     layers: [
-      { key: "municipios", label: "Divisas Municipais (62)", color: "#0E8A7D", sw: "pg", type: "poly",
-        file: "municipios", popup: _atlasMunPopup, defaultOn: true },
+      { key: "uc", label: "Unidades de Conservação (98)", color: "#2D8540", sw: "pg", type: "poly",
+        file: "uc", popup: _atlasUcPopup,
+        styleFn: f => {
+          const grupo = (f.properties||{}).grupo;
+          const col = grupo === "PI" ? "#1B5E20" : grupo === "US" ? "#558B2F" : "#2D8540";
+          return { color: col, weight: 1.2, opacity: 0.7, fillColor: col, fillOpacity: 0.12 };
+        }},
+      { key: "sitios", label: "Sítios Arqueológicos · IPHAN (610)", color: "#C2185B", sw: "pt", type: "point",
+        file: "sitios", popup: _atlasSitioPopup,
+        styleFn: () => ({ color: "#C2185B", weight: 1, opacity: 0.9, fillColor: "#C2185B", fillOpacity: 0.85, radius: 3 }) },
     ]
   },
 ];
@@ -5857,12 +6229,60 @@ function getAtlasHTML() {
           <span data-ic="atlas"></span>
         </button>
 
-        <!-- Barra de basemaps (canto inferior esquerdo) -->
+        <!-- Rosa-dos-ventos (canto superior esquerdo) -->
+        <div class="atlas-compass" aria-hidden="true" title="Norte">
+          <svg viewBox="0 0 48 48" width="44" height="44">
+            <circle cx="24" cy="24" r="22" fill="rgba(255,255,255,0.92)" stroke="#1A2B5E" stroke-width="1.5"/>
+            <polygon points="24,5 28,24 24,21 20,24" fill="#C0392B"/>
+            <polygon points="24,43 28,24 24,27 20,24" fill="#1A2B5E"/>
+            <text x="24" y="11" text-anchor="middle" font-family="Outfit" font-size="7" font-weight="900" fill="#1A2B5E">N</text>
+            <text x="24" y="46" text-anchor="middle" font-family="Outfit" font-size="6" font-weight="700" fill="#4a5568">S</text>
+            <text x="4"  y="26" text-anchor="middle" font-family="Outfit" font-size="6" font-weight="700" fill="#4a5568">W</text>
+            <text x="44" y="26" text-anchor="middle" font-family="Outfit" font-size="6" font-weight="700" fill="#4a5568">E</text>
+          </svg>
+        </div>
+
+        <!-- Barra de basemaps (canto inferior esquerdo) — agora 9 opções -->
         <div class="atlas-basemap-bar">
-          <button class="atlas-bm-btn active" data-bm="osm" onclick="atlasSetBasemap(this)">Mapa</button>
-          <button class="atlas-bm-btn" data-bm="sat" onclick="atlasSetBasemap(this)">Satélite</button>
-          <button class="atlas-bm-btn" data-bm="topo" onclick="atlasSetBasemap(this)">Topo</button>
-          <button class="atlas-bm-btn" data-bm="dark" onclick="atlasSetBasemap(this)">Escuro</button>
+          <button class="atlas-bm-btn active" data-bm="voyager" onclick="atlasSetBasemap(this)" title="CARTO Voyager · ruas + tons suaves (recomendado)">Padrão</button>
+          <button class="atlas-bm-btn" data-bm="osm" onclick="atlasSetBasemap(this)" title="OpenStreetMap clássico">OSM</button>
+          <button class="atlas-bm-btn" data-bm="streets" onclick="atlasSetBasemap(this)" title="Esri Streets · ruas detalhadas">Ruas</button>
+          <button class="atlas-bm-btn" data-bm="esritopo" onclick="atlasSetBasemap(this)" title="Esri Topographic">Topo+</button>
+          <button class="atlas-bm-btn" data-bm="topo" onclick="atlasSetBasemap(this)" title="OpenTopoMap · relevo">Relevo</button>
+          <button class="atlas-bm-btn" data-bm="sat" onclick="atlasSetBasemap(this)" title="Esri World Imagery (sem rótulos)">Satélite</button>
+          <button class="atlas-bm-btn" data-bm="sat+rua" onclick="atlasSetBasemap(this)" title="Satélite + rótulos sobrepostos">Sat+Ruas</button>
+          <button class="atlas-bm-btn" data-bm="light" onclick="atlasSetBasemap(this)" title="CARTO Light · minimal">Claro</button>
+          <button class="atlas-bm-btn" data-bm="dark" onclick="atlasSetBasemap(this)" title="CARTO Dark · contraste">Escuro</button>
+        </div>
+
+        <!-- Ferramentas (canto superior central-esquerdo) -->
+        <div class="atlas-tools">
+          <button class="atlas-tool-btn" onclick="atlasFitToAM()" title="Enquadrar Amazonas inteiro">
+            <span style="font-size:.85rem">🌎</span><span class="atlas-tool-lbl">AM</span>
+          </button>
+          <button class="atlas-tool-btn" onclick="atlasFitToManaus()" title="Voar para Manaus urbana">
+            <span style="font-size:.85rem">🏙</span><span class="atlas-tool-lbl">Manaus</span>
+          </button>
+          <button class="atlas-tool-btn" id="atlasMeasureBtn" onclick="atlasToggleMeasure()" title="Medir distância (clique a clique)">
+            <span style="font-size:.85rem">📏</span><span class="atlas-tool-lbl">Medir</span>
+          </button>
+          <button class="atlas-tool-btn" onclick="atlasToggleFullscreen()" title="Tela cheia">
+            <span style="font-size:.85rem">⛶</span><span class="atlas-tool-lbl">Cheia</span>
+          </button>
+        </div>
+
+        <!-- Coordenadas + zoom (canto inferior centro) -->
+        <div class="atlas-coord-box">
+          <span class="atlas-coord-lbl">Coord</span>
+          <span id="atlasCoord" class="atlas-coord-val">—, —</span>
+          <span class="atlas-coord-sep">·</span>
+          <span id="atlasZoomNum" class="atlas-coord-z">z5</span>
+        </div>
+
+        <!-- Legenda dinâmica (canto direito inferior) -->
+        <div class="atlas-legend" id="atlasLegend">
+          <div class="atlas-leg-hdr">Legenda</div>
+          <div class="atlas-leg-body"></div>
         </div>
       </div>
     </div>
@@ -5873,28 +6293,68 @@ async function initAtlas() {
   const map = mkMap("atlasMap", { center: [-4.5, -63.5], zoom: 5 });
   HUB.state.atlasMap = map;
   HUB.state.atlasLayers = {};
+  HUB.state.atlasOverlay = null; // tile layer de rótulos sobreposto à imagem aérea
 
-  // Pré-carrega a planilha de ramais em background — necessária para
+  // Pré-carrega a planilha de ramais em PARALELO ao boot — necessária para
   // os popups dos municípios contarem ramais/extensão corretamente.
-  // (Sem isso, abrir o Atlas direto sem passar pelo módulo Ramais
-  // resulta em popups com '0 ramais' permanentemente.)
-  _loadRamaisSheet().catch(e => console.warn("preload ramais (atlas):", e));
+  // Single-flight: se outro módulo já carregou, retorna imediatamente.
+  // Promise guardada em HUB.state para que popups possam aguardar (ver atlasLoadLayer).
+  HUB.state.ramaisLoadPromise = HUB.state.ramaisLoadPromise || _loadRamaisSheet();
+  HUB.state.ramaisLoadPromise.catch(e => console.warn("preload ramais (atlas):", e));
 
   // Injeta SVG icons no painel (grupos + header)
   injectSvgIcons(document.getElementById("atlasMap"));
 
-  // Basemaps
+  // Basemaps — 9 opções (4 anteriores + voyager, light, esri-topo, esri-streets, sat+ruas)
+  // O default agora é "voyager" (CARTO Voyager) — mais legível que OSM cru.
   const _bm = {
-    osm:  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" }),
-    sat:  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18, attribution: "© Esri" }),
-    topo: L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "© OpenTopoMap" }),
-    dark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, attribution: "© CartoDB" }),
+    voyager: L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", { maxZoom: 19, subdomains: "abcd", attribution: "© CARTO · OSM" }),
+    osm:     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" }),
+    sat:     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri World Imagery" }),
+    "sat+rua": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri" }),
+    topo:    L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "© OpenTopoMap" }),
+    esritopo: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Topographic" }),
+    streets: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Streets" }),
+    light:   L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, subdomains: "abcd", attribution: "© CartoDB Light" }),
+    dark:    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, subdomains: "abcd", attribution: "© CartoDB Dark" }),
   };
+  // Camada de rótulos para sobrepor à imagem aérea ("sat+rua")
+  const _bmRefOverlay = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, opacity: 0.95, attribution: "© Esri Reference" });
   HUB.state.atlasBasemaps = _bm;
-  HUB.state.atlasCurrentBm = "osm";
-  // Remove o tile layer padrão do mkMap e coloca o OSM correto
+  HUB.state.atlasBmOverlay = _bmRefOverlay;
+  HUB.state.atlasCurrentBm = "voyager";
+  // Remove o tile layer padrão do mkMap e coloca o voyager
   map.eachLayer(l => { if (l instanceof L.TileLayer) map.removeLayer(l); });
-  _bm.osm.addTo(map);
+  _bm.voyager.addTo(map);
+
+  // Escala (km/mi) no canto inferior direito
+  L.control.scale({ position: "bottomright", metric: true, imperial: false, maxWidth: 180 }).addTo(map);
+
+  // Coordenadas live + escala numérica reativos (mousemove + zoomend)
+  map.on("mousemove", e => {
+    const el = document.getElementById("atlasCoord");
+    if (el) el.textContent = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+  });
+  map.on("zoomend", () => {
+    const z = map.getZoom();
+    const wrap = document.getElementById("atlasMap");
+    if (!wrap) return;
+    // CSS toggles para mostrar/esconder labels conforme zoom
+    wrap.toggleAttribute("data-lbl-mun",    z >= 8);
+    wrap.toggleAttribute("data-lbl-bairro", z >= 12);
+    wrap.toggleAttribute("data-lbl-rua",    z >= 15);
+    const zEl = document.getElementById("atlasZoomNum");
+    if (zEl) zEl.textContent = "z" + z;
+  });
+
+  // Aguarda a planilha de ramais (com timeout de 6s para não travar o atlas).
+  // Garante que os popups de município já tenham os dados na primeira abertura.
+  try {
+    await Promise.race([
+      HUB.state.ramaisLoadPromise,
+      new Promise(res => setTimeout(res, 6000))
+    ]);
+  } catch(e) { /* ignora — popups têm fallback via popupopen */ }
 
   // Ativa as camadas default (defaultOn: true)
   for (const g of ATLAS_GROUPS) {
@@ -5903,6 +6363,9 @@ async function initAtlas() {
     }
   }
   atlasUpdateCount();
+  atlasUpdateLegend();
+  // Dispara handler de zoom uma vez para setar attrs corretos no boot
+  map.fire("zoomend");
 }
 
 function atlasGroupToggle(hdr) {
@@ -5946,6 +6409,7 @@ async function atlasItemClick(el, key) {
     if (layer) { try { map.removeLayer(layer); } catch(e) {} }
   }
   atlasUpdateCount();
+  atlasUpdateLegend();
 }
 
 async function atlasLoadLayer(map, key) {
@@ -5966,14 +6430,27 @@ async function atlasLoadLayer(map, key) {
       return trimmed.startsWith("<") ? trimmed : `<div class="pop-title">${htmlEscape(r)}</div>`;
     };
 
-    // Hover effect padrão para linhas/polígonos
+    // Style: prefere styleFn(feature) custom — necessário para zonas de Manaus
+    // (cada bairro tem cor própria via ZONA_INFO) e UC (cor por grupo PI/US).
+    // Para os demais, usa baseStyle derivado de def.color/def.sw.
     const baseStyle = def.type === "poly"
       ? { color: def.color, weight: 1.2, opacity: 0.7, fillColor: def.color, fillOpacity: 0.04 }
       : { color: def.color, weight: def.sw === "ld" ? 1.6 : 2.4, opacity: 0.85,
           dashArray: def.sw === "ld" ? "6 4" : null, lineJoin: "round" };
+    const styleResolver = def.styleFn ? def.styleFn : (() => baseStyle);
     const hoverStyle = def.type === "poly"
-      ? { weight: 2.5, opacity: 1, fillOpacity: 0.14 }
+      ? { weight: 2.5, opacity: 1, fillOpacity: 0.22 }
       : { weight: (baseStyle.weight || 2.4) + 1.5, opacity: 1 };
+
+    // Anexa tooltip permanente quando o def define labelField (bairros, ruas, municípios)
+    // — mostrado/escondido pelo CSS (atlas-map[data-lbl-X]) conforme zoom.
+    const attachLabel = (f, lyr) => {
+      if (!def.labelField) return;
+      const txt = (f.properties || {})[def.labelField];
+      if (!txt) return;
+      const cls = def.labelClass || "atlas-lbl";
+      lyr.bindTooltip(String(txt), { permanent: true, direction: "center", className: cls, sticky: false });
+    };
 
     // IMPORTANTE: bindPopup recebe FUNÇÃO em vez de string para que o popup
     // seja regenerado a cada clique. Sem isso, popups agregando dados de
@@ -5992,16 +6469,51 @@ async function atlasLoadLayer(map, key) {
             iconSize: [26,26], iconAnchor: [13,13], popupAnchor: [0, -13]
           })
         }),
-        onEachFeature: (f, lyr) => lyr.bindPopup(() => popHtml(f.properties || {}), { maxWidth: 320 })
+        onEachFeature: (f, lyr) => {
+          lyr.bindPopup(() => popHtml(f.properties || {}), { maxWidth: 320 });
+          attachLabel(f, lyr);
+        }
+      });
+    } else if (def.type === "point") {
+      // CircleMarker (sítios IPHAN — densos)
+      layer = L.geoJSON(gj, {
+        filter: def.filter,
+        pointToLayer: (f, ll) => {
+          const s = styleResolver(f);
+          return L.circleMarker(ll, { radius: s.radius || 4, color: s.color, weight: s.weight || 1, opacity: s.opacity || 0.9, fillColor: s.fillColor || s.color, fillOpacity: s.fillOpacity || 0.7 });
+        },
+        onEachFeature: (f, lyr) => {
+          lyr.bindPopup(() => popHtml(f.properties || {}), { maxWidth: 320 });
+        }
       });
     } else {
       layer = L.geoJSON(gj, {
         filter: def.filter,
-        style: baseStyle,
+        style: styleResolver,
         onEachFeature: (f, lyr) => {
+          const fStyle = styleResolver(f);
           lyr.bindPopup(() => popHtml(f.properties || {}), { maxWidth: 360 });
-          lyr.on("mouseover", e => e.target.setStyle(hoverStyle));
-          lyr.on("mouseout",  e => e.target.setStyle(baseStyle));
+          // Hover: aumenta peso/opacidade preservando cor própria
+          lyr.on("mouseover", e => e.target.setStyle({ ...fStyle, ...hoverStyle }));
+          lyr.on("mouseout",  e => e.target.setStyle(fStyle));
+          // Refresh do popup quando ramaisSheet ainda não chegou (popup de município
+          // depende desses dados para mostrar contagem + extensão de ramais).
+          // Reusa a Promise single-flight criada no initAtlas para evitar duplo fetch.
+          if (def.key === "municipios") {
+            lyr.on("popupopen", async () => {
+              if (!HUB.state.ramaisSheet || !HUB.state.ramaisSheet.length) {
+                try {
+                  // Aguarda a Promise compartilhada (não dispara novo fetch).
+                  HUB.state.ramaisLoadPromise = HUB.state.ramaisLoadPromise || _loadRamaisSheet();
+                  await HUB.state.ramaisLoadPromise;
+                  // Re-renderiza o popup com os dados que acabaram de chegar.
+                  // popup pode estar aberto OU não — chamamos setPopupContent de qualquer forma.
+                  lyr.setPopupContent(popHtml(f.properties || {}));
+                } catch(e) { console.warn("popupopen ramais:", e); }
+              }
+            });
+          }
+          attachLabel(f, lyr);
         }
       });
     }
@@ -6010,17 +6522,122 @@ async function atlasLoadLayer(map, key) {
   try { layer.addTo(map); } catch(e) {}
   // Mantém polígonos no fundo para não cobrir linhas/pontos
   if (def.type === "poly" && layer.bringToBack) try { layer.bringToBack(); } catch(e) {}
+  atlasUpdateLegend && atlasUpdateLegend();
 }
 
 function atlasSetBasemap(btn) {
   const bm = btn.dataset.bm;
   const map = HUB.state.atlasMap; if (!map) return;
-  document.querySelectorAll(".atlas-basemap-btn").forEach(b => b.classList.toggle("active", b === btn));
+  // Atualiza estado visual dos botões (corrige selector — era .atlas-basemap-btn antes)
+  document.querySelectorAll(".atlas-bm-btn").forEach(b => b.classList.toggle("active", b === btn));
   const bms = HUB.state.atlasBasemaps;
   if (!bms) return;
+  // Remove TODOS os tile layers atuais + overlay de rótulos
   Object.values(bms).forEach(l => { try { map.removeLayer(l); } catch(e) {} });
-  if (bms[bm]) bms[bm].addTo(map);
+  const overlay = HUB.state.atlasBmOverlay;
+  if (overlay) { try { map.removeLayer(overlay); } catch(e) {} }
+  // Adiciona o novo basemap (sempre no fundo)
+  if (bms[bm]) { bms[bm].addTo(map); if (bms[bm].bringToBack) bms[bm].bringToBack(); }
+  // Se for "sat+rua", sobrepõe rótulos para preservar legibilidade
+  if (bm === "sat+rua" && overlay) overlay.addTo(map);
   HUB.state.atlasCurrentBm = bm;
+}
+
+/* ── LEGENDA DINÂMICA — mostra swatch das camadas ATIVAS ── */
+function atlasUpdateLegend() {
+  const box = document.getElementById("atlasLegend");
+  if (!box) return;
+  const items = [];
+  document.querySelectorAll(".atlas-layer-item.on").forEach(el => {
+    const key = el.dataset.layerKey;
+    const def = ATLAS_LAYER_MAP[key];
+    if (!def) return;
+    const lbl = def.label;
+    const col = def.color;
+    let sw;
+    if (def.sw === "ln")      sw = `<span class="atlas-leg-sw" style="width:14px;height:3px;border-radius:2px;background:${col}"></span>`;
+    else if (def.sw === "ld") sw = `<span class="atlas-leg-sw" style="width:14px;height:0;border-top:2.5px dashed ${col}"></span>`;
+    else if (def.sw === "pt") sw = `<span class="atlas-leg-sw" style="width:9px;height:9px;border-radius:50%;background:${col};border:1.5px solid #fff;box-shadow:0 0 0 1px ${col}"></span>`;
+    else if (def.sw === "pg") sw = `<span class="atlas-leg-sw" style="width:12px;height:9px;border-radius:2px;border:1.5px solid ${col};background:${col}33"></span>`;
+    else                       sw = `<span class="atlas-leg-sw" style="width:12px;height:3px;background:${col}"></span>`;
+    items.push(`<div class="atlas-leg-row">${sw}<span>${lbl}</span></div>`);
+  });
+  // Mostra/esconde o box todo se não houver camadas ativas
+  box.classList.toggle("show", items.length > 0);
+  const body = box.querySelector(".atlas-leg-body");
+  if (body) body.innerHTML = items.length ? items.join("") : "";
+  // Caso especial: se a camada de zonas Manaus está ativa, adiciona legenda das 6 zonas
+  const zonasOn = document.querySelector('.atlas-layer-item.on[data-layer-key="zonas_manaus"]');
+  if (zonasOn && body) {
+    const zonasLeg = Object.keys(ZONA_INFO).filter(k => k !== "_").map(k => {
+      const z = ZONA_INFO[k];
+      return `<div class="atlas-leg-row"><span class="atlas-leg-sw" style="width:12px;height:9px;border-radius:2px;background:${z.fill};border:1px solid ${z.txt}"></span><span style="font-size:.6rem">${z.label}</span></div>`;
+    }).join("");
+    body.insertAdjacentHTML("beforeend", `<div class="atlas-leg-divider"></div><div class="atlas-leg-mini-title">Zonas de Manaus</div>${zonasLeg}`);
+  }
+}
+
+/* ── FERRAMENTAS ── */
+function atlasFitToAM() {
+  const m = HUB.state.atlasMap; if (!m) return;
+  // bounding box do AM (lon -73 a -56, lat -10 a 3)
+  m.fitBounds([[-10, -73], [3, -56]], { padding: [20, 20] });
+}
+function atlasFitToManaus() {
+  const m = HUB.state.atlasMap; if (!m) return;
+  // bounding box urbano de Manaus
+  m.fitBounds([[-3.20, -60.20], [-2.95, -59.85]], { padding: [10, 10] });
+}
+function atlasToggleFullscreen() {
+  const el = document.querySelector(".atlas-map");
+  if (!el) return;
+  const doc = document;
+  const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
+  if (!fsEl) {
+    (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+  } else {
+    (doc.exitFullscreen || doc.webkitExitFullscreen || doc.msExitFullscreen).call(doc);
+  }
+  // Leaflet precisa de invalidateSize após redimensionar o container
+  setTimeout(() => { try { HUB.state.atlasMap && HUB.state.atlasMap.invalidateSize(); } catch(e) {} }, 280);
+}
+// Medição de distância — polyline crescente a cada clique
+let _atlasMeasureOn = false, _atlasMeasureLayer = null, _atlasMeasurePts = [];
+function atlasToggleMeasure() {
+  const m = HUB.state.atlasMap; if (!m) return;
+  _atlasMeasureOn = !_atlasMeasureOn;
+  const btn = document.getElementById("atlasMeasureBtn");
+  if (btn) btn.classList.toggle("active", _atlasMeasureOn);
+  if (_atlasMeasureOn) {
+    _atlasMeasurePts = [];
+    _atlasMeasureLayer = L.layerGroup().addTo(m);
+    m.getContainer().style.cursor = "crosshair";
+    m.on("click", _atlasMeasureClick);
+  } else {
+    if (_atlasMeasureLayer) { try { m.removeLayer(_atlasMeasureLayer); } catch(e) {} _atlasMeasureLayer = null; }
+    m.getContainer().style.cursor = "";
+    m.off("click", _atlasMeasureClick);
+    _atlasMeasurePts = [];
+  }
+}
+function _atlasMeasureClick(e) {
+  const m = HUB.state.atlasMap; if (!m || !_atlasMeasureLayer) return;
+  _atlasMeasurePts.push(e.latlng);
+  L.circleMarker(e.latlng, { radius: 4, color: "#C0392B", fillColor: "#fff", fillOpacity: 1, weight: 2 }).addTo(_atlasMeasureLayer);
+  if (_atlasMeasurePts.length > 1) {
+    L.polyline(_atlasMeasurePts, { color: "#C0392B", weight: 3, opacity: 0.8, dashArray: "6 4" }).addTo(_atlasMeasureLayer);
+    // calcula distância acumulada (haversine via L.latLng.distanceTo)
+    let d = 0;
+    for (let i = 1; i < _atlasMeasurePts.length; i++) d += _atlasMeasurePts[i-1].distanceTo(_atlasMeasurePts[i]);
+    const km = d / 1000;
+    L.marker(e.latlng, {
+      icon: L.divIcon({
+        className: "",
+        html: `<div style="background:#C0392B;color:#fff;padding:.2em .55em;border-radius:6px;font-family:Outfit,sans-serif;font-size:.7rem;font-weight:800;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3);transform:translate(8px,-8px)">${km < 1 ? Math.round(d) + " m" : km.toFixed(2) + " km"}</div>`,
+        iconSize: [0, 0], iconAnchor: [0, 0]
+      })
+    }).addTo(_atlasMeasureLayer);
+  }
 }
 
 function atlasUpdateCount() {
