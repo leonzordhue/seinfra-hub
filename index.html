@@ -1133,6 +1133,53 @@
       backdrop-filter: blur(6px);
     }
     @media (max-width: 720px) { .atlas-legend { max-width: 180px; max-height: 32vh; } }
+
+    /* ═══ MOBILE OPTIMIZATIONS ═══ Reduzir poluição visual no atlas em telas pequenas */
+    @media (max-width: 720px) {
+      /* Painel de camadas inicia colapsado — mostra só botão flutuante */
+      .atlas-panel { width: calc(100% - 16px); max-width: 290px; }
+      .atlas-panel-hdr { padding: .6rem .75rem; }
+      .atlas-panel-title { font-size: .75rem; }
+      .atlas-group-hdr { padding: .45rem .7rem; }
+      .atlas-layer-item { padding: .35rem .7rem .35rem 1.7rem; }
+
+      /* Rosa-dos-ventos: menor */
+      .atlas-compass { width: 36px; height: 36px; top: 8px; left: 8px; }
+      .atlas-compass svg { width: 36px; height: 36px; }
+
+      /* Ferramentas: stack vertical compacta no canto, só ícone */
+      .atlas-tools { top: 52px; left: 8px; gap: .25rem; padding: .25rem; }
+      .atlas-tool-btn { padding: .38em .42em; min-width: 30px; justify-content: center; }
+      .atlas-tool-lbl { display: none; }
+
+      /* Coordenadas: esconder LABEL "Coord", manter só lat/lon truncados */
+      .atlas-coord-box { padding: .25em .55em; font-size: .55rem; bottom: 8px; gap: .3rem; }
+      .atlas-coord-lbl { display: none; }
+      .atlas-coord-val { min-width: 0; font-size: .55rem; }
+      .atlas-coord-sep { display: none; }
+      .atlas-coord-z { padding: 0.04em .35em; font-size: .55rem; }
+
+      /* Barra de basemaps: scroll horizontal, botões menores */
+      .atlas-basemap-bar { left: 8px; bottom: 8px; padding: .25rem; max-width: calc(100% - 16px); }
+      .atlas-bm-btn { padding: .3em .55em; font-size: .62rem; }
+
+      /* Legenda: posicionar acima da barra de basemaps, mais estreita */
+      .atlas-legend { bottom: 48px; left: 8px; max-width: 160px; max-height: 28vh; }
+      .atlas-leg-hdr { padding: .25em .55em; font-size: .55rem; }
+      .atlas-leg-body { padding: .25rem .4rem; }
+      .atlas-leg-row { font-size: .62rem; padding: .15rem 0; }
+
+      /* Mapa: altura reduzida em mobile pra deixar mais espaço para painel rolar */
+      .atlas-map { height: 480px; }
+    }
+    @media (max-width: 480px) {
+      /* Telas muito pequenas: legenda escondida por padrão (camadas no painel já bastam) */
+      .atlas-legend { display: none !important; }
+      /* Coordenadas opcionais — esconder, deixa só o zoom indicator */
+      .atlas-coord-box .atlas-coord-val { display: none; }
+      .atlas-map { height: 420px; }
+      .atlas-bm-btn { padding: .28em .45em; font-size: .58rem; }
+    }
     .atlas-legend.show { display: flex; }
     .atlas-leg-hdr {
       padding: .35em .7em;
@@ -4442,8 +4489,8 @@ window.filterViaMun = function() {
 
     <div class="kpi-grid" style="margin-bottom:1rem">
       <div class="kpi-card"><div class="kpi-card-label">Contratos</div><div class="kpi-card-value">${obras.length}</div><div class="kpi-card-foot">no município</div></div>
-      <div class="kpi-card v"><div class="kpi-card-label">Ruas cadastradas</div><div class="kpi-card-value">${ruas.length}</div><div class="kpi-card-foot">planilha viário</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Extensão cadastrada</div><div class="kpi-card-value">${fmtNum(extRuas, 1)}</div><div class="kpi-card-foot">km</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Ruas cadastradas</div><div class="kpi-card-value" id="viaKpiRuas">${ruas.length}</div><div class="kpi-card-foot" id="viaKpiRuasFoot">planilha viário</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Extensão cadastrada</div><div class="kpi-card-value" id="viaKpiExt">${fmtNum(extRuas, 1)}</div><div class="kpi-card-foot">km</div></div>
       <div class="kpi-card r"><div class="kpi-card-label">Investimento</div><div class="kpi-card-value">${_fmtBRLShort(totInv)}</div><div class="kpi-card-foot">contratado</div></div>
     </div>
 
@@ -4460,26 +4507,28 @@ window.filterViaMun = function() {
     </div>
     <div id="viaQuadroMap" class="map-wrap" style="height:380px"></div>
 
-    <div class="panel-title" style="margin:1.1rem 0 0.4rem">
+    <div class="panel-title" id="viaRuasTitle" style="margin:1.1rem 0 0.4rem">
       Ruas e vias cadastradas (${ruas.length})
     </div>
-    ${ruas.length ? `
-      <div style="position:relative;margin-bottom:0.6rem">
-        <input type="text" id="viaRuaSearch" class="filter-select" style="width:100%;padding:0.65rem 0.9rem;border-radius:10px"
-               placeholder="🔍 Pesquisar rua (nome ou tipo)..." oninput="filterViaRuas()"/>
-      </div>
-      <div class="table-wrap" style="max-height:360px;overflow-y:auto">
-        <table class="data-table" id="viaRuasTable">
-          <thead><tr><th>Nome da via</th><th>Tipo</th><th style="text-align:right">Extensão (km)</th></tr></thead>
-          <tbody>${ruas.sort((a,b) => (b.extensao_km||0) - (a.extensao_km||0)).map(r => `
-            <tr data-busca="${htmlEscape((r.nome_via + ' ' + r.tipo).toLowerCase())}">
-              <td style="font-weight:600">${htmlEscape(r.nome_via)}</td>
-              <td style="font-size:0.82rem;color:var(--cinza-med)">${htmlEscape(r.tipo || "—")}</td>
-              <td style="text-align:right">${fmtNum(r.extensao_km, 2)}</td>
-            </tr>`).join("")}</tbody>
-        </table>
-      </div>` : `<div class="info-state" style="padding:1rem 0">Sem ruas/vias cadastradas para este município na planilha viário.</div>`
-    }
+    <div id="viaRuasContainer">
+      ${ruas.length ? `
+        <div style="position:relative;margin-bottom:0.6rem">
+          <input type="text" id="viaRuaSearch" class="filter-select" style="width:100%;padding:0.65rem 0.9rem;border-radius:10px"
+                 placeholder="🔍 Pesquisar rua (nome ou tipo)..." oninput="filterViaRuas()"/>
+        </div>
+        <div class="table-wrap" style="max-height:360px;overflow-y:auto">
+          <table class="data-table" id="viaRuasTable">
+            <thead><tr><th>Nome da via</th><th>Tipo</th><th style="text-align:right">Extensão (km)</th></tr></thead>
+            <tbody>${ruas.sort((a,b) => (b.extensao_km||0) - (a.extensao_km||0)).map(r => `
+              <tr data-busca="${htmlEscape((r.nome_via + ' ' + r.tipo).toLowerCase())}">
+                <td style="font-weight:600">${htmlEscape(r.nome_via)}</td>
+                <td style="font-size:0.82rem;color:var(--cinza-med)">${htmlEscape(r.tipo || "—")}</td>
+                <td style="text-align:right">${fmtNum(r.extensao_km, 2)}</td>
+              </tr>`).join("")}</tbody>
+          </table>
+        </div>` : `<div class="info-state" id="viaSemRuasMsg" style="padding:1rem 0">⏳ Buscando ruas no traçado geográfico...</div>`
+      }
+    </div>
 
     <div class="panel-title" style="margin:1.1rem 0 0.4rem">Contratos vinculados (${obras.length})</div>
     ${obras.length ? `<div style="display:flex;flex-direction:column;gap:0.5rem">${obras.sort((a,b) => b.valor-a.valor).map(_renderObraCard).join("")}</div>` :
@@ -4673,6 +4722,56 @@ async function _renderViaQuadroMap(mun) {
       badge.textContent = `${ruas.length} ruas · ${totalExt.toFixed(1)} km`;
     } else {
       badge.textContent = "sem ruas mapeadas na fonte";
+    }
+  }
+
+  // ─── ENRIQUECIMENTO: quando a planilha viário não cataloga este município
+  // (caso típico: NOVA OLINDA DO NORTE, BARCELOS, JAPURÁ etc.), atualiza a
+  // tabela "Ruas cadastradas" e os KPIs com os dados extraídos do geojson via PIP.
+  const sheetTinhaRuas = (HUB.state.viarioSheet || []).some(r => r.municipio === mun);
+  if (!sheetTinhaRuas && ruas && ruas.length) {
+    const totalExt = ruas.reduce((s, r) => s + Number(r.properties?.extensao_km || 0), 0);
+    const kpiRuas = document.getElementById("viaKpiRuas");
+    const kpiRuasFoot = document.getElementById("viaKpiRuasFoot");
+    const kpiExt = document.getElementById("viaKpiExt");
+    if (kpiRuas) kpiRuas.textContent = ruas.length;
+    if (kpiRuasFoot) kpiRuasFoot.textContent = "traçado geográfico";
+    if (kpiExt) kpiExt.textContent = fmtNum(totalExt, 1);
+    const title = document.getElementById("viaRuasTitle");
+    if (title) title.textContent = `Ruas e vias cadastradas (${ruas.length})`;
+    const container = document.getElementById("viaRuasContainer");
+    if (container) {
+      // Ordena por extensão decrescente e renderiza tabela enriquecida (sem coluna Tipo, mas com aviso da fonte)
+      const sorted = [...ruas].sort((a, b) => (b.properties?.extensao_km || 0) - (a.properties?.extensao_km || 0));
+      container.innerHTML = `
+        <div style="font-size:0.7rem;color:#7A4F00;background:#FEF3C7;border:1px solid #F5C878;padding:0.45rem 0.7rem;border-radius:8px;margin-bottom:0.6rem;display:flex;align-items:center;gap:0.5rem">
+          <span style="font-size:0.95rem">📍</span>
+          <span><strong>${ruas.length} ruas</strong> detectadas via traçado geográfico — a planilha viário não cataloga este município, mas o atlas tem o desenho das vias.</span>
+        </div>
+        <div style="position:relative;margin-bottom:0.6rem">
+          <input type="text" id="viaRuaSearch" class="filter-select" style="width:100%;padding:0.65rem 0.9rem;border-radius:10px"
+                 placeholder="🔍 Pesquisar rua..." oninput="filterViaRuas()"/>
+        </div>
+        <div class="table-wrap" style="max-height:360px;overflow-y:auto">
+          <table class="data-table" id="viaRuasTable">
+            <thead><tr><th>Nome da via</th><th style="text-align:right">Extensão (km)</th></tr></thead>
+            <tbody>${sorted.map(f => {
+              const p = f.properties || {};
+              const nome = p.nome || "Sem nome cadastrado";
+              const ext = Number(p.extensao_km || 0);
+              return `<tr data-busca="${htmlEscape(nome.toLowerCase())}">
+                <td style="font-weight:600">${htmlEscape(nome)}</td>
+                <td style="text-align:right">${ext.toFixed(2)}</td>
+              </tr>`;
+            }).join("")}</tbody>
+          </table>
+        </div>`;
+    }
+  } else if (!sheetTinhaRuas && (!ruas || !ruas.length)) {
+    // Nem planilha nem geojson — mostra mensagem definitiva
+    const container = document.getElementById("viaRuasContainer");
+    if (container) {
+      container.innerHTML = `<div class="info-state" style="padding:1rem 0">Sem ruas/vias cadastradas para este município nem na planilha viário nem no traçado geográfico.</div>`;
     }
   }
 
@@ -5909,13 +6008,41 @@ function _atlasBairroPopup(p) {
   const mun = p.NM_MUN || p.municipio || "—";
   const dist = p.NM_DIST || "";
   const ibgeB = p.CD_BAIRRO || "";
+  const ibgeM = p.CD_MUN || (ibgeB ? String(ibgeB).slice(0,7) : "");
+  const rgi = p.NM_RGI || "";
+  const rgint = p.NM_RGINT || "";
   const zona = mun && _normMun(mun) === "MANAUS" ? zonaDoBairro(nome) : null;
   const z = zona ? ZONA_INFO[zona] : null;
-  return `<div style="font-family:Outfit,sans-serif;min-width:240px">
-    <div style="font-weight:800;color:#6C3483;font-size:1rem;line-height:1.1">${htmlEscape(nome)}</div>
-    <div style="font-size:.68rem;color:#8896a8;margin-top:.15rem">📍 ${htmlEscape(mun)}${dist && dist !== nome ? " · " + htmlEscape(dist) : ""}</div>
-    ${z ? `<div style="margin-top:.45rem;display:inline-block;background:${z.fill};color:${z.txt};padding:.28em .65em;border-radius:999px;font-size:.62rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase">${z.label}</div>` : ""}
-    ${ibgeB ? `<div style="font-size:.6rem;font-family:monospace;color:#8896a8;margin-top:.4rem">IBGE ${htmlEscape(String(ibgeB))}</div>` : ""}
+  const munInd = MUN_DATA[_normMun(mun)] || null;
+  // Slug pro IBGE Cidades: minúsculo, sem acento, espaços → hífen
+  const munSlug = _normMun(mun).toLowerCase().replace(/\s+/g, "-");
+  return `<div style="font-family:Outfit,sans-serif;min-width:260px;max-width:320px">
+    <div style="font-weight:800;color:#6C3483;font-size:1.05rem;line-height:1.15">${htmlEscape(nome)}</div>
+    <div style="font-size:.68rem;color:#8896a8;margin-top:.2rem">📍 ${htmlEscape(mun)}${dist && dist !== nome ? " · " + htmlEscape(dist) : ""}</div>
+    ${z ? `<div style="margin-top:.5rem;display:inline-block;background:${z.fill};color:${z.txt};padding:.28em .7em;border-radius:999px;font-size:.62rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase">${z.label}</div>` : ""}
+
+    ${munInd ? `
+      <!-- Contexto municipal — IBGE/Atlas Brasil -->
+      <div style="margin-top:.55rem;padding:.5rem .6rem;background:linear-gradient(180deg,#f5f0fb,#ece3f5);border:1px solid #d4bfe5;border-left:4px solid #6C3483;border-radius:8px">
+        <div style="font-size:.5rem;font-weight:800;color:#6C3483;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem">Município de ${htmlEscape(mun)}</div>
+        <div style="display:flex;gap:.7rem;flex-wrap:wrap;font-size:.7rem">
+          ${munInd.pop ? `<div><div style="font-weight:900;color:#1A2B5E;font-size:.9rem">${Number(munInd.pop).toLocaleString("pt-BR")}</div><div style="font-size:.5rem;color:#8896a8;text-transform:uppercase;font-weight:700">Hab. (Censo 2022)</div></div>` : ""}
+          ${munInd.idh ? `<div><div style="font-weight:900;color:#${Number(munInd.idh)>=0.7?"2D8540":Number(munInd.idh)>=0.6?"D4A017":"C0392B"};font-size:.9rem">${Number(munInd.idh).toFixed(3)}</div><div style="font-size:.5rem;color:#8896a8;text-transform:uppercase;font-weight:700">IDHM 2013</div></div>` : ""}
+          ${munInd.ext ? `<div><div style="font-weight:900;color:#1A2B5E;font-size:.9rem">${munInd.ext}</div><div style="font-size:.5rem;color:#8896a8;text-transform:uppercase;font-weight:700">Área urbana km²</div></div>` : ""}
+        </div>
+      </div>` : ""}
+
+    <div style="margin-top:.5rem;font-size:.65rem;color:#4a5568;line-height:1.4">
+      ${rgi ? `<div>🗺️ Região Imediata: <strong>${htmlEscape(rgi)}</strong></div>` : ""}
+      ${rgint ? `<div>🌐 Região Intermediária: <strong>${htmlEscape(rgint)}</strong></div>` : ""}
+    </div>
+
+    <div style="margin-top:.45rem;font-size:.55rem;color:#8896a8;font-family:monospace">
+      ${ibgeB ? `Bairro ${htmlEscape(String(ibgeB))}` : ""}${ibgeB && ibgeM ? " · " : ""}${ibgeM ? `Mun ${htmlEscape(String(ibgeM))}` : ""}
+    </div>
+
+    ${munSlug ? `<a href="https://cidades.ibge.gov.br/brasil/am/${munSlug}/panorama" target="_blank" rel="noopener"
+      style="display:inline-block;margin-top:.5rem;padding:.32em .65em;background:#6C3483;color:#fff;border-radius:6px;font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;text-decoration:none">Ver no IBGE Cidades →</a>` : ""}
   </div>`;
 }
 
@@ -6366,6 +6493,12 @@ async function initAtlas() {
   atlasUpdateLegend();
   // Dispara handler de zoom uma vez para setar attrs corretos no boot
   map.fire("zoomend");
+
+  // Mobile: painel inicia colapsado para liberar o mapa (usuário reabre via FAB).
+  // matchMedia evita conflito com CSS — JS só dispara em telas estreitas no momento do init.
+  if (window.matchMedia && window.matchMedia("(max-width: 720px)").matches) {
+    setTimeout(() => atlasCollapsePanel(), 80);
+  }
 }
 
 function atlasGroupToggle(hdr) {
@@ -7900,32 +8033,48 @@ async function exportPDF(title, content) {
       y += 9;
       doc.setTextColor(26, 37, 64);
     } else if (block.type === "table" && block.headers && block.rows && doc.autoTable) {
-      // Detecta coluna "Objeto" — dá maior largura e habilita wrap automático.
-      // Colunas que costumam ser curtas (Contrato/Ano/Valor) ganham largura mínima.
+      // Soma de larguras tem que caber em 186mm úteis (210 - 24 de margem).
+      // Detecta heurísticamente cada coluna pelo header e dá largura proporcional.
+      // Colunas reconhecidas (mm): Contrato 22 · Objeto 56 · Valor 22 · Município 24
+      //                            Ano 11 · Situação 24 · Pavimento 22 · Trecho 30
       const colStyles = {};
+      const nCols = block.headers.length;
       block.headers.forEach((h, idx) => {
         const k = (h || "").toString().toLowerCase();
         if (k.includes("objeto") || k.includes("descri")) {
-          colStyles[idx] = { cellWidth: 70, overflow: 'linebreak' };
+          // Em tabelas com muitas colunas (parte 3 rodovia tem 6), Objeto é o flex
+          colStyles[idx] = { cellWidth: nCols >= 6 ? 56 : 70, overflow: 'linebreak' };
         } else if (k.includes("contrato")) {
-          colStyles[idx] = { cellWidth: 24, overflow: 'linebreak' };
+          colStyles[idx] = { cellWidth: 22, overflow: 'linebreak' };
         } else if (k === "ano") {
-          colStyles[idx] = { cellWidth: 12, halign: 'center' };
+          colStyles[idx] = { cellWidth: 11, halign: 'center' };
         } else if (k === "valor") {
-          colStyles[idx] = { cellWidth: 24, halign: 'right' };
+          colStyles[idx] = { cellWidth: 22, halign: 'right' };
         } else if (k.includes("situa")) {
           colStyles[idx] = { cellWidth: 24, overflow: 'linebreak' };
+        } else if (k.includes("municí") || k.includes("munici")) {
+          colStyles[idx] = { cellWidth: 24, overflow: 'linebreak' };
+        } else if (k.includes("pavimen") || k.includes("revestim")) {
+          colStyles[idx] = { cellWidth: 22, overflow: 'linebreak' };
+        } else if (k === "trecho" || k.includes("código snv") || k.includes("codigo snv")) {
+          colStyles[idx] = { cellWidth: 22, overflow: 'linebreak' };
+        } else if (k === "início" || k === "inicio" || k === "fim") {
+          colStyles[idx] = { cellWidth: 30, overflow: 'linebreak' };
         }
       });
+      // Em tabelas largas (6+ colunas), reduz fontsize do body para garantir caber em A4 vertical
+      const bodyFontSize = nCols >= 6 ? 7.2 : 8;
+      const bodyPadding = nCols >= 6 ? 1.1 : 1.6;
       doc.autoTable({
         head: [block.headers], body: block.rows,
         startY: y,
+        tableWidth: 'wrap',                  // não força largura total — usa só o necessário
         // margin.top é CRÍTICO: sem isso, em quebra de página o cabeçalho do PDF é
         // sobreposto pela tabela. headerH=28 + folga de 8 = 36mm de margem superior.
         margin: { top: headerH + 8, left: margin, right: margin, bottom: footerH + 5 },
         styles: { overflow: 'linebreak', cellWidth: 'wrap', valign: 'top' },
-        headStyles: { fillColor: [26, 43, 94], textColor: 255, fontStyle: "bold", fontSize: 9, halign: 'left' },
-        bodyStyles: { fontSize: 8, textColor: [26, 37, 64], cellPadding: 1.6 },
+        headStyles: { fillColor: [26, 43, 94], textColor: 255, fontStyle: "bold", fontSize: nCols >= 6 ? 8 : 9, halign: 'left' },
+        bodyStyles: { fontSize: bodyFontSize, textColor: [26, 37, 64], cellPadding: bodyPadding },
         columnStyles: colStyles,
         alternateRowStyles: { fillColor: [245, 247, 251] },
         didDrawPage: (data) => {
@@ -8301,16 +8450,19 @@ async function gerarBriefingRodovia(nome) {
     { type: "heading", value: `3. Obras vinculadas (${obras.length}) — Investimento total: ${_fmtBRLShort(totInv)}` },
   ];
   if (obras.length) {
+    // Trunca Objeto a 160 chars (~3 linhas em 7.2pt na coluna de 56mm) — evita
+    // que o autoTable estoure a página vertical do A4 com texto descontrolado.
+    const _truncObj = s => { const t = (s||"—").toString(); return t.length > 160 ? t.slice(0, 157) + "…" : t; };
     content.push({
       type: "table",
       headers: ["Contrato", "Objeto", "Valor", "Município", "Ano", "Situação"],
       rows: obras.sort((a, b) => b.valor - a.valor).map(o => [
-        o.contrato || "—",
-        o.objeto || "—",
+        (o.contrato || "—").toString().slice(0, 24),
+        _truncObj(o.objeto),
         _fmtBRLShort(o.valor),
-        o.municipio || "—",
+        (o.municipio || "—").toString().slice(0, 28),
         o.ano || "—",
-        (o.situacao_eobras || o.situacao_real || "—"),
+        ((o.situacao_eobras || o.situacao_real || "—") + "").slice(0, 22),
       ]),
     });
   } else {
