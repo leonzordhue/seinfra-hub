@@ -4457,11 +4457,31 @@ function _buildViarioGeral() {
 function _buildViarioQuadro() {
   const obras = HUB.state.contratosVia || [];
   const via = HUB.state.viarioSheet || [];
-  // Conjunto dos municípios que têm contrato OU rua cadastrada
-  const munsSet = new Set();
-  obras.forEach(o => (o.municipio||"").toString().split(/\s*,\s*/).forEach(m => { const t = m.toUpperCase().trim(); if (t) munsSet.add(t); }));
-  via.forEach(r => { if (r.municipio) munsSet.add(r.municipio); });
-  const muns = [...munsSet].sort();
+  // Dedup robusto: chave = accent-folded + alias, valor = forma preferida (com acento).
+  // Sem isso, "NOVA ARIPUANÃ" (planilha) + "NOVO ARIPUANÃ" (alias correto) aparecem 2x → 63 em vez de 62.
+  // Também corrige NBSP/zero-width e variações de caixa.
+  const munsMap = new Map();
+  const _add = (raw) => {
+    if (!raw) return;
+    let t = raw.toString()
+      .replace(/[  ​‌‍﻿]+/g, " ")
+      .replace(/\s+/g, " ")
+      .toUpperCase().trim();
+    if (!t) return;
+    t = _aplicaAliasMun(t);          // BARRERINHA→BARREIRINHA, NOVA→NOVO ARIPUANÃ etc.
+    const key = _normMun(t);          // chave única ignorando acentos
+    // Prefere a forma COM acento (mais legível) quando há colisão
+    const existing = munsMap.get(key);
+    if (!existing || (/[À-ſ]/.test(t) && !/[À-ſ]/.test(existing))) {
+      munsMap.set(key, t);
+    }
+  };
+  obras.forEach(o => (o.municipio||"").toString().split(/\s*,\s*/).forEach(_add));
+  via.forEach(r => _add(r.municipio));
+  // MANAUS não tem geojson de viário (responsabilidade SEMINF/Prefeitura, não SEINFRA).
+  // Removido do dropdown a pedido do operador — sem fonte cartográfica, não há o que mostrar.
+  munsMap.delete("MANAUS");
+  const muns = [...munsMap.values()].sort((a, b) => a.localeCompare(b, "pt-BR"));
   const sel = document.getElementById("viaMunSel");
   if (sel) sel.innerHTML = `<option value="">Selecione um município (${muns.length})</option>` + muns.map(m => `<option value="${m}">${m}</option>`).join("");
 }
@@ -4472,8 +4492,14 @@ window.filterViaMun = function() {
     document.getElementById("viaQuadroOut").innerHTML = `<div class="info-state" style="padding:1.6rem 0">Selecione um município para ver contratos, ruas cadastradas, extensão e investimento.</div>`;
     return;
   }
-  const obras = (HUB.state.contratosVia || []).filter(o => (o.municipio||"").toString().toUpperCase().includes(m));
-  const ruas = (HUB.state.viarioSheet || []).filter(r => r.municipio === m);
+  // Match resiliente: o select usa nome canonico (com acento, alias aplicado).
+  // viarioSheet/contratosVia podem ter variantes — comparamos via _normMun (accent-fold).
+  const mKey = _normMun(_aplicaAliasMun(m));
+  const obras = (HUB.state.contratosVia || []).filter(o => {
+    const munList = (o.municipio||"").toString().split(/\s*,\s*/);
+    return munList.some(x => _normMun(_aplicaAliasMun(x.toUpperCase().trim())) === mKey);
+  });
+  const ruas = (HUB.state.viarioSheet || []).filter(r => _normMun(_aplicaAliasMun(r.municipio||"")) === mKey);
   const extRuas = ruas.reduce((s, r) => s + (r.extensao_km || 0), 0);
   const totInv = obras.reduce((s, o) => s + o.valor, 0);
   const ehCapital = _ehManaus(m);
