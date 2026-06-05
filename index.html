@@ -4637,24 +4637,24 @@ function _viaRuasDoMunicipio(gj, mun) {
   const munN = _normMun(mun);
   const feats = gj.features || [];
 
-  // Polígono do município (tipo perimetro_urbano, com fallback para marco_municipio)
-  const polF = feats.find(f => {
-    const p = f.properties || {};
-    if (p.tipo !== "perimetro_urbano" && p.tipo !== "marco_municipio") return false;
-    return _normMun(p.municipio || "") === munN;
-  }) || feats.find(f => {
-    const p = f.properties || {};
-    return p.tipo === "marco_municipio" && _normMun(p.municipio || "") === munN;
-  });
+  // BUG histórico: o find aceitava perimetro_urbano OU marco_municipio sem priorizar.
+  // No viario.geojson os 62 marcos vêm ANTES dos 59 perímetros no array, então
+  // o find sempre pegava o marco (Point). _viaGetOuterRing(Point) retorna null,
+  // PIP nunca executava, e 58 dos 59 municípios com perímetro retornavam 0 ruas.
+  // Fix: procurar PRIMEIRO perimetro_urbano (polygon), só depois cair no marco.
+  const polF =
+       feats.find(f => f.properties?.tipo === "perimetro_urbano" && _normMun(f.properties?.municipio || "") === munN)
+    || feats.find(f => f.properties?.tipo === "marco_municipio" && _normMun(f.properties?.municipio || "") === munN);
 
   // (a) Match rápido: ruas com municipio atribuído na fonte
+  // (Autazes 162, Careiro 97, Careiro da Várzea 23 — os 3 sem perímetro)
   const ruasDiretas = feats.filter(f => {
     const p = f.properties || {};
     return p.tipo === "rua" && p.municipio && _normMun(p.municipio) === munN;
   });
   if (ruasDiretas.length) return { polF, ruas: ruasDiretas };
 
-  // (b) Fallback: point-in-polygon usando o polígono do município
+  // (b) Fallback: point-in-polygon usando o perímetro urbano
   if (!polF) return { polF: null, ruas: [] };
   const ring = _viaGetOuterRing(polF);
   if (!ring) return { polF, ruas: [] };
