@@ -7633,6 +7633,54 @@ async function exportBriefingExecutivoPDF() {
   ]);
 }
 
+/* DEDUP de contratos municipais — a Planilha Geral pode trazer um mesmo CT
+   em múltiplas linhas (entrada inicial + aditivos + reajustes). Sem dedup, o
+   briefing mostra a MESMA obra repetida 2-3x. Estratégia auditável:
+
+   1. Agrupa por (contrato OU n_obra OU objeto-normalizado) — chave estável.
+   2. Para cada grupo: a entrada com MAIOR valor é a "principal" (mantém
+      empresa/fiscal/situação/datas dela).
+   3. Valores financeiros são SOMADOS dentro do grupo (o HANDOFF dizia: alguns
+      CTs cobrem múltiplos sub-objetos cuja soma é o real — pegar só o maior
+      subestimaria — e aditivos não somam mas em alguns casos sim; somar é o
+      lado seguro porque dedup elimina linhas duplas do gviz).
+
+   IMPORTANTE: este dedup é APENAS para o briefing municipal. Outros módulos
+   (Rodovias/Atlas) ficam intactos. */
+function _dedupContratosMun(items) {
+  if (!items || items.length < 2) return items || [];
+  // Normaliza chave: prefere número de contrato; se faltar, usa n_obra; senão
+  // usa o objeto normalizado (lowercase, sem espaços extras).
+  const keyOf = c => {
+    const k = (c.contrato || c.n_obra || "").toString().trim();
+    if (k) return "CT:" + k.toUpperCase();
+    const obj = (c.objeto || c.resumo || "").toString().toLowerCase().replace(/\s+/g, " ").trim();
+    return obj ? "OBJ:" + obj : null;
+  };
+  const groups = new Map();
+  items.forEach((c, idx) => {
+    const k = keyOf(c) || `SOLO:${idx}`;
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(c);
+  });
+  return [...groups.values()].map(group => {
+    if (group.length === 1) return group[0];
+    // Múltiplas linhas com mesma chave — merge
+    const principal = [...group].sort((a, b) => (b.valor || 0) - (a.valor || 0))[0];
+    const merged = { ...principal };
+    // Campos financeiros: soma (lida com sub-objetos genuínos + neutraliza dupla)
+    ["valor", "empenhado", "liberado", "pago", "pago_wl", "empregos"].forEach(f => {
+      const sum = group.reduce((s, c) => s + (Number(c[f]) || 0), 0);
+      if (sum > 0) merged[f] = sum;
+    });
+    // Objetos distintos: concatena com separador para o leitor identificar
+    const objs = [...new Set(group.map(c => (c.objeto || c.resumo || "").toString().trim()).filter(Boolean))];
+    if (objs.length > 1) merged.objeto = objs.join("  ·  ");
+    merged._dedupCount = group.length;
+    return merged;
+  });
+}
+
 async function exportBriefingMunicipalPDF(mun) {
   if (!mun) return;
   if (!HUB.state.contratosObra && HUB.state.contratos) {
@@ -7641,9 +7689,14 @@ async function exportBriefingMunicipalPDF(mun) {
   // Pré-carrega licitações (caso ainda não tenha vindo) — promise compartilhada
   try { await _loadLicitacoes(); } catch (e) {}
 
-  const ct = (HUB.state.contratosObra || [])
-    .filter(c => (c.municipio || "").toString().toUpperCase().includes(mun.toUpperCase()))
+  const ctBruto = (HUB.state.contratosObra || [])
+    .filter(c => (c.municipio || "").toString().toUpperCase().includes(mun.toUpperCase()));
+  // Aplica dedup ANTES do sort — depois ordena por valor consolidado.
+  const ct = _dedupContratosMun(ctBruto)
     .sort((a, b) => (b.valor || 0) - (a.valor || 0));
+  // Conta quantas linhas foram consolidadas (útil pro footer informativo)
+  const _qtdLinhasBrutas = ctBruto.length;
+  const _qtdAgrupadas = ct.filter(c => c._dedupCount > 1).length;
   const ram = (HUB.state.ramaisSheet || []).filter(r => (r.municipio || "").toUpperCase() === mun.toUpperCase());
   const aero = (typeof AE_DATA !== "undefined" ? AE_DATA : []).filter(a => (a.municipio || "").toUpperCase() === mun.toUpperCase());
   const _licitCount = _filtrarLicitacoesMun(HUB.state.licitacoes || [], mun).length;
@@ -7694,13 +7747,20 @@ async function exportBriefingMunicipalPDF(mun) {
   // Sumário das obras (índice rápido)
   if (ct.length > 1) {
     content.push({ type: "heading", value: `Sumário das ${ct.length} Obras` });
+    // Aviso de consolidação — só aparece se HOUVE dedup (mais transparente p/ o leitor)
+    if (_qtdAgrupadas > 0) {
+      content.push({ type: "text", value:
+        `Nota técnica: ${_qtdLinhasBrutas} linhas da planilha geral foram consolidadas em ${ct.length} obras únicas — ` +
+        `${_qtdAgrupadas} obra${_qtdAgrupadas !== 1 ? "s" : ""} tinha${_qtdAgrupadas !== 1 ? "m" : ""} múltiplas entradas ` +
+        `(contrato inicial + aditivos/reajustes) somadas em valor financeiro.` });
+    }
     content.push({
       type: "table",
       headers: ["#", "Contrato", "Objeto", "Situação", "Valor"],
       rows: ct.map((c, i) => [
         String(i + 1),
         c.contrato || "—",
-        c.objeto || c.resumo || "—",
+        (c.objeto || c.resumo || "—") + (c._dedupCount > 1 ? `  (${c._dedupCount}x consolidado)` : ""),
         c.situacao_eobras || c.situacao_real || "—",
         fmtBRL(c.valor || 0),
       ]),
