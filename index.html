@@ -2097,6 +2097,11 @@ function setActiveSidebar(id) {
 
 async function loadModule(id) {
   if (!HUB.modules[id]) return;
+  // Planejamento abre a plataforma externa de planejamento de obra rodoviária
+  if (id === "planejamento") {
+    window.open("https://leonzordhue.github.io/Planejamento-rodoviario", "_blank", "noopener");
+    return;
+  }
   // fecha sidebar em mobile
   if (window.innerWidth < 768) toggleSidebar(false);
 
