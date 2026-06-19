@@ -3771,7 +3771,6 @@ function _icmRenderPanel() {
     <div class="icm-ficha">
       ${_fichaRow("Trecho avaliado", fmtNum(r.extensao_levantada_km, 1) + " km")}
       ${_fichaRow("IRI médio", (r.iri_medio != null ? r.iri_medio + " m/km" : "—") + ` <span style="font-weight:400;color:var(--cinza-aux)">(menor = mais liso)</span>`)}
-      ${_fichaRow("Velocidade média no trajeto", r.vel_media != null ? fmtNum(r.vel_media, 0) + " km/h" : "—")}
       ${_fichaRow("Buracos / irregularidades", fmtNum(r.n_buracos, 0))}
     </div>
     <div style="margin-top:0.8rem">${_icmDistBar(r.dist_pct)}</div>
