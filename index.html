@@ -817,6 +817,45 @@
     .map-wrap.tall { height: 560px; }
     @media (max-width: 640px) { .map-wrap { height: 360px; } }
 
+    /* ── ICM / Condição Viária ── */
+    .icm-layout { display: grid; grid-template-columns: 1.45fr 1fr; gap: 1rem; align-items: start; }
+    @media (max-width: 980px) { .icm-layout { grid-template-columns: 1fr; } }
+    .icm-controls { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; margin-bottom: 0.9rem; }
+    .icm-controls select { font-family: inherit; font-size: 0.85rem; font-weight: 600; color: var(--cinza-txt);
+      padding: 0.45rem 0.7rem; border: 1.5px solid var(--azul-borda); border-radius: 9px; background: #fff; min-width: 230px; }
+    .icm-seg { display: inline-flex; border: 1.5px solid var(--azul-borda); border-radius: 9px; overflow: hidden; }
+    .icm-seg button { background: #fff; border: none; padding: 0.45rem 0.85rem; font-size: 0.8rem; font-weight: 700;
+      color: var(--cinza-med); border-right: 1px solid var(--azul-borda); }
+    .icm-seg button:last-child { border-right: none; }
+    .icm-seg button.active { background: var(--azul); color: #fff; }
+    .icm-chk { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; font-weight: 600; color: var(--cinza-med); cursor: pointer; }
+    .icm-legend { display: flex; flex-wrap: wrap; gap: 0.45rem 1.1rem; }
+    .icm-leg-item { display: flex; align-items: center; gap: 0.45rem; font-size: 0.82rem; font-weight: 600; color: var(--cinza-med); }
+    .icm-leg-sw { width: 15px; height: 15px; border-radius: 4px; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,0.06); }
+    .cond-badge { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.32rem 0.8rem; border-radius: 999px;
+      font-weight: 800; font-size: 0.85rem; color: #fff; letter-spacing: 0.01em; }
+    .cond-badge.lg { font-size: 1.05rem; padding: 0.45rem 1.1rem; }
+    .dist-bar { display: flex; height: 24px; border-radius: 7px; overflow: hidden; box-shadow: 0 0 0 1px var(--borda); }
+    .dist-bar > span { height: 100%; transition: width 0.4s; }
+    .icm-ficha { display: flex; flex-direction: column; }
+    .icm-ficha-row { display: flex; justify-content: space-between; gap: 1rem; padding: 0.5rem 0; border-bottom: 1px dashed var(--borda); font-size: 0.86rem; }
+    .icm-ficha-row:last-child { border-bottom: none; }
+    .icm-ficha-row .lbl { color: var(--cinza-aux); font-weight: 600; white-space: nowrap; }
+    .icm-ficha-row .val { color: var(--cinza-txt); font-weight: 600; text-align: right; }
+    .icm-block-title { font-family: var(--font-cond); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--cinza-aux); margin: 1.1rem 0 0.5rem; display: flex; align-items: center; gap: 0.45rem; }
+    .icm-note { font-size: 0.8rem; color: var(--cinza-med); line-height: 1.5; background: var(--cinza-bg);
+      border-left: 3px solid var(--ciano); border-radius: 0 8px 8px 0; padding: 0.6rem 0.85rem; }
+    .icm-road-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.7rem; }
+    .icm-road-card { border: 1.5px solid var(--borda); border-radius: 11px; padding: 0.8rem 0.9rem; cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; background: #fff; }
+    .icm-road-card:hover { border-color: var(--azul-borda); box-shadow: var(--shadow); transform: translateY(-2px); }
+    .icm-road-card.sel { border-color: var(--azul); box-shadow: 0 0 0 2px var(--azul-claro); }
+    .icm-road-card-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.45rem; }
+    .icm-road-card-code { font-family: var(--font-cond); font-size: 1.15rem; font-weight: 700; color: var(--cinza-txt); }
+    .icm-road-card-stats { display: flex; gap: 0.9rem; font-size: 0.74rem; color: var(--cinza-aux); font-weight: 600; }
+    .icm-road-card-stats b { display: block; font-size: 0.95rem; color: var(--cinza-txt); font-weight: 700; }
+
     /* Table */
     .table-wrap { overflow-x: auto; }
     .data-table {
@@ -1518,6 +1557,7 @@
         <div class="sidebar-item" data-mod="viario"       onclick="loadModule('viario')">       <span class="sidebar-icon" data-ic="viario"></span><span>Viário Urbano</span></div>
         <div class="sidebar-item" data-mod="aerodromos"   onclick="loadModule('aerodromos')">   <span class="sidebar-icon" data-ic="aerodromos"></span><span>Aeródromos</span></div>
         <div class="sidebar-item" data-mod="terminais"    onclick="loadModule('terminais')">    <span class="sidebar-icon" data-ic="terminais"></span><span>Terminais</span></div>
+        <div class="sidebar-item" data-mod="icm"          onclick="loadModule('icm')">          <span class="sidebar-icon" data-ic="icm"></span><span>Condição Viária</span></div>
         <div class="sidebar-section-label">Operações</div>
         <div class="sidebar-item" data-mod="briefings"    onclick="loadModule('briefings')">    <span class="sidebar-icon" data-ic="briefings"></span><span>Briefings</span></div>
         <div class="sidebar-item" data-mod="atlas"        onclick="loadModule('atlas')">        <span class="sidebar-icon" data-ic="atlas"></span><span>Atlas</span></div>
@@ -1626,6 +1666,7 @@ const HUB = {
     viario:       { id: "viario",       label: "Viário Urbano",  icon: "\u{1F3D9}",  color: "#B45309" },
     aerodromos:   { id: "aerodromos",   label: "Aeródromos",     icon: "\u{2708}",   color: "#0E7490" },
     terminais:    { id: "terminais",    label: "Terminais",      icon: "\u{2693}",   color: "#B8620A" },
+    icm:          { id: "icm",          label: "Condição Viária",icon: "\u{1F6E6}",  color: "#0F766E" },
     briefings:    { id: "briefings",    label: "Briefings",      icon: "\u{1F4C4}",  color: "#C0392B" },
     atlas:        { id: "atlas",        label: "Atlas",          icon: "\u{1F5FA}",  color: "#1A2B5E" },
     planejamento: { id: "planejamento", label: "Planejamento",   icon: "\u{1F4CB}",  color: "#6C3483" },
@@ -1673,6 +1714,7 @@ const _ICON_PATHS = {
   bi: '<path d="M3 3v18h18M7 17l4-5 4 3 5-7"/><circle cx="7" cy="17" r="1.4" fill="currentColor"/><circle cx="11" cy="12" r="1.4" fill="currentColor"/><circle cx="15" cy="15" r="1.4" fill="currentColor"/><circle cx="20" cy="8" r="1.4" fill="currentColor"/>',
   briefings: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   hidrovias: '<path d="M3 8c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2M3 14c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2M3 20c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2"/>',
+  icm: '<path d="M4 15a8 8 0 0 1 16 0"/><path d="M12 15l4.5-3.5"/><circle cx="12" cy="15" r="1.3" fill="currentColor"/><path d="M5.5 15h.01M18.5 15h.01M12 7.2v.01"/>',
 };
 
 function iconSvg(id, opts) {
@@ -2430,6 +2472,7 @@ function populateModuleCardSubs() {
   setSub("viario", "Sistema viário urbano municipal — 62 municípios");
   setSub("aerodromos", "Aeródromos estaduais (SEINFRA) e públicos federais");
   setSub("terminais", "Terminais hidroviários flutuantes nas comunidades");
+  setSub("icm", "Condição do pavimento por rodovia — levantamento RoadLab Pro");
   setSub("briefings", "Briefings executivos por obra/município · PDFs com timbrado");
   setSub("atlas", "Camadas geoespaciais toggleáveis");
   setSub("planejamento", "Metas e priorização orçamentária");
@@ -2614,6 +2657,7 @@ const _MOD_GRADS = {
   viario:       ["#5c2a04", "#844006", "#B45309", "#fbc88a"],
   aerodromos:   ["#073a48", "#0a5870", "#0E7490", "#90e0ef"],
   terminais:    ["#012a4a", "#01497c", "#0077b6", "#90e0ef"],
+  icm:          ["#0a3d38", "#0f766e", "#13a89a", "#7ee8dc"],
   obras:        ["#5c1610", "#8b2317", "#C0392B", "#f3a89f"],
   atlas:        ["#0c1733", "#1a2b5e", "#2c4a8f", "#7fa4d6"],
   planejamento: ["#2c1349", "#4a1f73", "#6C3483", "#d1b3e8"],
@@ -2652,6 +2696,7 @@ function getModuleHTML(id) {
     case "aerodromos":   return getAerodromosHTML();
     case "hidrovias":    return getHidroviasHTML();
     case "terminais":    return getTerminaisHTML();
+    case "icm":          return getICMHTML();
     case "obras":        return getObrasHTML();
     case "atlas":        return getAtlasHTML();
     case "planejamento": return getPlanejamentoHTML();
@@ -2669,6 +2714,7 @@ function initModule(id) {
     case "aerodromos":   return initAerodromos();
     case "hidrovias":    return initHidrovias();
     case "terminais":    return initTerminais();
+    case "icm":          return initICM();
     case "obras":        return initObras();
     case "atlas":        return initAtlas();
     case "planejamento": return initPlanejamento();
@@ -3442,6 +3488,330 @@ window.renderInvestList = function() {
   document.getElementById("invList").innerHTML = filtered.length
     ? `<div style="display:flex;flex-direction:column;gap:0.5rem">${filtered.sort((a,b) => b.valor-a.valor).map(_renderObraCard).join("")}</div>`
     : `<div class="info-state" style="padding:1.4rem 0">Nenhuma obra encontrada com os filtros atuais.</div>`;
+};
+
+/* ──────────────────────────────────────────────
+   MÓDULO ICM / CONDIÇÃO VIÁRIA
+   Fonte: data/icm.json (snapshot do levantamento RoadLab Pro).
+   Escala de condição = classificação RoadLab por IRI (preliminar).
+   ────────────────────────────────────────────── */
+const ICM_LVL = [
+  { n: "Excelente",   c: "#157347" },
+  { n: "Bom",         c: "#4CAF50" },
+  { n: "Regular",     c: "#F5A623" },
+  { n: "Ruim",        c: "#E8730C" },
+  { n: "Péssimo",     c: "#C0392B" },
+  { n: "Sem medição", c: "#9AA5B5" },
+];
+
+async function loadICMData() {
+  if (HUB.state.icmData !== undefined && HUB.state.icmData !== null) return HUB.state.icmData;
+  try {
+    const r = await fetch("data/icm.json");
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    HUB.state.icmData = await r.json();
+  } catch (e) {
+    console.warn("Falha ICM", e);
+    HUB.state.icmData = null;
+  }
+  return HUB.state.icmData;
+}
+
+function getICMHTML() {
+  return `
+  <div class="mod-wrap">
+    ${modHero("icm", "Condição do pavimento por rodovia · Levantamento RoadLab Pro · IRI e mapeamento de buracos")}
+
+    <div class="kpi-grid" id="icmKpis">
+      <div class="kpi-card"><div class="kpi-card-label">Rodovias avaliadas</div><div class="kpi-card-value">—</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Extensão avaliada</div><div class="kpi-card-value">—</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">IRI médio geral</div><div class="kpi-card-value">—</div></div>
+      <div class="kpi-card r"><div class="kpi-card-label">Buracos mapeados</div><div class="kpi-card-value">—</div></div>
+    </div>
+
+    <div class="panel-card">
+      <div class="panel-title">Como ler este painel</div>
+      <p style="font-size:0.88rem;color:var(--cinza-med);line-height:1.6;margin:0.3rem 0 0.8rem">
+        Cada rodovia foi percorrida com um celular fixado no veículo (aplicativo <strong>RoadLab Pro</strong>, do Banco Mundial),
+        que mede a <strong>rugosidade do asfalto</strong> — o quanto a pista "treme" o carro. Quanto mais lisa a pista,
+        melhor a condição. As cores abaixo indicam, de forma simples, como está cada trecho:
+      </p>
+      <div class="icm-legend" id="icmLegend"></div>
+      <div class="icm-note" style="margin-top:0.9rem">
+        <strong>Observação técnica:</strong> esta é uma avaliação <strong>preliminar</strong> baseada no IRI (Índice de Rugosidade
+        Internacional) medido pelo RoadLab Pro. Ainda <strong>não</strong> corresponde ao ICM oficial do DNIT
+        (Resolução nº 5/2022, que combina pavimento e conservação), cuja metodologia será implantada futuramente.
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="icm-controls">
+        <select id="icmSel" onchange="icmSelectRoad(this.value)"></select>
+        <div class="icm-seg" id="icmModeSeg">
+          <button data-m="trecho" class="active" onclick="icmSetMode('trecho')">Trecho a trecho</button>
+          <button data-m="media" onclick="icmSetMode('media')">Condição média</button>
+        </div>
+        <label class="icm-chk"><input type="checkbox" id="icmBumps" onchange="icmToggleBumps(this.checked)"> Mostrar buracos</label>
+      </div>
+      <div class="icm-layout">
+        <div id="icmMap" class="map-wrap tall"></div>
+        <div id="icmPanel"></div>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="panel-title">Rodovias avaliadas — clique para abrir</div>
+      <div class="icm-road-grid" id="icmRoadGrid" style="margin-top:0.7rem"></div>
+    </div>
+  </div>`;
+}
+
+async function initICM() {
+  const data = await loadICMData();
+  const panel = document.getElementById("icmPanel");
+  if (!data || !data.rodovias || !data.rodovias.length) {
+    if (panel) panel.innerHTML = `<div class="info-state">Dados de condição viária indisponíveis. Verifique <code>data/icm.json</code>.</div>`;
+    const mp = document.getElementById("icmMap"); if (mp) mp.style.display = "none";
+    return;
+  }
+  const rs = data.rodovias;
+
+  // estado default do módulo
+  if (HUB.state.icmSel === undefined) HUB.state.icmSel = "";
+  if (!HUB.state.icmMode) HUB.state.icmMode = "trecho";
+  if (HUB.state.icmBumps === undefined) HUB.state.icmBumps = false;
+
+  // KPIs globais
+  const extAval = rs.reduce((a, r) => a + (r.extensao_levantada_km || 0), 0);
+  const buracos = rs.reduce((a, r) => a + (r.n_buracos || 0), 0);
+  const wIri = rs.reduce((a, r) => a + ((r.iri_medio || 0) * (r.extensao_medida_km || 0)), 0);
+  const wLen = rs.reduce((a, r) => a + (r.extensao_medida_km || 0), 0);
+  const iriG = wLen ? (wIri / wLen) : 0;
+  const kp = document.getElementById("icmKpis");
+  if (kp) kp.innerHTML = `
+    <div class="kpi-card"><div class="kpi-card-label">Rodovias avaliadas</div><div class="kpi-card-value">${rs.length}</div><div class="kpi-card-foot">com levantamento RoadLab</div></div>
+    <div class="kpi-card v"><div class="kpi-card-label">Extensão avaliada</div><div class="kpi-card-value">${fmtNum(extAval, 0)}</div><div class="kpi-card-foot">km percorridos em campo</div></div>
+    <div class="kpi-card a"><div class="kpi-card-label">IRI médio geral</div><div class="kpi-card-value">${iriG.toFixed(2)}</div><div class="kpi-card-foot">m/km · menor = mais liso</div></div>
+    <div class="kpi-card r"><div class="kpi-card-label">Buracos mapeados</div><div class="kpi-card-value">${fmtNum(buracos, 0)}</div><div class="kpi-card-foot">irregularidades georreferenciadas</div></div>`;
+
+  // legenda
+  const lg = document.getElementById("icmLegend");
+  if (lg) lg.innerHTML = ICM_LVL.map(lv =>
+    `<div class="icm-leg-item"><span class="icm-leg-sw" style="background:${lv.c}"></span>${lv.n}</div>`).join("");
+
+  // seletor
+  const sel = document.getElementById("icmSel");
+  if (sel) {
+    sel.innerHTML = `<option value="">Panorama — todas as ${rs.length} rodovias</option>` +
+      rs.map(r => `<option value="${r.codigo}">${r.codigo} — ${htmlEscape(r.nivel_geral)}</option>`).join("");
+    sel.value = HUB.state.icmSel;
+  }
+  // toggle de modo
+  _icmSyncMode();
+  const ck = document.getElementById("icmBumps"); if (ck) ck.checked = HUB.state.icmBumps;
+
+  _icmRenderGrid();
+  // recria mapa do zero (módulo pode ser reaberto)
+  HUB.state.maps.icmMap = null; HUB.state.icmLayer = null;
+  _icmRender(true);
+  _icmRenderPanel();
+}
+
+function _icmRoadPaths(r, step) {
+  // monta polilinha(s) ordenada(s); quebra onde ha salto de GPS entre links
+  const segs = r.segments || [];
+  const paths = []; let cur = []; let prev = null;
+  const jump = (a, b) => (Math.abs(a[0] - b[0]) > 0.03 || Math.abs(a[1] - b[1]) > 0.03);
+  for (let i = 0; i < segs.length; i += step) {
+    const p = [segs[i][0], segs[i][1]];
+    if (prev && jump(p, prev)) { if (cur.length > 1) paths.push(cur); cur = []; }
+    cur.push(p); prev = p;
+  }
+  if (segs.length) {
+    const last = segs[segs.length - 1], e = [last[2], last[3]];
+    if (prev && jump(e, prev)) { if (cur.length > 1) paths.push(cur); cur = [e]; }
+    else cur.push(e);
+  }
+  if (cur.length > 1) paths.push(cur);
+  return paths;
+}
+
+function _icmRender(fit) {
+  const data = HUB.state.icmData; if (!data) return;
+  let map = HUB.state.maps.icmMap;
+  if (!map) { map = mkMap("icmMap", { center: [-3.2, -60.2], zoom: 7 }); if (!map) return; HUB.state.maps.icmMap = map; }
+  if (!HUB.state.icmLayer) HUB.state.icmLayer = L.layerGroup().addTo(map);
+  const grp = HUB.state.icmLayer; grp.clearLayers();
+  const sel = HUB.state.icmSel;
+  const bounds = [];
+
+  if (!sel) {
+    // PANORAMA — uma linha simplificada por rodovia, cor = condição geral
+    data.rodovias.forEach(r => {
+      const step = Math.max(1, Math.floor((r.segments || []).length / 120));
+      _icmRoadPaths(r, step).forEach(path => {
+        path.forEach(p => bounds.push(p));
+        L.polyline(path, { color: r.nivel_geral_cor, weight: 5, opacity: 0.88 })
+          .bindPopup(`<div class="pop-title">${r.codigo}</div>
+            <div class="pop-row">Condição geral: <b style="color:${r.nivel_geral_cor}">${htmlEscape(r.nivel_geral)}</b></div>
+            <div class="pop-row">IRI médio: ${r.iri_medio != null ? r.iri_medio : "—"} m/km</div>
+            <div class="pop-row" style="margin-top:0.35rem"><a href="#" onclick="icmSelectRoad('${r.codigo}');return false;">Abrir detalhes &rarr;</a></div>`)
+          .addTo(grp);
+      });
+    });
+  } else {
+    const r = data.rodovias.find(x => x.codigo === sel); if (!r) return;
+    if (HUB.state.icmMode === "media") {
+      _icmRoadPaths(r, 1).forEach(path => {
+        path.forEach(p => bounds.push(p));
+        L.polyline(path, { color: r.nivel_geral_cor, weight: 6, opacity: 0.92 })
+          .bindPopup(`<div class="pop-title">${r.codigo} — condição média</div>
+            <div class="pop-row"><b style="color:${r.nivel_geral_cor}">${htmlEscape(r.nivel_geral)}</b> · IRI ${r.iri_medio != null ? r.iri_medio : "—"} m/km</div>`)
+          .addTo(grp);
+      });
+    } else {
+      (r.segments || []).forEach(s => {
+        const a = [s[0], s[1]], b = [s[2], s[3]]; bounds.push(a, b);
+        const lv = ICM_LVL[s[5]] || ICM_LVL[5];
+        L.polyline([a, b], { color: lv.c, weight: 6, opacity: 0.9 })
+          .bindPopup(`<div class="pop-title">${r.codigo} — trecho</div>
+            <div class="pop-row">Condição: <b style="color:${lv.c}">${lv.n}</b></div>
+            <div class="pop-row">IRI: ${s[4] != null ? s[4] : "—"} m/km</div>`)
+          .addTo(grp);
+      });
+    }
+    if (HUB.state.icmBumps && r.bumps) {
+      r.bumps.forEach(b => {
+        L.circleMarker([b[0], b[1]], { radius: 4, color: "#7f1d1d", weight: 1, fillColor: "#C0392B", fillOpacity: 0.92 })
+          .bindPopup(`<div class="pop-row">Irregularidade / buraco detectado</div>`).addTo(grp);
+      });
+    }
+    if (r.bbox) bounds.push([r.bbox[0], r.bbox[1]], [r.bbox[2], r.bbox[3]]);
+  }
+  if (fit && bounds.length) { try { map.fitBounds(bounds, { padding: [28, 28] }); } catch (e) {} }
+  setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 160);
+}
+
+function _icmDistBar(pct) {
+  const segs = pct.map((p, i) => p > 0
+    ? `<span title="${ICM_LVL[i].n}: ${p}%" style="width:${p}%;background:${ICM_LVL[i].c}"></span>` : "").join("");
+  return `<div class="dist-bar">${segs || '<span style="width:100%;background:var(--cinza-aux)"></span>'}</div>`;
+}
+
+function _fichaRow(lbl, val) {
+  return `<div class="icm-ficha-row"><span class="lbl">${lbl}</span><span class="val">${val}</span></div>`;
+}
+
+function _icmRenderPanel() {
+  const el = document.getElementById("icmPanel"); if (!el) return;
+  const data = HUB.state.icmData; const sel = HUB.state.icmSel;
+
+  if (!sel) {
+    // panorama: distribuição global por nível + contagem
+    const rs = data.rodovias;
+    const km = [0, 0, 0, 0, 0];
+    rs.forEach(r => (r.dist_km || []).slice(0, 5).forEach((v, i) => km[i] += (v || 0)));
+    const tot = km.reduce((a, b) => a + b, 0) || 1;
+    const pct = km.map(v => Math.round(1000 * v / tot) / 10);
+    const cont = {};
+    rs.forEach(r => { cont[r.nivel_geral] = (cont[r.nivel_geral] || 0) + 1; });
+    el.innerHTML = `
+      <div class="panel-title" style="margin-bottom:0.4rem">Panorama da malha avaliada</div>
+      <p style="font-size:0.85rem;color:var(--cinza-med);line-height:1.55;margin-bottom:0.9rem">
+        Selecione uma rodovia no mapa, no menu acima ou na lista abaixo para ver a ficha completa e a condição trecho a trecho.</p>
+      <div class="icm-block-title">${iconSvg("icm", { size: 15 })} Distribuição da extensão avaliada</div>
+      ${_icmDistBar(pct)}
+      <div class="icm-legend" style="margin-top:0.7rem">
+        ${ICM_LVL.slice(0, 5).map((lv, i) => `<div class="icm-leg-item"><span class="icm-leg-sw" style="background:${lv.c}"></span>${lv.n} — ${fmtNum(km[i], 0)} km (${pct[i]}%)</div>`).join("")}
+      </div>
+      <div class="icm-block-title" style="margin-top:1.2rem">${iconSvg("rodovias", { size: 15 })} Rodovias por condição geral</div>
+      <div class="icm-ficha">
+        ${ICM_LVL.slice(0, 5).map(lv => cont[lv.n] ? _fichaRow(`<span class="icm-leg-sw" style="display:inline-block;vertical-align:-2px;background:${lv.c}"></span> ${lv.n}`, `${cont[lv.n]} rodovia(s)`) : "").join("")}
+      </div>`;
+    return;
+  }
+
+  const r = data.rodovias.find(x => x.codigo === sel);
+  if (!r) { el.innerHTML = ""; return; }
+
+  const bomPct = Math.round((r.dist_pct[0] + r.dist_pct[1]) * 10) / 10;
+  const ruimPct = Math.round((r.dist_pct[3] + r.dist_pct[4]) * 10) / 10;
+  let resumo;
+  if (bomPct >= 70) resumo = `A maior parte desta rodovia (<strong>${bomPct}%</strong> da extensão avaliada) está em <strong>boas condições</strong>.`;
+  else if (ruimPct >= 40) resumo = `Atenção: <strong>${ruimPct}%</strong> da extensão avaliada está em <strong>condição ruim ou péssima</strong> e demanda manutenção.`;
+  else resumo = `<strong>${bomPct}%</strong> da extensão avaliada está em boas condições; <strong>${ruimPct}%</strong> precisa de atenção.`;
+
+  const muni = (r.municipios && r.municipios.length) ? r.municipios.join(", ") : (r.regiao || "—");
+
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:0.6rem;flex-wrap:wrap;margin-bottom:0.5rem">
+      <div style="font-family:var(--font-cond);font-size:1.7rem;font-weight:700;color:var(--cinza-txt)">${r.codigo}</div>
+      <span class="cond-badge lg" style="background:${r.nivel_geral_cor}">${htmlEscape(r.nivel_geral)}</span>
+    </div>
+    <p style="font-size:0.86rem;color:var(--cinza-med);line-height:1.55;margin-bottom:0.6rem">${resumo}</p>
+
+    <div class="icm-block-title">${iconSvg("rodovias", { size: 15 })} Ficha da rodovia</div>
+    <div class="icm-ficha">
+      ${_fichaRow("Início", htmlEscape(r.inicio || "—"))}
+      ${_fichaRow("Término", htmlEscape(r.fim || "—"))}
+      ${_fichaRow("Municípios", htmlEscape(muni))}
+      ${_fichaRow("Extensão total", r.extensao_total_km != null ? fmtNum(r.extensao_total_km, 1) + " km" : "—")}
+      ${_fichaRow("Faixa de domínio", htmlEscape(r.faixa_dominio || "Não informada"))}
+      ${_fichaRow("Jurisdição", htmlEscape(r.jurisdicao || "Estadual"))}
+      ${_fichaRow("Revestimento", htmlEscape(r.revestimento || r.pavimento || "—"))}
+    </div>
+
+    <div class="icm-block-title" style="margin-top:1.1rem">${iconSvg("icm", { size: 15 })} Condição do pavimento</div>
+    <div class="icm-ficha">
+      ${_fichaRow("Trecho avaliado", fmtNum(r.extensao_levantada_km, 1) + " km")}
+      ${_fichaRow("IRI médio", (r.iri_medio != null ? r.iri_medio + " m/km" : "—") + ` <span style="font-weight:400;color:var(--cinza-aux)">(menor = mais liso)</span>`)}
+      ${_fichaRow("Velocidade média no trajeto", r.vel_media != null ? fmtNum(r.vel_media, 0) + " km/h" : "—")}
+      ${_fichaRow("Buracos / irregularidades", fmtNum(r.n_buracos, 0))}
+    </div>
+    <div style="margin-top:0.8rem">${_icmDistBar(r.dist_pct)}</div>
+    <div class="icm-legend" style="margin-top:0.6rem">
+      ${ICM_LVL.slice(0, 5).map((lv, i) => r.dist_pct[i] > 0
+        ? `<div class="icm-leg-item"><span class="icm-leg-sw" style="background:${lv.c}"></span>${lv.n} — ${fmtNum(r.dist_km[i], 1)} km (${r.dist_pct[i]}%)</div>` : "").join("")}
+    </div>
+    <div class="icm-note" style="margin-top:0.9rem">Avaliação preliminar por IRI (RoadLab Pro). Não substitui o ICM oficial do DNIT.</div>`;
+}
+
+function _icmRenderGrid() {
+  const g = document.getElementById("icmRoadGrid"); if (!g) return;
+  const data = HUB.state.icmData; const sel = HUB.state.icmSel;
+  g.innerHTML = data.rodovias.map(r => `
+    <div class="icm-road-card ${r.codigo === sel ? "sel" : ""}" onclick="icmSelectRoad('${r.codigo}')">
+      <div class="icm-road-card-top">
+        <span class="icm-road-card-code">${r.codigo}</span>
+        <span class="cond-badge" style="background:${r.nivel_geral_cor}">${htmlEscape(r.nivel_geral)}</span>
+      </div>
+      <div class="icm-road-card-stats">
+        <div>Avaliado<b>${fmtNum(r.extensao_levantada_km, 1)} km</b></div>
+        <div>IRI<b>${r.iri_medio != null ? r.iri_medio : "—"}</b></div>
+        <div>Buracos<b>${fmtNum(r.n_buracos, 0)}</b></div>
+      </div>
+    </div>`).join("");
+}
+
+function _icmSyncMode() {
+  const seg = document.getElementById("icmModeSeg"); if (!seg) return;
+  $$("button", seg).forEach(b => b.classList.toggle("active", b.dataset.m === HUB.state.icmMode));
+}
+
+window.icmSelectRoad = function (code) {
+  HUB.state.icmSel = code || "";
+  const sel = document.getElementById("icmSel"); if (sel) sel.value = HUB.state.icmSel;
+  _icmRenderGrid();
+  _icmRender(true);
+  _icmRenderPanel();
+};
+window.icmSetMode = function (m) {
+  HUB.state.icmMode = m; _icmSyncMode();
+  _icmRender(false);
+};
+window.icmToggleBumps = function (on) {
+  HUB.state.icmBumps = !!on;
+  _icmRender(false);
 };
 
 /* ──────────────────────────────────────────────
