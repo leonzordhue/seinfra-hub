@@ -856,6 +856,33 @@
     .icm-road-card-stats { display: flex; gap: 0.9rem; font-size: 0.74rem; color: var(--cinza-aux); font-weight: 600; }
     .icm-road-card-stats b { display: block; font-size: 0.95rem; color: var(--cinza-txt); font-weight: 700; }
 
+    /* ── Observatório de Sinistros ── */
+    .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 1rem; }
+    .obs-crit { display: flex; flex-direction: column; gap: 0.4rem; }
+    .obs-crit-item { display: flex; align-items: center; gap: 0.7rem; padding: 0.5rem 0.6rem; border-radius: 9px;
+      border: 1px solid var(--borda); cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+    .obs-crit-item:hover { border-color: var(--vermelho); background: var(--vermelho-cl); }
+    .obs-crit-item.sel { border-color: var(--vermelho); background: var(--vermelho-cl); }
+    .obs-crit-rank { font-family: var(--font-cond); font-size: 1.1rem; font-weight: 700; color: var(--cinza-aux); width: 26px; text-align: center; flex-shrink: 0; }
+    .obs-crit-bar { flex: 1; height: 9px; border-radius: 5px; background: var(--cinza-bg); overflow: hidden; }
+    .obs-crit-bar > span { display: block; height: 100%; background: var(--vermelho); border-radius: 5px; }
+    .obs-crit-cod { font-family: var(--font-cond); font-weight: 700; color: var(--cinza-txt); width: 76px; flex-shrink: 0; }
+    .obs-crit-num { font-size: 0.78rem; color: var(--cinza-med); font-weight: 600; white-space: nowrap; }
+    .sin-sev { display: inline-block; padding: 0.12rem 0.5rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; }
+    .sin-sev.fatal { background: var(--vermelho-cl); color: var(--vermelho); }
+    .sin-sev.feri { background: var(--amarelo-cl); color: var(--laranja); }
+    .sin-sev.ger  { background: var(--azul-claro); color: var(--azul); }
+    .sin-tbl { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .sin-tbl th { text-align: left; padding: 0.5rem 0.6rem; color: var(--cinza-aux); font-weight: 700;
+      border-bottom: 2px solid var(--borda); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+    .sin-tbl td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--borda); vertical-align: top; color: var(--cinza-txt); }
+    .sin-tbl tr:hover td { background: var(--cinza-bg); }
+    .sin-pag { display: flex; gap: 0.35rem; flex-wrap: wrap; align-items: center; margin-top: 0.8rem; }
+    .sin-pag button { border: 1px solid var(--azul-borda); background: #fff; color: var(--cinza-med);
+      border-radius: 7px; padding: 0.3rem 0.6rem; font-size: 0.8rem; font-weight: 600; }
+    .sin-pag button.active { background: var(--azul); color: #fff; border-color: var(--azul); }
+    .sin-pag button:disabled { opacity: 0.4; cursor: default; }
+
     /* Table */
     .table-wrap { overflow-x: auto; }
     .data-table {
@@ -1558,6 +1585,7 @@
         <div class="sidebar-item" data-mod="aerodromos"   onclick="loadModule('aerodromos')">   <span class="sidebar-icon" data-ic="aerodromos"></span><span>Aeródromos</span></div>
         <div class="sidebar-item" data-mod="terminais"    onclick="loadModule('terminais')">    <span class="sidebar-icon" data-ic="terminais"></span><span>Terminais</span></div>
         <div class="sidebar-item" data-mod="icm"          onclick="loadModule('icm')">          <span class="sidebar-icon" data-ic="icm"></span><span>Condição Viária</span></div>
+        <div class="sidebar-item" data-mod="sinistros"    onclick="loadModule('sinistros')">    <span class="sidebar-icon" data-ic="sinistros"></span><span>Sinistros</span></div>
         <div class="sidebar-section-label">Operações</div>
         <div class="sidebar-item" data-mod="briefings"    onclick="loadModule('briefings')">    <span class="sidebar-icon" data-ic="briefings"></span><span>Briefings</span></div>
         <div class="sidebar-item" data-mod="atlas"        onclick="loadModule('atlas')">        <span class="sidebar-icon" data-ic="atlas"></span><span>Atlas</span></div>
@@ -1667,6 +1695,7 @@ const HUB = {
     aerodromos:   { id: "aerodromos",   label: "Aeródromos",     icon: "\u{2708}",   color: "#0E7490" },
     terminais:    { id: "terminais",    label: "Terminais",      icon: "\u{2693}",   color: "#B8620A" },
     icm:          { id: "icm",          label: "Condição Viária",icon: "\u{1F6E6}",  color: "#0F766E" },
+    sinistros:    { id: "sinistros",    label: "Sinistros",      icon: "\u{1F6A8}",  color: "#B3261E" },
     briefings:    { id: "briefings",    label: "Briefings",      icon: "\u{1F4C4}",  color: "#C0392B" },
     atlas:        { id: "atlas",        label: "Atlas",          icon: "\u{1F5FA}",  color: "#1A2B5E" },
     planejamento: { id: "planejamento", label: "Planejamento",   icon: "\u{1F4CB}",  color: "#6C3483" },
@@ -1715,6 +1744,7 @@ const _ICON_PATHS = {
   briefings: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>',
   hidrovias: '<path d="M3 8c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2M3 14c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2M3 20c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2"/>',
   icm: '<path d="M4 15a8 8 0 0 1 16 0"/><path d="M12 15l4.5-3.5"/><circle cx="12" cy="15" r="1.3" fill="currentColor"/><path d="M5.5 15h.01M18.5 15h.01M12 7.2v.01"/>',
+  sinistros: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
 };
 
 function iconSvg(id, opts) {
@@ -2473,6 +2503,7 @@ function populateModuleCardSubs() {
   setSub("aerodromos", "Aeródromos estaduais (SEINFRA) e públicos federais");
   setSub("terminais", "Terminais hidroviários flutuantes nas comunidades");
   setSub("icm", "Condição do pavimento por rodovia — levantamento RoadLab Pro");
+  setSub("sinistros", "Observatório de acidentes em rodovias estaduais — fonte: imprensa");
   setSub("briefings", "Briefings executivos por obra/município · PDFs com timbrado");
   setSub("atlas", "Camadas geoespaciais toggleáveis");
   setSub("planejamento", "Metas e priorização orçamentária");
@@ -2658,6 +2689,7 @@ const _MOD_GRADS = {
   aerodromos:   ["#073a48", "#0a5870", "#0E7490", "#90e0ef"],
   terminais:    ["#012a4a", "#01497c", "#0077b6", "#90e0ef"],
   icm:          ["#0a3d38", "#0f766e", "#13a89a", "#7ee8dc"],
+  sinistros:    ["#5c1014", "#8b1a16", "#B3261E", "#f3a89f"],
   obras:        ["#5c1610", "#8b2317", "#C0392B", "#f3a89f"],
   atlas:        ["#0c1733", "#1a2b5e", "#2c4a8f", "#7fa4d6"],
   planejamento: ["#2c1349", "#4a1f73", "#6C3483", "#d1b3e8"],
@@ -2697,6 +2729,7 @@ function getModuleHTML(id) {
     case "hidrovias":    return getHidroviasHTML();
     case "terminais":    return getTerminaisHTML();
     case "icm":          return getICMHTML();
+    case "sinistros":    return getSinistrosHTML();
     case "obras":        return getObrasHTML();
     case "atlas":        return getAtlasHTML();
     case "planejamento": return getPlanejamentoHTML();
@@ -2715,6 +2748,7 @@ function initModule(id) {
     case "hidrovias":    return initHidrovias();
     case "terminais":    return initTerminais();
     case "icm":          return initICM();
+    case "sinistros":    return initSinistros();
     case "obras":        return initObras();
     case "atlas":        return initAtlas();
     case "planejamento": return initPlanejamento();
@@ -3817,6 +3851,388 @@ window.icmSetMode = function (m) {
 window.icmToggleBumps = function (on) {
   HUB.state.icmBumps = !!on;
   _icmRender(false);
+};
+
+/* ──────────────────────────────────────────────
+   MÓDULO SINISTROS — Observatório de acidentes em rodovias estaduais
+   Fonte: planilha "Noticias" (bot RoadLab/Google News). Foco: rodovias AM-.
+   Enriquece client-side (KM, gravidade, esfera) quando o bot ainda não gravou.
+   ────────────────────────────────────────────── */
+const _RE_AM = /AM[\s-]?(\d{2,3})/i;
+
+function _sinRodAM(row) {
+  // Retorna a rodovia estadual normalizada (AM-XXX) ou null se não for estadual.
+  const campos = [(row.rodovia || ""), (row.titulo || ""), (row.descricao || "")];
+  for (const c of campos) {
+    const m = String(c).match(_RE_AM);
+    if (m) return "AM-" + m[1].padStart(3, "0");
+  }
+  return null;
+}
+
+function _sinExtractKm(row) {
+  if (row.km != null && String(row.km).trim()) return String(row.km).trim();
+  const t = (row.titulo || "") + " " + (row.descricao || "");
+  const m = t.match(/(?:km|quil[oô]metro)\s*\.?\s*(\d{1,4}(?:[.,]\d{1,2})?)/i);
+  return m ? m[1].replace(",", ".") : "";
+}
+
+function _sinParseData(s) {
+  // Trata os 2 formatos: gviz "Date(2026,2,4,8,0,0)" (mês 0-indexado) e "DD/MM/YYYY HH:MM".
+  s = String(s || "");
+  let ts = null;
+  let g = s.match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)/);
+  if (g) {
+    ts = new Date(+g[1], +g[2], +g[3], +(g[4] || 0), +(g[5] || 0), +(g[6] || 0));
+  } else {
+    const m = s.match(/(\d{2})\/(\d{2})\/(\d{4})/);
+    if (m) ts = new Date(+m[3], +m[2] - 1, +m[1]);
+  }
+  if (!ts || isNaN(ts.getTime())) return { ts: null, mes: null, disp: s.split(" ")[0] || "—" };
+  const p = n => String(n).padStart(2, "0");
+  return { ts, mes: `${ts.getFullYear()}-${p(ts.getMonth() + 1)}`, disp: `${p(ts.getDate())}/${p(ts.getMonth() + 1)}/${ts.getFullYear()}` };
+}
+
+function _sinTipoPrimario(raw) {
+  // Remove severidade (Fatal/Feridos) e devolve o tipo de acidente principal.
+  const partes = String(raw || "").split(",").map(s => s.trim())
+    .filter(s => s && !/fatal/i.test(s) && !/ferido/i.test(s));
+  return partes[0] || "Acidente (geral)";
+}
+
+function _sinProcess(rows) {
+  const out = [];
+  for (const row of (rows || [])) {
+    const cod = _sinRodAM(row);
+    if (!cod) continue;                          // só rodovias estaduais
+    const tipoRaw = row.tipo_de_acidente_sinistro || row.tipo_acidente || "";
+    const fatalFlag = /sim/i.test(row.vitimas_fatais || "") ||
+      (parseInt(row.fatais_n, 10) || 0) > 0 || /fatal|mort/i.test(tipoRaw);
+    const dt = _sinParseData(row.data_hora || row.data);
+    out.push({
+      titulo:    row.titulo || "Sem título",
+      fonte:     row.fonte || "—",
+      data:      dt.disp,
+      mes:       dt.mes,
+      ts:        dt.ts,
+      link:      row.link || "",
+      rodovia:   cod,
+      municipio: (row.municipio && !/identific/i.test(row.municipio)) ? row.municipio : "—",
+      tipo:      _sinTipoPrimario(tipoRaw),
+      tipoRaw:   tipoRaw,
+      fatal:     fatalFlag,
+      nFatais:   parseInt(row.fatais_n, 10) || (fatalFlag ? 1 : 0),
+      nFeridos:  parseInt(row.feridos_n, 10) || (/sim/i.test(row.feridos || "") ? 1 : 0),
+      km:        _sinExtractKm(row),
+      desc:      row.descricao || "",
+    });
+  }
+  return out;
+}
+
+async function loadSinistrosData() {
+  if (!HUB.state.sinistros || !HUB.state.sinistros.length) {
+    try { HUB.state.sinistros = await gvizFetch(SHEETS.sinistros.id, SHEETS.sinistros.gid); }
+    catch (e) { console.warn("Falha sinistros", e); HUB.state.sinistros = []; }
+  }
+  HUB.state.sinObs = _sinProcess(HUB.state.sinistros);
+  return HUB.state.sinObs;
+}
+
+function getSinistrosHTML() {
+  return `
+  <div class="mod-wrap">
+    ${modHero("sinistros", "Acidentes em rodovias estaduais (AM) · Monitoramento de imprensa · Subsídio para priorização de obras")}
+
+    <div class="panel-card"><div class="panel-body">
+      <div class="icm-note" style="border-left-color:var(--vermelho)">
+        <strong>O que é este observatório.</strong> Reúne notícias de acidentes nas rodovias <strong>estaduais</strong> do Amazonas,
+        coletadas automaticamente da imprensa. Serve para enxergar <strong>onde os sinistros se concentram</strong> e orientar onde priorizar
+        obras de segurança viária. Os números refletem a <em>cobertura jornalística</em> (não o registro oficial de boletins) — leia como
+        indício de risco, não como estatística fechada.
+      </div>
+    </div></div>
+
+    <div class="kpi-grid" id="sinKpis">
+      <div class="kpi-card"><div class="kpi-card-label">Sinistros</div><div class="kpi-card-value">—</div></div>
+      <div class="kpi-card r"><div class="kpi-card-label">Com vítima fatal</div><div class="kpi-card-value">—</div></div>
+      <div class="kpi-card a"><div class="kpi-card-label">Rodovias afetadas</div><div class="kpi-card-value">—</div></div>
+      <div class="kpi-card v"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value">—</div></div>
+    </div>
+
+    <div class="panel-card"><div class="panel-body">
+      <div class="icm-controls">
+        <select id="sinRod" onchange="sinFilter()"></select>
+        <select id="sinTipo" onchange="sinFilter()"></select>
+        <select id="sinPer" onchange="sinFilter()">
+          <option value="">Todo o período</option>
+          <option value="3">Últimos 3 meses</option>
+          <option value="6">Últimos 6 meses</option>
+          <option value="12">Últimos 12 meses</option>
+        </select>
+        <label class="icm-chk"><input type="checkbox" id="sinFatal" onchange="sinFilter()"> Só com vítima fatal</label>
+        <input id="sinQ" placeholder="Buscar no título…" onkeyup="if(event.key==='Enter')sinFilter()"
+          style="font-family:inherit;font-size:0.85rem;padding:0.45rem 0.7rem;border:1.5px solid var(--azul-borda);border-radius:9px;min-width:180px">
+        <button onclick="sinResetFiltros()" class="icm-seg" style="padding:0.45rem 0.8rem;font-weight:700;font-size:0.8rem;color:var(--cinza-med);background:#fff;border:1.5px solid var(--azul-borda);border-radius:9px">Limpar</button>
+      </div>
+
+      <div class="icm-layout">
+        <div id="sinMap" class="map-wrap tall"></div>
+        <div>
+          <div class="icm-block-title">${iconSvg("sinistros", { size: 15 })} Pontos críticos — rodovias com mais sinistros</div>
+          <div class="obs-crit" id="sinCrit"></div>
+          <div class="icm-note" style="margin-top:0.9rem">Clique numa rodovia (mapa ou lista) para filtrar todo o painel por ela.</div>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="panel-card"><div class="panel-body">
+      <div class="panel-title">Análises</div>
+      <div class="chart-grid" style="margin-top:0.8rem">
+        <div><div class="icm-block-title">Sinistros por rodovia (top 10)</div><div class="chart-wrap"><canvas id="sinChRod"></canvas></div></div>
+        <div><div class="icm-block-title">Tipos de acidente</div><div class="chart-wrap"><canvas id="sinChTipo"></canvas></div></div>
+        <div><div class="icm-block-title">Municípios mais atingidos (top 8)</div><div class="chart-wrap"><canvas id="sinChMun"></canvas></div></div>
+        <div><div class="icm-block-title">Evolução mensal</div><div class="chart-wrap"><canvas id="sinChTempo"></canvas></div></div>
+      </div>
+    </div></div>
+
+    <div class="panel-card"><div class="panel-body">
+      <div class="panel-title" id="sinListTitle">Ocorrências</div>
+      <div class="table-wrap" style="margin-top:0.7rem"><table class="sin-tbl" id="sinTbl"></table></div>
+      <div class="sin-pag" id="sinPag"></div>
+    </div></div>
+  </div>`;
+}
+
+async function initSinistros() {
+  await loadSinistrosData();
+  const data = HUB.state.sinObs || [];
+  if (!data.length) {
+    const m = document.getElementById("sinMap"); if (m) m.style.display = "none";
+    const k = document.getElementById("sinKpis");
+    if (k) k.innerHTML = `<div class="info-state" style="grid-column:1/-1">Sem sinistros em rodovias estaduais para exibir.</div>`;
+    return;
+  }
+  HUB.state.sinF = { rod: "", tipo: "", per: "", fatal: false, q: "", page: 1 };
+
+  // popular selects
+  const rods = [...new Set(data.map(d => d.rodovia))].sort();
+  const tipos = [...new Set(data.map(d => d.tipo))].sort();
+  const selR = document.getElementById("sinRod");
+  if (selR) selR.innerHTML = `<option value="">Todas as rodovias (${rods.length})</option>` +
+    rods.map(r => `<option value="${r}">${r}</option>`).join("");
+  const selT = document.getElementById("sinTipo");
+  if (selT) selT.innerHTML = `<option value="">Todos os tipos</option>` +
+    tipos.map(t => `<option value="${htmlEscape(t)}">${htmlEscape(t)}</option>`).join("");
+
+  HUB.state.maps.sinMap = null;
+  _sinRender(true);
+}
+
+function _sinFiltered() {
+  const f = HUB.state.sinF, data = HUB.state.sinObs || [];
+  let lim = null;
+  if (f.per) { lim = new Date(); lim.setMonth(lim.getMonth() - parseInt(f.per, 10)); }
+  return data.filter(d => {
+    if (f.rod && d.rodovia !== f.rod) return false;
+    if (f.tipo && d.tipo !== f.tipo) return false;
+    if (f.fatal && !d.fatal) return false;
+    if (lim && d.ts && d.ts < lim) return false;
+    if (f.q && !((d.titulo + " " + d.municipio + " " + d.fonte).toLowerCase().includes(f.q.toLowerCase()))) return false;
+    return true;
+  });
+}
+
+function _sinColor(n) {
+  if (n >= 10) return "#7f1d1d";
+  if (n >= 6)  return "#B3261E";
+  if (n >= 3)  return "#E8730C";
+  if (n >= 1)  return "#F5A623";
+  return "#cbd5e1";
+}
+
+function _sinRender(refit) {
+  const fil = _sinFiltered();
+  // contagens por rodovia (base do mapa e pontos críticos)
+  const porRod = {}, porFatRod = {};
+  fil.forEach(d => { porRod[d.rodovia] = (porRod[d.rodovia] || 0) + 1; if (d.fatal) porFatRod[d.rodovia] = (porFatRod[d.rodovia] || 0) + 1; });
+
+  // KPIs
+  const fatais = fil.filter(d => d.fatal).length;
+  const kp = document.getElementById("sinKpis");
+  if (kp) kp.innerHTML = `
+    <div class="kpi-card"><div class="kpi-card-label">Sinistros</div><div class="kpi-card-value">${fmtNum(fil.length)}</div><div class="kpi-card-foot">notícias de acidente</div></div>
+    <div class="kpi-card r"><div class="kpi-card-label">Com vítima fatal</div><div class="kpi-card-value">${fmtNum(fatais)}</div><div class="kpi-card-foot">${fil.length ? Math.round(100 * fatais / fil.length) : 0}% das ocorrências</div></div>
+    <div class="kpi-card a"><div class="kpi-card-label">Rodovias afetadas</div><div class="kpi-card-value">${Object.keys(porRod).length}</div><div class="kpi-card-foot">estaduais com registro</div></div>
+    <div class="kpi-card v"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value">${new Set(fil.map(d => d.municipio).filter(m => m !== "—")).size}</div><div class="kpi-card-foot">com ocorrências</div></div>`;
+
+  _sinRenderCrit(porRod, porFatRod);
+  _sinRenderCharts(fil, porRod);
+  _sinRenderMap(porRod, porFatRod, refit);
+  _sinRenderTabela(fil);
+}
+
+function _sinRenderCrit(porRod, porFatRod) {
+  const el = document.getElementById("sinCrit"); if (!el) return;
+  const rank = Object.entries(porRod).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const max = rank.length ? rank[0][1] : 1;
+  const sel = HUB.state.sinF.rod;
+  el.innerHTML = rank.length ? rank.map(([cod, n], i) => `
+    <div class="obs-crit-item ${cod === sel ? "sel" : ""}" onclick="sinSelectRod('${cod}')">
+      <span class="obs-crit-rank">${i + 1}</span>
+      <span class="obs-crit-cod">${cod}</span>
+      <span class="obs-crit-bar"><span style="width:${Math.round(100 * n / max)}%"></span></span>
+      <span class="obs-crit-num">${n} sinistro(s)${porFatRod[cod] ? ` · <b style="color:var(--vermelho)">${porFatRod[cod]} fatal</b>` : ""}</span>
+    </div>`).join("") : `<div class="info-state">Sem dados para o filtro atual.</div>`;
+}
+
+function _sinRenderCharts(fil, porRod) {
+  const navy = "#1A2B5E", red = "#B3261E";
+  // 1) Top 10 rodovias
+  const rank = Object.entries(porRod).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  mkChart("sinChRod", {
+    type: "bar",
+    data: { labels: rank.map(r => r[0]), datasets: [{ data: rank.map(r => r[1]), backgroundColor: red, borderRadius: 4 }] },
+    options: { indexAxis: "y", plugins: { legend: { display: false } }, scales: { x: { beginAtZero: true, ticks: { precision: 0 } } }, maintainAspectRatio: false }
+  });
+  // 2) Tipos
+  const porTipo = {}; fil.forEach(d => porTipo[d.tipo] = (porTipo[d.tipo] || 0) + 1);
+  const tEnt = Object.entries(porTipo).sort((a, b) => b[1] - a[1]);
+  mkChart("sinChTipo", {
+    type: "doughnut",
+    data: { labels: tEnt.map(t => t[0]), datasets: [{ data: tEnt.map(t => t[1]),
+      backgroundColor: ["#B3261E", "#E8730C", "#F5A623", "#1A2B5E", "#0E7490", "#6C3483", "#2D8540", "#8896A8"] }] },
+    options: { plugins: { legend: { position: "right", labels: { boxWidth: 12, font: { size: 11 } } } }, maintainAspectRatio: false }
+  });
+  // 3) Municípios
+  const porMun = {}; fil.forEach(d => { if (d.municipio !== "—") porMun[d.municipio] = (porMun[d.municipio] || 0) + 1; });
+  const mRank = Object.entries(porMun).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  mkChart("sinChMun", {
+    type: "bar",
+    data: { labels: mRank.map(m => m[0]), datasets: [{ data: mRank.map(m => m[1]), backgroundColor: navy, borderRadius: 4 }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }, maintainAspectRatio: false }
+  });
+  // 4) Evolução mensal (últimos 12 meses presentes)
+  const porMes = {}; fil.forEach(d => { if (d.mes) porMes[d.mes] = (porMes[d.mes] || 0) + 1; });
+  const meses = Object.keys(porMes).sort().slice(-12);
+  const fmtMes = m => { const [a, b] = m.split("-"); return `${b}/${a.slice(2)}`; };
+  mkChart("sinChTempo", {
+    type: "line",
+    data: { labels: meses.map(fmtMes), datasets: [{ data: meses.map(m => porMes[m]), borderColor: red,
+      backgroundColor: "rgba(179,38,30,0.12)", fill: true, tension: 0.3, pointRadius: 3 }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }, maintainAspectRatio: false }
+  });
+}
+
+async function _sinRenderMap(porRod, porFatRod, refit) {
+  let map = HUB.state.maps.sinMap;
+  if (!map) { map = mkMap("sinMap", { center: [-4.2, -63.0], zoom: 6 }); if (!map) return; HUB.state.maps.sinMap = map; }
+  if (HUB.state.sinLayer) { try { map.removeLayer(HUB.state.sinLayer); } catch (e) {} }
+  const gj = await loadGeoJSON(GEOJSON_FILES.rodovias_est);
+  if (!gj) return;
+  const sel = HUB.state.sinF.rod;
+  const codeOf = p => {
+    const raw = (p.RODOVIA || p.rodovia || p.CODIGO || p.NOME || "").toString();
+    const m = raw.match(_RE_AM); return m ? "AM-" + m[1].padStart(3, "0") : null;
+  };
+  const afetados = [];
+  const lyr = L.geoJSON(gj, {
+    style: f => {
+      const cod = codeOf(f.properties || {});
+      const n = cod ? (porRod[cod] || 0) : 0;
+      const isSel = sel && cod === sel;
+      return { color: _sinColor(n), weight: isSel ? 8 : (3 + Math.min(n, 12) * 0.6), opacity: (sel && !isSel) ? 0.2 : 0.9 };
+    },
+    onEachFeature: (f, l) => {
+      const cod = codeOf(f.properties || {}); if (!cod) return;
+      const n = porRod[cod] || 0, nf = porFatRod[cod] || 0;
+      if (n > 0 && (!sel || cod === sel)) afetados.push(l);
+      l.bindPopup(`<div class="pop-title">${cod}</div>
+        <div class="pop-row"><b>${n}</b> sinistro(s)${nf ? ` · <b style="color:#B3261E">${nf} com vítima fatal</b>` : ""}</div>
+        <div class="pop-row" style="margin-top:0.3rem"><a href="#" onclick="sinSelectRod('${cod}');return false;">Filtrar por esta rodovia &rarr;</a></div>`);
+      l.on("click", () => sinSelectRod(cod));
+    }
+  }).addTo(map);
+  HUB.state.sinLayer = lyr;
+  if (refit) {
+    try {
+      const alvo = afetados.length ? L.featureGroup(afetados) : lyr;
+      map.fitBounds(alvo.getBounds(), { padding: [30, 30], maxZoom: 9 });
+    } catch (e) {}
+  }
+  setTimeout(() => { try { map.invalidateSize(); } catch (e) {} }, 160);
+}
+
+function _sinSev(d) {
+  if (d.fatal) return `<span class="sin-sev fatal">Fatal${d.nFatais > 1 ? " · " + d.nFatais : ""}</span>`;
+  if (d.nFeridos > 0 || /ferido/i.test(d.tipoRaw)) return `<span class="sin-sev feri">Feridos</span>`;
+  return `<span class="sin-sev ger">Sem info</span>`;
+}
+
+function _sinRenderTabela(fil) {
+  const f = HUB.state.sinF;
+  const tt = document.getElementById("sinListTitle");
+  if (tt) tt.textContent = `Ocorrências (${fil.length})${f.rod ? " — " + f.rod : ""}`;
+  const ordered = fil.slice().sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  const PP = 15, pages = Math.max(1, Math.ceil(ordered.length / PP));
+  if (f.page > pages) f.page = pages;
+  const slice = ordered.slice((f.page - 1) * PP, f.page * PP);
+  const tbl = document.getElementById("sinTbl");
+  if (tbl) tbl.innerHTML = `
+    <thead><tr><th>Data</th><th>Rodovia</th><th>KM</th><th>Tipo</th><th>Gravidade</th><th>Município</th><th>Notícia</th></tr></thead>
+    <tbody>${slice.length ? slice.map(d => `
+      <tr>
+        <td style="white-space:nowrap">${htmlEscape(d.data || "—")}</td>
+        <td><b>${d.rodovia}</b></td>
+        <td>${d.km ? "km " + htmlEscape(d.km) : "—"}</td>
+        <td>${htmlEscape(d.tipo)}</td>
+        <td>${_sinSev(d)}</td>
+        <td>${htmlEscape(d.municipio)}</td>
+        <td>${d.link ? `<a href="${htmlEscape(d.link)}" target="_blank" rel="noopener" title="${htmlEscape(d.titulo)}">${htmlEscape(d.titulo.slice(0, 70))}${d.titulo.length > 70 ? "…" : ""}</a>` : htmlEscape(d.titulo.slice(0, 70))}</td>
+      </tr>`).join("") : `<tr><td colspan="7" class="info-state" style="padding:1.2rem">Nenhuma ocorrência com os filtros atuais.</td></tr>`}
+    </tbody>`;
+  const pag = document.getElementById("sinPag");
+  if (pag) {
+    if (pages <= 1) { pag.innerHTML = ""; }
+    else {
+      let btns = `<button onclick="sinPage(${f.page - 1})" ${f.page === 1 ? "disabled" : ""}>‹</button>`;
+      const around = [];
+      for (let p = 1; p <= pages; p++) { if (p === 1 || p === pages || Math.abs(p - f.page) <= 1) around.push(p); }
+      let last = 0;
+      around.forEach(p => { if (p - last > 1) btns += `<span style="color:var(--cinza-aux)">…</span>`; btns += `<button class="${p === f.page ? "active" : ""}" onclick="sinPage(${p})">${p}</button>`; last = p; });
+      btns += `<button onclick="sinPage(${f.page + 1})" ${f.page === pages ? "disabled" : ""}>›</button>`;
+      pag.innerHTML = btns;
+    }
+  }
+}
+
+window.sinFilter = function () {
+  const f = HUB.state.sinF; if (!f) return;
+  f.rod = document.getElementById("sinRod")?.value || "";
+  f.tipo = document.getElementById("sinTipo")?.value || "";
+  f.per = document.getElementById("sinPer")?.value || "";
+  f.fatal = !!document.getElementById("sinFatal")?.checked;
+  f.q = document.getElementById("sinQ")?.value || "";
+  f.page = 1;
+  _sinRender(false);
+};
+window.sinSelectRod = function (cod) {
+  const f = HUB.state.sinF; if (!f) return;
+  f.rod = (f.rod === cod) ? "" : cod;   // clicar de novo limpa
+  const sel = document.getElementById("sinRod"); if (sel) sel.value = f.rod;
+  f.page = 1;
+  _sinRender(true);                     // reenquadra no trecho selecionado
+};
+window.sinPage = function (p) {
+  HUB.state.sinF.page = p; _sinRenderTabela(_sinFiltered());
+  document.getElementById("sinTbl")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+};
+window.sinResetFiltros = function () {
+  HUB.state.sinF = { rod: "", tipo: "", per: "", fatal: false, q: "", page: 1 };
+  ["sinRod", "sinTipo", "sinPer"].forEach(id => { const e = document.getElementById(id); if (e) e.value = ""; });
+  const fc = document.getElementById("sinFatal"); if (fc) fc.checked = false;
+  const q = document.getElementById("sinQ"); if (q) q.value = "";
+  _sinRender(true);
 };
 
 /* ──────────────────────────────────────────────
