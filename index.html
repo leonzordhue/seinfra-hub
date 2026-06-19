@@ -3860,6 +3860,11 @@ window.icmToggleBumps = function (on) {
    ────────────────────────────────────────────── */
 const _RE_AM = /AM[\s-]?(\d{2,3})/i;
 
+// URL do Web App (Google Apps Script) que dispara a busca de notícias.
+// Deixe "" para esconder o botão. Cole aqui a URL terminada em /exec
+// gerada ao implantar apps_script_atualizar.gs (ver Buscador/).
+const SINISTROS_UPDATE_URL = "";
+
 function _sinRodAM(row) {
   // Retorna a rodovia estadual normalizada (AM-XXX) ou null se não for estadual.
   const campos = [(row.rodovia || ""), (row.titulo || ""), (row.descricao || "")];
@@ -3974,6 +3979,7 @@ function getSinistrosHTML() {
         <input id="sinQ" placeholder="Buscar no título…" onkeyup="if(event.key==='Enter')sinFilter()"
           style="font-family:inherit;font-size:0.85rem;padding:0.45rem 0.7rem;border:1.5px solid var(--azul-borda);border-radius:9px;min-width:180px">
         <button onclick="sinResetFiltros()" class="icm-seg" style="padding:0.45rem 0.8rem;font-weight:700;font-size:0.8rem;color:var(--cinza-med);background:#fff;border:1.5px solid var(--azul-borda);border-radius:9px">Limpar</button>
+        <button onclick="sinAtualizar()" title="Dispara uma busca por notícias novas" style="margin-left:auto;display:inline-flex;align-items:center;gap:0.4rem;padding:0.45rem 0.9rem;font-weight:700;font-size:0.8rem;color:#fff;background:var(--vermelho);border:none;border-radius:9px">${iconSvg("sinistros", { size: 14, stroke: 2 })} Atualizar notícias</button>
       </div>
 
       <div class="icm-layout">
@@ -4226,6 +4232,18 @@ window.sinSelectRod = function (cod) {
 window.sinPage = function (p) {
   HUB.state.sinF.page = p; _sinRenderTabela(_sinFiltered());
   document.getElementById("sinTbl")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+};
+window.sinAtualizar = function () {
+  if (!SINISTROS_UPDATE_URL) {
+    alert("Botão ainda não configurado.\n\nPara ativá-lo, instale o Web App (arquivo apps_script_atualizar.gs, na pasta Buscador) e cole a URL gerada em SINISTROS_UPDATE_URL no index.html.\n\nEnquanto isso, use o atalho local 'Atualizar_Sinistros.bat' para a busca completa.");
+    return;
+  }
+  window.open(SINISTROS_UPDATE_URL, "_blank", "noopener");
+  setTimeout(() => {
+    if (confirm("Busca disparada na nuvem. Quando a aba de retorno disser que terminou, clique OK para recarregar o painel com os dados novos.")) {
+      HUB.state.sinistros = null; HUB.state.moduleInited.delete("sinistros"); loadModule("sinistros");
+    }
+  }, 1500);
 };
 window.sinResetFiltros = function () {
   HUB.state.sinF = { rod: "", tipo: "", per: "", fatal: false, q: "", page: 1 };
