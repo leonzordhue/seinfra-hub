@@ -3530,38 +3530,44 @@ function getICMHTML() {
     </div>
 
     <div class="panel-card">
-      <div class="panel-title">Como ler este painel</div>
-      <p style="font-size:0.88rem;color:var(--cinza-med);line-height:1.6;margin:0.3rem 0 0.8rem">
-        Cada rodovia foi percorrida com um celular fixado no veículo (aplicativo <strong>RoadLab Pro</strong>, do Banco Mundial),
-        que mede a <strong>rugosidade do asfalto</strong> — o quanto a pista "treme" o carro. Quanto mais lisa a pista,
-        melhor a condição. As cores abaixo indicam, de forma simples, como está cada trecho:
-      </p>
-      <div class="icm-legend" id="icmLegend"></div>
-      <div class="icm-note" style="margin-top:0.9rem">
-        <strong>Observação técnica:</strong> esta é uma avaliação <strong>preliminar</strong> baseada no IRI (Índice de Rugosidade
-        Internacional) medido pelo RoadLab Pro. Ainda <strong>não</strong> corresponde ao ICM oficial do DNIT
-        (Resolução nº 5/2022, que combina pavimento e conservação), cuja metodologia será implantada futuramente.
-      </div>
-    </div>
-
-    <div class="panel-card">
-      <div class="icm-controls">
-        <select id="icmSel" onchange="icmSelectRoad(this.value)"></select>
-        <div class="icm-seg" id="icmModeSeg">
-          <button data-m="trecho" class="active" onclick="icmSetMode('trecho')">Trecho a trecho</button>
-          <button data-m="media" onclick="icmSetMode('media')">Condição média</button>
+      <div class="panel-body">
+        <div class="panel-title">Como ler este painel</div>
+        <p style="font-size:0.88rem;color:var(--cinza-med);line-height:1.6;margin:0.5rem 0 0.9rem">
+          Cada rodovia foi percorrida com um celular fixado no veículo (aplicativo <strong>RoadLab Pro</strong>, do Banco Mundial),
+          que mede a <strong>rugosidade do asfalto</strong> — o quanto a pista "treme" o carro. Quanto mais lisa a pista,
+          melhor a condição. As cores abaixo indicam, de forma simples, como está cada trecho:
+        </p>
+        <div class="icm-legend" id="icmLegend"></div>
+        <div class="icm-note" style="margin-top:0.9rem">
+          <strong>Observação técnica:</strong> esta é uma avaliação <strong>preliminar</strong> baseada no IRI (Índice de Rugosidade
+          Internacional) medido pelo RoadLab Pro. Ainda <strong>não</strong> corresponde ao ICM oficial do DNIT
+          (Resolução nº 5/2022, que combina pavimento e conservação), cuja metodologia será implantada futuramente.
         </div>
-        <label class="icm-chk"><input type="checkbox" id="icmBumps" onchange="icmToggleBumps(this.checked)"> Mostrar buracos</label>
-      </div>
-      <div class="icm-layout">
-        <div id="icmMap" class="map-wrap tall"></div>
-        <div id="icmPanel"></div>
       </div>
     </div>
 
     <div class="panel-card">
-      <div class="panel-title">Rodovias avaliadas — clique para abrir</div>
-      <div class="icm-road-grid" id="icmRoadGrid" style="margin-top:0.7rem"></div>
+      <div class="panel-body">
+        <div class="icm-controls">
+          <select id="icmSel" onchange="icmSelectRoad(this.value)"></select>
+          <div class="icm-seg" id="icmModeSeg">
+            <button data-m="trecho" class="active" onclick="icmSetMode('trecho')">Trecho a trecho</button>
+            <button data-m="media" onclick="icmSetMode('media')">Condição média</button>
+          </div>
+          <label class="icm-chk"><input type="checkbox" id="icmBumps" onchange="icmToggleBumps(this.checked)"> Mostrar buracos</label>
+        </div>
+        <div class="icm-layout">
+          <div id="icmMap" class="map-wrap tall"></div>
+          <div id="icmPanel"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="panel-body">
+        <div class="panel-title">Rodovias avaliadas — clique para abrir</div>
+        <div class="icm-road-grid" id="icmRoadGrid" style="margin-top:0.7rem"></div>
+      </div>
     </div>
   </div>`;
 }
