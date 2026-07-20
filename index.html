@@ -1523,6 +1523,52 @@
       color: var(--cinza-med); line-height: 1.55;
     }
     .modal-rich .mr-context.gov-estado { background: #f3e8ff; border-color: #d6bcfa; color: #4c1d6f; }
+    .modal-rich .mr-context.gov-hidro  { background: #e0f2fe; border: 1px solid #90e0ef; color: #01497c; }
+
+    /* ─────────────────────────────────────────────────────
+       TERMINAIS — busca + lista vertical (padrão hidro-amazonas)
+       ───────────────────────────────────────────────────── */
+    .tm-filters {
+      background: #fff; border-radius: 14px; border: 1px solid var(--borda);
+      box-shadow: 0 2px 16px rgba(26,43,94,.09);
+      padding: 1.1rem 1.4rem; margin-bottom: 1.1rem;
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    }
+    .tm-filter-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza-aux); white-space: nowrap; }
+    .tm-search { position: relative; flex: 1; min-width: 200px; max-width: 340px; }
+    .tm-search input {
+      font-family: inherit; font-size: .82rem; width: 100%;
+      padding: .5rem .85rem .5rem 2.1rem;
+      border: 1.5px solid var(--borda); border-radius: 8px; outline: none;
+      color: inherit; background: var(--cinza-bg); transition: all .2s;
+    }
+    .tm-search input:focus { border-color: #0077b6; background: #fff; box-shadow: 0 0 0 3px rgba(0,119,182,.1); }
+    .tm-search-icon { position: absolute; left: .65rem; top: 50%; transform: translateY(-50%); font-size: .8rem; color: var(--cinza-aux); pointer-events: none; }
+    .tm-count { margin-left: auto; font-size: .72rem; font-weight: 600; color: var(--cinza-aux); }
+    .tm-count b { color: #0077b6; font-weight: 800; }
+    .tm-list { display: flex; flex-direction: column; gap: .85rem; }
+    .tm-card {
+      background: #fff; border-radius: 14px;
+      box-shadow: 0 2px 16px rgba(26,43,94,.09), 0 0 0 1px var(--borda);
+      padding: 1.15rem 1.4rem;
+      display: flex; align-items: center; gap: 1.15rem;
+      transition: box-shadow .22s, transform .22s;
+      cursor: pointer; position: relative; overflow: hidden;
+    }
+    .tm-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+      background: linear-gradient(to bottom, #0077b6, #023e8a);
+    }
+    .tm-card:hover { box-shadow: 0 12px 40px rgba(0,119,182,.18), 0 0 0 1px #90e0ef; transform: translateX(4px); }
+    .tm-num { font-size: 1.05rem; font-weight: 900; color: #0077b6; font-variant-numeric: tabular-nums; min-width: 2rem; text-align: center; opacity: .4; }
+    .tm-ic { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; background: linear-gradient(135deg, #e0f2fe, #caf0f8); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .tm-body { flex: 1; min-width: 0; }
+    .tm-dest { font-size: .95rem; font-weight: 700; color: var(--azul); margin-bottom: .25rem; word-break: break-word; }
+    .tm-mun { font-size: .76rem; color: var(--cinza-aux); font-weight: 500; }
+    .tm-badge { display: inline-flex; align-items: center; font-size: .62rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: .2em .65em; border-radius: 100px; background: #e0f2fe; color: #0077b6; border: 1px solid #90e0ef; margin-top: .35rem; }
+    .tm-coords { font-size: .68rem; font-weight: 600; color: var(--cinza-aux); font-family: monospace; text-align: right; flex-shrink: 0; line-height: 1.6; }
+    .tm-empty { display: none; text-align: center; padding: 3rem 2rem; color: var(--cinza-aux); }
+    @media (max-width: 680px) { .tm-coords { display: none; } }
 
     /* ─────────────────────────────────────────────────────
        Animação fade-in para listas (cards de terminal etc.)
@@ -2455,16 +2501,22 @@ function populateHeroKPIs() {
   const uniqRod = new Set(rod.map(r => (r.rodovia || r.nome || "").toString().toUpperCase().trim()).filter(Boolean));
   setEl("rg-rod", uniqRod.size ? fmtNum(uniqRod.size) : "—");
   setEl("rg-rod-ext", ext ? fmtNum(Math.round(ext)) : "—");
-  // Ramais (via geojson lazy)
-  const ram = HUB.state.geojsons[GEOJSON_FILES.ramais];
-  if (ram) {
-    const feats = ram.features || [];
+  // Ramais — planilha oficial primeiro; geojson como fallback; senão carrega em background
+  const ramSheet = HUB.state.ramaisSheet;
+  const ramGeo   = HUB.state.geojsons[GEOJSON_FILES.ramais];
+  if (ramSheet && ramSheet.length) {
+    setEl("rg-ram", fmtNum(ramSheet.length));
+    setEl("rg-ram-mun", fmtNum(new Set(ramSheet.map(r => r.municipio).filter(Boolean)).size));
+  } else if (ramGeo) {
+    const feats = ramGeo.features || [];
     setEl("rg-ram", fmtNum(feats.length));
     const muns = new Set(feats.map(f => _normMun(f.properties?.MUNICIPIO || f.properties?.municipio || "")).filter(Boolean));
     setEl("rg-ram-mun", fmtNum(muns.size));
   } else {
-    setEl("rg-ram", "1.200+");
+    setEl("rg-ram", "—");
     setEl("rg-ram-mun", "—");
+    // dispara carga da planilha; ao chegar, re-popula a home se ainda ativa
+    try { _loadRamaisSheet().then(_refreshHomeIfActive).catch(() => {}); } catch (e) {}
   }
   // Aeródromos
   if (typeof AE_DATA !== "undefined") {
@@ -2524,7 +2576,7 @@ function populateTimeline() {
   ).slice(0, 6);
   if (obrasEl) {
     obrasEl.innerHTML = ct.length ? ct.map(c => `
-      <div class="timeline-item" onclick="loadModule('obras')" style="cursor:pointer">
+      <div class="timeline-item" onclick="loadModule('briefings')" style="cursor:pointer">
         <div class="timeline-dot" style="background:#C0392B22;color:#C0392B">${iconSvg("obras", { size: 14, stroke: 2 })}</div>
         <div class="timeline-content">
           <div class="timeline-title">${htmlEscape(c.objeto || c.nome_obra || c.descricao || "Obra contratual")}</div>
@@ -2539,7 +2591,7 @@ function populateTimeline() {
   const sin = (HUB.state.sinistros || []).slice(0, 6);
   if (sinEl) {
     sinEl.innerHTML = sin.length ? sin.map(s => `
-      <div class="timeline-item" onclick="loadModule('bi')" style="cursor:pointer">
+      <div class="timeline-item" onclick="loadModule('sinistros')" style="cursor:pointer">
         <div class="timeline-dot" style="background:#F5A62322;color:#B45309">⚠</div>
         <div class="timeline-content">
           <div class="timeline-title">${htmlEscape(s.local || s.trecho || s.descricao || s.titulo || "Sinistro registrado")}</div>
@@ -4266,7 +4318,7 @@ const RAM_COL = { CODIGO:0,NUMERO:1,NOME:2,MUNICIPIO:9,EXTENSAO:11,INICIO:7,FIM:
 function getRamaisHTML() {
   return `
   <div class="mod-wrap">
-    ${modHero("ramais", "Atlas analítico de ramais estaduais · 907 cadastros em 62 municípios · apoio à decisão estratégica")}
+    ${modHero("ramais", "Atlas analítico de ramais estaduais · 62 municípios · apoio à decisão estratégica")}
 
     <div class="kpi-grid" id="ramTopKpis">
       <div class="kpi-card"><div class="kpi-card-label">Ramais cadastrados</div><div class="kpi-card-value" id="rmk-tot">—</div><div class="kpi-card-foot">total da base</div></div>
@@ -6352,7 +6404,8 @@ const TM_DATA = [
   {localidade:"BARCELOS",     destino:"Distrito de Moura",                              lat:-1.45722, lon:-61.62972},
   {localidade:"BARREIRINHA",  destino:"Distrito Cametá de Ramos",                       lat:-2.83611, lon:-57.41722},
   {localidade:"BENJAMIN CONSTANT", destino:"Comunidade Feijoal",                        lat:-4.29514, lon:-69.53769},
-  {localidade:"BENJAMIN CONSTANT", destino:"Comunidade Filadélfia",                     lat:-4.37867, lon:-59.63389},
+  // lon corrigida de -59.63389 (typo — caía no município de Borba); Filadélfia é contígua à sede de Benjamin Constant (~-70.03)
+  {localidade:"BENJAMIN CONSTANT", destino:"Comunidade Filadélfia",                     lat:-4.37867, lon:-70.03389},
   {localidade:"BERURI",       destino:"Comunidade Santa Maria do Pupunhal",             lat:-3.726,   lon:-61.24186},
   {localidade:"BOA VISTA DO RAMOS", destino:"Comunidade Menino de Deus",                lat:-3.15968, lon:-57.54784},
   {localidade:"BOA VISTA DO RAMOS", destino:"Comunidade de Jesus do Lago Preto do Ramos", lat:-3.26628, lon:-57.99386},
@@ -6396,19 +6449,23 @@ function getTerminaisHTML() {
 
     <div class="panel-card">
       <div class="panel-header">
-        <div class="panel-title">Localização dos terminais — Estado do Amazonas</div>
+        <div class="panel-title">⚓ Localização dos Terminais Flutuantes — Estado do Amazonas</div>
         <span style="font-size:0.7rem;color:var(--cinza-aux)">${TM_DATA.length} pontos · clique para detalhes</span>
       </div>
-      <div id="tmMap" class="map-wrap" style="height:460px"></div>
+      <div id="tmMap" class="map-wrap" style="height:480px"></div>
     </div>
 
-    <div class="panel-card">
-      <div class="panel-header" style="flex-wrap:wrap;gap:.6rem">
-        <div class="panel-title">Lista de terminais <span id="tmCount" style="font-weight:400;color:var(--cinza-aux);font-size:.78rem">(${TM_DATA.length})</span></div>
-        <input class="filter-input" id="tmBusca" placeholder="🔍 Buscar município ou destino…" oninput="filterTerminais()" style="width:280px;max-width:100%"/>
+    <div class="tm-filters">
+      <span class="tm-filter-label">Terminais:</span>
+      <div class="tm-search">
+        <span class="tm-search-icon">🔍</span>
+        <input type="text" id="tmBusca" placeholder="Buscar município ou destino..." oninput="filterTerminais()"/>
       </div>
-      <div id="tmList" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.7rem;margin-top:.6rem"></div>
+      <div class="tm-count"><b id="tmCount">${TM_DATA.length}</b> terminais encontrados</div>
     </div>
+
+    <div class="tm-list" id="tmList"></div>
+    <div class="tm-empty" id="tmEmpty">Nenhum terminal encontrado.</div>
   </div>`;
 }
 
@@ -6428,7 +6485,7 @@ function initTerminais() {
       <div style="font-family:Outfit,sans-serif;min-width:200px">
         <div style="font-weight:800;color:#0077b6;font-size:.88rem;margin-bottom:.25rem">${htmlEscape(t.destino)}</div>
         <div style="font-size:.72rem;color:#4a5568;margin-bottom:.35rem">📍 ${htmlEscape(_capWords(t.localidade))}</div>
-        <div style="font-size:.7rem;font-family:monospace;color:#8896a8">${t.lat.toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>
+        <div style="font-size:.7rem;font-family:monospace;color:#8896a8">${Math.abs(t.lat).toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>
         <button onclick="abrirModalTerminal(${i})" style="margin-top:.5rem;width:100%;background:linear-gradient(135deg,#0077b6,#023e8a);color:#fff;border:none;padding:.4rem .6rem;border-radius:6px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.04em;text-transform:uppercase">Ver detalhes ▸</button>
       </div>`;
     L.marker([t.lat, t.lon], { icon })
@@ -6448,39 +6505,25 @@ function initTerminais() {
 function abrirModalTerminal(i) {
   const t = TM_DATA[i]; if (!t) return;
   document.getElementById("tmModalGlobal")?.remove();
-  const tipoIcon = /comunidade/i.test(t.destino) ? "🏘️" : /distrito/i.test(t.destino) ? "🏛️" : "⚓";
-  const tipoLabel = /comunidade/i.test(t.destino) ? "Comunidade" : /distrito/i.test(t.destino) ? "Distrito" : "Porto / Terminal";
 
   const div = document.createElement("div");
   div.id = "tmModalGlobal";
   div.className = "modal-ov";
   div.innerHTML = `
     <div class="modal-rich" role="dialog" aria-label="${htmlEscape(t.destino)}">
-      <div class="mr-hdr gov-hidro" style="background:linear-gradient(135deg,#012a4a 0%,#01497c 60%,#0077b6 100%)">
+      <div class="mr-hdr gov-hidro" style="background:linear-gradient(135deg,#012a4a,#01497c)">
         <button class="mr-close" aria-label="Fechar">✕</button>
-        <div class="mr-hdr-icon">${tipoIcon}</div>
-        <div class="mr-icao-row"><span>${htmlEscape(tipoLabel)}</span></div>
+        <div class="mr-hdr-icon">⚓</div>
         <div class="mr-title">${htmlEscape(t.destino)}</div>
         <div class="mr-mun">📍 ${htmlEscape(_capWords(t.localidade))}</div>
-        <div class="mr-badges">
-          <span class="mr-badge">FLUTUANTE</span>
-          <span class="mr-badge">SEINFRA/AM</span>
-        </div>
       </div>
 
       <div class="mr-body">
         <div class="mr-section">
-          <div class="mr-section-title">Identificação</div>
+          <div class="mr-section-title">Informações do Terminal</div>
           <div class="mr-grid">
-            <div class="mr-field"><div class="mr-field-label">Município-sede</div><div class="mr-field-value">${htmlEscape(_capWords(t.localidade))}</div></div>
+            <div class="mr-field"><div class="mr-field-label">Município</div><div class="mr-field-value">${htmlEscape(_capWords(t.localidade))}</div></div>
             <div class="mr-field"><div class="mr-field-label">Destino</div><div class="mr-field-value">${htmlEscape(t.destino)}</div></div>
-            <div class="mr-field"><div class="mr-field-label">Tipo</div><div class="mr-field-value">${htmlEscape(tipoLabel)}</div></div>
-          </div>
-        </div>
-
-        <div class="mr-section">
-          <div class="mr-section-title">Coordenadas Geográficas</div>
-          <div class="mr-grid">
             <div class="mr-field"><div class="mr-field-label">Latitude</div><div class="mr-field-value mono">${t.lat.toFixed(5)}°</div></div>
             <div class="mr-field"><div class="mr-field-label">Longitude</div><div class="mr-field-value mono">${t.lon.toFixed(5)}°</div></div>
           </div>
@@ -6492,8 +6535,8 @@ function abrirModalTerminal(i) {
         </div>
 
         <div class="mr-section">
-          <div class="mr-context">
-            <strong>Sobre o terminal flutuante:</strong> Estrutura hidroviária instalada às margens dos rios, garantindo embarque e desembarque seguros para a população ribeirinha do município de <strong>${htmlEscape(_capWords(t.localidade))}</strong> e conectando-a à sede municipal.
+          <div class="mr-context gov-hidro">
+            ℹ️ <strong>Sobre os Terminais Flutuantes:</strong> Os terminais hidroviários flutuantes da SEINFRA/AM são estruturas de embarque e desembarque instaladas às margens dos rios do Amazonas, garantindo conectividade entre municípios-sede e suas comunidades e distritos no interior do Estado.
           </div>
         </div>
       </div>
@@ -6518,7 +6561,7 @@ function abrirModalTerminal(i) {
       const mm = document.getElementById("tmMinimap");
       if (mm) {
         if (_tmMinimap) { try { _tmMinimap.remove(); } catch (e) {} _tmMinimap = null; }
-        _tmMinimap = L.map(mm, { center: [t.lat, t.lon], zoom: 11, zoomControl: true, attributionControl: false });
+        _tmMinimap = L.map(mm, { center: [t.lat, t.lon], zoom: 12, zoomControl: true, attributionControl: false });
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(_tmMinimap);
         L.marker([t.lat, t.lon], {
           icon: L.divIcon({
@@ -6543,23 +6586,22 @@ window._tmRowClick = _tmRowClick;
 function renderTerminaisList(list) {
   const container = document.getElementById("tmList"); if (!container) return;
   const count = document.getElementById("tmCount");
-  if (count) count.textContent = `(${list.length}${list.length !== TM_DATA.length ? ` de ${TM_DATA.length}` : ''})`;
-  container.innerHTML = list.length ? list.map((t, i) => {
+  const empty = document.getElementById("tmEmpty");
+  if (count) count.textContent = list.length;
+  if (empty) empty.style.display = list.length ? "none" : "block";
+  container.innerHTML = list.map((t, idx) => {
     const globalIdx = TM_DATA.indexOf(t);
-    const tipoIcon = /comunidade/i.test(t.destino) ? "🏘️" : /distrito/i.test(t.destino) ? "🏛️" : "⚓";
-    const num = (globalIdx + 1).toString().padStart(2, "0");
-    return `<div class="anim-up" style="animation-delay:${(i*0.025).toFixed(2)}s;background:#fff;border:1px solid var(--borda);border-left:4px solid;border-image:linear-gradient(180deg,#0077b6,#023e8a) 1;border-radius:10px;padding:.75rem .9rem;cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s" onmouseover="this.style.transform='translateX(4px)';this.style.boxShadow='0 6px 18px rgba(0,119,182,.18)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="_tmRowClick(${globalIdx})">
-      <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:.3rem">
-        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#023e8a);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${tipoIcon}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:.85rem;font-weight:700;color:var(--azul-dk);line-height:1.25;word-break:break-word">${htmlEscape(t.destino)}</div>
-          <div style="font-size:.7rem;color:var(--cinza-med);margin-top:.1rem">📍 ${htmlEscape(_capWords(t.localidade))}</div>
-        </div>
-        <div style="font-family:var(--font-head);font-size:1rem;font-weight:700;color:#0077b6;opacity:.4">${num}</div>
+    return `<div class="tm-card anim-up" style="animation-delay:${(idx*0.02).toFixed(2)}s" onclick="_tmRowClick(${globalIdx})">
+      <div class="tm-num">${String(idx+1).padStart(2,"0")}</div>
+      <div class="tm-ic">⚓</div>
+      <div class="tm-body">
+        <div class="tm-dest">${htmlEscape(t.destino)}</div>
+        <div class="tm-mun">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+        <div><span class="tm-badge">Terminal Flutuante</span></div>
       </div>
-      <div style="font-family:monospace;font-size:.68rem;color:var(--cinza-aux);padding-top:.3rem;border-top:1px dashed var(--borda)">${t.lat.toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>
+      <div class="tm-coords">${Math.abs(t.lat).toFixed(4)}°S<br>${Math.abs(t.lon).toFixed(4)}°W</div>
     </div>`;
-  }).join("") : `<div class="info-state" style="grid-column:1/-1">Nenhum terminal encontrado.</div>`;
+  }).join("");
 }
 
 function filterTerminais() {
@@ -7077,7 +7119,7 @@ const ATLAS_GROUPS = [
         file: "rodovias_est", popup: _atlasRodEstPopup, defaultOn: true },
       { key: "rodovias_fed", label: "Rodovias Federais (237)", color: "#C0392B", sw: "ln", type: "line",
         file: "rodovias_fed", popup: _atlasRodFedPopup },
-      { key: "ramais", label: "Ramais SEINFRA (907)", color: "#2D8540", sw: "ld", type: "line",
+      { key: "ramais", label: "Ramais SEINFRA", color: "#2D8540", sw: "ld", type: "line",
         file: "ramais", popup: _atlasRamalPopup },
       { key: "viario_local", label: "Viário urbano (todas)", color: "#B45309", sw: "ln", type: "line",
         file: "viario_local", popup: _atlasViarioPopup,
