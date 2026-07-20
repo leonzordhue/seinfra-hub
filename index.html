@@ -1200,11 +1200,31 @@
     }
     @media (max-width: 720px) { .atlas-legend { max-width: 180px; max-height: 32vh; } }
 
+    /* Tela cheia via CSS quando não há Fullscreen API (iOS Safari) */
+    .atlas-map.atlas-fs-fallback {
+      position: fixed; inset: 0; z-index: 5000;
+      height: 100vh !important; height: 100dvh !important;
+      border-radius: 0;
+    }
+
     /* ═══ MOBILE OPTIMIZATIONS ═══ Reduzir poluição visual no atlas em telas pequenas */
     @media (max-width: 720px) {
-      /* Painel de camadas inicia colapsado — mostra só botão flutuante */
-      .atlas-panel { width: calc(100% - 16px); max-width: 290px; }
-      .atlas-panel-hdr { padding: .6rem .75rem; }
+      /* Painel de camadas vira bottom-sheet (antes flutuava sobre o mapa
+         cobrindo quase toda a largura) — inicia colapsado, FAB reabre */
+      .atlas-panel {
+        top: auto; bottom: 0; left: 0; right: 0;
+        width: 100%; max-width: none;
+        max-height: 55%;
+        border-radius: 16px 16px 0 0;
+      }
+      .atlas-panel::before {
+        content: ''; position: absolute; top: 6px; left: 50%;
+        transform: translateX(-50%); width: 38px; height: 4px;
+        border-radius: 2px; background: rgba(255,255,255,.4); z-index: 2;
+      }
+      .atlas-panel.collapsed { transform: translateY(110%); opacity: 0; }
+      .atlas-panel-reopen { top: auto; bottom: 52px; right: 8px; }
+      .atlas-panel-hdr { padding: .75rem .75rem .6rem; }
       .atlas-panel-title { font-size: .75rem; }
       .atlas-group-hdr { padding: .45rem .7rem; }
       .atlas-layer-item { padding: .35rem .7rem .35rem 1.7rem; }
@@ -1526,12 +1546,66 @@
     .modal-rich .mr-context.gov-hidro  { background: #e0f2fe; border: 1px solid #90e0ef; color: #01497c; }
 
     /* ─────────────────────────────────────────────────────
-       TERMINAIS — busca + lista vertical (padrão hidro-amazonas)
+       TERMINAIS — réplica fiel do hidro-amazonas original
+       (hero com ondas, mapa, busca, lista e modal próprios)
        ───────────────────────────────────────────────────── */
+    .tmx-hero {
+      background: linear-gradient(135deg, #012a4a 0%, #013a63 40%, #01497c 100%);
+      padding: 3rem 2rem 4.2rem; position: relative; overflow: hidden;
+      border-radius: 18px; margin-bottom: 1.75rem;
+    }
+    .tmx-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background-image:
+        radial-gradient(ellipse at 80% 20%, rgba(0,180,216,0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 5% 90%, rgba(245,166,35,0.08) 0%, transparent 40%),
+        repeating-linear-gradient(0deg, transparent, transparent 30px, rgba(0,180,216,0.03) 30px, rgba(0,180,216,0.03) 31px);
+      pointer-events: none;
+    }
+    .tmx-hero-inner { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+    .tmx-chip { display: inline-flex; align-items: center; gap: .5rem; font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: #90e0ef; background: rgba(0,180,216,.12); border: 1px solid rgba(0,180,216,.3); padding: .4em 1em; border-radius: 100px; margin-bottom: 1.2rem; }
+    .tmx-chip-dot { width: 5px; height: 5px; border-radius: 50%; background: #90e0ef; animation: pulse 2s ease-in-out infinite; }
+    .tmx-title { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; color: #fff; letter-spacing: -.025em; line-height: 1.1; margin-bottom: .75rem; }
+    .tmx-title em { font-style: normal; color: #90e0ef; }
+    .tmx-sub { font-size: .92rem; color: rgba(255,255,255,.6); line-height: 1.6; max-width: 480px; }
+    .tmx-stats { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+    .tmx-stat-val { font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: -.03em; line-height: 1; }
+    .tmx-stat-val .acc  { color: #F5A623; }
+    .tmx-stat-val .acc2 { color: #90e0ef; }
+    .tmx-stat-lbl { font-size: .65rem; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-top: .3rem; }
+    .tmx-wave { position: absolute; bottom: -1px; left: 0; width: 100%; z-index: 2; }
+    .tmx-wave svg { display: block; width: 100%; }
+
+    .tmx-mapsec { background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(26,43,94,.09), 0 0 0 1px var(--borda); overflow: hidden; margin-bottom: 1.75rem; }
+    .tmx-maphdr { padding: 1.25rem 1.5rem 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .tmx-maptitle { font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza-med); display: flex; align-items: center; gap: .5rem; }
+    #tmMap { height: 480px; margin-top: 1rem; }
+
+    /* Modal — cópia exata do original */
+    .tmx-ov { position: fixed; inset: 0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity .25s; }
+    .tmx-ov.open { opacity: 1; pointer-events: all; }
+    .tmx-modal { background: #fff; border-radius: 20px; width: 100%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 80px rgba(26,43,94,.22); transform: translateY(20px); transition: transform .25s; }
+    .tmx-ov.open .tmx-modal { transform: none; }
+    .tmx-mhead { background: linear-gradient(135deg, #012a4a, #01497c); padding: 2rem; position: relative; }
+    .tmx-mclose { position: absolute; top: 1rem; right: 1rem; width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.12); border: none; color: #fff; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .tmx-mclose:hover { background: rgba(255,255,255,.22); }
+    .tmx-micon { font-size: 2.2rem; margin-bottom: .6rem; }
+    .tmx-mtitle { font-size: 1.35rem; font-weight: 900; color: #fff; letter-spacing: -.02em; margin-bottom: .3rem; }
+    .tmx-mmun { font-size: .8rem; color: rgba(255,255,255,.6); }
+    .tmx-mbody { padding: 1.75rem; }
+    .tmx-msec { margin-bottom: 1.25rem; }
+    .tmx-msec-title { font-size: .63rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--cinza-aux); margin-bottom: .75rem; padding-bottom: .4rem; border-bottom: 1px solid var(--borda); }
+    .tmx-mgrid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+    .tmx-mlbl { font-size: .6rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza-aux); margin-bottom: .15rem; }
+    .tmx-mval { font-size: .88rem; font-weight: 600; color: #1A2540; }
+    #tmMinimap { height: 200px; border-radius: 10px; overflow: hidden; margin-top: 1rem; border: 1px solid var(--borda); }
+    .tmx-minfo { margin-top: 1rem; padding: 1rem; background: #e0f2fe; border-radius: 10px; font-size: .78rem; color: #01497c; line-height: 1.6; border: 1px solid #90e0ef; }
+    @media (max-width: 680px) { .tmx-mgrid { grid-template-columns: 1fr; } }
+
     .tm-filters {
       background: #fff; border-radius: 14px; border: 1px solid var(--borda);
       box-shadow: 0 2px 16px rgba(26,43,94,.09);
-      padding: 1.1rem 1.4rem; margin-bottom: 1.1rem;
+      padding: 1.2rem 1.5rem; margin-bottom: 1.75rem;
       display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
     }
     .tm-filter-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--cinza-aux); white-space: nowrap; }
@@ -1550,21 +1624,22 @@
     .tm-card {
       background: #fff; border-radius: 14px;
       box-shadow: 0 2px 16px rgba(26,43,94,.09), 0 0 0 1px var(--borda);
-      padding: 1.15rem 1.4rem;
-      display: flex; align-items: center; gap: 1.15rem;
+      padding: 1.25rem 1.5rem;
+      display: flex; align-items: center; gap: 1.25rem;
       transition: box-shadow .22s, transform .22s;
       cursor: pointer; position: relative; overflow: hidden;
     }
     .tm-card::before {
       content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
       background: linear-gradient(to bottom, #0077b6, #023e8a);
+      border-radius: 4px 0 0 4px;
     }
     .tm-card:hover { box-shadow: 0 12px 40px rgba(0,119,182,.18), 0 0 0 1px #90e0ef; transform: translateX(4px); }
-    .tm-num { font-size: 1.05rem; font-weight: 900; color: #0077b6; font-variant-numeric: tabular-nums; min-width: 2rem; text-align: center; opacity: .4; }
-    .tm-ic { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; background: linear-gradient(135deg, #e0f2fe, #caf0f8); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; }
+    .tm-num { font-size: 1.1rem; font-weight: 900; color: #0077b6; font-variant-numeric: tabular-nums; min-width: 2rem; text-align: center; opacity: .4; }
+    .tm-ic { width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0; background: linear-gradient(135deg, #e0f2fe, #caf0f8); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
     .tm-body { flex: 1; min-width: 0; }
-    .tm-dest { font-size: .95rem; font-weight: 700; color: var(--azul); margin-bottom: .25rem; word-break: break-word; }
-    .tm-mun { font-size: .76rem; color: var(--cinza-aux); font-weight: 500; }
+    .tm-dest { font-size: .95rem; font-weight: 700; color: var(--azul); margin-bottom: .3rem; word-break: break-word; }
+    .tm-mun { font-size: .78rem; color: var(--cinza-aux); font-weight: 500; }
     .tm-badge { display: inline-flex; align-items: center; font-size: .62rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; padding: .2em .65em; border-radius: 100px; background: #e0f2fe; color: #0077b6; border: 1px solid #90e0ef; margin-top: .35rem; }
     .tm-coords { font-size: .68rem; font-weight: 600; color: var(--cinza-aux); font-family: monospace; text-align: right; flex-shrink: 0; line-height: 1.6; }
     .tm-empty { display: none; text-align: center; padding: 3rem 2rem; color: var(--cinza-aux); }
@@ -2232,6 +2307,10 @@ async function loadModule(id) {
   HUB.activeModule = id;
   $("#moduleTitle").textContent = HUB.modules[id].label;
   $("#moduleTopbar").style.display = "flex";
+  // Botão PDF só nos módulos com exportação real (nos demais gerava um
+  // PDF vazio com título + data — botão sem função)
+  const expBtn = $("#moduleExportBtn");
+  if (expBtn) expBtn.style.display = (id === "briefings" || id === "rodovias") ? "" : "none";
   setActiveSidebar(id);
 
   canvas.style.opacity = "1";
@@ -6432,27 +6511,46 @@ function _cap(s) { if (!s) return ""; return s.charAt(0).toUpperCase() + s.slice
 function _capWords(s) { return s.split(" ").map(w => w.length > 2 ? _cap(w) : w.toLowerCase()).join(" "); }
 
 function getTerminaisHTML() {
-  const munsCount  = new Set(TM_DATA.map(t => t.localidade)).size;
-  const comuCount  = TM_DATA.filter(t=>/comunidade/i.test(t.destino)).length;
-  const distrCount = TM_DATA.filter(t=>/distrito/i.test(t.destino)).length;
+  const munsCount = new Set(TM_DATA.map(t => t.localidade)).size;
   return `
   <div class="mod-wrap">
-    ${modHero("terminais", "Terminais hidroviários flutuantes · embarque e desembarque nas comunidades e distritos do Amazonas")}
-
-    <!-- KPI grid (hero é fornecido pelo modHero) -->
-    <div class="kpi-grid">
-      <div class="kpi-card c"><div class="kpi-card-label">Total</div><div class="kpi-card-value">${TM_DATA.length}</div><div class="kpi-card-foot">terminais flutuantes</div></div>
-      <div class="kpi-card v"><div class="kpi-card-label">Municípios</div><div class="kpi-card-value">${munsCount}</div><div class="kpi-card-foot">atendidos</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Comunidades</div><div class="kpi-card-value">${comuCount}</div><div class="kpi-card-foot">ribeirinhas atendidas</div></div>
-      <div class="kpi-card r"><div class="kpi-card-label">Distritos</div><div class="kpi-card-value">${distrCount}</div><div class="kpi-card-foot">com terminal</div></div>
-    </div>
-
-    <div class="panel-card">
-      <div class="panel-header">
-        <div class="panel-title">⚓ Localização dos Terminais Flutuantes — Estado do Amazonas</div>
-        <span style="font-size:0.7rem;color:var(--cinza-aux)">${TM_DATA.length} pontos · clique para detalhes</span>
+    <!-- HERO — réplica do hidro-amazonas original -->
+    <section class="tmx-hero">
+      <div class="tmx-hero-inner">
+        <div>
+          <div class="tmx-chip"><span class="tmx-chip-dot"></span>Sistema Hidroviário — AM</div>
+          <h1 class="tmx-title">Terminais<br><em>Flutuantes</em></h1>
+          <p class="tmx-sub">Mapeamento e gestão dos terminais hidroviários flutuantes do Amazonas. Localização georreferenciada dos pontos de embarque e desembarque nas comunidades e distritos do interior do Estado.</p>
+        </div>
+        <div class="tmx-stats">
+          <div>
+            <div class="tmx-stat-val"><span class="acc">${TM_DATA.length}</span></div>
+            <div class="tmx-stat-lbl">Terminais</div>
+          </div>
+          <div>
+            <div class="tmx-stat-val"><span class="acc2">${munsCount}</span></div>
+            <div class="tmx-stat-lbl">Municípios</div>
+          </div>
+          <div>
+            <div class="tmx-stat-val"><span class="acc">AM</span></div>
+            <div class="tmx-stat-lbl">Estado</div>
+          </div>
+        </div>
       </div>
-      <div id="tmMap" class="map-wrap" style="height:480px"></div>
+      <div class="tmx-wave">
+        <svg viewBox="0 0 1440 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M0,20 C240,55 480,5 720,30 C960,55 1200,10 1440,35 L1440,60 L0,60 Z" fill="#F5F7FB" opacity="0.5"/>
+          <path d="M0,35 C240,10 480,50 720,20 C960,0 1200,45 1440,20 L1440,60 L0,60 Z" fill="#F5F7FB"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- MAPA -->
+    <div class="tmx-mapsec">
+      <div class="tmx-maphdr">
+        <div class="tmx-maptitle">⚓ Localização dos Terminais Flutuantes — Estado do Amazonas</div>
+      </div>
+      <div id="tmMap"></div>
     </div>
 
     <div class="tm-filters">
@@ -6482,19 +6580,15 @@ function initTerminais() {
       iconSize: [32,32], iconAnchor: [16,16], popupAnchor: [0,-16]
     });
     const popupHtml = `
-      <div style="font-family:Outfit,sans-serif;min-width:200px">
-        <div style="font-weight:800;color:#0077b6;font-size:.88rem;margin-bottom:.25rem">${htmlEscape(t.destino)}</div>
-        <div style="font-size:.72rem;color:#4a5568;margin-bottom:.35rem">📍 ${htmlEscape(_capWords(t.localidade))}</div>
-        <div style="font-size:.7rem;font-family:monospace;color:#8896a8">${Math.abs(t.lat).toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>
-        <button onclick="abrirModalTerminal(${i})" style="margin-top:.5rem;width:100%;background:linear-gradient(135deg,#0077b6,#023e8a);color:#fff;border:none;padding:.4rem .6rem;border-radius:6px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.04em;text-transform:uppercase">Ver detalhes ▸</button>
+      <div style="font-family:'Lexend Deca',sans-serif;min-width:190px">
+        <div style="font-weight:800;font-size:.88rem;color:#1A2B5E;margin-bottom:.25rem">${htmlEscape(t.destino)}</div>
+        <div style="font-size:.73rem;color:#666;margin-bottom:.5rem">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+        <div style="font-size:.7rem;font-family:monospace;color:#8896A8">${Math.abs(t.lat).toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>
       </div>`;
     L.marker([t.lat, t.lon], { icon })
       .addTo(map)
       .bindPopup(popupHtml, { maxWidth: 240, autoPan: true })
-      .on("click", e => {
-        L.DomEvent.stopPropagation(e);
-        try { map.flyTo([t.lat, t.lon], Math.max(map.getZoom(), 8), { duration: 0.6 }); } catch (err) {}
-      });
+      .on("click", () => abrirModalTerminal(i));
   });
   try { map.fitBounds(L.latLngBounds(TM_DATA.map(t => [t.lat, t.lon])), { padding: [30,30] }); } catch(e) {}
 
@@ -6508,36 +6602,34 @@ function abrirModalTerminal(i) {
 
   const div = document.createElement("div");
   div.id = "tmModalGlobal";
-  div.className = "modal-ov";
+  div.className = "tmx-ov";
   div.innerHTML = `
-    <div class="modal-rich" role="dialog" aria-label="${htmlEscape(t.destino)}">
-      <div class="mr-hdr gov-hidro" style="background:linear-gradient(135deg,#012a4a,#01497c)">
-        <button class="mr-close" aria-label="Fechar">✕</button>
-        <div class="mr-hdr-icon">⚓</div>
-        <div class="mr-title">${htmlEscape(t.destino)}</div>
-        <div class="mr-mun">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+    <div class="tmx-modal" role="dialog" aria-label="${htmlEscape(t.destino)}">
+      <div class="tmx-mhead">
+        <button class="tmx-mclose" aria-label="Fechar">✕</button>
+        <div class="tmx-micon">⚓</div>
+        <div class="tmx-mtitle">${htmlEscape(t.destino)}</div>
+        <div class="tmx-mmun">📍 ${htmlEscape(_capWords(t.localidade))}</div>
       </div>
 
-      <div class="mr-body">
-        <div class="mr-section">
-          <div class="mr-section-title">Informações do Terminal</div>
-          <div class="mr-grid">
-            <div class="mr-field"><div class="mr-field-label">Município</div><div class="mr-field-value">${htmlEscape(_capWords(t.localidade))}</div></div>
-            <div class="mr-field"><div class="mr-field-label">Destino</div><div class="mr-field-value">${htmlEscape(t.destino)}</div></div>
-            <div class="mr-field"><div class="mr-field-label">Latitude</div><div class="mr-field-value mono">${t.lat.toFixed(5)}°</div></div>
-            <div class="mr-field"><div class="mr-field-label">Longitude</div><div class="mr-field-value mono">${t.lon.toFixed(5)}°</div></div>
+      <div class="tmx-mbody">
+        <div class="tmx-msec">
+          <div class="tmx-msec-title">Informações do Terminal</div>
+          <div class="tmx-mgrid">
+            <div><div class="tmx-mlbl">Município</div><div class="tmx-mval">${htmlEscape(_capWords(t.localidade))}</div></div>
+            <div><div class="tmx-mlbl">Destino</div><div class="tmx-mval">${htmlEscape(t.destino)}</div></div>
+            <div><div class="tmx-mlbl">Latitude</div><div class="tmx-mval" style="font-family:monospace">${t.lat.toFixed(5)}°</div></div>
+            <div><div class="tmx-mlbl">Longitude</div><div class="tmx-mval" style="font-family:monospace">${t.lon.toFixed(5)}°</div></div>
           </div>
         </div>
 
-        <div class="mr-section">
-          <div class="mr-section-title">Localização no Mapa</div>
-          <div id="tmMinimap" style="height:220px;border-radius:10px;overflow:hidden;border:1px solid var(--borda)"></div>
+        <div class="tmx-msec">
+          <div class="tmx-msec-title">Localização no Mapa</div>
+          <div id="tmMinimap"></div>
         </div>
 
-        <div class="mr-section">
-          <div class="mr-context gov-hidro">
-            ℹ️ <strong>Sobre os Terminais Flutuantes:</strong> Os terminais hidroviários flutuantes da SEINFRA/AM são estruturas de embarque e desembarque instaladas às margens dos rios do Amazonas, garantindo conectividade entre municípios-sede e suas comunidades e distritos no interior do Estado.
-          </div>
+        <div class="tmx-minfo">
+          ℹ️ <strong>Sobre os Terminais Flutuantes:</strong> Os terminais hidroviários flutuantes da SEINFRA/AM são estruturas de embarque e desembarque instaladas às margens dos rios do Amazonas, garantindo conectividade entre municípios-sede e suas comunidades e distritos no interior do Estado.
         </div>
       </div>
     </div>`;
@@ -6550,7 +6642,7 @@ function abrirModalTerminal(i) {
   };
   const onEsc = (e) => { if (e.key === "Escape") close(); };
   div.addEventListener("click", e => { if (e.target === div) close(); });
-  div.querySelector(".mr-close").addEventListener("click", close);
+  div.querySelector(".tmx-mclose").addEventListener("click", close);
   document.addEventListener("keydown", onEsc);
 
   document.body.appendChild(div);
@@ -6561,7 +6653,7 @@ function abrirModalTerminal(i) {
       const mm = document.getElementById("tmMinimap");
       if (mm) {
         if (_tmMinimap) { try { _tmMinimap.remove(); } catch (e) {} _tmMinimap = null; }
-        _tmMinimap = L.map(mm, { center: [t.lat, t.lon], zoom: 12, zoomControl: true, attributionControl: false });
+        _tmMinimap = L.map(mm, { center: [t.lat, t.lon], zoom: 12, zoomControl: false, attributionControl: false });
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 18 }).addTo(_tmMinimap);
         L.marker([t.lat, t.lon], {
           icon: L.divIcon({
@@ -7251,15 +7343,13 @@ function getAtlasHTML() {
           </svg>
         </div>
 
-        <!-- Barra de basemaps (canto inferior esquerdo) — agora 9 opções -->
+        <!-- Barra de basemaps — 6 opções (removidas duplicatas: OSM≈Padrão,
+             Topo+≈Relevo, Satélite sem rótulos ≈ Satélite com rótulos) -->
         <div class="atlas-basemap-bar">
           <button class="atlas-bm-btn active" data-bm="voyager" onclick="atlasSetBasemap(this)" title="CARTO Voyager · ruas + tons suaves (recomendado)">Padrão</button>
-          <button class="atlas-bm-btn" data-bm="osm" onclick="atlasSetBasemap(this)" title="OpenStreetMap clássico">OSM</button>
           <button class="atlas-bm-btn" data-bm="streets" onclick="atlasSetBasemap(this)" title="Esri Streets · ruas detalhadas">Ruas</button>
-          <button class="atlas-bm-btn" data-bm="esritopo" onclick="atlasSetBasemap(this)" title="Esri Topographic">Topo+</button>
           <button class="atlas-bm-btn" data-bm="topo" onclick="atlasSetBasemap(this)" title="OpenTopoMap · relevo">Relevo</button>
-          <button class="atlas-bm-btn" data-bm="sat" onclick="atlasSetBasemap(this)" title="Esri World Imagery (sem rótulos)">Satélite</button>
-          <button class="atlas-bm-btn" data-bm="sat+rua" onclick="atlasSetBasemap(this)" title="Satélite + rótulos sobrepostos">Sat+Ruas</button>
+          <button class="atlas-bm-btn" data-bm="sat+rua" onclick="atlasSetBasemap(this)" title="Esri World Imagery + rótulos">Satélite</button>
           <button class="atlas-bm-btn" data-bm="light" onclick="atlasSetBasemap(this)" title="CARTO Light · minimal">Claro</button>
           <button class="atlas-bm-btn" data-bm="dark" onclick="atlasSetBasemap(this)" title="CARTO Dark · contraste">Escuro</button>
         </div>
@@ -7343,6 +7433,11 @@ async function initAtlas() {
   map.on("mousemove", e => {
     const el = document.getElementById("atlasCoord");
     if (el) el.textContent = `${e.latlng.lat.toFixed(5)}, ${e.latlng.lng.toFixed(5)}`;
+  });
+  // Touch (celular não tem mousemove): mostra o CENTRO do mapa ao arrastar
+  map.on("move", () => {
+    const el = document.getElementById("atlasCoord");
+    if (el) { const c = map.getCenter(); el.textContent = `${c.lat.toFixed(5)}, ${c.lng.toFixed(5)}`; }
   });
   map.on("zoomend", () => {
     const z = map.getZoom();
@@ -7607,9 +7702,15 @@ function atlasToggleFullscreen() {
   const el = document.querySelector(".atlas-map");
   if (!el) return;
   const doc = document;
+  const req = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
   const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
-  if (!fsEl) {
-    (el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+  if (!req) {
+    // iOS Safari (iPhone/iPad) não tem Fullscreen API para elementos —
+    // antes isso lançava TypeError e o botão parecia morto. Fallback CSS.
+    const on = el.classList.toggle("atlas-fs-fallback");
+    document.body.style.overflow = on ? "hidden" : "";
+  } else if (!fsEl) {
+    req.call(el);
   } else {
     (doc.exitFullscreen || doc.webkitExitFullscreen || doc.msExitFullscreen).call(doc);
   }
@@ -7749,7 +7850,7 @@ function getBIHTML() {
 
     <div class="chart-grid-2">
       <div class="panel-card">
-        <div class="panel-header"><div class="panel-title">Extensão por modal</div></div>
+        <div class="panel-header"><div class="panel-title">Ativos cadastrados por modal</div></div>
         <div class="panel-body"><div class="chart-wrap"><canvas id="chBiModal"></canvas></div></div>
       </div>
       <div class="panel-card">
@@ -7780,20 +7881,24 @@ async function initBI() {
 
   buildAlerts(ct, icm);
 
-  // Extensão por modal (radar)
-  const extRod = rod.reduce((a, r) => a + parseNum(r.extensao_km || r.extensao || r.km), 0);
+  // Ativos por modal — contagens REAIS (antes: radar com números fictícios
+  // hardcoded — Ramais 1200, Hidrovias 18000 km, Aeródromos 120, Terminais 80)
+  try { await _loadRamaisSheet(); } catch (e) {}
+  const uniqRod  = new Set(rod.map(r => (r.rodovia || r.nome || "").toString().toUpperCase().trim()).filter(Boolean)).size;
+  const ramCount = (HUB.state.ramaisSheet || []).length;
+  const aeCount  = (typeof AE_DATA !== "undefined") ? AE_DATA.length : 0;
+  const tmCount  = (typeof TM_DATA !== "undefined") ? TM_DATA.length : 0;
   mkChart("chBiModal", {
-    type: "radar",
+    type: "bar",
     data: {
-      labels: ["Rodovias", "Ramais", "Hidrovias", "Aeródromos", "Terminais"],
+      labels: ["Rodovias", "Ramais", "Aeródromos", "Terminais"],
       datasets: [{
-        label: "Extensão / Quantidade",
-        data: [Math.round(extRod), 1200, 18000, 120, 80],
-        backgroundColor: "rgba(26,43,94,0.15)", borderColor: "#1A2B5E", borderWidth: 2,
-        pointBackgroundColor: "#F5A623"
+        label: "Ativos cadastrados",
+        data: [uniqRod, ramCount, aeCount, tmCount],
+        backgroundColor: ["#1A2B5E", "#2D8540", "#0E7490", "#0077b6"]
       }]
     },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } }, scales: { r: { ticks: { display: false } } } }
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: "y", plugins: { legend: { display: false } } }
   });
 
   // Contratos por status (doughnut)
@@ -7808,7 +7913,9 @@ async function initBI() {
 
   // Top 10 municípios por investimento
   const munMap = {};
-  ct.forEach(c => { const m = (c.municipio || "—").toString(); const v = parseNum(c.valor_atualizado || c.valor_contratual || 0); munMap[m] = (munMap[m] || 0) + v; });
+  // valor_atualizado/valor_contratual NÃO existem no raw da planilha geral
+  // (HANDOFF bug 2) — somava R$ 0 em todos. Campo correto abaixo.
+  ct.forEach(c => { const m = (c.municipio || "—").toString(); const v = parseNum(c.valor_global_inicial_aditivos_reajustes_da_obra || c.valor_global_inicial_aditivos_reajustes || c.valor || 0); munMap[m] = (munMap[m] || 0) + v; });
   const munSorted = Object.entries(munMap).sort((a, b) => b[1] - a[1]).slice(0, 10);
   mkChart("chBiMun", {
     type: "bar",
@@ -7835,15 +7942,15 @@ function buildAlerts(contratos, icm) {
       return status.includes("atras") || status.includes("paral");
     });
     if (atrasados.length > 0)
-      alerts.push({ level: "danger", msg: `${atrasados.length} contratos paralisados/atrasados`, module: "obras" });
+      alerts.push({ level: "danger", msg: `${atrasados.length} contratos paralisados/atrasados`, module: "briefings" });
   }
   if (icm && icm.length) {
     const criticos = icm.filter(r => parseFloat(r.iri || r.icm || r.indice || 0) > 4.0);
     if (criticos.length > 0)
-      alerts.push({ level: "warning", msg: `${criticos.length} trechos com condição crítica (ICM)`, module: "rodovias" });
+      alerts.push({ level: "warning", msg: `${criticos.length} trechos com condição crítica (ICM)`, module: "icm" });
   }
   if ((HUB.state.sinistros || []).length > 50)
-    alerts.push({ level: "warning", msg: `${HUB.state.sinistros.length} sinistros registrados — revisar trechos críticos`, module: "rodovias" });
+    alerts.push({ level: "warning", msg: `${HUB.state.sinistros.length} sinistros registrados — revisar trechos críticos`, module: "sinistros" });
 
   const el = document.getElementById("alertGrid");
   if (!el) return;
@@ -9539,14 +9646,18 @@ window.gerarPDFInvestimentos = gerarPDFInvestimentos;
 async function exportCurrentPDF() {
   const id = HUB.activeModule;
   if (!id) return;
-  if (id === "obras" || id === "briefings") {
-    const ct = HUB.state.contratos || [];
+  if (id === "briefings") {
+    // Usa o schema MAPEADO (contratosObra) — o raw não tem valor_atualizado/
+    // valor_contratual e a tabela saía com R$ 0,00 em todas as linhas.
+    const ct = (HUB.state.contratosObra && HUB.state.contratosObra.length)
+      ? HUB.state.contratosObra
+      : (HUB.state.contratos || []).map(_mapContrato);
     const rows = ct.slice(0, 50).map(c => [
-      (c.contrato || c.numero_contrato || "").toString(),
-      (c.objeto || c.nome_obra || "").toString(),
+      (c.contrato || "").toString(),
+      (c.objeto || c.resumo || "").toString(),
       (c.municipio || "").toString(),
-      (c.situacao_eobras || c.situacao || "").toString(),
-      fmtBRL(parseNum(c.valor_atualizado || c.valor_contratual || 0))
+      (c.situacao_eobras || c.situacao_real || "").toString(),
+      fmtBRL(parseNum(c.valor || 0))
     ]);
     await exportPDF("Relatório de obras — SEINFRA/AM", [
       { type: "heading", value: "Visão executiva" },
@@ -9560,11 +9671,6 @@ async function exportCurrentPDF() {
     await gerarInventarioRodoviario();
     return;
   }
-  // genérico
-  await exportPDF(`Relatório — ${HUB.modules[id].label}`, [
-    { type: "heading", value: HUB.modules[id].label },
-    { type: "text", value: `Relatório gerado em ${new Date().toLocaleString("pt-BR")}.` }
-  ]);
 }
 
 /* ═════════════════════════════════════════════════════════════════
