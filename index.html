@@ -1601,6 +1601,11 @@
     #tmMinimap { height: 200px; border-radius: 10px; overflow: hidden; margin-top: 1rem; border: 1px solid var(--borda); }
     .tmx-minfo { margin-top: 1rem; padding: 1rem; background: #e0f2fe; border-radius: 10px; font-size: .78rem; color: #01497c; line-height: 1.6; border: 1px solid #90e0ef; }
     @media (max-width: 680px) { .tmx-mgrid { grid-template-columns: 1fr; } }
+    @media (max-width: 680px) {
+      .tmx-hero { padding: 2.2rem 1.25rem 3.4rem; }
+      .tmx-stats { gap: 1.5rem; }
+      .tmx-stat-val { font-size: 1.9rem; }
+    }
 
     .tm-filters {
       background: #fff; border-radius: 14px; border: 1px solid var(--borda);
@@ -2243,6 +2248,10 @@ function mkMap(id, opts) {
     L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
       maxZoom: 18, subdomains: "abcd"
     }).addTo(map);
+    // Escala métrica em todos os mapas (atlas usa a própria, passa noScale)
+    if (!(opts && opts.noScale)) {
+      try { L.control.scale({ position: "bottomleft", metric: true, imperial: false, maxWidth: 120 }).addTo(map); } catch (e) {}
+    }
     HUB.state.maps[id] = map;
     return map;
   } catch (e) { console.warn("mkMap", id, e); return null; }
@@ -2794,7 +2803,7 @@ function searchHub(q) {
     const m = (c.municipio || "").toString();
     const obj = (c.objeto || c.nome_obra || "").toString();
     if (m.toLowerCase().includes(query) || obj.toLowerCase().includes(query))
-      results.push({ icon: "\u{1F3D7}", text: obj || m, sub: m || "Contrato", action: () => loadModule("obras") });
+      results.push({ icon: "\u{1F3D7}", text: obj || m, sub: m || "Contrato", action: () => loadModule("briefings") });
   });
   const top = results.slice(0, 14);
   if (!top.length) { box.innerHTML = `<div class="hub-search-item"><div class="hub-search-item-text">Sem resultados</div></div>`; box.classList.add("show"); return; }
@@ -2861,9 +2870,7 @@ function getModuleHTML(id) {
     case "terminais":    return getTerminaisHTML();
     case "icm":          return getICMHTML();
     case "sinistros":    return getSinistrosHTML();
-    case "obras":        return getObrasHTML();
     case "atlas":        return getAtlasHTML();
-    case "planejamento": return getPlanejamentoHTML();
     case "bi":           return getBIHTML();
     case "briefings":    return getBriefingsHTML();
     default: return `<div class="info-state">Módulo não encontrado.</div>`;
@@ -2880,9 +2887,7 @@ function initModule(id) {
     case "terminais":    return initTerminais();
     case "icm":          return initICM();
     case "sinistros":    return initSinistros();
-    case "obras":        return initObras();
     case "atlas":        return initAtlas();
-    case "planejamento": return initPlanejamento();
     case "bi":           return initBI();
     case "briefings":    return initBriefings();
   }
@@ -6705,100 +6710,6 @@ function filterTerminais() {
 }
 
 /* ──────────────────────────────────────────────
-   MÓDULO OBRAS
-   ────────────────────────────────────────────── */
-function getObrasHTML() {
-  return `
-  <div class="mod-wrap">
-    ${modHero("obras", "Contratos e obras em execução · cards filtráveis e exportação PDF")}
-    <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-card-label">Contratos</div><div class="kpi-card-value" id="ob-ct">—</div><div class="kpi-card-foot">cadastrados</div></div>
-      <div class="kpi-card v"><div class="kpi-card-label">Em execução</div><div class="kpi-card-value" id="ob-exec">—</div><div class="kpi-card-foot">vigentes</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Paralisadas</div><div class="kpi-card-value" id="ob-par">—</div><div class="kpi-card-foot">com pendência</div></div>
-      <div class="kpi-card r"><div class="kpi-card-label">Investimento</div><div class="kpi-card-value" id="ob-inv">—</div><div class="kpi-card-foot">contratual</div></div>
-    </div>
-    <div class="panel-card">
-      <div class="filter-row">
-        <input class="filter-input" id="obBusca" placeholder="Buscar obra, município, contratada…" oninput="renderObras()"/>
-        <select class="filter-select" id="obStatus" onchange="renderObras()">
-          <option value="">Todos os status</option>
-          <option value="vigente">Vigentes/Em execução</option>
-          <option value="concluida">Concluídas</option>
-          <option value="paralisada">Paralisadas</option>
-          <option value="atrasada">Atrasadas</option>
-        </select>
-      </div>
-      <div class="panel-body">
-        <div class="obra-cards" id="obraCards"></div>
-      </div>
-    </div>
-  </div>`;
-}
-
-async function initObras() {
-  if (!HUB.state.contratos) await loadCoreData();
-  const ct = HUB.state.contratos || [];
-  $("#ob-ct").textContent   = fmtNum(ct.length);
-  const exec = ct.filter(c => /vigent|execu|andamento/i.test(c.situacao_eobras || c.situacao_real || c.situacao || ""));
-  const par  = ct.filter(c => /paral|atras/i.test(c.situacao_eobras || c.situacao_real || c.situacao || ""));
-  $("#ob-exec").textContent = fmtNum(exec.length);
-  $("#ob-par").textContent  = fmtNum(par.length);
-  const inv = ct.reduce((a, r) => a + parseNum(r.valor_atualizado || r.valor_contratual || r.valor || 0), 0);
-  $("#ob-inv").textContent  = inv ? (inv >= 1e9 ? "R$ " + (inv/1e9).toFixed(2) + " bi" : "R$ " + (inv/1e6).toFixed(1) + " mi") : "—";
-  renderObras();
-}
-
-function renderObras() {
-  const ct = HUB.state.contratos || [];
-  const q = ($("#obBusca")?.value || "").toLowerCase();
-  const st = $("#obStatus")?.value || "";
-  const filtered = ct.filter(c => {
-    const txt = [c.objeto, c.municipio, c.empresa, c.contratada, c.nome_obra].some(v => (v || "").toString().toLowerCase().includes(q));
-    if (q && !txt) return false;
-    const s = (c.situacao_eobras || c.situacao_real || c.situacao || "").toString().toLowerCase();
-    if (st === "vigente" && !/vigent|execu|andamento/.test(s)) return false;
-    if (st === "concluida" && !/conclu/.test(s)) return false;
-    if (st === "paralisada" && !/paral/.test(s)) return false;
-    if (st === "atrasada" && !/atras/.test(s)) return false;
-    return true;
-  });
-
-  const cards = filtered.slice(0, 150).map((c, i) => `
-    <div class="obra-card" onclick="exportObraPDF(${ct.indexOf(c)})">
-      <div class="obra-card-head">
-        <span class="obra-card-num">#${htmlEscape(c.contrato || c.numero_contrato || (i+1))}</span>
-        ${statusChip(c.situacao_eobras || c.situacao_real || c.situacao)}
-      </div>
-      <div class="obra-card-title">${htmlEscape(c.objeto || c.nome_obra || c.descricao || "Obra contratual")}</div>
-      <div class="obra-card-sub">${htmlEscape(c.municipio || "—")} · ${htmlEscape(c.empresa || c.contratada || "")}</div>
-      <div class="obra-card-meta">
-        <div>Valor <strong>${fmtBRL(parseNum(c.valor_atualizado || c.valor_contratual || c.valor || 0))}</strong></div>
-        <div>${htmlEscape(c.prazo || c.vigencia || "—")}</div>
-      </div>
-    </div>`).join("");
-  $("#obraCards").innerHTML = cards || `<div class="info-state">Nenhum contrato corresponde aos filtros.</div>`;
-}
-
-async function exportObraPDF(idx) {
-  const c = (HUB.state.contratos || [])[idx];
-  if (!c) return;
-  const content = [
-    { type: "heading", value: "Identificação do contrato" },
-    { type: "text", value: "Contrato: " + (c.contrato || c.numero_contrato || "—") },
-    { type: "text", value: "Objeto: " + (c.objeto || c.nome_obra || c.descricao || "—") },
-    { type: "text", value: "Município: " + (c.municipio || "—") },
-    { type: "text", value: "Contratada: " + (c.empresa || c.contratada || "—") },
-    { type: "heading", value: "Dados financeiros" },
-    { type: "text", value: "Valor contratual: " + fmtBRL(parseNum(c.valor_contratual || c.valor || 0)) },
-    { type: "text", value: "Valor atualizado: " + fmtBRL(parseNum(c.valor_atualizado || c.valor_contratual || 0)) },
-    { type: "heading", value: "Vigência e situação" },
-    { type: "text", value: "Prazo: " + (c.prazo || c.vigencia || "—") },
-    { type: "text", value: "Situação: " + (c.situacao_eobras || c.situacao_real || c.situacao || "—") },
-  ];
-  await exportPDF("Briefing de obra — " + (c.objeto || c.contrato || ""), content);
-}
-
-/* ──────────────────────────────────────────────
    MÓDULO ATLAS — v2 · basemaps + grupos + lazy load
    <!-- AKE/UFT-1.0 | BUILD: DMOBHUB-20260527 | IC: 1.0 | MÓDULO: atlas -->
    ────────────────────────────────────────────── */
@@ -7389,7 +7300,7 @@ function getAtlasHTML() {
 }
 
 async function initAtlas() {
-  const map = mkMap("atlasMap", { center: [-4.5, -63.5], zoom: 5 });
+  const map = mkMap("atlasMap", { center: [-4.5, -63.5], zoom: 5, noScale: true });
   HUB.state.atlasMap = map;
   HUB.state.atlasLayers = {};
   HUB.state.atlasOverlay = null; // tile layer de rótulos sobreposto à imagem aérea
@@ -7780,63 +7691,6 @@ function atlasSearchLayer(q) {
 }
 
 /* ──────────────────────────────────────────────
-   MÓDULO PLANEJAMENTO
-   ────────────────────────────────────────────── */
-function getPlanejamentoHTML() {
-  return `
-  <div class="mod-wrap">
-    ${modHero("planejamento", "Planejamento rodoviário e priorização orçamentária")}
-    <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-card-label">Metas 2026</div><div class="kpi-card-value" id="pl-meta">—</div><div class="kpi-card-foot">obras planejadas</div></div>
-      <div class="kpi-card v"><div class="kpi-card-label">Aprovadas</div><div class="kpi-card-value" id="pl-apr">—</div><div class="kpi-card-foot">empenho</div></div>
-      <div class="kpi-card a"><div class="kpi-card-label">Em análise</div><div class="kpi-card-value" id="pl-an">—</div><div class="kpi-card-foot">priorização</div></div>
-      <div class="kpi-card c"><div class="kpi-card-label">Investimento</div><div class="kpi-card-value" id="pl-inv">—</div><div class="kpi-card-foot">previsto</div></div>
-    </div>
-    <div class="panel-card">
-      <div class="panel-header"><div class="panel-title">Priorização por modal</div></div>
-      <div class="panel-body"><div class="chart-wrap"><canvas id="chPlan"></canvas></div></div>
-    </div>
-    <div class="panel-card">
-      <div class="panel-header"><div class="panel-title">Pipeline de planejamento</div></div>
-      <div class="table-wrap"><table class="data-table" id="planTable">
-        <thead><tr><th>Projeto</th><th>Modal</th><th>Município</th><th>Status</th><th>Valor previsto</th></tr></thead>
-        <tbody></tbody></table></div>
-    </div>
-  </div>`;
-}
-
-function initPlanejamento() {
-  // Heurística: planejamento usa contratos + extrapolações
-  const ct = HUB.state.contratos || [];
-  $("#pl-meta").textContent = fmtNum(Math.max(ct.length, 12));
-  $("#pl-apr").textContent  = fmtNum(ct.filter(c => /vigent|execu/i.test(c.situacao || "")).length || Math.round(ct.length * 0.62));
-  $("#pl-an").textContent   = fmtNum(Math.round(ct.length * 0.18) || 4);
-  const inv = ct.reduce((a, r) => a + parseNum(r.valor_atualizado || r.valor_contratual || 0), 0) * 1.15;
-  $("#pl-inv").textContent  = inv ? (inv >= 1e9 ? "R$ " + (inv/1e9).toFixed(2) + " bi" : "R$ " + (inv/1e6).toFixed(1) + " mi") : "—";
-
-  mkChart("chPlan", {
-    type: "polarArea",
-    data: {
-      labels: ["Rodovias", "Ramais", "Hidrovias", "Aeródromos", "Terminais"],
-      datasets: [{
-        data: [62, 18, 9, 6, 5],
-        backgroundColor: ["#1A2B5E", "#2D8540", "#5B21B6", "#0E7490", "#B8620A"]
-      }]
-    },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "bottom" } } }
-  });
-
-  const body = ct.slice(0, 40).map((c, i) => `<tr>
-    <td>${htmlEscape(c.objeto || c.nome_obra || ("Projeto " + (i+1)))}</td>
-    <td>Rodoviário</td>
-    <td>${htmlEscape(c.municipio || "—")}</td>
-    <td>${statusChip(c.situacao_eobras || c.situacao || "Em análise")}</td>
-    <td>${fmtBRL(parseNum(c.valor_atualizado || c.valor_contratual || 0))}</td>
-  </tr>`).join("");
-  const tb = $("#planTable tbody"); if (tb) tb.innerHTML = body || `<tr><td colspan="5" class="info-state">Sem dados de planejamento.</td></tr>`;
-}
-
-/* ──────────────────────────────────────────────
    MÓDULO BI & ANALYTICS
    ────────────────────────────────────────────── */
 function getBIHTML() {
@@ -7920,7 +7774,8 @@ async function initBI() {
   mkChart("chBiMun", {
     type: "bar",
     data: { labels: munSorted.map(x => x[0]), datasets: [{ label: "Investimento (R$)", data: munSorted.map(x => Math.round(x[1])), backgroundColor: "#1A2B5E" }] },
-    options: { responsive: true, maintainAspectRatio: false, indexAxis: "y", plugins: { legend: { display: false } } }
+    options: { responsive: true, maintainAspectRatio: false, indexAxis: "y", plugins: { legend: { display: false } },
+      scales: { x: { ticks: { callback: v => v >= 1e9 ? (v/1e9).toFixed(1).replace(".", ",") + " bi" : v >= 1e6 ? Math.round(v/1e6) + " mi" : v } } } }
   });
 
   // Sinistros por rodovia
