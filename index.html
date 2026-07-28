@@ -1821,25 +1821,24 @@ const SHEETS = {
   icm:       { id: "1m9p9nSTwEJJcuIyEXk8KJ8XO9TtzG7spqVUFKC6KBiM", gid: "1165654835" },
 };
 
+// v2/ = higienizado na origem (atlas-amazonas/scripts/): coordenadas arredondadas,
+// colunas vazias removidas, mojibake reparado; ramais também tem chaves renomeadas
+// (normalizar_ramais.py). Originais preservados no CDN como rollback.
 const GEOJSON_FILES = {
-  rodovias_est: "RODOVIAS_ESTADUAIS_AMAZONAS.geojson",
-  rodovias_fed: "RODOVIAS_FEDERAIS.geojson",
-  // v2 = normalizado na origem (chaves snake_case, números reais, 55% menor).
-  // Gerado por atlas-amazonas/scripts/normalizar_ramais.py; original preservado como rollback.
+  rodovias_est: "v2/RODOVIAS_ESTADUAIS_AMAZONAS.geojson",
+  rodovias_fed: "v2/RODOVIAS_FEDERAIS.geojson",
   ramais:       "v2/ramais.geojson",
-  aerodromos:   "AERODROMOS_SEINFRA.geojson",
-  hidrovias:    "HIDROVIAS.geojson",
-  terminais:    "TERMINAIS_FLUTUANTES_SEINFRA.geojson",
-  municipios:   "AM_MUNICIPIOS.geojson",
-  sistemas:     "SISTEMAS_VIARIOS_AMAZONAS1.geojson",
+  aerodromos:   "v2/AERODROMOS_SEINFRA.geojson",
+  hidrovias:    "v2/HIDROVIAS.geojson",
+  terminais:    "v2/TERMINAIS_FLUTUANTES_SEINFRA.geojson",
+  municipios:   "v2/AM_MUNICIPIOS.geojson",
   // Viário usa o geojson_base novo (local), via fetch relativo.
   // Estrutura: {properties:{categoria:'viario', tipo:'rua|marco_municipio|perimetro_urbano',
   //   nome, extensao_m, extensao_km, municipio (opcional)}}
   viario_local: "geojson/viario.geojson",
-  // Camadas Atlas v2 — densificação urbana (SEDECTI-grade)
-  bairros:      "BAIRROS.geojson",
-  uc:           "UNIDADE_DE_CONSERVACAO.geojson",
-  sitios:       "SITIOS_ARQ_-_IPHAN.geojson",
+  bairros:      "v2/BAIRROS.geojson",
+  uc:           "v2/UNIDADE_DE_CONSERVACAO.geojson",
+  sitios:       "v2/SITIOS_ARQ_-_IPHAN.geojson",
 };
 
 /* ── HUB (núcleo, BIOS) ── */
@@ -7107,7 +7106,7 @@ function _atlasAeroPopup(p) {
     <div style="font-size:.72rem;color:#4a5568;margin-top:.3rem">
       ${p.CIAD ? `<div style="font-family:monospace">CIAD: ${htmlEscape(p.CIAD)}</div>` : ""}
       ${p.Compriment ? `<div>📏 Pista: <strong>${htmlEscape(p.Compriment)} m</strong></div>` : ""}
-      ${p.Largura ? `<div>↔ Largura: ${htmlEscape(p.Largura)} m</div>` : ""}
+      ${p.Largura || p["Largura 1"] ? `<div>↔ Largura: ${htmlEscape(p.Largura || p["Largura 1"])} m</div>` : ""}
     </div>
   </div>`;
 }

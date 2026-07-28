@@ -4,15 +4,26 @@
 //
 // As URLs/keys abaixo espelham as constantes do index.html (são públicas lá).
 
+// Mojibake = UTF-8 lido como latin-1 num re-export ("Alvarães" -> "AlvarÃ£es").
+// Já aconteceu no SISTEMAS_VIARIOS_AMAZONAS2; este teste impede que volte despercebido.
+const MOJIBAKE = /Ã[£©§¡ªµºí³­]|Â[°²³º]|â€/;
+function semMojibake(texto, detalhe) {
+  const m = texto.match(MOJIBAKE);
+  if (!m) return { ok: true, detalhe };
+  const pos = texto.indexOf(m[0]);
+  return { ok: false, detalhe: `MOJIBAKE detectado ("...${texto.slice(Math.max(0, pos - 20), pos + 10)}...") — re-export com encoding errado?` };
+}
+
 const CHECKS = [
   {
     nome: "Planilha Geral (contratos, Sheets API v4)",
     url: "https://sheets.googleapis.com/v4/spreadsheets/1LJTtvldaYyHuMnsF04gim2eZPhIqzy5CbEnOZ1zTCoM/values/" +
          encodeURIComponent("Planilha Geral!A:DB") + "?key=AIzaSyDaitkJNDTZi3BMFAe9u4wV6U-DIgUS7NA",
     valida: async r => {
-      const j = await r.json();
-      const n = (j.values || []).length;
-      return n >= 100 ? { ok: true, detalhe: `${n} linhas` } : { ok: false, detalhe: `só ${n} linhas (esperado ≥100)` };
+      const t = await r.text();
+      const n = (JSON.parse(t).values || []).length;
+      if (n < 100) return { ok: false, detalhe: `só ${n} linhas (esperado ≥100)` };
+      return semMojibake(t, `${n} linhas`);
     },
   },
   {
@@ -20,9 +31,10 @@ const CHECKS = [
     url: "https://sheets.googleapis.com/v4/spreadsheets/1Cr5Qbj_My7oOcIYiIjZ6NgJiCsij4ZAQCSxdP49cffc/values/" +
          encodeURIComponent("Ramais!A:BK") + "?key=AIzaSyBrK45p0mev1t5NyDJomdDIvJTe2DWaojA",
     valida: async r => {
-      const j = await r.json();
-      const n = (j.values || []).length;
-      return n >= 500 ? { ok: true, detalhe: `${n} linhas` } : { ok: false, detalhe: `só ${n} linhas (esperado ≥500)` };
+      const t = await r.text();
+      const n = (JSON.parse(t).values || []).length;
+      if (n < 500) return { ok: false, detalhe: `só ${n} linhas (esperado ≥500)` };
+      return semMojibake(t, `${n} linhas`);
     },
   },
   {
@@ -64,24 +76,40 @@ const CHECKS = [
     nome: "GeoJSON Ramais v2 (CDN atlas-amazonas)",
     url: "https://leonzordhue.github.io/atlas-amazonas/geojson/v2/ramais.geojson",
     valida: async r => {
-      const n = ((await r.json()).features || []).length;
-      return n >= 900 ? { ok: true, detalhe: `${n} features` } : { ok: false, detalhe: `só ${n} features (esperado ≥900)` };
+      const t = await r.text();
+      const n = (JSON.parse(t).features || []).length;
+      if (n < 900) return { ok: false, detalhe: `só ${n} features (esperado ≥900)` };
+      return semMojibake(t, `${n} features`);
     },
   },
   {
-    nome: "GeoJSON Rodovias estaduais (CDN atlas-amazonas)",
-    url: "https://leonzordhue.github.io/atlas-amazonas/geojson/RODOVIAS_ESTADUAIS_AMAZONAS.geojson",
+    nome: "GeoJSON Rodovias estaduais v2 (CDN atlas-amazonas)",
+    url: "https://leonzordhue.github.io/atlas-amazonas/geojson/v2/RODOVIAS_ESTADUAIS_AMAZONAS.geojson",
     valida: async r => {
-      const n = ((await r.json()).features || []).length;
-      return n >= 40 ? { ok: true, detalhe: `${n} features` } : { ok: false, detalhe: `só ${n} features (esperado ≥40)` };
+      const t = await r.text();
+      const n = (JSON.parse(t).features || []).length;
+      if (n < 40) return { ok: false, detalhe: `só ${n} features (esperado ≥40)` };
+      return semMojibake(t, `${n} features`);
     },
   },
   {
-    nome: "GeoJSON Municípios (CDN atlas-amazonas)",
-    url: "https://leonzordhue.github.io/atlas-amazonas/geojson/AM_MUNICIPIOS.geojson",
+    nome: "GeoJSON Municípios v2 (CDN atlas-amazonas)",
+    url: "https://leonzordhue.github.io/atlas-amazonas/geojson/v2/AM_MUNICIPIOS.geojson",
     valida: async r => {
-      const n = ((await r.json()).features || []).length;
-      return n >= 60 ? { ok: true, detalhe: `${n} municípios` } : { ok: false, detalhe: `só ${n} (esperado 62)` };
+      const t = await r.text();
+      const n = (JSON.parse(t).features || []).length;
+      if (n < 60) return { ok: false, detalhe: `só ${n} (esperado 62)` };
+      return semMojibake(t, `${n} municípios`);
+    },
+  },
+  {
+    nome: "GeoJSON Bairros v2 (CDN atlas-amazonas)",
+    url: "https://leonzordhue.github.io/atlas-amazonas/geojson/v2/BAIRROS.geojson",
+    valida: async r => {
+      const t = await r.text();
+      const n = (JSON.parse(t).features || []).length;
+      if (n < 400) return { ok: false, detalhe: `só ${n} bairros (esperado 469)` };
+      return semMojibake(t, `${n} bairros`);
     },
   },
   {
