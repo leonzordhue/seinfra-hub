@@ -7120,6 +7120,43 @@ function _atlasViarioPopup(p) {
   </div>`;
 }
 
+// Pontes de Manaus acompanhadas pela DMOB — coordenadas extraídas dos links
+// de localização da planilha "links das pontes.xlsx" (Projetos DMOB, 2026-07-28).
+// Dados inline: são 9 pontos, não justifica arquivo no CDN.
+const PONTES_MANAUS = {
+  type: "FeatureCollection",
+  features: [
+    { n: 1,  lat: -3.024798, lon: -59.931792, sit: "Em andamento", link: "https://maps.app.goo.gl/H3EsE8ZKxq3WBAAx8" },
+    { n: 2,  lat: -3.024356, lon: -59.931573, sit: "Em andamento", link: "https://maps.app.goo.gl/Xx9bFRDBmnknEmAA7" },
+    { n: 3,  lat: -3.027500, lon: -59.931979, sit: "Em andamento", link: "https://maps.app.goo.gl/RuSqZfLYRRjRURUSA" },
+    { n: 4,  lat: -3.033788, lon: -59.934906, sit: "Em andamento", link: "https://maps.app.goo.gl/JngbL68yYPAvgHKt5" },
+    { n: 5,  lat: -3.034069, lon: -59.935382, sit: "Em andamento", link: "https://maps.app.goo.gl/dcWesL1agLnjvyhG6" },
+    { n: 6,  lat: -3.034378, lon: -59.935786, sit: "Em andamento", link: "https://maps.app.goo.gl/A2b4SrK6RM5soZH99" },
+    { n: 37, lat: -3.059771, lon: -60.057012, sit: "Concluído - Inaugurado", link: "https://maps.app.goo.gl/sowo95CE1Dssxtny7" },
+    { n: 45, lat: -3.042083, lon: -59.978203, sit: "Concluído - Inaugurado", link: "https://maps.app.goo.gl/41B5qk3Y62xys5A2A" },
+    { n: 46, lat: -3.046842, lon: -59.978874, sit: "Concluído - Inaugurado", link: "https://maps.app.goo.gl/9Axj4GTX8bjxZCDR7" },
+  ].map(p => ({
+    type: "Feature",
+    properties: { numero: p.n, situacao: p.sit, link: p.link },
+    geometry: { type: "Point", coordinates: [p.lon, p.lat] },
+  })),
+};
+
+function _ponteConcluida(p) { return /conclu/i.test(p.situacao || ""); }
+
+function _atlasPontePopup(p) {
+  const ok = _ponteConcluida(p);
+  const cor = ok ? "#2D8540" : "#D4A017";
+  return `<div style="font-family:Outfit,sans-serif;min-width:190px">
+    <div style="font-weight:800;color:${cor};font-size:.95rem">Ponte ${htmlEscape(p.numero)}</div>
+    <div style="font-size:.72rem;margin-top:.3rem">
+      <span style="display:inline-block;padding:.1rem .5rem;border-radius:99px;background:${cor}1a;color:${cor};font-weight:700">${htmlEscape(p.situacao || "—")}</span>
+    </div>
+    <div style="font-size:.7rem;color:#8896a8;margin-top:.35rem">📍 Manaus</div>
+    ${p.link ? `<div style="font-size:.72rem;margin-top:.35rem"><a href="${htmlEscape(p.link)}" target="_blank" rel="noopener" style="color:#1A2B5E;font-weight:700">Abrir no Google Maps ↗</a></div>` : ""}
+  </div>`;
+}
+
 const ATLAS_GROUPS = [
   // 1. Administrativo — limites, divisões e zonas (SEDECTI-grade)
   {
@@ -7167,6 +7204,13 @@ const ATLAS_GROUPS = [
         filter: f => (f.properties || {}).tipo === "rua" && (f.properties || {}).nome,
         styleFn: () => ({ color: "#7A4F00", weight: 1.6, opacity: 0.78 }),
         labelField: "nome", labelClass: "atlas-lbl-rua", labelMinZoom: 15 },
+      { key: "pontes_manaus", label: "Pontes · Manaus (9)", color: "#D4A017", sw: "pt", type: "point",
+        data: PONTES_MANAUS, popup: _atlasPontePopup,
+        // verde = concluída/inaugurada · âmbar = em andamento
+        styleFn: f => {
+          const cor = _ponteConcluida(f.properties || {}) ? "#2D8540" : "#D4A017";
+          return { color: "#fff", weight: 2, opacity: 1, fillColor: cor, fillOpacity: 0.95, radius: 7 };
+        }},
     ]
   },
   // 3. Aquaviário
@@ -7485,9 +7529,13 @@ async function atlasLoadLayer(map, key) {
   const def = ATLAS_LAYER_MAP[key]; if (!def) return;
   let layer = HUB.state.atlasLayers[key];
   if (!layer) {
-    const file = GEOJSON_FILES[def.file || key];
-    if (!file) return;
-    const gj = await loadGeoJSON(file);
+    // def.data = FeatureCollection inline (ex.: pontes de Manaus) — sem fetch
+    let gj = def.data;
+    if (!gj) {
+      const file = GEOJSON_FILES[def.file || key];
+      if (!file) return;
+      gj = await loadGeoJSON(file);
+    }
     if (!gj) return;
     // popup retorna HTML rico (function) ou string simples
     const popFn = def.popup || (p => `<div class="pop-title">${htmlEscape(p.NOME || p.nome || "—")}</div>`);
