@@ -1824,7 +1824,9 @@ const SHEETS = {
 const GEOJSON_FILES = {
   rodovias_est: "RODOVIAS_ESTADUAIS_AMAZONAS.geojson",
   rodovias_fed: "RODOVIAS_FEDERAIS.geojson",
-  ramais:       "RAMAIS_SEINFRA.geojson",
+  // v2 = normalizado na origem (chaves snake_case, números reais, 55% menor).
+  // Gerado por atlas-amazonas/scripts/normalizar_ramais.py; original preservado como rollback.
+  ramais:       "v2/ramais.geojson",
   aerodromos:   "AERODROMOS_SEINFRA.geojson",
   hidrovias:    "HIDROVIAS.geojson",
   terminais:    "TERMINAIS_FLUTUANTES_SEINFRA.geojson",
@@ -7067,21 +7069,19 @@ function _atlasRodFedPopup(p) {
 }
 
 function _atlasRamalPopup(p) {
-  // Chaves reais do RAMAIS_SEINFRA.geojson (shapefile trunca em 10 chars):
-  // "Descriçã" (nome), "Extensão" (string BR "2,6"), "Local de I", "Local Term".
-  const nome = p["Descriçã"] || p["Descriç_1"] || p.NOME || "Ramal";
-  const ext  = parseNum(p["Extensão"] || p.EXTENSAO);
+  // Chaves do v2/ramais.geojson (normalizado na origem — snake_case, números reais)
+  const ext = Number(p.extensao_km) || 0;
   return `<div style="font-family:Outfit,sans-serif;min-width:220px">
-    <div style="font-weight:800;color:#2D8540;font-size:.92rem">${htmlEscape(nome)}</div>
-    ${p["CÓDIGO"] ? `<div style="font-size:.68rem;font-family:monospace;color:#8896a8;margin-top:.15rem">${htmlEscape(p["CÓDIGO"])}${p["Número"] ? ` #${htmlEscape(p["Número"])}` : ""}</div>` : ""}
+    <div style="font-weight:800;color:#2D8540;font-size:.92rem">${htmlEscape(p.nome || "Ramal")}</div>
+    ${p.codigo ? `<div style="font-size:.68rem;font-family:monospace;color:#8896a8;margin-top:.15rem">${htmlEscape(p.codigo)}${p.numero ? ` #${htmlEscape(p.numero)}` : ""}</div>` : ""}
     <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
-      ${p["Município"] || p.MUNICIPIO ? `<div>📍 ${htmlEscape(p["Município"] || p.MUNICIPIO)}</div>` : ""}
+      ${p.municipio ? `<div>📍 ${htmlEscape(p.municipio)}</div>` : ""}
       ${ext > 0 ? `<div>📏 <strong>${ext.toFixed(2).replace(".", ",")} km</strong></div>` : ""}
-      ${p["Situação"] ? `<div>🚧 ${htmlEscape(p["Situação"])}</div>` : ""}
-      ${p["Local de I"] ? `<div>▶ ${htmlEscape(p["Local de I"])}</div>` : ""}
-      ${p["Local Term"] ? `<div>■ ${htmlEscape(p["Local Term"])}</div>` : ""}
-      ${p["Classifica"] ? `<div>🏷 ${htmlEscape(p["Classifica"])}</div>` : ""}
-      ${p["Revestimen"] ? `<div>🛣 ${htmlEscape(p["Revestimen"])}</div>` : ""}
+      ${p.situacao ? `<div>🚧 ${htmlEscape(p.situacao)}</div>` : ""}
+      ${p.local_inicio ? `<div>▶ ${htmlEscape(p.local_inicio)}</div>` : ""}
+      ${p.local_termino ? `<div>■ ${htmlEscape(p.local_termino)}</div>` : ""}
+      ${p.classificacao ? `<div>🏷 ${htmlEscape(p.classificacao)}</div>` : ""}
+      ${p.revestimento ? `<div>🛣 ${htmlEscape(p.revestimento)}</div>` : ""}
     </div>
   </div>`;
 }
@@ -7603,14 +7603,13 @@ async function _atlasRamalIndex() {
   if (_atlasRamalIdx) return _atlasRamalIdx;
   const gj = await loadGeoJSON(GEOJSON_FILES.ramais);
   if (!gj) return [];
-  // Chaves reais do shapefile (truncadas em 10 chars): "Descriçã", "Município", "CÓDIGO"
+  // Chaves do v2/ramais.geojson (normalizado na origem)
   _atlasRamalIdx = (gj.features || []).map(f => {
     const p = f.properties || {};
-    const nome = p["Descriçã"] || p["Descriç_1"] || "";
-    if (!nome) return null;
-    const mun = p["Município"] || "";
-    const cod = p["CÓDIGO"] ? `${p["CÓDIGO"]}${p["Número"] ? " #" + p["Número"] : ""}` : "";
-    return { nome, mun, cod, busca: _normMun(`${nome} ${mun} ${cod}`), f };
+    if (!p.nome) return null;
+    const mun = p.municipio || "";
+    const cod = p.codigo ? `${p.codigo}${p.numero ? " #" + p.numero : ""}` : "";
+    return { nome: p.nome, mun, cod, busca: _normMun(`${p.nome} ${mun} ${cod}`), f };
   }).filter(Boolean);
   return _atlasRamalIdx;
 }

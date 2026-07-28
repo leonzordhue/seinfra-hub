@@ -61,8 +61,8 @@ const CHECKS = [
     },
   },
   {
-    nome: "GeoJSON Ramais (CDN atlas-amazonas)",
-    url: "https://leonzordhue.github.io/atlas-amazonas/geojson/RAMAIS_SEINFRA.geojson",
+    nome: "GeoJSON Ramais v2 (CDN atlas-amazonas)",
+    url: "https://leonzordhue.github.io/atlas-amazonas/geojson/v2/ramais.geojson",
     valida: async r => {
       const n = ((await r.json()).features || []).length;
       return n >= 900 ? { ok: true, detalhe: `${n} features` } : { ok: false, detalhe: `só ${n} features (esperado ≥900)` };
