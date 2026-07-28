@@ -1170,6 +1170,31 @@
     }
 
     /* Coordenadas live + zoom (canto inferior central) */
+    /* Busca de ramal (topo central do mapa) */
+    .atlas-ramal-srch {
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      z-index: 850; width: min(360px, calc(100% - 150px));
+    }
+    .atlas-ramal-srch input {
+      width: 100%; font-family: var(--font); font-size: .78rem;
+      padding: .5rem .95rem; border: 1.5px solid var(--borda); border-radius: 999px;
+      outline: none; background: rgba(255,255,255,0.96);
+      box-shadow: 0 4px 14px rgba(0,0,0,.18); backdrop-filter: blur(6px);
+      transition: border-color .15s;
+    }
+    .atlas-ramal-srch input:focus { border-color: #2D8540; box-shadow: 0 0 0 3px rgba(45,133,64,.14), 0 4px 14px rgba(0,0,0,.18); }
+    .atlas-ramal-results {
+      margin-top: .35rem; background: #fff; border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.22); display: none;
+      max-height: 300px; overflow-y: auto;
+    }
+    .atlas-ramal-results.open { display: block; }
+    .atlas-ramal-item { padding: .5rem .85rem; cursor: pointer; }
+    .atlas-ramal-item + .atlas-ramal-item { border-top: 1px solid var(--borda); }
+    .atlas-ramal-item:hover { background: #f0f7f1; }
+    .atlas-ramal-item-nome { font-size: .78rem; font-weight: 700; color: #2D8540; }
+    .atlas-ramal-item-sub { font-size: .66rem; color: #8896a8; margin-top: .1rem; }
+
     .atlas-coord-box {
       position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); z-index: 800;
       background: rgba(26,43,94,0.92); color: #fff;
@@ -1232,6 +1257,10 @@
       /* Rosa-dos-ventos: menor */
       .atlas-compass { width: 36px; height: 36px; top: 8px; left: 8px; }
       .atlas-compass svg { width: 36px; height: 36px; }
+
+      /* Busca de ramal: encolhe e desloca para não brigar com a rosa-dos-ventos */
+      .atlas-ramal-srch { top: 8px; left: auto; right: 8px; transform: none; width: min(240px, calc(100% - 100px)); }
+      .atlas-ramal-srch input { font-size: .7rem; padding: .42rem .75rem; }
 
       /* Ferramentas: stack vertical compacta no canto, só ícone */
       .atlas-tools { top: 52px; left: 8px; gap: .25rem; padding: .25rem; }
@@ -7261,6 +7290,14 @@ function getAtlasHTML() {
           </svg>
         </div>
 
+        <!-- Busca de ramal — digite e voe até o ramal no mapa -->
+        <div class="atlas-ramal-srch">
+          <input id="atlasRamalInput" type="text" autocomplete="off"
+                 placeholder="🔍 Buscar ramal (nome, código ou município)…"
+                 oninput="atlasRamalSearch(this.value)" />
+          <div class="atlas-ramal-results" id="atlasRamalResults"></div>
+        </div>
+
         <!-- Barra de basemaps — 6 opções (removidas duplicatas: OSM≈Padrão,
              Topo+≈Relevo, Satélite sem rótulos ≈ Satélite com rótulos) -->
         <div class="atlas-basemap-bar">
@@ -7367,6 +7404,11 @@ async function initAtlas() {
     wrap.toggleAttribute("data-lbl-rua",    z >= 15);
     const zEl = document.getElementById("atlasZoomNum");
     if (zEl) zEl.textContent = "z" + z;
+  });
+  // Clique no mapa fecha o dropdown da busca de ramal
+  map.on("click", () => {
+    const box = document.getElementById("atlasRamalResults");
+    if (box) { box.classList.remove("open"); box.innerHTML = ""; }
   });
 
   // Aguarda a planilha de ramais (com timeout de 6s para não travar o atlas).
@@ -7552,6 +7594,68 @@ async function atlasLoadLayer(map, key) {
   if (def.type === "poly" && layer.bringToBack) try { layer.bringToBack(); } catch(e) {}
   atlasUpdateLegend && atlasUpdateLegend();
 }
+
+/* ── Busca de ramal no Atlas — digita e voa até o ramal ────────────────── */
+let _atlasRamalIdx = null;   // índice de busca [{nome, mun, cod, busca, f}]
+let _atlasRamalHits = [];    // resultados da última busca (para o clique)
+
+async function _atlasRamalIndex() {
+  if (_atlasRamalIdx) return _atlasRamalIdx;
+  const gj = await loadGeoJSON(GEOJSON_FILES.ramais);
+  if (!gj) return [];
+  // Chaves reais do shapefile (truncadas em 10 chars): "Descriçã", "Município", "CÓDIGO"
+  _atlasRamalIdx = (gj.features || []).map(f => {
+    const p = f.properties || {};
+    const nome = p["Descriçã"] || p["Descriç_1"] || "";
+    if (!nome) return null;
+    const mun = p["Município"] || "";
+    const cod = p["CÓDIGO"] ? `${p["CÓDIGO"]}${p["Número"] ? " #" + p["Número"] : ""}` : "";
+    return { nome, mun, cod, busca: _normMun(`${nome} ${mun} ${cod}`), f };
+  }).filter(Boolean);
+  return _atlasRamalIdx;
+}
+
+window.atlasRamalSearch = async function(q) {
+  const box = document.getElementById("atlasRamalResults");
+  if (!box) return;
+  const termo = _normMun(q || "");
+  if (termo.length < 2) { box.classList.remove("open"); box.innerHTML = ""; return; }
+  const idx = await _atlasRamalIndex();
+  const toks = termo.split(/\s+/).filter(Boolean);
+  _atlasRamalHits = idx.filter(r => toks.every(t => r.busca.includes(t))).slice(0, 12);
+  if (!_atlasRamalHits.length) {
+    box.innerHTML = `<div class="atlas-ramal-item"><div class="atlas-ramal-item-sub">Nenhum ramal encontrado</div></div>`;
+  } else {
+    box.innerHTML = _atlasRamalHits.map((r, i) => `
+      <div class="atlas-ramal-item" onclick="atlasRamalGo(${i})">
+        <div class="atlas-ramal-item-nome">${htmlEscape(r.nome)}</div>
+        <div class="atlas-ramal-item-sub">📍 ${htmlEscape(r.mun)}${r.cod ? " · " + htmlEscape(r.cod) : ""}</div>
+      </div>`).join("");
+  }
+  box.classList.add("open");
+};
+
+window.atlasRamalGo = async function(i) {
+  const hit = _atlasRamalHits[i]; if (!hit) return;
+  const map = HUB.state.atlasMap; if (!map) return;
+  const box = document.getElementById("atlasRamalResults");
+  const inp = document.getElementById("atlasRamalInput");
+  if (box) { box.classList.remove("open"); box.innerHTML = ""; }
+  if (inp) inp.value = hit.nome;
+  // Liga a camada de ramais se estiver desligada (mantém o checkbox do painel em sincronia)
+  const el = document.querySelector('.atlas-layer-item[data-layer-key="ramais"]');
+  if (el && !el.classList.contains("on")) await atlasItemClick(el, "ramais");
+  else if (!HUB.state.atlasLayers.ramais) await atlasLoadLayer(map, "ramais");
+  const grp = HUB.state.atlasLayers.ramais; if (!grp) return;
+  // loadGeoJSON cacheia o objeto, então a feature do índice é a MESMA da camada
+  let alvo = null;
+  grp.eachLayer(l => { if (l.feature === hit.f) alvo = l; });
+  if (!alvo) return;
+  const b = alvo.getBounds ? alvo.getBounds() : null;
+  if (b && b.isValid()) map.fitBounds(b, { maxZoom: 14, padding: [50, 50] });
+  // Abre o balão após o voo assentar
+  setTimeout(() => { try { alvo.openPopup(); } catch (e) {} }, 400);
+};
 
 function atlasSetBasemap(btn) {
   const bm = btn.dataset.bm;
