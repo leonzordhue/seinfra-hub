@@ -7038,14 +7038,21 @@ function _atlasRodFedPopup(p) {
 }
 
 function _atlasRamalPopup(p) {
-  return `<div style="font-family:Outfit,sans-serif;min-width:200px">
-    <div style="font-weight:800;color:#2D8540;font-size:.92rem">${htmlEscape(p.NOME || p["Descrição"] || p["CÓDIGO"] || "Ramal")}</div>
+  // Chaves reais do RAMAIS_SEINFRA.geojson (shapefile trunca em 10 chars):
+  // "Descriçã" (nome), "Extensão" (string BR "2,6"), "Local de I", "Local Term".
+  const nome = p["Descriçã"] || p["Descriç_1"] || p.NOME || "Ramal";
+  const ext  = parseNum(p["Extensão"] || p.EXTENSAO);
+  return `<div style="font-family:Outfit,sans-serif;min-width:220px">
+    <div style="font-weight:800;color:#2D8540;font-size:.92rem">${htmlEscape(nome)}</div>
+    ${p["CÓDIGO"] ? `<div style="font-size:.68rem;font-family:monospace;color:#8896a8;margin-top:.15rem">${htmlEscape(p["CÓDIGO"])}${p["Número"] ? ` #${htmlEscape(p["Número"])}` : ""}</div>` : ""}
     <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
       ${p["Município"] || p.MUNICIPIO ? `<div>📍 ${htmlEscape(p["Município"] || p.MUNICIPIO)}</div>` : ""}
-      ${p["Extensão"] || p.EXTENSAO ? `<div>📏 <strong>${Number(p["Extensão"]||p.EXTENSAO).toFixed(2)} km</strong></div>` : ""}
+      ${ext > 0 ? `<div>📏 <strong>${ext.toFixed(2).replace(".", ",")} km</strong></div>` : ""}
+      ${p["Situação"] ? `<div>🚧 ${htmlEscape(p["Situação"])}</div>` : ""}
+      ${p["Local de I"] ? `<div>▶ ${htmlEscape(p["Local de I"])}</div>` : ""}
+      ${p["Local Term"] ? `<div>■ ${htmlEscape(p["Local Term"])}</div>` : ""}
       ${p["Classifica"] ? `<div>🏷 ${htmlEscape(p["Classifica"])}</div>` : ""}
       ${p["Revestimen"] ? `<div>🛣 ${htmlEscape(p["Revestimen"])}</div>` : ""}
-      ${p["Situação"] ? `<div>🚧 ${htmlEscape(p["Situação"])}</div>` : ""}
     </div>
   </div>`;
 }
