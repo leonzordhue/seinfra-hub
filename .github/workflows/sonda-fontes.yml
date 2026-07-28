@@ -1,0 +1,48 @@
+name: Sonda das fontes de dados
+
+# Testa semanalmente todas as fontes que o hub consome (planilhas Google,
+# GeoJSONs do CDN atlas-amazonas, o próprio site). Se alguma quebrar —
+# aba renomeada, planilha despublicada, key bloqueada — abre uma issue.
+
+on:
+  schedule:
+    - cron: "0 10 * * 1"   # segunda-feira, 10:00 UTC (06:00 Manaus)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sondar fontes
+        id: sonda
+        run: node scripts/sonda_fontes.mjs
+
+      - name: Abrir issue se houver falha
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TITULO="Sonda: fonte de dados fora do ar ou alterada"
+          CORPO="A sonda semanal detectou falha em fonte(s) de dados do hub:
+
+          \`\`\`
+          $(cat sonda_falhas.txt 2>/dev/null || echo 'ver log do workflow')
+          \`\`\`
+
+          Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+          Causas comuns: aba/coluna renomeada na planilha, planilha despublicada, quota da API key estourada, arquivo removido do atlas-amazonas."
+          # Não duplica: se já existe issue aberta com o mesmo título, só comenta
+          EXISTENTE=$(gh issue list --state open --search "in:title \"$TITULO\"" --json number --jq '.[0].number')
+          if [ -n "$EXISTENTE" ]; then
+            gh issue comment "$EXISTENTE" --body "$CORPO"
+          else
+            gh issue create --title "$TITULO" --body "$CORPO"
+          fi
