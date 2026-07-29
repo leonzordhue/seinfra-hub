@@ -5609,6 +5609,16 @@ function _normMun(s) {
   return v.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase().trim();
 }
 
+// Match EXATO de município: o campo pode listar vários separados por vírgula
+// ("Autazes, Careiro"). Compara cada entrada com o município pedido após
+// normalização (_normMun) — evita contaminação por substring
+// (ex.: seleção "CAREIRO" capturava contratos de "CAREIRO DA VÁRZEA").
+function _munMatch(campo, mun) {
+  const alvo = _normMun(mun);
+  if (!alvo) return false;
+  return String(campo || "").split(",").some(p => _normMun(p) === alvo);
+}
+
 // Filtra ruas de um município usando o geojson_base novo:
 // 1) match direto por properties.municipio quando presente (rápido, ~282 ruas)
 // 2) point-in-polygon dentro do perimetro_urbano daquele município (fallback)
@@ -5888,7 +5898,7 @@ async function gerarPDFInvestimentosViario() {
 async function gerarBriefingMunicipioViario(mun) {
   const m = (mun || "").toString().toUpperCase().trim();
   if (!m) return;
-  const obras = (HUB.state.contratosVia || []).filter(o => (o.municipio||"").toString().toUpperCase().includes(m));
+  const obras = (HUB.state.contratosVia || []).filter(o => _munMatch(o.municipio, m));
   const ruas = (HUB.state.viarioSheet || []).filter(r => r.municipio === m);
   const extRuas = ruas.reduce((s, r) => s + (r.extensao_km || 0), 0);
   const totInv = obras.reduce((s, o) => s + o.valor, 0);
@@ -8290,7 +8300,14 @@ function _buildBrCharts(ct) {
 }
 
 function _populateBrMuns(ct) {
-  const muns = [...new Set(ct.map(c=>c.municipio).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  // Split por vírgula: contratos multi-município ("Autazes, Careiro") geram
+  // uma opção POR município — sem entradas compostas no select.
+  const vistos = new Map();
+  ct.forEach(c => (c.municipio || "").toString().split(",").forEach(p => {
+    const nome = p.trim();
+    if (nome && !vistos.has(_normMun(nome))) vistos.set(_normMun(nome), nome);
+  }));
+  const muns = [...vistos.values()].sort((a,b)=>a.localeCompare(b,"pt-BR"));
 
   // select aba Obras
   const selFiltro = document.getElementById("brMunFiltro");
@@ -8315,7 +8332,7 @@ function renderBriefings() {
     if (st === "vigente"    && !_isExec(c))    return false;
     if (st === "concluida"  && !_isConc(c))    return false;
     if (st === "paralisada" && !_isAtencao(c)) return false;
-    if (mun && !((c.municipio || "").toString().toUpperCase().includes(mun.toUpperCase()))) return false;
+    if (mun && !_munMatch(c.municipio, mun)) return false;
     return true;
   });
 
@@ -8371,10 +8388,11 @@ function renderBriefingMunicipal() {
   const el  = document.getElementById("brMunPanel"); if (!el) return;
   if (!mun) { el.innerHTML = `<div class="info-state">Selecione um município para ver a análise consolidada.</div>`; return; }
 
-  // Usa contratosObra (mapeado) — match por substring (alguns contratos têm
-  // múltiplos municípios no mesmo campo, separados por vírgula).
+  // Usa contratosObra (mapeado) — match EXATO por entrada (campo pode ter
+  // múltiplos municípios separados por vírgula) + dedup de linhas repetidas
+  // (aditivos/sub-objetos), mesma consolidação usada no PDF municipal.
   const ct  = HUB.state.contratosObra || [];
-  const ctM = ct.filter(c => (c.municipio || "").toString().toUpperCase().includes(mun.toUpperCase()));
+  const ctM = _dedupContratosMun(ct.filter(c => _munMatch(c.municipio, mun)));
   const invM = ctM.reduce((a,c) => a + (c.valor || 0), 0);
   const execM = ctM.filter(_isExec).length;
   const concM = ctM.filter(_isConc).length;
@@ -8665,7 +8683,7 @@ async function exportBriefingMunicipalPDF(mun) {
   try { await _loadLicitacoes(); } catch (e) {}
 
   const ctBruto = (HUB.state.contratosObra || [])
-    .filter(c => (c.municipio || "").toString().toUpperCase().includes(mun.toUpperCase()));
+    .filter(c => _munMatch(c.municipio, mun));
   // Aplica dedup ANTES do sort — depois ordena por valor consolidado.
   const ct = _dedupContratosMun(ctBruto)
     .sort((a, b) => (b.valor || 0) - (a.valor || 0));
