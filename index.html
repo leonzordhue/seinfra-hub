@@ -3168,6 +3168,10 @@ function _mapContrato(r) {
   };
 }
 
+// Objeto começa com palavra-chave de OAE (ponte/viaduto isolados) — usado
+// tanto no matching de contrato quanto no de sub-objeto (linha da planilha).
+const _RE_OAE_PRINCIPAL = /^(DEMOLI[CÇ][AÃ]O|CONSTRU[CÇ][AÃ]O|REFORMA|RECUPERA[CÇ][AÃ]O|REVITALIZA[CÇ][AÃ]O|SUBSTITUI[CÇ][AÃ]O|MANUTEN[CÇ][AÃ]O|RESTAURA[CÇ][AÃ]O)\s+(D[AOE]S?\s+)?(PONTE|VIADUTO|OBRA\s+DE\s+ARTE)\b/;
+
 // Matching robusto: é obra rodoviária? (e da rodovia X se rodNome for dado)
 // Implementa as regras: exclui ramais/vicinais; AM-151 = "Carlos Braga" (alias
 // exclusivo); AM-450 = "Anel Sul" mas EXCLUI obras de arte e somente Manaus;
@@ -3183,8 +3187,7 @@ function _isObraRodoviaria(c, rodNome) {
   // Aplicada a QUALQUER rodovia, conforme regra estendida do operador.
   // Ex.: "Demolição da ponte antiga existente na AM-010..." → excluir.
   const objUpper = (c.objeto || "").toUpperCase().trim();
-  const reOAEPrincipal = /^(DEMOLI[CÇ][AÃ]O|CONSTRU[CÇ][AÃ]O|REFORMA|RECUPERA[CÇ][AÃ]O|REVITALIZA[CÇ][AÃ]O|SUBSTITUI[CÇ][AÃ]O|MANUTEN[CÇ][AÃ]O|RESTAURA[CÇ][AÃ]O)\s+(D[AOE]S?\s+)?(PONTE|VIADUTO|OBRA\s+DE\s+ARTE)\b/;
-  if (reOAEPrincipal.test(objUpper)) return false;
+  if (_RE_OAE_PRINCIPAL.test(objUpper)) return false;
   if (!rodNome) {
     return /\bAM[\s\-\/]?\d{2,3}\b/.test(tema)
         || /\bCARLOS\s+BRAGA\b/.test(tema)
@@ -3223,15 +3226,72 @@ function _isObraRodoviaria(c, rodNome) {
   return true;
 }
 
-// Lista as obras de uma rodovia, com dedup (mesmo CT em inicial + aditivo → mantém maior valor)
+// Rodovias "principais" de um SUB-OBJETO (linha da planilha). O RESUMO DO
+// OBJETO é a fonte primária — é ele que distingue o lote/rodovia em CTs
+// multi-rodovia (ex.: CT-00006/2020 tem 4 linhas, uma por rodovia; o OBJETO
+// completo cita todas, mas cada resumo diz "Rodovia AM-352 - Lote 02" etc.).
+function _rodoviasDoSubobjeto(s) {
+  const resumo = (s.resumo || "").toString().toUpperCase();
+  const out = new Set();
+  // 1) Padrão forte: "RODOVIA AM-353" — pega SÓ a rodovia nomeada (ignora
+  //    referências de localização tipo "no Km 56 da AM-070").
+  let m; const reForte = /RODOVIA\s+AM[\s\-\/]?0*(\d{1,3})(?!\d)/g;
+  while ((m = reForte.exec(resumo)) !== null) out.add("AM-" + m[1].padStart(3, "0"));
+  if (/\bCARLOS\s+BRAGA\b/.test(resumo)) out.add("AM-151");
+  if (/\bANEL\s+SUL\b/.test(resumo)) out.add("AM-450");
+  if (out.size) return [...out];
+  // 2) Fallback: qualquer AM-XXX citada no resumo (ex.: "Estrada de
+  //    Itapiranga AM-363 KM 81"), desde que não seja só referência de km.
+  const reAM = /AM[\s\-\/]?0*(\d{1,3})(?!\d)/g;
+  while ((m = reAM.exec(resumo)) !== null) out.add("AM-" + m[1].padStart(3, "0"));
+  return [...out];
+}
+
+// Visão PARCIAL de um contrato agregado: só os sub-objetos que interessam ao
+// filtro (rodovia/ramal/município), com valor e extensão (km) somados da
+// parcela. `_parcial` marca quando não é o contrato inteiro — o card e os
+// PDFs mostram o total do CT ao lado, para auditabilidade.
+function _obraParcial(agregado, subs) {
+  const todos = (agregado._subobjetos && agregado._subobjetos.length) ? agregado._subobjetos : [agregado];
+  const valor = subs.reduce((s, x) => s + (x.valor || 0), 0);
+  const extKm = subs.reduce((s, x) => s + (String(x.unidade || "").toLowerCase().includes("km") ? parseNum(x.dimensao) : 0), 0);
+  const resumos = [...new Set(subs.map(x => (x.resumo || "").toString().trim()).filter(Boolean))];
+  const muns = [...new Set(subs.map(x => (x.municipio || "").toString().trim()).filter(Boolean))];
+  return {
+    ...agregado,
+    valor,
+    objeto: resumos.length ? resumos.join("  ·  ") : agregado.objeto,
+    municipio: muns.length ? muns.join(", ") : agregado.municipio,
+    _extTrabalhada: extKm > 0 ? extKm : null,
+    _parcial: subs.length < todos.length,
+    _valorTotalCT: agregado.valor,
+  };
+}
+
+// Lista as obras de uma rodovia — por SUB-OBJETO: um CT multi-rodovia entra
+// com a PARCELA (valor/extensão) de cada rodovia, não o total repetido.
+// (Antes: o CT-00006/2020 de R$ 12,5 mi aparecia inteiro em AM-070, AM-352,
+// AM-452 E AM-453; a AM-354 do CT-00004/2020 não aparecia em lugar nenhum.)
 function _obrasDaRodovia(rodNome, contratos) {
-  const seen = {};
+  const mm = (rodNome || "").toUpperCase().match(/AM[\s\-\/]?(\d{1,3})/);
+  const alvo = mm ? "AM-" + mm[1].padStart(3, "0") : null;
+  const out = [];
   for (const c of contratos) {
-    if (!_isObraRodoviaria(c, rodNome)) continue;
-    const k = c.contrato || ((c.objeto||"").slice(0, 40) + "|" + (c.empresa||""));
-    if (!seen[k] || c.valor > seen[k].valor) seen[k] = c;
+    const subs = (c._subobjetos && c._subobjetos.length) ? c._subobjetos : [c];
+    const match = subs.filter(s => {
+      const sit = ((s.situacao_eobras || "") + " " + (s.situacao_real || "")).toUpperCase();
+      if (sit.includes("RESCIND")) return false;
+      if (_RE_OAE_PRINCIPAL.test((s.resumo || "").toString().toUpperCase().trim())) return false;
+      const rods = _rodoviasDoSubobjeto(s);
+      // Resumo aponta rodovia(s): decide por ele (fonte primária).
+      if (rods.length && alvo) return rods.includes(alvo);
+      // Sem rodovia no resumo (ou rodovia sem código AM): heurística completa da linha.
+      return _isObraRodoviaria(s, rodNome);
+    });
+    if (!match.length) continue;
+    out.push(_obraParcial(c, match));
   }
-  return Object.values(seen);
+  return out;
 }
 
 // Siglas reais detectadas na planilha+geojson: PAV, DUP, LEI/LEN (leito natural),
@@ -3289,10 +3349,13 @@ function _renderObraCard(o) {
       <span style="font-size:0.9rem;font-weight:800;color:var(--azul);white-space:nowrap">${_fmtBRLShort(o.valor)}</span>
     </div>
     <div title="${htmlEscape(obj)}" style="font-size:0.85rem;font-weight:500;line-height:1.45;margin-bottom:0.5rem;color:var(--azul-dk);word-wrap:break-word;overflow-wrap:break-word;hyphens:auto">${htmlEscape(obj)}</div>
+    ${o._parcial ? `<div style="font-size:0.7rem;color:#8B4513;background:#FEF3DC;border:1px solid #F5A62366;border-radius:6px;padding:0.28rem 0.55rem;margin-bottom:0.5rem">◔ Parcela do contrato atribuída a este filtro — valor total do CT: <strong>${_fmtBRLShort(o._valorTotalCT)}</strong></div>` : ""}
+    ${o._naoIsolado ? `<div style="font-size:0.7rem;color:#8B4513;background:#FEF3DC;border:1px solid #F5A62366;border-radius:6px;padding:0.28rem 0.55rem;margin-bottom:0.5rem">⚠ Contrato cobre múltiplas frentes — parcela deste ramal não pôde ser isolada; valores do CT completo.</div>` : ""}
     <div style="font-size:0.72rem;color:var(--cinza-med);display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;justify-content:space-between">
       <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;flex:1;min-width:0">
         <span style="font-weight:600">${htmlEscape(o.municipio||"—")}</span><span>·</span>
         <span style="word-break:break-word">${htmlEscape(o.empresa||"—")}</span>
+        ${o._extTrabalhada ? `<span>·</span><span style="font-weight:600">🛣 ${fmtNum(o._extTrabalhada, 2)} km</span>` : ""}
         ${o.ano ? `<span>·</span><span>${o.ano}</span>` : ""}
         ${statusChip(o.situacao_eobras||o.situacao_real||"")}
       </div>
@@ -3648,9 +3711,13 @@ function _buildRodInvest() {
   const anos = [...new Set(obras.map(o => o.ano).filter(a => a > 0))].sort((a,b) => b-a);
   const selA = document.getElementById("invAno");
   if (selA) selA.innerHTML = `<option value="">Todos os anos</option>` + anos.map(a => `<option value="${a}">${a}</option>`).join("");
-  // Rodovias mencionadas
+  // Rodovias mencionadas — por sub-objeto (resumo primeiro), para o select
+  // incluir rodovias que só aparecem em linhas específicas (ex.: AM-354).
   const rodSet = new Set();
-  obras.forEach(o => _extractRodoviasDeObra(o).forEach(c => rodSet.add(c)));
+  obras.forEach(o => ((o._subobjetos && o._subobjetos.length) ? o._subobjetos : [o]).forEach(s => {
+    const rods = _rodoviasDoSubobjeto(s);
+    (rods.length ? rods : _extractRodoviasDeObra(s)).forEach(c => rodSet.add(c));
+  }));
   const rodArr = [...rodSet].sort();
   const selR = document.getElementById("invRodovia");
   if (selR) selR.innerHTML = `<option value="">Todas as rodovias (${rodArr.length})</option>` + rodArr.map(c => `<option value="${c}">${c}</option>`).join("");
@@ -3662,16 +3729,15 @@ window.renderInvestList = function() {
   const st = document.getElementById("invStatus")?.value || "";
   const an = document.getElementById("invAno")?.value || "";
   const rd = (document.getElementById("invRodovia")?.value || "").toUpperCase();
-  const filtered = (HUB.state.contratosRod || []).filter(o => {
+  // Com filtro de rodovia: usa a atribuição por sub-objeto (parcela do CT que
+  // cabe à rodovia), a mesma do Quadro/briefing — sem repetir o CT inteiro.
+  const base = rd ? _obrasDaRodovia(rd, HUB.state.contratosRod || []) : (HUB.state.contratosRod || []);
+  const filtered = base.filter(o => {
     if (q) {
       const hay = ((o.objeto||"") + " " + (o.contrato||"") + " " + (o.empresa||"") + " " + (o.municipio||"")).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     if (an && String(o.ano) !== String(an)) return false;
-    if (rd) {
-      const rods = _extractRodoviasDeObra(o);
-      if (!rods.includes(rd)) return false;
-    }
     if (st) {
       const s = ((o.situacao_eobras||"") + " " + (o.situacao_real||"")).toLowerCase();
       if (st === "concluido"  && !(s.includes("conclu") || s.includes("inaug"))) return false;
@@ -4866,32 +4932,49 @@ window.selectRamal = async function(key) {
   const inp = document.getElementById("ramSearch");
   if (inp) inp.value = `${r.codigo} #${r.numero} — ${r.descricao.slice(0,40)}`;
 
-  // Obras vinculadas — múltiplas estratégias em ordem de confiança:
-  // 1) Match direto pelo nº de contrato registrado na planilha de ramais (campo r.contrato)
-  //    — ramais concluídos têm o CT executor anotado: prioridade máxima.
-  // 2) Match por descrição/nome do ramal no objeto+resumo+localização (heurística textual).
+  // Obras vinculadas — match por SUB-OBJETO (linha da planilha), para que um
+  // CT que cobre vários ramais traga só a PARCELA (valor/extensão) deste ramal:
+  // 1) Match textual da linha com o nome do ramal (fold de acento/caixa via
+  //    _normMun, tolerante a typos de acentuação tipo "CLAÚDIO"/"CLÁUDIO").
+  // 2) Se nenhuma linha for isolada mas o CT registrado na planilha de ramais
+  //    (r.contrato) bater, mostra o contrato inteiro sinalizado (_naoIsolado).
   const ctRamalRegistrado = (r.contrato || "").trim().replace(/\s+/g, "");
-  const obras = (HUB.state.contratosRam || []).filter(o => {
-    // (1) match exato por CT registrado
+  const _descN = _normMun(r.descricao || "");
+  const _STOP_RAMAL = new Set(["RAMAL","ESTRADA","VICINAL","SUB","DO","DA","DE","DOS","DAS","KM","AM","BR","I","II","III","IV"]);
+  const _rowMatchRamal = (s) => {
+    // RESUMO+localização é a fonte primária: o OBJETO repete o texto do
+    // contrato inteiro (lista todos os ramais do CT) e contaminaria o match —
+    // só cai no objeto quando a linha não tem resumo.
+    const temaResumo = _normMun((s.resumo||"") + " " + (s.localizacao||""));
+    const tema = temaResumo.trim().length > 3 ? temaResumo : _normMun(s.objeto||"");
+    if (_descN.length > 8 && tema.includes(_descN.slice(0, Math.min(30, _descN.length)))) return true;
+    // Guarda de tipo no fallback por palavra-chave: "ESTRADA dos Reis" não
+    // pode casar com "RAMAL dos Reis" (tipos distintos, mesmo nome).
+    const _tipoDe = t => { const m2 = String(t||"").trim().match(/^(SUB\.?\s+)?(RAMAL|ESTRADA|VICINAL|TRAVESSA|RUA|AVENIDA)\b/); return m2 ? m2[2] : ""; };
+    const tipoDesc = _tipoDe(_descN), tipoRow = _tipoDe(_normMun(s.resumo||""));
+    if (tipoDesc && tipoRow && tipoDesc !== tipoRow) return false;
+    const palavras = _descN.split(/[^A-Z0-9]+/).filter(p => p.length >= 3 && !_STOP_RAMAL.has(p));
+    if (!palavras.length) return false;
+    const matched = palavras.filter(p => tema.includes(p)).length;
+    return matched >= Math.min(2, palavras.length);
+  };
+  const obras = [];
+  for (const o of (HUB.state.contratosRam || [])) {
+    const subs = (o._subobjetos && o._subobjetos.length) ? o._subobjetos : [o];
+    const match = subs.filter(_rowMatchRamal);
+    if (match.length) { obras.push(_obraParcial(o, match)); continue; }
+    // Fallback: CT registrado bate, mas o nome do ramal não foi localizado em
+    // nenhuma linha — mostra o CT completo com aviso de parcela não isolada.
     if (ctRamalRegistrado) {
       const ctObra = (o.contrato || "").trim().replace(/\s+/g, "");
-      if (ctObra && ctObra === ctRamalRegistrado) return true;
-      // tolerância: número sem prefixo/sufixo
-      if (ctObra && ctObra.replace(/\D/g, "") === ctRamalRegistrado.replace(/\D/g, "")) return true;
+      const bate = ctObra && (ctObra === ctRamalRegistrado || ctObra.replace(/\D/g, "") === ctRamalRegistrado.replace(/\D/g, ""));
+      if (bate) {
+        const ob = _obraParcial(o, subs);
+        ob._naoIsolado = subs.length > 1;
+        obras.push(ob);
+      }
     }
-    // (2) match heurístico por descrição
-    const tema = ((o.objeto||"") + " " + (o.resumo||"") + " " + (o.localizacao||"")).toUpperCase();
-    const desc = (r.descricao || "").toUpperCase().trim();
-    if (desc && desc.length > 8 && tema.includes(desc.slice(0, Math.min(30, desc.length)))) return true;
-    // (3) match por nome da rua/ramal específico no resumo do sub-objeto (cobre CTs grandes
-    // com sub-objetos para vários ramais — ex. CT-00055/2020 lista vários ramais distintos)
-    if (desc && desc.length > 8) {
-      const palavrasChave = desc.split(/\s+/).filter(p => p.length > 4 && !["RAMAL","ESTRADA","VICINAL","DO","DA","DE","DOS","DAS"].includes(p));
-      const matched = palavrasChave.filter(p => tema.includes(p));
-      if (matched.length >= 2) return true; // 2+ palavras-chave únicas no resumo
-    }
-    return false;
-  });
+  }
   const totInv = obras.reduce((s, o) => s + o.valor, 0);
   // Chip do contrato registrado (quando concluído tem CT executor)
   const chipContrato = ctRamalRegistrado
@@ -5466,6 +5549,22 @@ function _buildViarioQuadro() {
   if (sel) sel.innerHTML = `<option value="">Selecione um município (${muns.length})</option>` + muns.map(m => `<option value="${m}">${m}</option>`).join("");
 }
 
+// Contratos viários de um município — por SUB-OBJETO (linha da planilha):
+// um CT que cobre 2+ municípios entra com a parcela (valor/extensão) de cada
+// um, em vez do total inteiro no município da primeira linha.
+function _obrasViaDoMunicipio(m) {
+  const mKey = _normMun(_aplicaAliasMun((m || "").toString().toUpperCase().trim()));
+  if (!mKey) return [];
+  const out = [];
+  for (const o of (HUB.state.contratosVia || [])) {
+    const subs = (o._subobjetos && o._subobjetos.length) ? o._subobjetos : [o];
+    const match = subs.filter(s => (s.municipio || "").toString().split(/\s*,\s*/)
+      .some(x => _normMun(_aplicaAliasMun(x.toUpperCase().trim())) === mKey));
+    if (match.length) out.push(_obraParcial(o, match));
+  }
+  return out;
+}
+
 window.filterViaMun = function() {
   const m = (document.getElementById("viaMunSel").value || "").toUpperCase().trim();
   if (!m) {
@@ -5475,10 +5574,7 @@ window.filterViaMun = function() {
   // Match resiliente: o select usa nome canonico (com acento, alias aplicado).
   // viarioSheet/contratosVia podem ter variantes — comparamos via _normMun (accent-fold).
   const mKey = _normMun(_aplicaAliasMun(m));
-  const obras = (HUB.state.contratosVia || []).filter(o => {
-    const munList = (o.municipio||"").toString().split(/\s*,\s*/);
-    return munList.some(x => _normMun(_aplicaAliasMun(x.toUpperCase().trim())) === mKey);
-  });
+  const obras = _obrasViaDoMunicipio(m);
   const ruas = (HUB.state.viarioSheet || []).filter(r => _normMun(_aplicaAliasMun(r.municipio||"")) === mKey);
   const extRuas = ruas.reduce((s, r) => s + (r.extensao_km || 0), 0);
   const totInv = obras.reduce((s, o) => s + o.valor, 0);
@@ -5898,7 +5994,7 @@ async function gerarPDFInvestimentosViario() {
 async function gerarBriefingMunicipioViario(mun) {
   const m = (mun || "").toString().toUpperCase().trim();
   if (!m) return;
-  const obras = (HUB.state.contratosVia || []).filter(o => _munMatch(o.municipio, m));
+  const obras = _obrasViaDoMunicipio(m);
   const ruas = (HUB.state.viarioSheet || []).filter(r => r.municipio === m);
   const extRuas = ruas.reduce((s, r) => s + (r.extensao_km || 0), 0);
   const totInv = obras.reduce((s, o) => s + o.valor, 0);
@@ -9534,16 +9630,20 @@ async function gerarBriefingRodovia(nome) {
     const _truncObj = s => { const t = (s||"—").toString(); return t.length > 160 ? t.slice(0, 157) + "…" : t; };
     content.push({
       type: "table",
-      headers: ["Contrato", "Objeto", "Valor", "Município", "Ano", "Situação"],
+      headers: ["Contrato", "Objeto", "Valor", "Ext. (km)", "Município", "Ano", "Situação"],
       rows: obras.sort((a, b) => b.valor - a.valor).map(o => [
-        (o.contrato || "—").toString().slice(0, 24),
+        (o.contrato || "—").toString().slice(0, 24) + (o._parcial ? " *" : ""),
         _truncObj(o.objeto),
         _fmtBRLShort(o.valor),
+        o._extTrabalhada ? fmtNum(o._extTrabalhada, 2) : "—",
         (o.municipio || "—").toString().slice(0, 28),
         o.ano || "—",
         ((o.situacao_eobras || o.situacao_real || "—") + "").slice(0, 22),
       ]),
     });
+    if (obras.some(o => o._parcial)) {
+      content.push({ type: "text", value: "* Parcela do contrato atribuída a esta rodovia (CT abrange mais de uma rodovia); valor e extensão referem-se apenas aos serviços nela executados." });
+    }
   } else {
     content.push({ type: "text", value: "Sem obras rodoviárias vinculadas no momento." });
   }
@@ -9559,16 +9659,13 @@ async function gerarPDFInvestimentos() {
   const rd = (document.getElementById("invRodovia")?.value || "").toUpperCase();
 
   // Reaplica filtros (espelhando renderInvestList p/ garantir paridade)
-  const filtered = (HUB.state.contratosRod || []).filter(o => {
+  const _basePDF = rd ? _obrasDaRodovia(rd, HUB.state.contratosRod || []) : (HUB.state.contratosRod || []);
+  const filtered = _basePDF.filter(o => {
     if (q) {
       const hay = ((o.objeto||"") + " " + (o.contrato||"") + " " + (o.empresa||"") + " " + (o.municipio||"")).toLowerCase();
       if (!hay.includes(q)) return false;
     }
     if (an && String(o.ano) !== String(an)) return false;
-    if (rd) {
-      const rods = _extractRodoviasDeObra(o);
-      if (!rods.includes(rd)) return false;
-    }
     if (st) {
       const s = ((o.situacao_eobras||"") + " " + (o.situacao_real||"")).toLowerCase();
       if (st === "concluido"  && !(s.includes("conclu") || s.includes("inaug"))) return false;
