@@ -3032,6 +3032,13 @@ const CONTRATOS_OFICIAIS_RODOVIAS = [
   "CT-00006/2026-SEINFRA",
 ];
 
+// COMPLEMENTO à whitelist oficial — obras rodoviárias registradas na Planilha
+// Geral que ficaram FORA do relatório v5, confirmadas pelo operador (DMOB).
+// Somam aos totais do módulo Rodovias; revisar quando sair o relatório v6.
+const CONTRATOS_RODOVIAS_EXTRAS = [
+  "CT-00040/2021-SEINFRA", // Contenção de processo erosivo às margens da AM-240, KM 30 (Presidente Figueiredo)
+];
+
 // Whitelist oficial — Ramais e Estradas (39 contratos, R$ 1.048.590.620,30).
 // Mesma fonte: Relatório de Investimentos em Mobilidade WL 2019-2026 v5.
 const CONTRATOS_OFICIAIS_RAMAIS = [
@@ -3381,7 +3388,7 @@ async function initRodovias() {
   // ex.: CT-00144/2013 = Duplicação Tarumã + Viaduto Lydia = R$ 250 mi consolidado.
   // O relatório oficial SOMA esses sub-objetos; pegar só o MAIOR subestimava o total.)
   if (!HUB.state.contratosRod) {
-    const oficiaisSet = new Set(CONTRATOS_OFICIAIS_RODOVIAS);
+    const oficiaisSet = new Set([...CONTRATOS_OFICIAIS_RODOVIAS, ...CONTRATOS_RODOVIAS_EXTRAS]);
     // CTs multi-segmento: só conta sub-objetos categorizados como "rodovia"
     // (ex. CT-00067/2018 tem sub-objeto rodovia AM-453 + sub-objeto viário "Sistema Viário Comunidade Bela Vista" — só rodovia entra aqui).
     const multiSeg = new Set([
