@@ -4691,7 +4691,7 @@ async function _renderAcervoRamal(r) {
     const ac = await _loadAcervo();
     const pastas = ac.fotos.filter(p => p.ramal_key === r.key);
     const kmls = ac.kml.filter(k => k.ramal_key === r.key);
-    const shps = ac.shp.filter(s => s.tipo === "ramal");
+    const shps = ac.shp.filter(s => s.tipo === "ramal" && s.ramal_key === r.key);
     el.innerHTML = _acervoSecaoHtml(pastas, kmls, shps, "Acervo do ramal — fotos, traçado e shapefile");
   } catch (e) { /* acervo indisponível: seção fica vazia */ }
 }
@@ -4701,9 +4701,10 @@ async function _renderAcervoRodovia(nome) {
   try {
     const ac = await _loadAcervo();
     const pastas = ac.fotos.filter(p => p.rodovia === nome);
-    const kmls = ac.kml.filter(k => k.rodovia === nome && (k.tipo === "rodovia" || k.tipo === "colecao"));
-    const shps = ac.shp.filter(s => s.tipo === "rodovia");
-    el.innerHTML = _acervoSecaoHtml(pastas, kmls, shps, "Acervo da rodovia — fotos, traçados e shapefile");
+    // Só o traçado da PRÓPRIA rodovia (principal) — sem segmentos km-XX, sem ramais, sem coleções.
+    const kmls = ac.kml.filter(k => k.tipo === "rodovia" && k.rodovia === nome && k.principal);
+    const shps = ac.shp.filter(s => s.tipo === "rodovia" && s.rodovia === nome);
+    el.innerHTML = _acervoSecaoHtml(pastas, kmls, shps, "Acervo da rodovia — traçado e fotos");
   } catch (e) { /* acervo indisponível: seção fica vazia */ }
 }
 
