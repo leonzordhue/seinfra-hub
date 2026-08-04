@@ -3647,6 +3647,7 @@ window.selectRodovia = async function(nome) {
         `).join("")}
       </div>
     </div>` : ""}
+    <div id="rodQuadroAcervo"></div>
     <div class="panel-title" style="margin:0.4rem 0 0.4rem">Traçado no mapa ${sitPres.length>1 ? '<span style="font-size:0.7rem;color:var(--cinza-aux);font-weight:500">(múltiplas situações)</span>' : ''}</div>
     <div>
       <div id="rodQuadroMap" class="map-wrap" style="height:380px"></div>
@@ -3672,6 +3673,7 @@ window.selectRodovia = async function(nome) {
   `;
 
   setTimeout(() => _renderRodQuadroMap(nome), 120);
+  _renderAcervoRodovia(nome);
 };
 
 async function _renderRodQuadroMap(nome) {
@@ -4651,6 +4653,60 @@ function _classificaSubobjeto(c) {
   return "outro";
 }
 
+/* ── ACERVO DMOB (fotos de campo + traçados KML) ────────────────────────────
+   Fonte: repo acervo-dmob (GitHub Pages). Manifestos casados por ramal_key
+   (= codigo_numero, mesma chave de HUB.state.ramaisSheet) e por rodovia. */
+const ACERVO_BASE = "https://raw.githubusercontent.com/leonzordhue/acervo-dmob/main/";
+function _loadAcervo() {
+  if (!HUB.state.acervoPromise) {
+    HUB.state.acervoPromise = Promise.all([
+      fetch(ACERVO_BASE + "acervo_fotos.json").then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(ACERVO_BASE + "acervo_kml.json").then(r => r.ok ? r.json() : []).catch(() => []),
+      fetch(ACERVO_BASE + "acervo_shp.json").then(r => r.ok ? r.json() : []).catch(() => []),
+    ]).then(([fotos, kml, shp]) => ({ fotos: fotos || [], kml: kml || [], shp: shp || [] }));
+  }
+  return HUB.state.acervoPromise;
+}
+function _acervoSecaoHtml(pastas, kmls, shps, titulo) {
+  if (!pastas.length && !kmls.length && !shps.length) return "";
+  const totFotos = pastas.reduce((s, p) => s + (p.n_fotos || 0), 0);
+  const comDrive = pastas.filter(p => p.drive_url);
+  const btn = bg => `font-size:0.75rem;font-weight:700;color:#fff;background:${bg};padding:0.45em 0.95em;border-radius:8px;text-decoration:none;display:inline-block`;
+  // Fotos: link para a pasta do Google Drive (quando ja subida); senao mostra a contagem.
+  const fotoBtns = comDrive.length
+    ? comDrive.map(p => `<a href="${htmlEscape(p.drive_url)}" target="_blank" rel="noopener" style="${btn('var(--verde,#2D8540)')}">📷 Fotos${pastas.length > 1 ? " · " + htmlEscape((p.ramal || p.chave.split(" / ").pop() || "").slice(0, 22)) : ""} (${p.n_fotos})</a>`).join("")
+    : (totFotos ? `<span style="font-size:0.72rem;color:var(--cinza-aux);border:1px dashed var(--borda);padding:0.4em 0.8em;border-radius:8px">📷 ${totFotos} foto${totFotos !== 1 ? 's' : ''} (envio ao Drive pendente)</span>` : "");
+  const kmlBtns = kmls.map(k => `<a href="${ACERVO_BASE}${htmlEscape(k.url)}" download style="${btn('var(--azul)')}" title="${htmlEscape(k.arquivo)}">⬇ Traçado ${htmlEscape((k.url.split(".").pop() || "kmz").toUpperCase())}${kmls.length > 1 ? " · " + htmlEscape((k.ramal || k.arquivo).slice(0, 22)) : ""}</a>`).join("");
+  const shpBtns = shps.map(s => `<a href="${ACERVO_BASE}${htmlEscape(s.url)}" download style="${btn('#5B6472')}" title="Shapefile da camada (.shp/.shx/.dbf/.prj)">⬇ Shapefile</a>`).join("");
+  return `
+    <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.85rem 1rem;margin-bottom:1rem">
+      <div style="font-size:0.62rem;color:var(--azul);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.55rem">${htmlEscape(titulo)}</div>
+      <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center">${fotoBtns}${kmlBtns}${shpBtns}</div>
+    </div>`;
+}
+async function _renderAcervoRamal(r) {
+  const el = document.getElementById("ramQuadroAcervo");
+  if (!el) return;
+  try {
+    const ac = await _loadAcervo();
+    const pastas = ac.fotos.filter(p => p.ramal_key === r.key);
+    const kmls = ac.kml.filter(k => k.ramal_key === r.key);
+    const shps = ac.shp.filter(s => s.tipo === "ramal");
+    el.innerHTML = _acervoSecaoHtml(pastas, kmls, shps, "Acervo do ramal — fotos, traçado e shapefile");
+  } catch (e) { /* acervo indisponível: seção fica vazia */ }
+}
+async function _renderAcervoRodovia(nome) {
+  const el = document.getElementById("rodQuadroAcervo");
+  if (!el) return;
+  try {
+    const ac = await _loadAcervo();
+    const pastas = ac.fotos.filter(p => p.rodovia === nome);
+    const kmls = ac.kml.filter(k => k.rodovia === nome && (k.tipo === "rodovia" || k.tipo === "colecao"));
+    const shps = ac.shp.filter(s => s.tipo === "rodovia");
+    el.innerHTML = _acervoSecaoHtml(pastas, kmls, shps, "Acervo da rodovia — fotos, traçados e shapefile");
+  } catch (e) { /* acervo indisponível: seção fica vazia */ }
+}
+
 async function _loadRamaisSheet() {
   if (HUB.state.ramaisSheet && HUB.state.ramaisSheet.length) return;
   try {
@@ -5037,6 +5093,8 @@ window.selectRamal = async function(key) {
       <div style="font-size:0.85rem">${htmlEscape(r.ponto_referencia)}</div>
     </div>` : ""}
 
+    <div id="ramQuadroAcervo"></div>
+
     <div class="panel-title" style="margin:0.4rem 0 0.4rem">Traçado no mapa</div>
     <div id="ramQuadroMap" class="map-wrap" style="height:380px"></div>
 
@@ -5045,6 +5103,7 @@ window.selectRamal = async function(key) {
       `<div class="info-state" style="padding:1rem 0">Sem obras contratuais vinculadas a este ramal no momento.</div>`}
   `;
   setTimeout(() => _renderRamQuadroMap(r), 150);
+  _renderAcervoRamal(r);
   // Scroll suave até o detalhe (em telas longas o usuário não precisa subir manualmente)
   setTimeout(() => {
     document.getElementById("ramQuadroOut")?.scrollIntoView({ behavior: "smooth", block: "start" });
