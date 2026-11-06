@@ -9,6 +9,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>DMOB Hub — Plataforma Gerencial de Mobilidade · SEINFRA/AM</title>
 
+  <link rel="preconnect" href="https://server.arcgisonline.com" crossorigin />
+  <link rel="preconnect" href="https://services.arcgisonline.com" crossorigin />
+  <link rel="preconnect" href="https://leonzordhue.github.io" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Lexend+Deca:wght@300;400;500;600;700;800;900&family=Lexend+Zetta:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -1693,6 +1696,8 @@
       .canvas-wrap { margin-left: 0 !important; }
     }
   .leaflet-layer.tile-sat-clara{filter:brightness(1.18) contrast(1.06) saturate(1.12)}
+.leaflet-container{background:#dfe5d8}
+.leaflet-tile{transition:opacity .25s}
 </style>
 </head>
 <body>
@@ -1707,10 +1712,10 @@
   <header class="site-header">
     <div class="header-brand">
       <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
-      <img src="https://leonzordhue.github.io/atlas-amazonas/assets/marca_gov_seinfra.png"
+      <picture><source srcset="assets/marca_gov_seinfra.webp" type="image/webp">
+      <img src="assets/marca_gov_seinfra.png" width="900" height="144" fetchpriority="high"
            alt="Secretaria de Infraestrutura · Governo do Amazonas"
-           class="brand-marca"
-           onerror="this.src='https://leonzordhue.github.io/atlas-amazonas/assets/marca_gov_seinfra_branca.png'"/>
+           class="brand-marca"/></picture>
     </div>
     <div class="header-right">
       <span class="header-badge-gov">Hub de Mobilidade</span>
@@ -1816,12 +1821,18 @@ window._VERSION_LOG.push({
   rev: "v1.2", data: "2026-11-06",
   descricao: "Fundo padrão de todos os mapas = satélite clareado + estradas + nomes (estilo Google Earth), a pedido do Paulo"
 });
+window._VERSION_LOG.push({
+  rev: "v1.3", data: "2026-11-06",
+  descricao: "Velocidade dos mapas: tiles Esri em 2 hosts, estradas só do zoom 8, keepBuffer, preconnect; logo 441 KB -> 43 KB (webp local)"
+});
 window._VICIOS_CONHECIDOS = [{ id: "VK-01", desc: "API_KEY exposta no client" }];
 window._TENTATIVAS_FALHAS = window._TENTATIVAS_FALHAS || [];
 window._TENTATIVAS_FALHAS.push({ data: "2026-11-06", tentativa: "Basemap CARTO sem chave (rastertiles/voyager, light_all, dark_all)", motivo: "CARTO exige API key: todo tile vem com a marca 'API KEY REQUIRED'. Não voltar a usar sem chave." });
 
 /* ── Constantes ── */
 const CDN_ASSETS   = "https://leonzordhue.github.io/atlas-amazonas/assets";
+// Tiles da Esri alternando entre os dois hosts (server/services): dobra as conexões paralelas do navegador (06/11/2026)
+const ESRI_SUB = ["server", "services"];
 const CDN_GEOJSON  = "https://leonzordhue.github.io/atlas-amazonas/geojson";
 const API_KEY      = "AIzaSyDaitkJNDTZi3BMFAe9u4wV6U-DIgUS7NA"; // VK-01
 
@@ -2276,9 +2287,9 @@ function mkChart(id, config) {
 function baseSatClara(maxZoom) {
   const o = { maxZoom: maxZoom || 19 };
   return L.layerGroup([
-    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", Object.assign({ className: "tile-sat-clara", attribution: "© Esri World Imagery" }, o)),
-    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}", Object.assign({ opacity: 0.85 }, o)),
-    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", o),
+    L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", Object.assign({ subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, className: "tile-sat-clara", attribution: "© Esri World Imagery" }, o)),
+    L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}", Object.assign({ subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, opacity: 0.85, minZoom: 8 }, o)),
+    L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", Object.assign({ subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false }, o)),
   ]);
 }
 
@@ -7608,20 +7619,20 @@ async function initAtlas() {
   const _bm = {
     // CARTO exige chave desde nov/2026 (marca d'água "API KEY REQUIRED"): chaves mantidas, tiles trocados pela Esri
     voyager: baseSatClara(19), // "Padrão" = satélite claro estilo Google Earth
-    ruasesri: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Streets" }),
+    ruasesri: L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, attribution: "© Esri Streets" }),
     osm:     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" }),
-    sat:     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri World Imagery" }),
-    "sat+rua": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri" }),
+    sat:     L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, attribution: "© Esri World Imagery" }),
+    "sat+rua": L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, attribution: "© Esri" }),
     topo:    L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "© OpenTopoMap" }),
-    esritopo: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Topographic" }),
-    streets: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Streets" }),
-    light:   L.layerGroup([L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, maxNativeZoom: 16, attribution: "© Esri Light Gray" }),
-                           L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, maxNativeZoom: 16 })]),
-    dark:    L.layerGroup([L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, maxNativeZoom: 16, attribution: "© Esri Dark Gray" }),
-                           L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, maxNativeZoom: 16 })]),
+    esritopo: L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, attribution: "© Esri Topographic" }),
+    streets: L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, attribution: "© Esri Streets" }),
+    light:   L.layerGroup([L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, maxNativeZoom: 16, attribution: "© Esri Light Gray" }),
+                           L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, maxNativeZoom: 16 })]),
+    dark:    L.layerGroup([L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, maxNativeZoom: 16, attribution: "© Esri Dark Gray" }),
+                           L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, maxNativeZoom: 16 })]),
   };
   // Camada de rótulos para sobrepor à imagem aérea ("sat+rua")
-  const _bmRefOverlay = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, opacity: 0.95, attribution: "© Esri Reference" });
+  const _bmRefOverlay = L.tileLayer("https://{s}.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { subdomains: ESRI_SUB, keepBuffer: 3, updateWhenZooming: false, maxZoom: 19, opacity: 0.95, attribution: "© Esri Reference" });
   HUB.state.atlasBasemaps = _bm;
   HUB.state.atlasBmOverlay = _bmRefOverlay;
   HUB.state.atlasCurrentBm = "voyager";
