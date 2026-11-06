@@ -1698,6 +1698,43 @@
   .leaflet-layer.tile-sat-clara{filter:brightness(1.18) contrast(1.06) saturate(1.12)}
 .leaflet-container{background:#dfe5d8}
 .leaflet-tile{transition:opacity .25s}
+
+    /* Acompanhamento de Obras (e-Obras) */
+    .eo-fonte{font-size:.78rem;color:var(--cinza-med);background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:10px;padding:.55rem .9rem;margin:0 0 1rem}
+    .eo-sub{font-size:.74rem;color:var(--cinza-aux)}
+    .kpi-grid.eo-k5{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+    .eo-bar{height:6px;background:#E3E8F1;border-radius:4px;overflow:hidden;min-width:60px;flex:1}
+    .eo-bar b{display:block;height:100%;border-radius:4px}
+    .eo-faixa{margin-top:.55rem;padding:.45rem .6rem;background:#fff;border:1px dashed var(--azul-borda);border-radius:8px;display:flex;flex-wrap:wrap;gap:.35rem .8rem;align-items:center;font-size:.72rem;color:var(--cinza-med);cursor:pointer}
+    .eo-faixa:hover{border-style:solid;border-color:var(--azul)}
+    .eo-faixa .eo-bar{max-width:90px}
+    .eo-tag{font-family:var(--font-cond);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:.62rem;color:#fff;background:var(--azul);border-radius:4px;padding:.1em .45em}
+    .eo-alerta{color:var(--vermelho)!important;font-weight:700}
+    .eo-alertas{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:.9rem}
+    .eo-al{border:1px solid var(--borda);border-top:4px solid var(--c);border-radius:10px;padding:.7rem;background:#fff;display:flex;flex-direction:column;gap:.35rem}
+    .eo-al-h{display:flex;justify-content:space-between;align-items:baseline;font-weight:700;font-size:.82rem;color:var(--azul)}
+    .eo-al-h b{font-size:1.4rem;color:var(--c);font-variant-numeric:tabular-nums}
+    .eo-al-i{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:.1rem;padding:.4rem .45rem;border-radius:7px;font-size:.74rem;line-height:1.35}
+    .eo-al-i:hover,.eo-al-i:focus-visible{background:var(--azul-claro);outline:2px solid transparent}
+    .eo-al-i:focus-visible{box-shadow:0 0 0 2px var(--amarelo)}
+    .eo-ct{font-family:var(--font-cond);font-weight:700;color:var(--azul);white-space:nowrap;letter-spacing:.02em}
+    .eo-ob{color:var(--cinza-med)}.eo-det{color:var(--cinza-aux);font-variant-numeric:tabular-nums}
+    .eo-vazio,.eo-mais{font-size:.74rem;color:var(--cinza-aux);padding:.2rem .45rem}
+    .eo-filtros{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:.8rem}
+    .eo-filtros input,.eo-filtros select{font:inherit;font-size:.82rem;padding:.5rem .7rem;border:1.5px solid var(--azul-borda);border-radius:8px;background:#fff;color:var(--azul-dk,#1A2540)}
+    .eo-filtros input{flex:1;min-width:220px}
+    .eo-tab th{cursor:pointer;user-select:none;white-space:nowrap}.eo-tab th.ord{color:var(--amarelo)}
+    .eo-tab td.num,.eo-tab th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .eo-tab tbody tr{cursor:pointer}.eo-tab tbody tr:hover{background:var(--azul-claro)}
+    .eo-tab .eo-obj{max-width:340px;font-size:.78rem;line-height:1.35}
+    .eo-fis{display:flex;align-items:center;gap:.4rem;justify-content:flex-end}
+    .eo-prog{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem}
+    .eo-prog>div{display:grid;grid-template-columns:1fr auto;gap:.3rem;align-items:center;font-size:.78rem;color:var(--cinza-med)}
+    .eo-prog .eo-bar{grid-column:1/-1;height:9px}
+    .eo-prog strong{font-size:1.05rem;color:var(--azul);font-variant-numeric:tabular-nums}
+    .eo-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 1.2rem}
+    .eo-l{display:flex;justify-content:space-between;gap:.8rem;padding:.42rem 0;border-bottom:1px solid var(--borda);font-size:.8rem}
+    .eo-l span{color:var(--cinza-aux)}.eo-l strong{text-align:right;color:var(--azul-dk,#1A2540);font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -1748,6 +1785,7 @@
         <div class="sidebar-item" data-mod="icm"          onclick="loadModule('icm')">          <span class="sidebar-icon" data-ic="icm"></span><span>Condição Viária</span></div>
         <div class="sidebar-item" data-mod="sinistros"    onclick="loadModule('sinistros')">    <span class="sidebar-icon" data-ic="sinistros"></span><span>Sinistros</span></div>
         <div class="sidebar-section-label">Operações</div>
+        <div class="sidebar-item" data-mod="acompanhamento" onclick="loadModule('acompanhamento')"><span class="sidebar-icon" data-ic="acompanhamento"></span><span>Acompanhamento</span></div>
         <div class="sidebar-item" data-mod="briefings"    onclick="loadModule('briefings')">    <span class="sidebar-icon" data-ic="briefings"></span><span>Briefings</span></div>
         <div class="sidebar-item" data-mod="atlas"        onclick="loadModule('atlas')">        <span class="sidebar-icon" data-ic="atlas"></span><span>Atlas</span></div>
         <div class="sidebar-item" data-mod="planejamento" onclick="loadModule('planejamento')"> <span class="sidebar-icon" data-ic="planejamento"></span><span>Planejamento</span></div>
@@ -1825,6 +1863,10 @@ window._VERSION_LOG.push({
   rev: "v1.3", data: "2026-11-06",
   descricao: "Velocidade dos mapas: tiles Esri em 2 hosts, estradas só do zoom 8, keepBuffer, preconnect; logo 441 KB -> 43 KB (webp local)"
 });
+window._VERSION_LOG.push({
+  rev: "v1.4", data: "2026-11-06",
+  descricao: "Módulo Acompanhamento de Obras (e-Obras, 399 CT/CV, data/eobras.json): KPIs, alertas (sem medição > 90 d, vigência, físico atrás do prazo, paralisados), tabela, ficha com curva de medições; faixa e-Obras em todo card de obra; alertas do BI"
+});
 window._VICIOS_CONHECIDOS = [{ id: "VK-01", desc: "API_KEY exposta no client" }];
 window._TENTATIVAS_FALHAS = window._TENTATIVAS_FALHAS || [];
 window._TENTATIVAS_FALHAS.push({ data: "2026-11-06", tentativa: "Basemap CARTO sem chave (rastertiles/voyager, light_all, dark_all)", motivo: "CARTO exige API key: todo tile vem com a marca 'API KEY REQUIRED'. Não voltar a usar sem chave." });
@@ -1875,6 +1917,7 @@ const HUB = {
     icm:          { id: "icm",          label: "Condição Viária",icon: "\u{1F6E6}",  color: "#0F766E" },
     sinistros:    { id: "sinistros",    label: "Sinistros",      icon: "\u{1F6A8}",  color: "#B3261E" },
     briefings:    { id: "briefings",    label: "Briefings",      icon: "\u{1F4C4}",  color: "#C0392B" },
+    acompanhamento: { id: "acompanhamento", label: "Acompanhamento de Obras", icon: "\u{1F4C8}", color: "#1A2B5E" },
     atlas:        { id: "atlas",        label: "Atlas",          icon: "\u{1F5FA}",  color: "#1A2B5E" },
     planejamento: { id: "planejamento", label: "Planejamento",   icon: "\u{1F4CB}",  color: "#6C3483" },
     bi:           { id: "bi",           label: "BI & Analytics", icon: "\u{1F4CA}",  color: "#D4A017" },
@@ -1909,6 +1952,7 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
    ViewBox 24x24, stroke 1.7, linecap/linejoin round (visual coerente).
    ═════════════════════════════════════════════════════════════════ */
 const _ICON_PATHS = {
+  acompanhamento: '<path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4"/>',
   inicio: '<path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6h-6v6H5a2 2 0 0 1-2-2v-9z"/>',
   rodovias: '<path d="M8 3l-4 18M16 3l4 18M12 4v3M12 10v3M12 16v3"/>',
   ramais: '<path d="M5 21l4-10 5 3 3-7 2 4M9 11l-2 4M14 14l-1 4M17 11l1 5"/>',
@@ -2199,6 +2243,7 @@ function loadCoreData() {
         sheetsApiFetch(SHEETS.geral.id, "Planilha Geral!A:DB"),    // Sheets API v4
         gvizFetch(SHEETS.sinistros.id, SHEETS.sinistros.gid),
         gvizFetch(SHEETS.icm.id,       SHEETS.icm.gid),
+        loadEObras(),                                              // data/eobras.json (e-Obras)
       ]);
       if (ger.status === "fulfilled") HUB.state.contratos = ger.value;
       if (sin.status === "fulfilled") HUB.state.sinistros = sin.value;
@@ -2896,6 +2941,7 @@ const _MOD_GRADS = {
   planejamento: ["#2c1349", "#4a1f73", "#6C3483", "#d1b3e8"],
   bi:           ["#5a4106", "#917013", "#D4A017", "#fbe7a1"],
   briefings:    ["#15311c", "#1f5b30", "#2D8540", "#9ee8b0"],
+  acompanhamento: ["#0c1733", "#1a2b5e", "#2c4a8f", "#F5A623"],
   hidrovias:    ["#012a4a", "#01497c", "#0077b6", "#90e0ef"],
 };
 function modHero(id, subtitle) {
@@ -2934,6 +2980,7 @@ function getModuleHTML(id) {
     case "atlas":        return getAtlasHTML();
     case "bi":           return getBIHTML();
     case "briefings":    return getBriefingsHTML();
+    case "acompanhamento": return getAcompanhamentoHTML();
     default: return `<div class="info-state">Módulo não encontrado.</div>`;
   }
 }
@@ -2951,6 +2998,7 @@ function initModule(id) {
     case "atlas":        return initAtlas();
     case "bi":           return initBI();
     case "briefings":    return initBriefings();
+    case "acompanhamento": return initAcompanhamento();
   }
 }
 
@@ -3380,8 +3428,8 @@ function _grupo3Sit(k) {
 }
 function _fmtBRLShort(v) {
   if (!v || isNaN(v)) return "R$ 0";
-  if (v >= 1e9) return "R$ " + (v/1e9).toFixed(2) + " bi";
-  if (v >= 1e6) return "R$ " + (v/1e6).toFixed(1) + " mi";
+  if (v >= 1e9) return "R$ " + (v/1e9).toFixed(2).replace(".", ",") + " bi";
+  if (v >= 1e6) return "R$ " + (v/1e6).toFixed(1).replace(".", ",") + " mi";
   if (v >= 1e3) return "R$ " + (v/1e3).toFixed(0) + " mil";
   return "R$ " + v.toFixed(0);
 }
@@ -3411,6 +3459,7 @@ function _renderObraCard(o) {
         onmouseout="this.style.background='#fff';this.style.color='var(--azul)'"
         title="Gerar briefing PDF desta obra">📄 Briefing</button>
     </div>
+    ${eoFaixa(o.contrato)}
   </div>`;
 }
 
@@ -8066,6 +8115,257 @@ function atlasSearchLayer(q) {
 /* ──────────────────────────────────────────────
    MÓDULO BI & ANALYTICS
    ────────────────────────────────────────────── */
+/* ──────────────────────────────────────────────
+   MÓDULO ACOMPANHAMENTO DE OBRAS (e-Obras) · 06/11/2026
+   Fonte: data/eobras.json, gerado por projetos/dmob/planilha-geral-dmob/exportar_hub.py
+   a partir das Fichas Resumida e Analítica do e-Obras (posição no _meta).
+   Regras (iguais à aba CONTRATOS da Planilha Geral DMOB):
+     valor atual = original + aditado · % financeiro = medido / valor atual · saldo = valor atual − medido
+   Alertas:
+     sem medição  = situação ativa e última medição há mais de 90 dias
+     vigência     = situação ativa e fim da vigência vencido ou em até 60 dias
+     atraso       = tempo decorrido (assinatura → fim da execução) − % físico > 25 p.p.
+   ────────────────────────────────────────────── */
+const EO_ATIVAS = /andamento|vigente|paralis|recebimento|a iniciar/i;
+let _eoLista = [], _eoOrdem = { k: "saldo", dir: -1 };
+const _eoBRL = v => v == null || isNaN(v) ? "—" : (v < 0 ? "− " : "") + _fmtBRLShort(Math.abs(v));
+
+async function loadEObras() {
+  if (HUB.state.eobras) return HUB.state.eobras;
+  try {
+    const r = await fetch("data/eobras.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    HUB.state.eobras = j;
+    HUB.state.eobrasIdx = {};
+    // chave com a secretaria (CT-1/2017-CETAM ≠ CT-1/2017-SEINFRA); sem secretaria só se for única
+    const curta = {};
+    for (const [ct, v] of Object.entries(j.ct || {})) {
+      const o = Object.assign({ ct }, v);
+      HUB.state.eobrasIdx[_eoChave(ct)] = o;
+      const c = _eoChave(ct, true); curta[c] = curta[c] ? null : o;
+    }
+    for (const [c, o] of Object.entries(curta)) if (o && !HUB.state.eobrasIdx[c]) HUB.state.eobrasIdx[c] = o;
+  } catch (e) { console.warn("eobras.json", e); HUB.state.eobras = { ct: {}, _meta: {} }; HUB.state.eobrasIdx = {}; }
+  return HUB.state.eobras;
+}
+// "CT-00093/2012-SEINFRA" -> "CT-93/2012-SEINFRA"; curta=true -> "CT-93/2012"
+function _eoChave(ct, curta) {
+  const s = String(ct || "").toUpperCase();
+  const m = s.match(/(CT|CV)?[\s\-Nº°.]*0*(\d+)\s*\/\s*(\d{4})(?:\s*-\s*([A-Z]+))?/);
+  if (!m) return s.trim();
+  const base = `${m[1] || "CT"}-${+m[2]}/${m[3]}`;
+  return curta || !m[4] ? base : base + "-" + m[4];
+}
+function eoDe(contrato) { const i = HUB.state.eobrasIdx || {}; return i[_eoChave(contrato)] || i[_eoChave(contrato, true)] || null; }
+const _eoHoje = () => new Date(new Date().toDateString());
+const _eoDias = iso => iso ? Math.round((_eoHoje() - new Date(iso + "T00:00:00")) / 864e5) : null;
+const _eoData = iso => iso ? iso.split("-").reverse().join("/") : "—";
+function _eoAtraso(o) {
+  if (!o.ass || !o.fim_exec || o.fis == null) return null;
+  const ini = new Date(o.ass + "T00:00:00"), fim = new Date(o.fim_exec + "T00:00:00");
+  if (fim <= ini) return null;
+  const tempo = Math.min(100, Math.max(0, (_eoHoje() - ini) / (fim - ini) * 100));
+  return { tempo, gap: tempo - o.fis };
+}
+function _eoBar(p, cor) {
+  const v = Math.max(0, Math.min(100, Number(p) || 0));
+  return `<div class="eo-bar" title="${fmtNum(p, 1)}%"><b style="width:${v}%;background:${cor || "var(--verde)"}"></b></div>`;
+}
+// Faixa do e-Obras dentro dos cards de obra dos módulos (Rodovias, Ramais, Viário, Briefings)
+function eoFaixa(contrato) {
+  const o = eoDe(contrato); if (!o) return "";
+  const d = _eoDias(o.ult_med), ativa = EO_ATIVAS.test(o.sit || "");
+  const parado = ativa && d != null && d > 90;
+  return `<div class="eo-faixa" onclick="event.stopPropagation();eoAbrir('${htmlEscape(o.ct)}')" title="Abrir acompanhamento no e-Obras">
+    <span class="eo-tag">e-Obras</span>
+    <span>Físico <strong>${o.fis != null ? fmtNum(o.fis, 1) + "%" : "—"}</strong></span>${_eoBar(o.fis)}
+    <span>Medido <strong>${_eoBRL(o.medido)}</strong></span>
+    <span>Saldo <strong>${_eoBRL(o.saldo)}</strong></span>
+    <span class="${parado ? "eo-alerta" : ""}">Última medição ${o.ult_med ? _eoData(o.ult_med) + (d != null ? ` (${d} dias)` : "") : "—"}</span>
+  </div>`;
+}
+
+function getAcompanhamentoHTML() {
+  return `
+  <div class="mod-wrap">
+    ${modHero("acompanhamento", "Execução física e financeira de cada contrato e convênio · dados do e-Obras")}
+    <div class="eo-fonte" id="eoFonte">Carregando dados do e-Obras…</div>
+    <div class="kpi-grid eo-k5" id="eoKpis"></div>
+    <div class="panel-card">
+      <div class="panel-header"><div class="panel-title">O que pede atenção</div><div class="eo-sub">contratos ativos (em andamento, vigentes, paralisados, em recebimento ou a iniciar)</div></div>
+      <div class="panel-body"><div class="eo-alertas" id="eoAlertas"></div></div>
+    </div>
+    <div class="chart-grid-2">
+      <div class="panel-card"><div class="panel-header"><div class="panel-title">Saldo a medir por categoria (ativos)</div></div>
+        <div class="panel-body"><div class="chart-wrap" style="height:300px"><canvas id="chEoCat"></canvas></div></div></div>
+      <div class="panel-card"><div class="panel-header"><div class="panel-title">Contratos por situação no e-Obras</div></div>
+        <div class="panel-body"><div class="chart-wrap" style="height:300px"><canvas id="chEoSit"></canvas></div></div></div>
+    </div>
+    <div class="panel-card">
+      <div class="panel-header"><div class="panel-title">Todos os contratos e convênios</div><div class="eo-sub" id="eoCont"></div></div>
+      <div class="panel-body">
+        <div class="eo-filtros">
+          <input id="eoBusca" type="search" placeholder="Buscar CT, objeto, empresa, município, rodovia…" aria-label="Buscar">
+          <select id="eoSit" aria-label="Situação"><option value="ativas">Só ativos</option><option value="">Todas as situações</option></select>
+          <select id="eoCat" aria-label="Categoria"><option value="">Todas as categorias</option></select>
+        </div>
+        <div class="table-wrap"><table class="data-table eo-tab" id="eoTab"><thead><tr>
+          <th data-k="ct">Contrato</th><th data-k="obj">Objeto</th><th data-k="mun">Município</th>
+          <th data-k="v_atual" class="num">Valor atual</th><th data-k="fis" class="num">Físico</th>
+          <th data-k="medido" class="num">Medido</th><th data-k="saldo" class="num">Saldo</th>
+          <th data-k="ult_med">Últ. medição</th><th data-k="fim_vig">Vigência</th><th data-k="sit">Situação</th>
+        </tr></thead><tbody></tbody></table></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function initAcompanhamento() {
+  const j = await loadEObras();
+  const todos = [...new Set(Object.values(HUB.state.eobrasIdx || {}))];
+  const m = j._meta || {};
+  $("#eoFonte").innerHTML = todos.length
+    ? `Fonte: ${htmlEscape(m.fonte || "e-Obras")} · posição <strong>${htmlEscape(m.posicao || "—")}</strong> · ${todos.length} contratos e convênios. Os números mudam quando a planilha é reexportada.`
+    : `Não consegui carregar data/eobras.json.`;
+  const ativos = todos.filter(o => EO_ATIVAS.test(o.sit || ""));
+  const soma = (l, k) => l.reduce((a, o) => a + (Number(o[k]) || 0), 0);
+  const vAt = soma(ativos, "v_atual"), med = soma(ativos, "medido");
+  $("#eoKpis").innerHTML = `
+    <div class="kpi-card"><div class="kpi-card-label">Contratos ativos</div><div class="kpi-card-value">${ativos.length}</div><div class="kpi-card-foot">de ${todos.length} no e-Obras</div></div>
+    <div class="kpi-card c"><div class="kpi-card-label">Valor atual (ativos)</div><div class="kpi-card-value">${_eoBRL(vAt)}</div><div class="kpi-card-foot">original + aditivos</div></div>
+    <div class="kpi-card v"><div class="kpi-card-label">Medido (ativos)</div><div class="kpi-card-value">${_eoBRL(med)}</div><div class="kpi-card-foot">${vAt ? fmtNum(med / vAt * 100, 1) : "—"}% do valor atual</div></div>
+    <div class="kpi-card a"><div class="kpi-card-label">Saldo a medir (ativos)</div><div class="kpi-card-value">${_eoBRL(soma(ativos, "saldo"))}</div><div class="kpi-card-foot">valor atual − medido</div></div>
+    <div class="kpi-card r"><div class="kpi-card-label">Paralisados</div><div class="kpi-card-value">${todos.filter(o => /paralis/i.test(o.sit || "")).length}</div><div class="kpi-card-foot">${_eoBRL(soma(todos.filter(o => /paralis/i.test(o.sit || "")), "saldo"))} de saldo parado</div></div>`;
+
+  // Alertas
+  const semMed = ativos.filter(o => !/a iniciar|paralis/i.test(o.sit) && _eoDias(o.ult_med) > 90).sort((a, b) => _eoDias(b.ult_med) - _eoDias(a.ult_med));
+  const vig = ativos.filter(o => o.fim_vig && _eoDias(o.fim_vig) > -60).sort((a, b) => Math.abs(_eoDias(a.fim_vig)) - Math.abs(_eoDias(b.fim_vig))); // mais perto de hoje primeiro
+  const atr = ativos.map(o => Object.assign({ _a: _eoAtraso(o) }, o)).filter(o => o._a && o._a.gap > 25).sort((a, b) => b._a.gap - a._a.gap);
+  const par = todos.filter(o => /paralis/i.test(o.sit || "")).sort((a, b) => (b.saldo || 0) - (a.saldo || 0));
+  const bloco = (titulo, cor, lista, det) => `<div class="eo-al" style="--c:${cor}"><div class="eo-al-h"><span>${titulo}</span><b>${lista.length}</b></div>
+    ${lista.slice(0, 6).map(o => `<button class="eo-al-i" onclick="eoAbrir('${htmlEscape(o.ct)}')"><span class="eo-ct">${htmlEscape(o.ct)}</span><span class="eo-ob">${htmlEscape((o.obj || "").slice(0, 90))}</span><span class="eo-det">${det(o)}</span></button>`).join("") || `<div class="eo-vazio">Nenhum.</div>`}
+    ${lista.length > 6 ? `<div class="eo-mais">e mais ${lista.length - 6} na tabela abaixo</div>` : ""}</div>`;
+  $("#eoAlertas").innerHTML =
+    bloco("Sem medição há mais de 90 dias", "#B3261E", semMed, o => `última em ${_eoData(o.ult_med)} · ${_eoDias(o.ult_med)} dias · saldo ${_eoBRL(o.saldo)}`) +
+    bloco("Vigência vencida ou vencendo em 60 dias", "#B8620A", vig, o => { const d = -_eoDias(o.fim_vig); return `${_eoData(o.fim_vig)} · ${d < 0 ? "vencida há " + (-d) + " dias" : "faltam " + d + " dias"}`; }) +
+    bloco("Físico atrás do prazo (> 25 p.p.)", "#6C3483", atr, o => `físico ${fmtNum(o.fis, 0)}% · prazo decorrido ${fmtNum(o._a.tempo, 0)}%`) +
+    bloco("Paralisados", "#4A5568", par, o => `desde ${_eoData(o.desde)} · saldo ${_eoBRL(o.saldo)}`);
+
+  // Gráficos
+  const porCat = {};
+  ativos.forEach(o => { const c = o.cat || "Outros"; porCat[c] = (porCat[c] || 0) + (o.saldo || 0); });
+  const cats = Object.entries(porCat).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  mkChart("chEoCat", { type: "bar", data: { labels: cats.map(c => c[0]), datasets: [{ data: cats.map(c => c[1]), backgroundColor: "#1A2B5E", borderRadius: 4 }] },
+    options: { indexAxis: "y", maintainAspectRatio: false, plugins: { legend: { display: false }, datalabels: { anchor: "end", align: "end", formatter: v => _eoBRL(v) } },
+      scales: { x: { ticks: { callback: v => _eoBRL(v) }, grace: "15%" } } } });
+  const porSit = {};
+  todos.forEach(o => { porSit[o.sit || "—"] = (porSit[o.sit || "—"] || 0) + 1; });
+  const sits = Object.entries(porSit).sort((a, b) => b[1] - a[1]);
+  const corSit = s => /conclu/i.test(s) ? "#2D8540" : /andamento|vigente/i.test(s) ? "#1A2B5E" : /paralis/i.test(s) ? "#B3261E" : /receb/i.test(s) ? "#0E7490" : /expir|extint|encerr/i.test(s) ? "#8896A8" : "#B8620A";
+  mkChart("chEoSit", { type: "doughnut", data: { labels: sits.map(s => s[0]), datasets: [{ data: sits.map(s => s[1]), backgroundColor: sits.map(s => corSit(s[0])), borderColor: "#fff", borderWidth: 2 }] },
+    options: { maintainAspectRatio: false, cutout: "58%", plugins: { legend: { position: "right", labels: { boxWidth: 12, font: { size: 11 } } } } } });
+
+  // Tabela
+  const catSel = $("#eoCat");
+  [...new Set(todos.map(o => o.cat).filter(Boolean))].sort().forEach(c => catSel.insertAdjacentHTML("beforeend", `<option>${htmlEscape(c)}</option>`));
+  [...new Set(todos.map(o => o.sit).filter(Boolean))].sort().forEach(c => $("#eoSit").insertAdjacentHTML("beforeend", `<option>${htmlEscape(c)}</option>`));
+  _eoLista = todos;
+  ["#eoBusca", "#eoSit", "#eoCat"].forEach(s => $(s).addEventListener("input", _eoRenderTab));
+  $$("#eoTab th").forEach(th => th.addEventListener("click", () => {
+    const k = th.dataset.k; _eoOrdem = { k, dir: _eoOrdem.k === k ? -_eoOrdem.dir : (/^(ct|obj|mun|sit)$/.test(k) ? 1 : -1) }; _eoRenderTab();
+  }));
+  _eoRenderTab();
+}
+
+function _eoRenderTab() {
+  const q = normalizeKey($("#eoBusca")?.value || "").replace(/_/g, " "), sit = $("#eoSit").value, cat = $("#eoCat").value;
+  let l = _eoLista.filter(o => (sit === "ativas" ? EO_ATIVAS.test(o.sit || "") : !sit || o.sit === sit) && (!cat || o.cat === cat)
+    && (!q || normalizeKey([o.ct, o.obj, o.emp, o.mun, o.rod, o.bem].join(" ")).replace(/_/g, " ").includes(q)));
+  const { k, dir } = _eoOrdem;
+  l.sort((a, b) => { const x = a[k], y = b[k]; if (x == null) return 1; if (y == null) return -1; return (x > y ? 1 : x < y ? -1 : 0) * dir; });
+  $("#eoCont").textContent = `${l.length} de ${_eoLista.length} · clique no cabeçalho para ordenar`;
+  $$("#eoTab th").forEach(th => th.classList.toggle("ord", th.dataset.k === k));
+  const tb = $("#eoTab tbody");
+  tb.innerHTML = l.slice(0, 400).map(o => {
+    const d = _eoDias(o.ult_med), venc = o.fim_vig && _eoDias(o.fim_vig) > 0 && EO_ATIVAS.test(o.sit || "");
+    return `<tr onclick="eoAbrir('${htmlEscape(o.ct)}')">
+      <td class="eo-ct">${htmlEscape(o.ct)}</td>
+      <td class="eo-obj" title="${htmlEscape(o.obj || "")}">${htmlEscape((o.obj || "—").slice(0, 110))}</td>
+      <td>${htmlEscape(o.mun || "—")}</td>
+      <td class="num">${_eoBRL(o.v_atual)}</td>
+      <td class="num"><div class="eo-fis">${o.fis != null ? fmtNum(o.fis, 0) + "%" : "—"}${_eoBar(o.fis)}</div></td>
+      <td class="num">${_eoBRL(o.medido)}</td>
+      <td class="num">${_eoBRL(o.saldo)}</td>
+      <td class="${EO_ATIVAS.test(o.sit || "") && d > 90 ? "eo-alerta" : ""}">${_eoData(o.ult_med)}</td>
+      <td class="${venc ? "eo-alerta" : ""}">${_eoData(o.fim_vig)}</td>
+      <td>${statusChip(o.sit)}</td></tr>`;
+  }).join("") || `<tr><td colspan="10" class="info-state">Nada encontrado.</td></tr>`;
+}
+
+async function eoAbrir(ct) {
+  await loadEObras();
+  const o = (HUB.state.eobrasIdx || {})[_eoChave(ct)]; if (!o) return;
+  document.getElementById("eoModal")?.remove();
+  const at = _eoAtraso(o), d = _eoDias(o.ult_med);
+  const linha = (r, v) => v == null || v === "" ? "" : `<div class="eo-l"><span>${r}</span><strong>${v}</strong></div>`;
+  const div = document.createElement("div");
+  div.id = "eoModal"; div.className = "modal-ov";
+  div.innerHTML = `<div class="modal-rich" role="dialog" aria-label="${htmlEscape(o.ct)}" style="max-width:860px">
+    <div class="mr-hdr" style="background:linear-gradient(135deg,#0c1733,#1a2b5e 60%,#2c4a8f)">
+      <button class="mr-close" aria-label="Fechar">✕</button>
+      <div class="mr-title" style="font-size:1.05rem;margin-top:1.4rem">${htmlEscape(o.ct)}</div>
+      <div class="mr-mun" style="opacity:.92;line-height:1.45">${htmlEscape(o.obj || "")}</div>
+      <div class="mr-badges"><span class="mr-badge">${htmlEscape(o.sit || "—")}</span>${o.cat ? `<span class="mr-badge">${htmlEscape(o.cat)}</span>` : ""}${o.rod ? `<span class="mr-badge">${htmlEscape(o.rod)}</span>` : ""}</div>
+    </div>
+    <div style="padding:1.1rem 1.4rem 1.4rem">
+      <div class="eo-prog">
+        <div><span>Físico</span><strong>${o.fis != null ? fmtNum(o.fis, 1) + "%" : "—"}</strong>${_eoBar(o.fis)}</div>
+        <div><span>Financeiro (medido ÷ valor atual)</span><strong>${o.fin != null ? fmtNum(o.fin, 1) + "%" : "—"}</strong>${_eoBar(o.fin, "var(--azul)")}</div>
+        ${at ? `<div><span>Prazo decorrido</span><strong>${fmtNum(at.tempo, 0)}%</strong>${_eoBar(at.tempo, at.gap > 25 ? "#B3261E" : "#8896A8")}</div>` : ""}
+      </div>
+      <div class="chart-wrap" style="height:230px;margin:0.8rem 0 1rem"><canvas id="chEoCurva"></canvas></div>
+      <div class="eo-grade">
+        ${linha("Contratada / convenente", htmlEscape(o.emp || ""))}
+        ${linha("Município(s)", htmlEscape(o.mun || ""))}
+        ${linha("Bem público", htmlEscape(o.bem || ""))}
+        ${linha("Dimensão", o.dim != null ? fmtNum(o.dim, 2) + " " + htmlEscape(o.un || "") : null)}
+        ${linha("Assinatura", _eoData(o.ass))}
+        ${linha("Fim da execução", o.fim_exec ? _eoData(o.fim_exec) : null)}
+        ${linha("Fim da vigência", o.fim_vig ? _eoData(o.fim_vig) : null)}
+        ${linha("Valor original", fmtBRL(o.v_orig))}
+        ${linha("Aditivos de valor", o.v_adit ? fmtBRL(o.v_adit) : null)}
+        ${linha("Valor atual", fmtBRL(o.v_atual))}
+        ${linha("Total medido", fmtBRL(o.medido))}
+        ${linha("Reajuste medido", o.reaj_med ? fmtBRL(o.reaj_med) : null)}
+        ${linha("Total pago", o.pago != null ? fmtBRL(o.pago) : null)}
+        ${linha("Saldo a medir", fmtBRL(o.saldo))}
+        ${linha("Medições / parcelas", o.n_med)}
+        ${linha("Última medição", o.ult_med ? _eoData(o.ult_med) + (d != null ? ` · há ${d} dias` : "") : null)}
+        ${linha("Aditivos", o.n_adit)}
+        ${linha("Dias paralisados", o.dias_par)}
+      </div>
+      <div class="eo-fonte" style="margin-top:0.9rem">Fonte: e-Obras, posição ${htmlEscape((HUB.state.eobras._meta || {}).posicao || "—")}.</div>
+    </div></div>`;
+  const close = () => { div.classList.remove("open"); document.body.style.overflow = ""; document.removeEventListener("keydown", esc); setTimeout(() => div.remove(), 250); };
+  const esc = e => { if (e.key === "Escape") close(); };
+  div.addEventListener("click", e => { if (e.target === div) close(); });
+  div.querySelector(".mr-close").addEventListener("click", close);
+  document.addEventListener("keydown", esc);
+  document.body.appendChild(div); document.body.style.overflow = "hidden";
+  requestAnimationFrame(() => div.classList.add("open"));
+  const md = (o.med || []).filter(x => x[0]);
+  if (md.length) mkChart("chEoCurva", { type: "line",
+    data: { labels: md.map(x => _eoData(x[0])), datasets: [
+      { label: "% financeiro acumulado", data: md.map(x => x[2]), borderColor: "#1A2B5E", backgroundColor: "rgba(26,43,94,.08)", fill: true, tension: .25, pointRadius: 2 },
+      { label: "% físico", data: md.map(x => x[3]), borderColor: "#2D8540", tension: .25, pointRadius: 2, spanGaps: true }] },
+    options: { maintainAspectRatio: false, plugins: { datalabels: { display: false }, legend: { position: "bottom", labels: { boxWidth: 12 } },
+      tooltip: { callbacks: { afterBody: it => { const x = md[it[0].dataIndex]; return x[1] != null ? "Medição: " + fmtBRL(x[1]) : ""; } } } },
+      scales: { y: { min: 0, suggestedMax: 100, ticks: { callback: v => v + "%" } }, x: { ticks: { maxTicksLimit: 8, autoSkip: true } } } } });
+  else $("#chEoCurva").parentElement.innerHTML = `<div class="info-state">Sem medições registradas no e-Obras.</div>`;
+}
+
+
 function getBIHTML() {
   return `
   <div class="mod-wrap">
@@ -8171,6 +8471,13 @@ function buildAlerts(contratos, icm) {
     });
     if (atrasados.length > 0)
       alerts.push({ level: "danger", msg: `${atrasados.length} contratos paralisados/atrasados`, module: "briefings" });
+  }
+  const eo = [...new Set(Object.values(HUB.state.eobrasIdx || {}))].filter(o => EO_ATIVAS.test(o.sit || ""));
+  if (eo.length) {
+    const sem = eo.filter(o => !/a iniciar|paralis/i.test(o.sit) && _eoDias(o.ult_med) > 90).length;
+    const vig = eo.filter(o => o.fim_vig && _eoDias(o.fim_vig) > 0).length;
+    if (sem) alerts.push({ level: "danger", msg: `${sem} contratos ativos sem medição há mais de 90 dias (e-Obras)`, module: "acompanhamento" });
+    if (vig) alerts.push({ level: "warning", msg: `${vig} contratos ativos com vigência vencida (e-Obras)`, module: "acompanhamento" });
   }
   if (icm && icm.length) {
     const criticos = icm.filter(r => parseFloat(r.iri || r.icm || r.indice || 0) > 4.0);
