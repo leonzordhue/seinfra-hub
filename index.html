@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://leonzordhue.github.io" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Lexend+Deca:wght@300;400;500;600;700;800;900&family=Lexend+Zetta:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Lexend+Deca:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -50,7 +50,7 @@
       --borda:       #E0E6F0;
       --branco:      #FFFFFF;
       --font:        'Lexend Deca', 'Outfit', sans-serif;
-      --font-head:   'Lexend Zetta', 'Outfit', sans-serif;
+      --font-head:   'Lexend Deca', 'Outfit', sans-serif;
       --font-cond:   'Barlow Condensed', 'Outfit', sans-serif;
       --shadow:      0 2px 16px rgba(26,43,94,0.09), 0 0 0 1px var(--borda);
       --shadow-lg:   0 12px 32px rgba(26,43,94,0.14), 0 0 0 1px var(--borda);
@@ -74,12 +74,12 @@
       display: flex; align-items: center; justify-content: space-between;
     }
     .topbar-gov-text {
-      font-family: var(--font-cond); font-size: 0.65rem; font-weight: 600;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 600;
       letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.55);
     }
     .topbar-gov-live {
       display: flex; align-items: center; gap: 0.4rem;
-      font-family: var(--font-cond); font-size: 0.65rem; font-weight: 700;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase; color: var(--amarelo);
     }
     .topbar-dot {
@@ -111,7 +111,7 @@
     }
     .header-live {
       display: flex; align-items: center; gap: 0.35rem;
-      font-family: var(--font-cond); font-size: 0.62rem; font-weight: 700;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase; color: var(--azul); opacity: 0.75;
     }
     .live-dot {
@@ -168,7 +168,7 @@
     .sidebar-nav::-webkit-scrollbar { width: 6px; }
     .sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
     .sidebar-section-label {
-      font-family: var(--font-cond); font-size: 0.62rem; font-weight: 700;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase;
       color: rgba(255,255,255,0.35);
       padding: 0.8rem 1.25rem 0.3rem;
@@ -361,7 +361,7 @@
     .kpi-mini.k-laranja::before  { background: var(--laranja); }
     .kpi-mini.k-vermelho::before { background: var(--vermelho); }
     .kpi-mini-label {
-      font-family: var(--font-cond); font-size: 0.62rem; font-weight: 700;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 700;
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--cinza-aux);
     }
     .kpi-mini-value {
@@ -431,10 +431,10 @@
     }
     /* Atividade recente — grid 2 colunas (obras vs sinistros) */
     .home-activity-grid {
-      display: grid; grid-template-columns: 1fr 1fr;
+      display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr);
       gap: 1rem; margin-bottom: 1.25rem;
     }
-    @media (max-width: 768px) { .home-activity-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 768px) { .home-activity-grid { grid-template-columns: minmax(0,1fr); } }
     .home-activity-head {
       display: flex; align-items: center; gap: .65rem;
       padding: .8rem 1rem; border-bottom: 1px solid var(--borda);
@@ -477,7 +477,7 @@
     }
     .home-resumo-body { flex: 1; min-width: 0; }
     .home-resumo-label {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.05em;
       text-transform: uppercase; color: var(--cinza-med);
       margin-bottom: 0.1rem;
     }
@@ -523,7 +523,7 @@
     }
     .home-map-toggles { display: flex; gap: 0.4rem; flex-wrap: wrap; }
     .map-toggle {
-      font-family: var(--font-cond); font-size: 0.68rem; font-weight: 700;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 700;
       letter-spacing: 0.05em; text-transform: uppercase;
       color: var(--cinza-med); background: #fff;
       border: 1.5px solid var(--borda); padding: 0.32em 0.85em;
@@ -560,7 +560,7 @@
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
     .timeline-meta {
-      font-family: var(--font-cond); font-size: 0.65rem; font-weight: 600;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 600;
       letter-spacing: 0.05em; text-transform: uppercase; color: var(--cinza-aux);
       margin-top: 0.18rem;
     }
@@ -679,7 +679,7 @@
     .kpi-card.r::before { background: var(--vermelho); }
     .kpi-card.c::before { background: var(--ciano); }
     .kpi-card-label {
-      font-family: var(--font-cond); font-size: 0.62rem; font-weight: 700;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 700;
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--cinza-aux);
     }
     .kpi-card-value {
@@ -779,7 +779,7 @@
       background: var(--azul); color: #fff; border-color: var(--azul);
       box-shadow: 0 4px 14px rgba(0,45,114,.28); transform: translateY(-1px);
     }
-    .rod-chip-count { font-size: 0.68rem; font-weight: 500; opacity: 0.75; margin-left: 0.35rem; }
+    .rod-chip-count { font-size: 0.75rem; font-weight: 500; opacity: 0.75; margin-left: 0.35rem; }
 
     /* Barra de navegação prev/next no detalhe */
     .rod-nav-bar {
@@ -908,7 +908,7 @@
     /* Chips */
     .chip {
       font-family: var(--font-cond); display: inline-flex; align-items: center; gap: 0.3rem;
-      font-size: 0.65rem; font-weight: 700; padding: 0.2em 0.7em;
+      font-size: 0.75rem; font-weight: 700; padding: 0.2em 0.7em;
       border-radius: 100px; letter-spacing: 0.04em; text-transform: uppercase;
       white-space: nowrap;
     }
@@ -1377,7 +1377,7 @@
     @media (max-width: 700px) { .ramal-detail-grid { grid-template-columns: 1fr 1fr; } }
     .ramal-detail-item { display: flex; flex-direction: column; gap: 0.18rem; }
     .ramal-detail-label {
-      font-family: var(--font-cond); font-size: 0.62rem; font-weight: 700;
+      font-family: var(--font-cond); font-size: 0.75rem; font-weight: 700;
       color: var(--azul); letter-spacing: 0.08em; text-transform: uppercase;
     }
     .ramal-detail-value { font-size: 0.85rem; font-weight: 700; color: var(--cinza-txt); }
@@ -1394,7 +1394,7 @@
     }
     .footer-col { flex: 1; min-width: 0; }
     .footer-item {
-      font-family: 'Lexend Deca', sans-serif; font-size: 0.63rem;
+      font-family: 'Lexend Deca', sans-serif; font-size: 0.75rem;
       color: var(--cinza-med); line-height: 1.75;
     }
     .footer-vdiv { width: 1px; height: 56px; background: var(--borda); flex-shrink: 0; }
@@ -1703,6 +1703,7 @@
     .eo-fonte{font-size:.78rem;color:var(--cinza-med);background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:10px;padding:.55rem .9rem;margin:0 0 1rem}
     .eo-sub{font-size:.74rem;color:var(--cinza-aux)}
     .kpi-grid.eo-k5{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+    @media (max-width: 640px){ .kpi-grid, .kpi-grid.eo-k5{grid-template-columns:repeat(2,minmax(0,1fr))!important} .kpi-card-value{font-size:1.25rem} }
     .eo-bar{height:6px;background:#E3E8F1;border-radius:4px;overflow:hidden;min-width:60px;flex:1}
     .eo-bar b{display:block;height:100%;border-radius:4px}
     .eo-faixa{margin-top:.55rem;padding:.45rem .6rem;background:#fff;border:1px dashed var(--azul-borda);border-radius:8px;display:flex;flex-wrap:wrap;gap:.35rem .8rem;align-items:center;font-size:.72rem;color:var(--cinza-med);cursor:pointer}
@@ -1735,6 +1736,33 @@
     .eo-grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 1.2rem}
     .eo-l{display:flex;justify-content:space-between;gap:.8rem;padding:.42rem 0;border-bottom:1px solid var(--borda);font-size:.8rem}
     .eo-l span{color:var(--cinza-aux)}.eo-l strong{text-align:right;color:var(--azul-dk,#1A2540);font-variant-numeric:tabular-nums}
+    [class*="grid"] > * { min-width: 0; }
+    html, body { overflow-x: hidden; }
+    .leaflet-overlay-pane canvas, .leaflet-overlay-pane svg { filter: drop-shadow(0 0 1px rgba(0,0,0,.55)); }
+
+    /* ── Acabamento v1.6 (06/11/2026): leitura, foco, carregamento e movimento discreto ── */
+    .kpi-card-value, .home-resumo-val, .data-table td, .eo-tab td { font-variant-numeric: tabular-nums; }
+    .home-hero-title { letter-spacing: -0.025em; }
+    .section-title, .panel-title { letter-spacing: -0.005em; }
+    :focus-visible { outline: 2px solid var(--amarelo); outline-offset: 2px; border-radius: 6px; }
+    ::selection { background: #F5A62355; }
+    .module-card:hover { transform: translateY(-2px); }
+    .home-resumo-item:hover { transform: none; border-color: var(--azul-borda); }
+    .is-loading { color: transparent !important; position: relative; min-width: 4.5ch; display: inline-block; }
+    .is-loading::after { content: ''; position: absolute; inset: 15% 0; border-radius: 6px;
+      background: linear-gradient(90deg, #EDF1F7 0%, #F7F9FC 50%, #EDF1F7 100%); background-size: 200% 100%;
+      animation: dmobShimmer 1.2s linear infinite; }
+    @keyframes dmobShimmer { to { background-position: -200% 0; } }
+    .rv { opacity: 0; transform: translateY(6px); }
+    .rv.rv-in { opacity: 1; transform: none; transition: opacity .32s ease, transform .32s ease; }
+    .leaflet-container { border-radius: inherit; }
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-thumb { background: #C4D0E8; border-radius: 10px; border: 2px solid transparent; background-clip: content-box; }
+    *::-webkit-scrollbar-thumb:hover { background: #8896A8; background-clip: content-box; }
+    @media (prefers-reduced-motion: reduce) {
+      .rv { opacity: 1; transform: none; } .is-loading::after { animation: none; }
+      .module-card:hover { transform: none; }
+    }
 </style>
 </head>
 <body>
@@ -1768,7 +1796,7 @@
         <div class="sidebar-logo-icon">DM</div>
         <div>
           <div class="sidebar-logo-text">DMOB Hub</div>
-          <div class="sidebar-logo-sub">v1.0 · SEINFRA</div>
+          <div class="sidebar-logo-sub">v1.6 · SEINFRA</div>
         </div>
       </div>
       <nav class="sidebar-nav" id="sidebarNav">
@@ -1794,7 +1822,7 @@
       </nav>
       <div class="sidebar-footer">
         <strong>AKE/UFT-1.0</strong>
-        Build DMOB-20260526
+        Build DMOB-20261106
       </div>
     </aside>
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar(false)"></div>
@@ -1843,7 +1871,7 @@
 <script>
 /* ═════════════════════════════════════════════════════════════════
    DMOB HUB — Plataforma Gerencial de Mobilidade
-   AKE/UFT-1.0 · BUILD DMOB-20260526 · IC 1.0
+   AKE/UFT-1.0 · BUILD DMOB-20261106 · IC 1.0
    ═════════════════════════════════════════════════════════════════ */
 
 window._VERSION_LOG = window._VERSION_LOG || [];
@@ -1866,6 +1894,14 @@ window._VERSION_LOG.push({
 window._VERSION_LOG.push({
   rev: "v1.4", data: "2026-11-06",
   descricao: "Módulo Acompanhamento de Obras (e-Obras, 399 CT/CV, data/eobras.json): KPIs, alertas (sem medição > 90 d, vigência, físico atrás do prazo, paralisados), tabela, ficha com curva de medições; faixa e-Obras em todo card de obra; alertas do BI"
+});
+window._VERSION_LOG.push({
+  rev: "v1.5", data: "2026-11-06",
+  descricao: "Layout: grid da Home não estoura mais a largura (minmax(0,1fr)); decimais pt-BR; mapa da Home enquadrado no AM com cores para satélite e halo nas linhas; Resumo com Execução e Saldo do e-Obras; busca abre a ficha do contrato"
+});
+window._VERSION_LOG.push({
+  rev: "v1.6", data: "2026-11-06",
+  descricao: "Design: títulos em Lexend Deca (a Zetta extra-larga dificultava a leitura), texto mínimo 12px, ícones SVG no Resumo, números tabulares que contam até o valor, skeleton enquanto carrega, entrada suave dos blocos ao rolar, foco visível; respeita prefers-reduced-motion"
 });
 window._VICIOS_CONHECIDOS = [{ id: "VK-01", desc: "API_KEY exposta no client" }];
 window._TENTATIVAS_FALHAS = window._TENTATIVAS_FALHAS || [];
@@ -1907,7 +1943,7 @@ const GEOJSON_FILES = {
 
 /* ── HUB (núcleo, BIOS) ── */
 const HUB = {
-  version: "1.0.0",
+  version: "1.6.0",
   modules: {
     rodovias:     { id: "rodovias",     label: "Rodovias",       icon: "\u{1F6E3}",  color: "#1A2B5E" },
     ramais:       { id: "ramais",       label: "Ramais",         icon: "\u{1F33F}",  color: "#2D8540" },
@@ -1943,6 +1979,62 @@ const HUB = {
   }
 };
 
+
+/* ── Acabamento v1.6: contagem dos números, skeleton e entrada dos blocos ── */
+(function dmobAcabamento() {
+  const reduz = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const SEL_NUM = ".kpi-card-value, .home-resumo-val";
+  // "R$ 3,10 bi" -> prefixo "R$ ", número 3.10 (2 casas), sufixo " bi"
+  function partes(t) {
+    const m = String(t).match(/^(.*?)(-?\d{1,3}(?:\.\d{3})*(?:,\d+)?|-?\d+(?:,\d+)?)(.*)$/);
+    if (!m) return null;
+    const dec = (m[2].split(",")[1] || "").length;
+    return { pre: m[1], val: parseFloat(m[2].replace(/\./g, "").replace(",", ".")), dec, suf: m[3], milhar: /\./.test(m[2]) || Math.abs(parseFloat(m[2].replace(/\./g, "").replace(",", "."))) >= 1000 };
+  }
+  const fmt = (v, p) => v.toLocaleString("pt-BR", { minimumFractionDigits: p.dec, maximumFractionDigits: p.dec, useGrouping: p.milhar });
+  function animar(el) {
+    const txt = el.textContent.trim();
+    el.classList.toggle("is-loading", txt === "—" || txt === "");
+    if (reduz || el._dmobAnim || txt === el._dmobFinal) return;
+    const p = partes(txt); if (!p || !isFinite(p.val) || p.val === 0) { el._dmobFinal = txt; return; }
+    el._dmobFinal = txt; el._dmobAnim = true;
+    const t0 = performance.now(), dur = 650;
+    (function passo(t) {
+      const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = p.pre + fmt(p.val * e, p) + p.suf;
+      if (k < 1) requestAnimationFrame(passo); else { el.textContent = txt; el._dmobAnim = false; }
+    })(t0);
+  }
+  const io = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(en => {
+    if (en.isIntersecting) { en.target.classList.add("rv-in"); io.unobserve(en.target); }
+  }), { rootMargin: "0px 0px -6% 0px" }) : null;
+  const SEL_RV = ".panel-card, .module-card, .home-resumo-item, .kpi-card, .chart-grid-2 > *, .eo-al";
+  function varrer(root) {
+    (root.querySelectorAll ? root : document).querySelectorAll(SEL_NUM).forEach(animar);
+    if (!io || reduz) return;
+    (root.querySelectorAll ? root : document).querySelectorAll(SEL_RV).forEach(el => {
+      if (el._dmobRv) return; el._dmobRv = true;
+      const r = el.getBoundingClientRect();
+      if (r.top < innerHeight * 0.94) { el.classList.add("rv", "rv-in"); return; } // já visível: sem esconder
+      el.classList.add("rv"); io.observe(el);
+    });
+  }
+  const mo = new MutationObserver(ms => {
+    for (const m of ms) {
+      if (m.type === "characterData" || m.type === "childList") {
+        const alvo = m.target.nodeType === 3 ? m.target.parentElement : m.target;
+        const num = alvo && alvo.closest && alvo.closest(SEL_NUM);
+        if (num) { if (!num._dmobAnim) animar(num); continue; }
+        m.addedNodes && m.addedNodes.forEach(n => { if (n.nodeType === 1) varrer(n); });
+      }
+    }
+  });
+  document.addEventListener("DOMContentLoaded", () => {
+    varrer(document);
+    mo.observe(document.body, { childList: true, subtree: true, characterData: true });
+  });
+})();
+
 /* ── Util ── */
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
@@ -1952,6 +2044,9 @@ function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
    ViewBox 24x24, stroke 1.7, linecap/linejoin round (visual coerente).
    ═════════════════════════════════════════════════════════════════ */
 const _ICON_PATHS = {
+  dinheiro: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 9.5v5M18 9.5v5"/>',
+  relogio: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/>',
+  obra: '<path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-6h6v6"/>',
   acompanhamento: '<path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><path d="M15 6h4v4"/>',
   inicio: '<path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-6h-6v6H5a2 2 0 0 1-2-2v-9z"/>',
   rodovias: '<path d="M8 3l-4 18M16 3l4 18M12 4v3M12 10v3M12 16v3"/>',
@@ -2277,13 +2372,13 @@ function loadCoreData() {
       const type = ctx.chart.config.type;
       if (type === "doughnut" || type === "pie") {
         const tot = (ctx.dataset.data || []).reduce((a,b) => a + (Number(b)||0), 0);
-        return tot > 0 ? ((value / tot) * 100).toFixed(1) + "%" : "";
+        return tot > 0 ? ((value / tot) * 100).toFixed(1).replace(".", ",") + "%" : "";
       }
       // bar / line — valor abreviado (mi/mil)
       const n = Number(value);
       if (!isFinite(n)) return String(value);
-      if (Math.abs(n) >= 1e9) return (n/1e9).toFixed(2) + " bi";
-      if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(1) + " mi";
+      if (Math.abs(n) >= 1e9) return (n/1e9).toFixed(2).replace(".", ",") + " bi";
+      if (Math.abs(n) >= 1e6) return (n/1e6).toFixed(1).replace(".", ",") + " mi";
       if (Math.abs(n) >= 1e3) return n.toLocaleString("pt-BR");
       return n % 1 === 0 ? n.toFixed(0) : n.toFixed(1);
     },
@@ -2525,7 +2620,7 @@ function getHomeHTML() {
       </div>
       <div class="home-resumo">
         <div class="home-resumo-item">
-          <div class="home-resumo-icon" style="background:#1A2B5E22;color:#1A2B5E">🛣</div>
+          <div class="home-resumo-icon" style="background:#1A2B5E22;color:#1A2B5E">${iconSvg("rodovias", { size: 22, stroke: 1.6 })}</div>
           <div class="home-resumo-body">
             <div class="home-resumo-label">Rodovias Estaduais</div>
             <div class="home-resumo-val" id="rg-rod">—</div>
@@ -2533,7 +2628,7 @@ function getHomeHTML() {
           </div>
         </div>
         <div class="home-resumo-item">
-          <div class="home-resumo-icon" style="background:#2D854022;color:#2D8540">🌿</div>
+          <div class="home-resumo-icon" style="background:#2D854022;color:#2D8540">${iconSvg("ramais", { size: 22, stroke: 1.6 })}</div>
           <div class="home-resumo-body">
             <div class="home-resumo-label">Ramais</div>
             <div class="home-resumo-val" id="rg-ram">—</div>
@@ -2541,7 +2636,7 @@ function getHomeHTML() {
           </div>
         </div>
         <div class="home-resumo-item">
-          <div class="home-resumo-icon" style="background:#B4530922;color:#B45309">🏙</div>
+          <div class="home-resumo-icon" style="background:#B4530922;color:#B45309">${iconSvg("viario", { size: 22, stroke: 1.6 })}</div>
           <div class="home-resumo-body">
             <div class="home-resumo-label">Viário Urbano</div>
             <div class="home-resumo-val" id="rg-via">78</div>
@@ -2549,7 +2644,7 @@ function getHomeHTML() {
           </div>
         </div>
         <div class="home-resumo-item">
-          <div class="home-resumo-icon" style="background:#0E749022;color:#0E7490">✈</div>
+          <div class="home-resumo-icon" style="background:#0E749022;color:#0E7490">${iconSvg("aerodromos", { size: 22, stroke: 1.6 })}</div>
           <div class="home-resumo-body">
             <div class="home-resumo-label">Aeródromos</div>
             <div class="home-resumo-val" id="rg-aero">—</div>
@@ -2557,7 +2652,7 @@ function getHomeHTML() {
           </div>
         </div>
         <div class="home-resumo-item">
-          <div class="home-resumo-icon" style="background:#0077b622;color:#0077b6">⚓</div>
+          <div class="home-resumo-icon" style="background:#0077b622;color:#0077b6">${iconSvg("terminais", { size: 22, stroke: 1.6 })}</div>
           <div class="home-resumo-body">
             <div class="home-resumo-label">Terminais Flutuantes</div>
             <div class="home-resumo-val" id="rg-term">—</div>
@@ -2565,7 +2660,7 @@ function getHomeHTML() {
           </div>
         </div>
         <div class="home-resumo-item">
-          <div class="home-resumo-icon" style="background:#C0392B22;color:#C0392B">🏗</div>
+          <div class="home-resumo-icon" style="background:#C0392B22;color:#C0392B">${iconSvg("obra", { size: 22, stroke: 1.6 })}</div>
           <div class="home-resumo-body">
             <div class="home-resumo-label">Obras / Contratos</div>
             <div class="home-resumo-val" id="rg-ct">—</div>
@@ -2573,7 +2668,7 @@ function getHomeHTML() {
           </div>
         </div>
         <div class="home-resumo-item">
-          <div class="home-resumo-icon" style="background:#D4A01722;color:#D4A017">💰</div>
+          <div class="home-resumo-icon" style="background:#D4A01722;color:#D4A017">${iconSvg("dinheiro", { size: 22, stroke: 1.6 })}</div>
           <div class="home-resumo-body">
             <div class="home-resumo-label">Investimento Total</div>
             <div class="home-resumo-val" id="rg-inv">—</div>
@@ -2581,11 +2676,27 @@ function getHomeHTML() {
           </div>
         </div>
         <div class="home-resumo-item">
-          <div class="home-resumo-icon" style="background:#6C348322;color:#6C3483">🗺</div>
+          <div class="home-resumo-icon" style="background:#6C348322;color:#6C3483">${iconSvg("atlas", { size: 22, stroke: 1.6 })}</div>
           <div class="home-resumo-body">
             <div class="home-resumo-label">Municípios</div>
             <div class="home-resumo-val">62</div>
             <div class="home-resumo-foot">do estado do Amazonas</div>
+          </div>
+        </div>
+        <div class="home-resumo-item" style="cursor:pointer" onclick="loadModule('acompanhamento')">
+          <div class="home-resumo-icon" style="background:#1A2B5E22;color:#1A2B5E">${iconSvg("acompanhamento", { size: 22, stroke: 1.6 })}</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Execução (e-Obras)</div>
+            <div class="home-resumo-val" id="rg-eo-fis">—</div>
+            <div class="home-resumo-foot"><span id="rg-eo-at">—</span> contratos ativos · medido ÷ valor</div>
+          </div>
+        </div>
+        <div class="home-resumo-item" style="cursor:pointer" onclick="loadModule('acompanhamento')">
+          <div class="home-resumo-icon" style="background:#B3261E22;color:#B3261E">${iconSvg("relogio", { size: 22, stroke: 1.6 })}</div>
+          <div class="home-resumo-body">
+            <div class="home-resumo-label">Saldo a medir</div>
+            <div class="home-resumo-val" id="rg-eo-saldo">—</div>
+            <div class="home-resumo-foot"><span id="rg-eo-sem">—</span> ativos sem medição há 90+ dias</div>
           </div>
         </div>
       </div>
@@ -2733,7 +2844,16 @@ function populateHeroKPIs() {
     r.valor_global_inicial_aditivos_reajustes_da_obra ||
     r.valor_global_inicial_aditivos_reajustes ||
     r.valor_atualizado || r.valor_contratual || r.valor || 0), 0);
-  setEl("rg-inv", inv ? (inv >= 1e9 ? "R$ " + (inv/1e9).toFixed(2) + " bi" : "R$ " + (inv/1e6).toFixed(1) + " mi") : "—");
+  loadEObras().then(() => {
+    const at = [...new Set(Object.values(HUB.state.eobrasIdx || {}))].filter(o => EO_ATIVAS.test(o.sit || ""));
+    if (!at.length) return;
+    const va = at.reduce((a, o) => a + (o.v_atual || 0), 0), me = at.reduce((a, o) => a + (o.medido || 0), 0);
+    setEl("rg-eo-fis", va ? fmtNum(me / va * 100, 1) + "%" : "—");
+    setEl("rg-eo-at", fmtNum(at.length));
+    setEl("rg-eo-saldo", _eoBRL(at.reduce((a, o) => a + (o.saldo || 0), 0)));
+    setEl("rg-eo-sem", fmtNum(at.filter(o => !/a iniciar|paralis/i.test(o.sit) && _eoDias(o.ult_med) > 90).length));
+  });
+  setEl("rg-inv", inv ? (inv >= 1e9 ? "R$ " + (inv/1e9).toFixed(2).replace(".", ",") + " bi" : "R$ " + (inv/1e6).toFixed(1).replace(".", ",") + " mi") : "—");
 }
 
 function populateModuleCardSubs() {
@@ -2751,6 +2871,7 @@ function populateModuleCardSubs() {
   setSub("icm", "Condição do pavimento por rodovia — levantamento RoadLab Pro");
   setSub("sinistros", "Observatório de acidentes em rodovias estaduais — fonte: imprensa");
   setSub("briefings", "Briefings executivos por obra/município · PDFs com timbrado");
+  setSub("acompanhamento", "Físico, medido, saldo e alertas de cada contrato · e-Obras");
   setSub("atlas", "Camadas geoespaciais toggleáveis");
   setSub("planejamento", "Metas e priorização orçamentária");
   setSub("bi", "Indicadores consolidados e alertas");
@@ -2810,11 +2931,12 @@ async function initHomeMap() {
     const gj = await loadGeoJSON(file);
     if (!gj) return null;
     const styleMap = {
-      municipios:   { color: "#0E8A7D", weight: 1.2, opacity: 0.65, fillColor: "#0E8A7D", fillOpacity: 0.03 },
-      rodovias_est: { color: "#1A2B5E", weight: 2 },   // azul-marinho — estaduais
-      rodovias_fed: { color: "#C0392B", weight: 2.5 }, // vermelho — federais
-      ramais:       { color: "#2D8540", weight: 1.6, opacity: 0.78, dashArray: "5 3" },
-      hidrovias:    { color: "#0077b6", weight: 2 },   // azul hidroviário
+      // cores claras: o fundo agora é satélite (06/11/2026)
+      municipios:   { color: "#FFFFFF", weight: 1, opacity: 0.6, fillColor: "#FFFFFF", fillOpacity: 0.03 },
+      rodovias_est: { color: "#FFC23D", weight: 3 },   // dourado — estaduais
+      rodovias_fed: { color: "#FF5A4E", weight: 2.6 }, // vermelho — federais
+      ramais:       { color: "#B8F27C", weight: 1.6, opacity: 0.9, dashArray: "5 3" },
+      hidrovias:    { color: "#5BD0FF", weight: 2 },   // azul hidroviário
     };
     const firstGeom = (gj.features || [])[0]?.geometry?.type || "";
     const isPoint = firstGeom.includes("Point");
@@ -2857,7 +2979,7 @@ async function initHomeMap() {
              </div>`
           );
           // Hover: realça o município
-          lyr.on("mouseover", e => e.target.setStyle({ weight: 2.5, fillOpacity: 0.12 }));
+          lyr.on("mouseover", e => e.target.setStyle({ weight: 2.5, fillOpacity: 0.15 }));
           lyr.on("mouseout",  e => e.target.setStyle(styleMap.municipios));
         }
       });
@@ -2874,6 +2996,8 @@ async function initHomeMap() {
     if (on) lyr.addTo(map); else map.removeLayer(lyr);
     // Ordem visual: municípios sempre embaixo (não cobrir linhas)
     if (key === "municipios" && on && lyr.bringToBack) lyr.bringToBack();
+    // abre enquadrado no Amazonas (antes mostrava a América do Sul inteira)
+    if (key === "municipios" && on && !map._dmobFit && lyr.getBounds) { map._dmobFit = true; map.fitBounds(lyr.getBounds(), { padding: [12, 12] }); }
   }
 
   // bind toggles
@@ -2908,8 +3032,12 @@ function searchHub(q) {
   (HUB.state.contratos || []).slice(0, 300).forEach(c => {
     const m = (c.municipio || "").toString();
     const obj = (c.objeto || c.nome_obra || "").toString();
-    if (m.toLowerCase().includes(query) || obj.toLowerCase().includes(query))
-      results.push({ icon: "\u{1F3D7}", text: obj || m, sub: m || "Contrato", action: () => loadModule("briefings") });
+    const ctn = (c.n_do_ct_cv || c.no_do_ct_cv || c.n_ct_cv || c.contrato || "").toString();
+    if (m.toLowerCase().includes(query) || obj.toLowerCase().includes(query) || ctn.toLowerCase().includes(query)) {
+      const eo = ctn && eoDe(ctn);
+      results.push({ icon: "\u{1F3D7}", text: obj || m, sub: (ctn ? ctn + " · " : "") + (m || "Contrato"),
+        action: () => eo ? eoAbrir(eo.ct) : loadModule("briefings") });
+    }
   });
   const top = results.slice(0, 14);
   if (!top.length) { box.innerHTML = `<div class="hub-search-item"><div class="hub-search-item-text">Sem resultados</div></div>`; box.classList.add("show"); return; }
@@ -3530,7 +3658,7 @@ function _buildRodTopKpis() {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   set("rk-rod", fmtNum(uniq.size));
   set("rk-ext", fmtNum(Math.round(ext)));
-  set("rk-pav", pct.toFixed(1) + "%");
+  set("rk-pav", pct.toFixed(1).replace(".", ",") + "%");
   set("rk-inv", _fmtBRLShort(tot));
 }
 
@@ -5619,7 +5747,7 @@ function _buildViarioGeral() {
             backgroundColor: "#2D8540", borderRadius: 4 }] },
     options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false },
-                 tooltip: { callbacks: { label: ctx => "R$ " + ctx.parsed.x.toFixed(1) + " mi" } } },
+                 tooltip: { callbacks: { label: ctx => "R$ " + ctx.parsed.x.toFixed(1).replace(".", ",") + " mi" } } },
       scales: { x: { beginAtZero: true, ticks: { callback: v => "R$ " + v + " mi" } } } }
   });
   mkChart("chViaTop5Menos", {
@@ -5629,7 +5757,7 @@ function _buildViarioGeral() {
             backgroundColor: "#C0392B", borderRadius: 4 }] },
     options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false },
-                 tooltip: { callbacks: { label: ctx => "R$ " + ctx.parsed.x.toFixed(2) + " mi" } } },
+                 tooltip: { callbacks: { label: ctx => "R$ " + ctx.parsed.x.toFixed(2).replace(".", ",") + " mi" } } },
       scales: { x: { beginAtZero: true, ticks: { callback: v => "R$ " + v + " mi" } } } }
   });
 
@@ -7129,7 +7257,7 @@ function _atlasMunPopup(p) {
         ✈ <strong>${htmlEscape(aeroNomes)}</strong>${aeroCt.length > 2 ? ` <span style="opacity:.7">+${aeroCt.length-2}</span>` : ""}
       </div>` : ""}
       ${invObras ? `<div style="margin-top:.55rem;padding-top:.5rem;border-top:1px dashed #e0e6f0;font-size:.74rem;color:#4a5568">
-        💰 Investimento contratual: <strong style="color:#1A2B5E">${invObras >= 1e9 ? "R$ "+(invObras/1e9).toFixed(2)+" bi" : "R$ "+(invObras/1e6).toFixed(1)+" mi"}</strong>
+        💰 Investimento contratual: <strong style="color:#1A2B5E">${invObras >= 1e9 ? "R$ "+(invObras/1e9).toFixed(2).replace(".", ",")+" bi" : "R$ "+(invObras/1e6).toFixed(1).replace(".", ",")+" mi"}</strong>
       </div>` : ""}
       ${!ramaisLoaded ? `<div style="margin-top:.45rem;font-size:.65rem;color:#8896a8;font-style:italic">⏳ Aguardando planilha de ramais...</div>` : ""}
       ${ramaisLoaded && ramaisCt.length === 0 && HUB.state.ramaisSheet.length > 0 ? `<details style="margin-top:.45rem;font-size:.6rem;color:#8896a8"><summary style="cursor:pointer">diagnóstico match</summary><div style="font-family:monospace;background:#fdedec;border:1px solid #f5b5ae;padding:.3rem;border-radius:6px;margin-top:.25rem;font-size:.55rem;color:#7A1B41">key=&quot;${htmlEscape(nomeKey)}&quot; · sheet=${HUB.state.ramaisSheet.length} ramais · exemplos: ${HUB.state.ramaisSheet.slice(0,3).map(r => "&quot;"+htmlEscape(_normMun(r.municipio||""))+"&quot;").join(", ")}</div></details>` : ""}
@@ -8639,7 +8767,7 @@ async function initBriefings() {
   setEl("br-tot",  fmtNum(ct.length));
   setEl("br-exec", fmtNum(exec.length));
   setEl("br-atenc",fmtNum(atenc.length));
-  setEl("br-inv",  invTotal >= 1e9 ? "R$ "+(invTotal/1e9).toFixed(2)+" bi" : (invTotal >= 1e6 ? "R$ "+(invTotal/1e6).toFixed(1)+" mi" : fmtBRL(invTotal)));
+  setEl("br-inv",  invTotal >= 1e9 ? "R$ "+(invTotal/1e9).toFixed(2).replace(".", ",")+" bi" : (invTotal >= 1e6 ? "R$ "+(invTotal/1e6).toFixed(1).replace(".", ",")+" mi" : fmtBRL(invTotal)));
 
   // tabs
   $$("#brTabs .tab-item").forEach(btn => {
@@ -8929,7 +9057,7 @@ function renderBriefingMunicipal() {
       </div>
       ${(pagoM > 0 || empregos > 0 || ramais.length || aerodromos.length) ? `
         <div style="margin-top:.6rem;display:flex;gap:.5rem;flex-wrap:wrap;font-size:.78rem">
-          ${pagoM > 0 ? `<div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:.45rem .8rem;color:var(--azul)">💰 <strong>${pagoM>=1e6?(pagoM/1e6).toFixed(1)+" mi":fmtBRL(pagoM)}</strong> pago</div>` : ""}
+          ${pagoM > 0 ? `<div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:.45rem .8rem;color:var(--azul)">💰 <strong>${pagoM>=1e6?(pagoM/1e6).toFixed(1).replace(".", ",")+" mi":fmtBRL(pagoM)}</strong> pago</div>` : ""}
           ${empregos > 0 ? `<div style="background:var(--verde-cl);border:1px solid var(--verde-brd);border-radius:8px;padding:.45rem .8rem;color:var(--verde)">👷 <strong>${fmtNum(empregos)}</strong> empregos diretos</div>` : ""}
           ${ramais.length ? `<div style="background:#e7f5e9;border:1px solid #9ee8b0;border-radius:8px;padding:.45rem .8rem;color:#1f5b30">🌿 <strong>${ramais.length}</strong> ramais</div>` : ""}
           ${aerodromos.length ? `<div style="background:#dff5fb;border:1px solid #90e0ef;border-radius:8px;padding:.45rem .8rem;color:#0E7490">✈ <strong>${aerodromos.length}</strong> aeródromo${aerodromos.length>1?'s':''}: ${aerodromos.map(a=>htmlEscape(a.nome)).join(", ")}</div>` : ""}
@@ -9560,7 +9688,7 @@ async function exportPDF(title, content) {
       doc.setFont("helvetica", "bold"); doc.setFontSize(8); doc.setTextColor(c[0], c[1], c[2]);
       doc.text(block.label || "", x, y + 3);
       doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(26, 37, 64);
-      doc.text(pct.toFixed(1) + "%", pageW - margin - doc.getTextWidth(pct.toFixed(1) + "%"), y + 3);
+      doc.text(pct.toFixed(1).replace(".", ",") + "%", pageW - margin - doc.getTextWidth(pct.toFixed(1).replace(".", ",") + "%"), y + 3);
       // Track
       doc.setFillColor(230, 235, 245);
       doc.roundedRect(x, y + 5, w, 4, 1, 1, "F");
@@ -9803,7 +9931,7 @@ function _buildBriefingObraContent(o, opts) {
   const ehRamal  = /ramal|vicinal|estrada/i.test((o.tipo||"") + " " + (o.segmento||"") + " " + (o.objeto||""));
   const tipoChip = ehRamal ? "Ramal" : ehViario ? "Viário Urbano" : "Rodoviário";
 
-  const fmtPct = v => (v == null || v === "" ? "—" : (Number(v).toFixed(1) + "%"));
+  const fmtPct = v => (v == null || v === "" ? "—" : (Number(v).toFixed(1).replace(".", ",") + "%"));
   const fmtBR = v => (v == null || v === "" || v === 0 ? "—" : fmtBRL(v));
   const dim = (o.dimensao || o.dimensao_executada || "");
   const dimUnidade = o.unidade || (dim && /km|m|m²|m2/i.test(String(dim)) ? "" : "");
@@ -10137,7 +10265,7 @@ async function gerarPDFInvestimentos() {
     type: "table",
     headers: ["Situação", "Obras", "Valor", "% do total"],
     rows: Object.entries(sitMap).sort((a, b) => b[1].v - a[1].v).map(([k, v]) => [
-      k, v.n, fmtBRL(v.v), total > 0 ? (v.v / total * 100).toFixed(1) + "%" : "—"
+      k, v.n, fmtBRL(v.v), total > 0 ? (v.v / total * 100).toFixed(1).replace(".", ",") + "%" : "—"
     ])
   });
 
@@ -10147,7 +10275,7 @@ async function gerarPDFInvestimentos() {
       type: "table",
       headers: ["Ano", "Obras", "Valor", "% do total"],
       rows: Object.entries(anoMap).sort((a, b) => a[0] - b[0]).map(([k, v]) => [
-        k, v.n, fmtBRL(v.v), total > 0 ? (v.v / total * 100).toFixed(1) + "%" : "—"
+        k, v.n, fmtBRL(v.v), total > 0 ? (v.v / total * 100).toFixed(1).replace(".", ",") + "%" : "—"
       ])
     });
   }
@@ -10252,4 +10380,4 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
-<!-- AKE/UFT-1.0 | BUILD: DMOB-20260526 | IC: 1.0 | MÓDULO: DMOB_HUB_V1 -->
+<!-- AKE/UFT-1.0 | BUILD: DMOB-20261106 | IC: 1.0 | MÓDULO: DMOB_HUB_V1 -->
