@@ -3039,7 +3039,8 @@ function searchHub(q) {
         action: () => eo ? eoAbrir(eo.ct) : loadModule("briefings") });
     }
   });
-  const top = results.slice(0, 14);
+  const vistos = new Set();
+  const top = results.filter(r => { const k = r.text + '|' + r.sub; if (vistos.has(k)) return false; vistos.add(k); return true; }).slice(0, 14);
   if (!top.length) { box.innerHTML = `<div class="hub-search-item"><div class="hub-search-item-text">Sem resultados</div></div>`; box.classList.add("show"); return; }
   box.innerHTML = top.map((r, i) => `
     <div class="hub-search-item" data-i="${i}">
