@@ -1692,7 +1692,8 @@
       .sidebar, .module-topbar, .sidebar-overlay, .sidebar-toggle, .topbar-gov { display: none !important; }
       .canvas-wrap { margin-left: 0 !important; }
     }
-  </style>
+  .leaflet-layer.tile-sat-clara{filter:brightness(1.18) contrast(1.06) saturate(1.12)}
+</style>
 </head>
 <body>
 
@@ -1810,6 +1811,10 @@ window._VERSION_LOG.push({
 window._VERSION_LOG.push({
   rev: "v1.1", data: "2026-11-06",
   descricao: "Basemaps CARTO (voyager/light/dark) trocados por Esri: a CARTO passou a devolver tile 'API KEY REQUIRED' e os mapas ficaram sem fundo"
+});
+window._VERSION_LOG.push({
+  rev: "v1.2", data: "2026-11-06",
+  descricao: "Fundo padrão de todos os mapas = satélite clareado + estradas + nomes (estilo Google Earth), a pedido do Paulo"
 });
 window._VICIOS_CONHECIDOS = [{ id: "VK-01", desc: "API_KEY exposta no client" }];
 window._TENTATIVAS_FALHAS = window._TENTATIVAS_FALHAS || [];
@@ -2267,6 +2272,16 @@ function mkChart(id, config) {
   } catch (e) { console.warn("mkChart", id, e); return null; }
 }
 
+// Fundo "Google Earth": imagem de satélite clareada + limites, nomes e estradas por cima (Paulo, 06/11/2026).
+function baseSatClara(maxZoom) {
+  const o = { maxZoom: maxZoom || 19 };
+  return L.layerGroup([
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", Object.assign({ className: "tile-sat-clara", attribution: "© Esri World Imagery" }, o)),
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}", Object.assign({ opacity: 0.85 }, o)),
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", o),
+  ]);
+}
+
 function mkMap(id, opts) {
   try {
     const el = document.getElementById(id);
@@ -2281,13 +2296,8 @@ function mkMap(id, opts) {
       zoom: (opts && opts.zoom) || 5,
       preferCanvas: true,
     });
-    // CARTO passou a exigir chave (tile "API KEY REQUIRED", nov/2026): fundo cinza claro da Esri + rótulos
-    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
-      maxZoom: 18, maxNativeZoom: 16, attribution: "© Esri"
-    }).addTo(map);
-    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", {
-      maxZoom: 18, maxNativeZoom: 16
-    }).addTo(map);
+    // CARTO passou a exigir chave (tile "API KEY REQUIRED", nov/2026): satélite claro estilo Google Earth
+    baseSatClara(18).addTo(map);
     // Escala métrica em todos os mapas (atlas usa a própria, passa noScale)
     if (!(opts && opts.noScale)) {
       try { L.control.scale({ position: "bottomleft", metric: true, imperial: false, maxWidth: 120 }).addTo(map); } catch (e) {}
@@ -7535,7 +7545,7 @@ function getAtlasHTML() {
         <!-- Barra de basemaps — 6 opções (removidas duplicatas: OSM≈Padrão,
              Topo+≈Relevo, Satélite sem rótulos ≈ Satélite com rótulos) -->
         <div class="atlas-basemap-bar">
-          <button class="atlas-bm-btn active" data-bm="voyager" onclick="atlasSetBasemap(this)" title="Esri Streets · ruas e cidades (recomendado)">Padrão</button>
+          <button class="atlas-bm-btn active" data-bm="voyager" onclick="atlasSetBasemap(this)" title="Satélite claro com nomes e estradas (estilo Google Earth)">Padrão</button>
           <button class="atlas-bm-btn" data-bm="streets" onclick="atlasSetBasemap(this)" title="Esri Streets · ruas detalhadas">Ruas</button>
           <button class="atlas-bm-btn" data-bm="topo" onclick="atlasSetBasemap(this)" title="OpenTopoMap · relevo">Relevo</button>
           <button class="atlas-bm-btn" data-bm="sat+rua" onclick="atlasSetBasemap(this)" title="Esri World Imagery + rótulos">Satélite</button>
@@ -7597,7 +7607,8 @@ async function initAtlas() {
   // O default agora é "voyager" (CARTO Voyager) — mais legível que OSM cru.
   const _bm = {
     // CARTO exige chave desde nov/2026 (marca d'água "API KEY REQUIRED"): chaves mantidas, tiles trocados pela Esri
-    voyager: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Streets" }),
+    voyager: baseSatClara(19), // "Padrão" = satélite claro estilo Google Earth
+    ruasesri: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Streets" }),
     osm:     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" }),
     sat:     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri World Imagery" }),
     "sat+rua": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri" }),
