@@ -1807,7 +1807,13 @@ window._VERSION_LOG.push({
   rev: "v1.0", data: "2026-05-26",
   descricao: "DMOB Hub — Plataforma Gerencial de Mobilidade SEINFRA/AM — launch inicial"
 });
+window._VERSION_LOG.push({
+  rev: "v1.1", data: "2026-11-06",
+  descricao: "Basemaps CARTO (voyager/light/dark) trocados por Esri: a CARTO passou a devolver tile 'API KEY REQUIRED' e os mapas ficaram sem fundo"
+});
 window._VICIOS_CONHECIDOS = [{ id: "VK-01", desc: "API_KEY exposta no client" }];
+window._TENTATIVAS_FALHAS = window._TENTATIVAS_FALHAS || [];
+window._TENTATIVAS_FALHAS.push({ data: "2026-11-06", tentativa: "Basemap CARTO sem chave (rastertiles/voyager, light_all, dark_all)", motivo: "CARTO exige API key: todo tile vem com a marca 'API KEY REQUIRED'. Não voltar a usar sem chave." });
 
 /* ── Constantes ── */
 const CDN_ASSETS   = "https://leonzordhue.github.io/atlas-amazonas/assets";
@@ -2275,8 +2281,12 @@ function mkMap(id, opts) {
       zoom: (opts && opts.zoom) || 5,
       preferCanvas: true,
     });
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      maxZoom: 18, subdomains: "abcd"
+    // CARTO passou a exigir chave (tile "API KEY REQUIRED", nov/2026): fundo cinza claro da Esri + rótulos
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 18, maxNativeZoom: 16, attribution: "© Esri"
+    }).addTo(map);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 18, maxNativeZoom: 16
     }).addTo(map);
     // Escala métrica em todos os mapas (atlas usa a própria, passa noScale)
     if (!(opts && opts.noScale)) {
@@ -7525,12 +7535,12 @@ function getAtlasHTML() {
         <!-- Barra de basemaps — 6 opções (removidas duplicatas: OSM≈Padrão,
              Topo+≈Relevo, Satélite sem rótulos ≈ Satélite com rótulos) -->
         <div class="atlas-basemap-bar">
-          <button class="atlas-bm-btn active" data-bm="voyager" onclick="atlasSetBasemap(this)" title="CARTO Voyager · ruas + tons suaves (recomendado)">Padrão</button>
+          <button class="atlas-bm-btn active" data-bm="voyager" onclick="atlasSetBasemap(this)" title="Esri Streets · ruas e cidades (recomendado)">Padrão</button>
           <button class="atlas-bm-btn" data-bm="streets" onclick="atlasSetBasemap(this)" title="Esri Streets · ruas detalhadas">Ruas</button>
           <button class="atlas-bm-btn" data-bm="topo" onclick="atlasSetBasemap(this)" title="OpenTopoMap · relevo">Relevo</button>
           <button class="atlas-bm-btn" data-bm="sat+rua" onclick="atlasSetBasemap(this)" title="Esri World Imagery + rótulos">Satélite</button>
-          <button class="atlas-bm-btn" data-bm="light" onclick="atlasSetBasemap(this)" title="CARTO Light · minimal">Claro</button>
-          <button class="atlas-bm-btn" data-bm="dark" onclick="atlasSetBasemap(this)" title="CARTO Dark · contraste">Escuro</button>
+          <button class="atlas-bm-btn" data-bm="light" onclick="atlasSetBasemap(this)" title="Esri Light Gray · fundo neutro para as camadas">Claro</button>
+          <button class="atlas-bm-btn" data-bm="dark" onclick="atlasSetBasemap(this)" title="Esri Dark Gray · contraste">Escuro</button>
         </div>
 
         <!-- Ferramentas (canto superior central-esquerdo) -->
@@ -7586,15 +7596,18 @@ async function initAtlas() {
   // Basemaps — 9 opções (4 anteriores + voyager, light, esri-topo, esri-streets, sat+ruas)
   // O default agora é "voyager" (CARTO Voyager) — mais legível que OSM cru.
   const _bm = {
-    voyager: L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", { maxZoom: 19, subdomains: "abcd", attribution: "© CARTO · OSM" }),
+    // CARTO exige chave desde nov/2026 (marca d'água "API KEY REQUIRED"): chaves mantidas, tiles trocados pela Esri
+    voyager: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Streets" }),
     osm:     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OSM" }),
     sat:     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri World Imagery" }),
     "sat+rua": L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri" }),
     topo:    L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "© OpenTopoMap" }),
     esritopo: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Topographic" }),
     streets: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, attribution: "© Esri Streets" }),
-    light:   L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, subdomains: "abcd", attribution: "© CartoDB Light" }),
-    dark:    L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", { maxZoom: 19, subdomains: "abcd", attribution: "© CartoDB Dark" }),
+    light:   L.layerGroup([L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, maxNativeZoom: 16, attribution: "© Esri Light Gray" }),
+                           L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, maxNativeZoom: 16 })]),
+    dark:    L.layerGroup([L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, maxNativeZoom: 16, attribution: "© Esri Dark Gray" }),
+                           L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, maxNativeZoom: 16 })]),
   };
   // Camada de rótulos para sobrepor à imagem aérea ("sat+rua")
   const _bmRefOverlay = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 19, opacity: 0.95, attribution: "© Esri Reference" });
