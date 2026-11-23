@@ -153,8 +153,6 @@ function docRodovia(cod, ctx) {
 // ── briefing de um contrato ──
 function docContrato(c, ctx) {
   const dias = c.fim_vig ? Math.round((new Date(c.fim_vig) - new Date()) / 864e5) : null;
-  const rods = [...new Set(((c.obj || "").match(/\bAM[\s-]?\d{2,3}\b/gi) || []).map(r => "AM-" + r.replace(/\D/g, "").padStart(3, "0")))];
-  const daRod = rods.filter(r => obraDaRodovia(c.obj, r));
   const meds = (c.med || []).slice(-6).reverse();
   // ritmo: p.p. de % financeiro por mês entre as 7 últimas medições
   let ritmo = null;
@@ -163,6 +161,24 @@ function docContrato(c, ctx) {
     const meses = (new Date(b[0]) - new Date(a[0])) / (30.44 * 864e5);
     if (meses > 0) ritmo = (b[2] - a[2]) / meses;
   }
+  // prazo decorrido = (hoje − assinatura) ÷ (fim da execução, ou da vigência, − assinatura)
+  const fimPrazo = c.fim_exec || c.fim_vig;
+  const prazo = c.ass && fimPrazo ? Math.max(0, Math.min(100, (new Date() - new Date(c.ass)) / (new Date(fimPrazo) - new Date(c.ass)) * 100)) : null;
+  const fisMeds = (c.med || []).filter(m => m[3] != null);
+  let ritmoFis = null;
+  if (fisMeds.length >= 2) {
+    const ms = fisMeds.slice(-7), a = ms[0], b = ms[ms.length - 1];
+    const meses = (new Date(b[0]) - new Date(a[0])) / (30.44 * 864e5);
+    if (meses > 0) ritmoFis = (b[3] - a[3]) / meses;
+  }
+  const desvio = c.fis != null && prazo != null ? c.fis - prazo : null;
+  const leituraFis = c.fis == null ? "O e-Obras não informa o percentual físico deste contrato."
+    : [`Físico em ${pct(c.fis)}${prazo != null ? ` com ${pct(prazo, 0)} do prazo de execução decorrido` : ""}`,
+       desvio != null ? (desvio <= -10 ? `atraso de ${num(-desvio, 0)} p.p. em relação ao prazo` : desvio >= 10 ? `adiantado ${num(desvio, 0)} p.p. em relação ao prazo` : "em linha com o prazo") : "",
+       c.fin != null ? (c.fin - c.fis > 10 ? `financeiro ${num(c.fin - c.fis, 0)} p.p. acima do físico` : c.fis - c.fin > 10 ? `físico ${num(c.fis - c.fin, 0)} p.p. acima do financeiro (medições a liberar)` : "físico e financeiro compatíveis") : "",
+       ritmoFis != null && c.fis < 100 ? (ritmoFis > 0.05 ? `ritmo recente de ${num(ritmoFis, 1)} p.p. por mês, cerca de ${num((100 - c.fis) / ritmoFis, 0)} meses para concluir` : "sem avanço físico nas últimas medições") : ""]
+      .filter(Boolean).join("; ") + ".";
+  const barraAnd = (rot, v, cor) => `<div class="and-linha"><span>${rot}</span><div class="and-barra"><i style="width:${Math.max(0, Math.min(100, v || 0))}%;background:${cor}"></i></div><b>${v == null ? "—" : pct(v)}</b></div>`;
   const sintese = [
     `${c.id}, ${c.emp}. ${c.obj}`,
     `Valor atual ${brlCurto(c.v_atual)} (original ${brlCurto(c.v_orig)}${c.v_adit ? `; ${num(c.n_adit)} aditivos somando ${brlCurto(c.v_adit)}, ${pct(c.v_orig ? c.v_adit / c.v_orig * 100 : null)} do original` : ""}). Medido ${pct(c.fin)} do valor atual${c.fis != null ? `, físico ${pct(c.fis)}` : ""}; saldo ${brlCurto(c.saldo)}.`,
@@ -171,7 +187,6 @@ function docContrato(c, ctx) {
       ? `No ritmo das últimas medições (${num(ritmo, 1)} p.p. do valor por mês), o saldo levaria cerca de ${num((100 - c.fin) / ritmo, 0)} meses para ser medido.`
       : "As últimas medições não mostram avanço financeiro.") : "",
   ].filter(Boolean);
-  const s = daRod.map(r => [r, ctx.an?.rodovias?.[r]]).filter(([, x]) => x);
   return `<article class="doc">${cab(`Briefing · ${c.id}`, `${c.modal || c.cat} · ${c.mun}`)}
     <p>${chipSit(c.sit)} ${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</p>
     <h2>Síntese</h2>${sintese.map(x => `<p>${esc(x)}</p>`).join("")}
@@ -182,13 +197,15 @@ function docContrato(c, ctx) {
       <tr><td>Medido</td><td class="n">${brlCurto(c.medido)} (${pct(c.fin)})</td><td>Saldo</td><td class="n">${brlCurto(c.saldo)}</td></tr>
       <tr><td>Físico</td><td class="n">${pct(c.fis)}</td><td>Medições</td><td class="n">${num(c.n_med)}</td></tr>
     </tbody></table>
-    ${(c.med || []).length > 1 ? `<div class="legenda" style="margin-top:14px"><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${c.med.some(m => m[3] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}</div><div class="graf"><canvas id="gCurvaBr" aria-label="Curva de medição"></canvas></div>` : ""}
+    <h2>Andamento físico</h2>
+    <div class="and">${barraAnd("Físico", c.fis, serie(2))}${barraAnd("Financeiro", c.fin, serie(1))}${barraAnd("Prazo decorrido", prazo, "var(--tinta-3)")}</div>
+    <p>${esc(leituraFis)}</p>
+    <p class="nota">Prazo: da assinatura (${data(c.ass)}) até ${c.fim_exec ? "o fim da execução" : "o fim da vigência"} (${data(fimPrazo)}).</p>
+    ${(c.med || []).length > 1 ? `<h2>Curva de medição</h2><div class="legenda"><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${c.med.some(m => m[3] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}</div><div class="graf graf-doc"><canvas id="gCurvaBr" aria-label="Curva de medição"></canvas></div>` : ""}
     ${meds.length ? `<h2>Últimas medições</h2><table class="t"><thead><tr><th>Data</th><th class="n">Valor liberado</th><th class="n">% acumulado</th><th class="n">% físico</th></tr></thead><tbody>
       ${meds.map(m => `<tr><td>${data(m[0])}</td><td class="n">${brlCurto(m[1])}</td><td class="n">${pct(m[2])}</td><td class="n">${pct(m[3])}</td></tr>`).join("")}</tbody></table>` : ""}
     ${c.alertas.length ? `<h2>Pontos de atenção</h2><ul class="lista">${c.alertas.map(a => `<li>${chip(a.nivel === "critico" ? "crítico" : "atenção", a.nivel)}<div><div class="q">${esc(a.txt)}</div><div class="d">${esc(a.base)}</div></div></li>`).join("")}</ul>` : ""}
-    ${s.length ? `<h2>Sinistros na rodovia</h2>${s.map(([r, x]) => `<p><b>${esc(r)}</b>: ${esc(x.leitura)}</p>`).join("")}` : ""}
-    ${rods.length && !daRod.length ? `<p class="nota">O objeto cita ${esc(rods.join(", "))} só como localização; o contrato não conta como obra da rodovia.</p>` : ""}
-    ${rodape(ctx, "; ficha do contrato: e-Obras (Ficha Resumida e Analítica)")}</article>`;
+    ${rodape({ ...ctx, an: null, lic: null }, "; ficha do contrato: Ficha Resumida e Analítica")}</article>`;
 }
 
 function curva(c, doc) {
