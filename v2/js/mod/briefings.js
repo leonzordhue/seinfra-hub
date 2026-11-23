@@ -84,11 +84,18 @@ const rodape = (ctx, extra = "") => `<p class="nota" style="margin-top:22px;bord
   DMOB/SEINFRA-AM · gerado em ${new Date().toLocaleDateString("pt-BR")}. Fontes: e-Obras (posição ${esc(ctx.eMeta.posicao)})${ctx.an ? `; sinistros por notícias (${esc(ctx.an._meta.gerado)})` : ""}${ctx.lic ? `; PNCP (${data(ctx.lic._meta.gerado)})` : ""}${extra}.
   Valores: valor atual = original + aditivos; saldo = valor atual − medido.</p>`;
 
-function tabelaObras(cs) {
-  if (!cs.length) return `<p>Nenhum contrato ativo.</p>`;
-  return `<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th class="n">Valor atual</th><th class="n">Físico</th><th class="n">Saldo</th></tr></thead><tbody>
-    ${cs.sort((a, b) => b.v_atual - a.v_atual).map(c => `<tr><td><b>${esc(c.id)}</b><div class="peq">${esc(c.emp)}</div></td><td class="obj">${esc((c.obj || "").slice(0, 150))}</td>
-    <td>${chipSit(c.sit)}${c.alertas.map(a => `<div class="peq">${esc(a.txt)}</div>`).join("")}</td><td class="n">${brlCurto(c.v_atual)}</td><td class="n">${pct(c.fis)}</td><td class="n">${brlCurto(c.saldo)}</td></tr>`).join("")}</tbody></table>`;
+// modo "andamento": valor, físico, financeiro, saldo e vigência; modo "encerrada": assinatura, término, valor final e medido
+function tabelaObras(cs, modo = "andamento") {
+  if (!cs.length) return `<p>Nenhum contrato.</p>`;
+  const ini = c => `<td><b>${esc(c.id)}</b><div class="peq">${esc(c.emp)}</div></td><td class="obj">${esc((c.obj || "").slice(0, 160))}<div class="peq">${esc(c.modal || c.cat || "")}</div></td>`;
+  if (modo === "encerrada") {
+    return `<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th>Assinatura</th><th>Término</th><th class="n">Valor final</th><th class="n">Medido</th><th class="n">Físico</th></tr></thead><tbody>
+    ${[...cs].sort((a, b) => String(b.ass).localeCompare(String(a.ass))).map(c => `<tr>${ini(c)}<td>${chipSit(c.sit)}</td><td>${data(c.ass)}</td><td>${data(c.fim_exec || c.ult_med || c.desde)}</td>
+      <td class="n">${brlCurto(c.v_atual)}</td><td class="n">${brlCurto(c.medido)}<div class="peq">${pct(c.fin)}</div></td><td class="n">${pct(c.fis)}</td></tr>`).join("")}</tbody></table>`;
+  }
+  return `<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th class="n">Valor atual</th><th class="n">Físico</th><th class="n">Financeiro</th><th class="n">Saldo</th><th>Vigência até</th></tr></thead><tbody>
+    ${[...cs].sort((a, b) => b.v_atual - a.v_atual).map(c => `<tr>${ini(c)}
+    <td>${chipSit(c.sit)}${c.alertas.map(a => `<div class="peq">${esc(a.txt)}</div>`).join("")}</td><td class="n">${brlCurto(c.v_atual)}</td><td class="n">${pct(c.fis)}</td><td class="n">${pct(c.fin)}</td><td class="n">${brlCurto(c.saldo)}</td><td>${data(c.fim_vig)}</td></tr>`).join("")}</tbody></table>`;
 }
 const soma = (cs, k) => cs.reduce((s, c) => s + (c[k] || 0), 0);
 
@@ -102,23 +109,31 @@ function blocoLic(lic, teste) {
 function docMunicipio(mun, ctx) {
   const cs = ctx.lista.filter(c => municipios(c).includes(mun));
   const at = cs.filter(c => c.grupo === "ativo"), atn = cs.filter(c => c.grupo === "atencao");
-  const lim = new Date(); lim.setFullYear(lim.getFullYear() - 2);
-  const conc = cs.filter(c => c.grupo === "encerrado" && c.desde && new Date(c.desde) >= lim);
+  const conc = cs.filter(c => c.grupo === "encerrado");
   const comAl = at.filter(c => c.alertas.length);
+  const anos = cs.map(c => String(c.ass || "").slice(0, 4)).filter(Boolean).sort();
+  // investimento por tipo de obra (todas as situações)
+  const porCat = Object.entries(cs.reduce((o, c) => { const k = c.modal || c.cat || "Outros"; (o[k] ||= []).push(c); return o; }, {}))
+    .map(([k, v]) => ({ k, n: v.length, valor: soma(v, "v_atual"), medido: soma(v, "medido") })).sort((a, b) => b.valor - a.valor);
   const rodsMun = [...ctx.icmPor.values()].filter(r => (r.municipios || []).some(m => semAcento(m) === semAcento(mun)));
   const ocs = (ctx.sin?.ocorrencias || []).filter(o => semAcento(o.municipio) === semAcento(mun));
   const sintese = [
-    `${plural(at.length, "contrato ativo", "contratos ativos")} da SEINFRA em ${mun}, somando ${brlCurto(soma(at, "v_atual"))}, com ${brlCurto(soma(at, "saldo"))} ainda a medir.`,
-    atn.length ? `${plural(atn.length, "contrato está", "contratos estão")} paralisado(s), expirado(s) ou em tomada de contas.` : "",
+    cs.length ? `A SEINFRA tem ${plural(cs.length, "contrato", "contratos")} em ${mun} no e-Obras${anos.length ? ` (assinados de ${anos[0]} a ${anos[anos.length - 1]})` : ""}, somando ${brlCurto(soma(cs, "v_atual"))} contratados e ${brlCurto(soma(cs, "medido"))} medidos.` : `Nenhum contrato da SEINFRA em ${mun} no e-Obras.`,
+    at.length ? `${plural(at.length, "contrato está", "contratos estão")} em andamento (${brlCurto(soma(at, "v_atual"))}, com ${brlCurto(soma(at, "saldo"))} ainda a medir).` : "",
+    atn.length ? `${plural(atn.length, "contrato está", "contratos estão")} paralisado(s), expirado(s) ou em tomada de contas (${brlCurto(soma(atn, "v_atual"))}).` : "",
     comAl.length ? `${plural(comAl.length, "contrato ativo tem", "contratos ativos têm")} alerta de gestão (vigência, medição ou descompasso físico-financeiro).` : "",
-    conc.length ? `Nos últimos 24 meses, ${plural(conc.length, "contrato foi encerrado", "contratos foram encerrados")} (${brlCurto(soma(conc, "v_atual"))}).` : "",
+    conc.length ? `${plural(conc.length, "contrato foi concluído ou encerrado", "contratos foram concluídos ou encerrados")} (${brlCurto(soma(conc, "v_atual"))}).` : "",
     ocs.length ? `${plural(ocs.length, "acidente em rodovia estadual foi noticiado", "acidentes em rodovias estaduais foram noticiados")} no município desde 2019 (${num(ocs.filter(o => o.fatal).length)} com morte).` : "",
   ].filter(Boolean);
   const nome = semAcento(mun);
   return `<article class="doc">${cab(`Briefing · ${mun}`, "Departamento de Mobilidade (DMOB) · SEINFRA-AM")}
     <h2>Síntese</h2>${sintese.map(s => `<p>${esc(s)}</p>`).join("")}
-    <h2>Obras em andamento (${num(at.length)})</h2>${tabelaObras(at)}
+    ${porCat.length ? `<h2>Investimento por tipo de obra</h2><table class="t"><thead><tr><th>Tipo</th><th class="n">Contratos</th><th class="n">Valor contratado</th><th class="n">Medido</th></tr></thead><tbody>
+      ${porCat.map(x => `<tr><td>${esc(x.k)}</td><td class="n">${num(x.n)}</td><td class="n">${brlCurto(x.valor)}</td><td class="n">${brlCurto(x.medido)}</td></tr>`).join("")}
+      <tr><td><b>Total</b></td><td class="n"><b>${num(cs.length)}</b></td><td class="n"><b>${brlCurto(soma(cs, "v_atual"))}</b></td><td class="n"><b>${brlCurto(soma(cs, "medido"))}</b></td></tr></tbody></table>` : ""}
+    <h2>Em andamento (${num(at.length)})</h2>${tabelaObras(at)}
     ${atn.length ? `<h2>Paralisadas, expiradas ou em tomada de contas (${num(atn.length)})</h2>${tabelaObras(atn)}` : ""}
+    ${conc.length ? `<h2>Concluídas e encerradas (${num(conc.length)})</h2>${tabelaObras(conc, "encerrada")}` : ""}
     ${rodsMun.length ? `<h2>Rodovias estaduais no município</h2><table class="t"><thead><tr><th>Rodovia</th><th>Trecho</th><th class="n">Extensão</th><th>Condição (IRI)</th><th class="n">Buracos</th></tr></thead><tbody>
       ${rodsMun.map(r => `<tr><td><b>${esc(r.codigo)}</b></td><td>${esc(r.inicio)} → ${esc(r.fim)}</td><td class="n">${num(r.extensao_total_km, 1)} km</td><td>${esc(r.nivel_geral)} (${num(r.iri_medio, 2)})</td><td class="n">${num(r.n_buracos)}</td></tr>`).join("")}</tbody></table>` : ""}
     ${ocs.length ? `<h2>Sinistros noticiados (desde 2019)</h2><ul class="lista">${ocs.sort((a, b) => b.data.localeCompare(a.data)).slice(0, 6).map(o => `<li><div><div class="q">${data(o.data)} · ${esc(o.rodovia)} · ${esc(o.tipo)}${o.fatal ? " · com morte" : ""}</div></div></li>`).join("")}</ul>` : ""}
