@@ -73,10 +73,14 @@ export function grafico(canvas, cfg) {
   const base = {
     responsive: true, maintainAspectRatio: false, animation: matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 250 },
     interaction: { mode: "index", intersect: false },
-    plugins: { legend: { display: false }, tooltip: { backgroundColor: css("--sup"), titleColor: css("--tinta"), bodyColor: css("--tinta-2"), borderColor: css("--borda-2"), borderWidth: 1, padding: 10 } },
-    scales: cfg.type === "doughnut" ? undefined : {
-      x: { grid: { display: false }, border: { color: css("--eixo") }, ticks: { color: tinta } },
-      y: { grid: { color: grade }, border: { display: false }, ticks: { color: tinta, precision: 0 }, beginAtZero: true },
+    // v3: tooltip escuro institucional, grade horizontal leve, eixo X sem rotação, linhas finas sem marcador
+    plugins: { legend: { display: false, labels: { usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 14, color: css("--tinta-2") } },
+      tooltip: { backgroundColor: "#00173D", titleColor: "#fff", bodyColor: "rgba(255,255,255,.88)", borderColor: "rgba(255,255,255,.12)", borderWidth: 1,
+        padding: { x: 12, y: 10 }, cornerRadius: 6, boxPadding: 4, usePointStyle: true, titleFont: { weight: "600" } } },
+    elements: { line: { borderWidth: 2, tension: .25 }, point: { radius: 0, hoverRadius: 4, hitRadius: 8 }, bar: { borderRadius: 3 } },
+    scales: cfg.type === "doughnut" || cfg.type === "pie" ? undefined : {
+      x: { grid: { display: false }, border: { color: css("--eixo") }, ticks: { color: tinta, maxRotation: 0, autoSkipPadding: 14, font: { size: 12 } } },
+      y: { grid: { color: grade, drawTicks: false }, border: { display: false }, ticks: { color: tinta, precision: 0, padding: 8, font: { size: 12 } }, beginAtZero: true },
     },
   };
   const g = new C(canvas, { ...cfg, options: fundir(base, cfg.options || {}) });

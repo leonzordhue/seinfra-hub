@@ -39,44 +39,63 @@
 <symbol id="i-buraco" viewBox="0 0 24 24"><path d="M3 9h3.5l2-2.5h7l2 2.5H21v10.5H3z"/><path d="M8 15.5c1-1.5 2.5-1 4-1.5s2.5-.5 4 1c-1 1.2-2.6 1.5-4 1.4-1.5 0-3-.2-4-.9z"/><path d="M14.5 10.5h2"/></symbol>
 <symbol id="i-externo" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V7.5A1.5 1.5 0 0 1 5.5 6H10"/></symbol>
 </svg>
-<div class="topo-movel"><button type="button" id="menu" aria-label="Abrir menu">Menu</button><strong>DMOB Hub</strong></div>
+<a class="pular" href="#conteudo">Ir para o conteúdo</a>
+<div class="faixa-gov" role="banner">
+  <span><b>SEINFRA-AM</b> · Secretaria de Estado de Infraestrutura</span>
+  <span class="faixa-dir"><span class="ponto" aria-hidden="true"></span>Dados abertos do DMOB · <span id="atualizado">atualizando…</span></span>
+</div>
 <div class="casca">
   <nav class="lateral" aria-label="Módulos">
-    <div class="marca">
-      <img src="../assets/marca_seinfra_branca.webp" alt="Secretaria de Infraestrutura" width="170" height="37">
-      <div><strong>DMOB Hub</strong><br><span>Departamento de Mobilidade</span></div>
-    </div>
+    <a class="marca" href="#/inicio" aria-label="DMOB Hub, página inicial">
+      <span class="marca-sinal" aria-hidden="true"><svg viewBox="0 0 40 40"><rect x="1" y="1" width="38" height="38" rx="7"/><path d="M13 33 18.2 7M27 33 21.8 7"/><path d="M20 9v3M20 16.5v4M20 25v6" class="eixo"/></svg></span>
+      <span><strong>DMOB Hub</strong><span>Departamento de Mobilidade</span></span>
+    </a>
     <div class="nav">
-      <a href="#/inicio" data-rota="inicio"><svg aria-hidden="true"><use href="#i-inicio"/></svg>Início</a>
+      <div class="nav-grupo">Visão geral</div>
+      <a href="#/inicio" data-rota="inicio"><svg aria-hidden="true"><use href="#i-inicio"/></svg>Painel do dia</a>
       <a href="#/mapa" data-rota="mapa"><svg aria-hidden="true"><use href="#i-mapa"/></svg>Mapa do Amazonas</a>
-      <div class="nav-grupo">Modais</div>
-      <a href="#/m/rodovias" data-rota="m/rodovias"><svg aria-hidden="true"><use href="#i-rodovia"/></svg>Rodovias</a>
+      <div class="nav-grupo">Malha e modais</div>
+      <a href="#/m/rodovias" data-rota="m/rodovias"><svg aria-hidden="true"><use href="#i-rodovia"/></svg>Rodovias estaduais</a>
       <a href="#/m/ramais" data-rota="m/ramais"><svg aria-hidden="true"><use href="#i-ramal"/></svg>Ramais</a>
       <a href="#/m/viario" data-rota="m/viario"><svg aria-hidden="true"><use href="#i-viario"/></svg>Viário urbano</a>
       <a href="#/m/aerodromos" data-rota="m/aerodromos"><svg aria-hidden="true"><use href="#i-aerodromo"/></svg>Aeródromos</a>
-      <a href="#/m/terminais" data-rota="m/terminais"><svg aria-hidden="true"><use href="#i-terminal"/></svg>Terminais</a>
-      <a href="#/m/icm" data-rota="m/icm"><svg aria-hidden="true"><use href="#i-condicao"/></svg>Condição viária</a>
-      <a href="#/acesso" data-rota="acesso"><svg aria-hidden="true"><use href="#i-acesso"/></svg>Acessibilidade</a>
-      <div class="nav-grupo">Gestão</div>
+      <a href="#/m/terminais" data-rota="m/terminais"><svg aria-hidden="true"><use href="#i-terminal"/></svg>Terminais fluviais</a>
+      <a href="#/m/icm" data-rota="m/icm"><svg aria-hidden="true"><use href="#i-condicao"/></svg>Condição do pavimento</a>
+      <div class="nav-grupo">Contratos e investimento</div>
       <a href="#/obras" data-rota="obras"><svg aria-hidden="true"><use href="#i-obra"/></svg>Obras e contratos</a>
-      <a href="#/licitacoes" data-rota="licitacoes"><svg aria-hidden="true"><use href="#i-licitacao"/></svg>Licitações</a>
+      <a href="#/licitacoes" data-rota="licitacoes"><svg aria-hidden="true"><use href="#i-licitacao"/></svg>Licitações e preços</a>
       <a href="#/briefings" data-rota="briefings"><svg aria-hidden="true"><use href="#i-briefing"/></svg>Briefings</a>
-      <a href="#/m/atlas" data-rota="m/atlas"><svg aria-hidden="true"><use href="#i-atlas"/></svg>Atlas</a>
-      <a href="#/consulta" data-rota="consulta"><svg aria-hidden="true"><use href="#i-consulta"/></svg>Consulta livre</a>
       <a href="https://leonzordhue.github.io/Planejamento-rodoviario" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-planejamento"/></svg>Planejamento<svg class="ext" aria-label="abre em nova aba"><use href="#i-externo"/></svg></a>
-      <div class="nav-grupo">Segurança e inteligência</div>
-      <a href="#/sinistros" data-rota="sinistros"><svg aria-hidden="true"><use href="#i-sinistro"/></svg>Sinistros</a>
+      <div class="nav-grupo">Segurança viária</div>
+      <a href="#/sinistros" data-rota="sinistros"><svg aria-hidden="true"><use href="#i-sinistro"/></svg>Sinistros (monitor)</a>
       <a href="#/sinistros-oficiais" data-rota="sinistros-oficiais"><svg aria-hidden="true"><use href="#i-oficial"/></svg>Sinistros: bases oficiais</a>
-      <a href="#/ambiente" data-rota="ambiente"><svg aria-hidden="true"><use href="#i-rio"/></svg>Ambiente e rios</a>
+      <div class="nav-grupo">Território e ambiente</div>
+      <a href="#/acesso" data-rota="acesso"><svg aria-hidden="true"><use href="#i-acesso"/></svg>Acessibilidade</a>
+      <a href="#/ambiente" data-rota="ambiente"><svg aria-hidden="true"><use href="#i-rio"/></svg>Rios e queimadas</a>
+      <a href="#/m/atlas" data-rota="m/atlas"><svg aria-hidden="true"><use href="#i-atlas"/></svg>Atlas</a>
+      <div class="nav-grupo">Análise</div>
+      <a href="#/consulta" data-rota="consulta"><svg aria-hidden="true"><use href="#i-consulta"/></svg>Consulta livre</a>
       <a href="#/m/bi" data-rota="m/bi"><svg aria-hidden="true"><use href="#i-bi"/></svg>BI e análises</a>
       <div class="nav-grupo">Campo</div>
       <a href="#/campo-iri" data-rota="campo-iri"><svg aria-hidden="true"><use href="#i-iri"/></svg>IRI pelo celular</a>
       <a href="#/campo-buracos" data-rota="campo-buracos"><svg aria-hidden="true"><use href="#i-buraco"/></svg>Buracos por foto</a>
     </div>
-    <div class="rodape">SEINFRA-AM · DMOB<br><button type="button" id="tema">Tema claro / escuro</button></div>
+    <div class="rodape">Governo do Estado do Amazonas<br>SEINFRA · SEAPLANC · DMOB</div>
   </nav>
-  <main id="conteudo" tabindex="-1"></main>
-  <div id="embutido" hidden></div>
+  <div class="area">
+    <header class="barra-app">
+      <button type="button" id="menu" class="icone-btn so-movel" aria-label="Abrir menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <nav class="trilha" id="trilha" aria-label="Você está em"></nav>
+      <button type="button" id="busca" class="busca-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></svg><span>Buscar contrato, município, rodovia…</span><kbd>Ctrl K</kbd></button>
+      <button type="button" id="tema" class="icone-btn" aria-label="Alternar tema claro ou escuro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg></button>
+    </header>
+    <main id="conteudo" tabindex="-1"></main>
+    <div id="embutido" hidden></div>
+    <footer class="rodape-app">
+      <span>DMOB Hub · Departamento de Mobilidade · SEINFRA-AM</span>
+      <span>Dados públicos de e-Obras, PNCP, ANA, INPE, IBGE, RENAEST e PRF. Cada página informa fonte e data.</span>
+    </footer>
+  </div>
 </div>
 </body>
 </html>
