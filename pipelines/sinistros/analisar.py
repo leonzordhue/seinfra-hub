@@ -102,7 +102,7 @@ def obra_da_rodovia(obj, n):
     am = rf"AM[\s-]?0*{n}\b"
     if not re.search(rf"\b{am}", obj or "", re.I):
         return False
-    return not re.search(rf"\bkm\s*\d+[\d.,]*\s*(?:da|na|do)\s+(?:rodovia\s+)?{am}|localizad[oa][^.;]{{0,60}}\b{am}", obj, re.I)
+    return not re.search(rf"\b(?:km|quil[oô]metros?)\s*\d+[\d.,]*(?:\s*(?:e|a|ao)\s*\d+[\d.,]*)?\s*(?:da|na|do)\s+(?:rodovia\s+)?{am}|localizad[oa][^.;]{{0,60}}\b{am}", obj, re.I)
 
 
 def normaliza(vals):

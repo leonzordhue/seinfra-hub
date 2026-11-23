@@ -1,9 +1,9 @@
-// Briefings de uma página, por município ou por rodovia, montados dos dados do Hub e prontos para imprimir/PDF.
+// Briefings de uma página, por município, rodovia ou contrato, montados dos dados do Hub e prontos para imprimir/PDF.
 // [Nexus] 23/11/2026. Fontes: eobras.json, sinistros.json, sinistros_analise.json, licitacoes.json, icm.json.
 // A IA não escreve nada aqui: toda frase sai de uma conta sobre os dados, com a fonte no rodapé.
 import { contratos, talvez, municipios, obraDaRodovia } from "../dados.js";
 import { esc, num, pct, data, brlCurto, semAcento, plural } from "../fmt.js";
-import { $, chip, chipSit, opcoes } from "../ui.js";
+import { $, chip, chipSit, opcoes, grafico, serie } from "../ui.js";
 
 const estado = { tipo: "municipio", alvo: "" };
 const rxRod = cod => new RegExp(`\\bAM[\\s-]?0*${parseInt(cod.slice(3), 10)}\\b`, "i");
@@ -18,27 +18,62 @@ export async function render(el, params) {
   const rods = [...new Set([...icmPor.keys(), ...Object.keys(an?.rodovias || {}), ...Object.keys(nomes)])].sort();
   if (params?.get("municipio")) Object.assign(estado, { tipo: "municipio", alvo: params.get("municipio") });
   if (params?.get("rodovia")) Object.assign(estado, { tipo: "rodovia", alvo: params.get("rodovia") });
+  if (params?.get("contrato")) Object.assign(estado, { tipo: "contrato", alvo: params.get("contrato") });
+  const porId = new Map(lista.map(c => [c.id, c]));
+  const TIPOS = [["municipio", "Município"], ["rodovia", "Rodovia"], ["contrato", "Contrato"]];
 
   el.innerHTML = `
     <div class="cab nao-imprime"><div><h1>Briefings</h1>
-      <p>Resumo de uma página para reunião, visita ou resposta a parlamentar: obras, sinistros, condição da via e licitações de um município ou de uma rodovia. Use "Imprimir / PDF" para salvar.</p></div></div>
+      <p>Resumo de uma página para reunião, visita ou resposta a parlamentar: de um município, de uma rodovia ou de um contrato. Use "Imprimir / PDF" para salvar.</p></div></div>
     <div class="filtros nao-imprime">
-      <div class="seg" id="fTipo"><button type="button" data-v="municipio" aria-pressed="${estado.tipo === "municipio"}">Município</button><button type="button" data-v="rodovia" aria-pressed="${estado.tipo === "rodovia"}">Rodovia</button></div>
+      <div class="seg" id="fTipo">${TIPOS.map(([v, r]) => `<button type="button" data-v="${v}" aria-pressed="${estado.tipo === v}">${r}</button>`).join("")}</div>
       <select id="fAlvo" aria-label="Escolha"></select>
+      <div id="buscaCt" class="busca-ct" hidden>
+        <input type="search" id="fCt" placeholder="Número, objeto, empresa ou município do contrato…" aria-label="Buscar contrato" autocomplete="off">
+        <div id="sugCt" class="sugestoes" role="listbox" hidden></div>
+      </div>
       <button type="button" class="btn pri" id="imprimir">Imprimir / PDF</button>
     </div>
     <div id="doc"></div>`;
 
-  const sel = $("#fAlvo", el);
-  const opts = () => { sel.innerHTML = opcoes(estado.tipo === "municipio" ? muns : rods, estado.alvo, estado.tipo === "municipio" ? "Escolha o município" : "Escolha a rodovia"); };
+  const sel = $("#fAlvo", el), caixa = $("#buscaCt", el), inp = $("#fCt", el), sug = $("#sugCt", el);
+  const opts = () => {
+    const ehCt = estado.tipo === "contrato";
+    sel.hidden = ehCt; caixa.hidden = !ehCt;
+    if (ehCt) { inp.value = estado.alvo || ""; return; }
+    sel.innerHTML = opcoes(estado.tipo === "municipio" ? muns : rods, estado.alvo, estado.tipo === "municipio" ? "Escolha o município" : "Escolha a rodovia");
+  };
   const pinta = () => {
     const ctx = { lista, sin, an, lic, icmPor, nomes, eMeta };
-    $("#doc", el).innerHTML = !estado.alvo ? `<p class="vazio">Escolha ${estado.tipo === "municipio" ? "um município" : "uma rodovia"} para montar o briefing.</p>`
-      : estado.tipo === "municipio" ? docMunicipio(estado.alvo, ctx) : docRodovia(estado.alvo, ctx);
+    const nome = { municipio: "um município", rodovia: "uma rodovia", contrato: "um contrato" }[estado.tipo];
+    const doc = $("#doc", el);
+    if (!estado.alvo) { doc.innerHTML = `<p class="vazio">Escolha ${nome} para montar o briefing.</p>`; return; }
+    if (estado.tipo === "contrato") {
+      const c = porId.get(estado.alvo);
+      if (!c) { doc.innerHTML = `<p class="vazio">Contrato não encontrado no e-Obras.</p>`; return; }
+      doc.innerHTML = docContrato(c, ctx); curva(c, doc); return;
+    }
+    doc.innerHTML = estado.tipo === "municipio" ? docMunicipio(estado.alvo, ctx) : docRodovia(estado.alvo, ctx);
   };
+  const escolher = v => { estado.alvo = v; history.replaceState(null, "", `#/briefings?${estado.tipo}=${encodeURIComponent(v)}`); pinta(); };
   $("#fTipo", el).onclick = e => { const b = e.target.closest("button"); if (!b) return; estado.tipo = b.dataset.v; estado.alvo = "";
-    $("#fTipo", el).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); opts(); pinta(); };
-  sel.onchange = () => { estado.alvo = sel.value; history.replaceState(null, "", `#/briefings?${estado.tipo}=${encodeURIComponent(estado.alvo)}`); pinta(); };
+    $("#fTipo", el).querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x === b)); opts(); pinta(); if (estado.tipo === "contrato") inp.focus(); };
+  sel.onchange = () => escolher(sel.value);
+
+  // busca de contrato: todos os termos precisam aparecer; até 12 sugestões, ativos primeiro
+  const ordem = { ativo: 0, atencao: 1, encerrado: 2 };
+  inp.oninput = () => {
+    const termos = semAcento(inp.value).split(/\s+/).filter(Boolean);
+    if (!termos.length) { sug.hidden = true; return; }
+    const achados = lista.filter(c => { const t = semAcento(`${c.id} ${c.obj} ${c.emp} ${c.mun} ${c.rod || ""}`); return termos.every(x => t.includes(x)); })
+      .sort((a, b) => ordem[a.grupo] - ordem[b.grupo] || b.v_atual - a.v_atual).slice(0, 12);
+    sug.innerHTML = achados.length ? achados.map(c => `<button type="button" role="option" data-id="${esc(c.id)}"><b>${esc(c.id)}</b> · ${esc(c.sit)} · ${brlCurto(c.v_atual)}<span>${esc((c.obj || "").slice(0, 120))} · ${esc(c.mun)}</span></button>`).join("")
+      : `<p class="vazio" style="padding:12px">Nenhum contrato com esses termos.</p>`;
+    sug.hidden = false;
+  };
+  sug.onclick = e => { const b = e.target.closest("button[data-id]"); if (!b) return; inp.value = b.dataset.id; sug.hidden = true; escolher(b.dataset.id); };
+  inp.onkeydown = e => { if (e.key === "Enter") { const b = sug.querySelector("button[data-id]"); if (b) b.click(); } if (e.key === "Escape") sug.hidden = true; };
+  el.addEventListener("click", e => { if (!caixa.contains(e.target)) sug.hidden = true; });
   $("#imprimir", el).onclick = () => window.print();
   opts(); pinta();
 }
@@ -113,4 +148,54 @@ function docRodovia(cod, ctx) {
     ${s?.trechos_criticos?.length ? `<h2>Trechos críticos</h2><p>${s.trechos_criticos.map(t => `km ${t.km_ini}–${t.km_fim}: ${t.ocorrencias} ocorrências (${t.fatais} com morte)`).join("; ")}.</p>` : ""}
     ${blocoLic(ctx.lic, cita)}
     ${rodape(ctx, r ? "; condição: levantamento RoadLab (data/icm.json)" : "")}</article>`;
+}
+
+// ── briefing de um contrato ──
+function docContrato(c, ctx) {
+  const dias = c.fim_vig ? Math.round((new Date(c.fim_vig) - new Date()) / 864e5) : null;
+  const rods = [...new Set(((c.obj || "").match(/\bAM[\s-]?\d{2,3}\b/gi) || []).map(r => "AM-" + r.replace(/\D/g, "").padStart(3, "0")))];
+  const daRod = rods.filter(r => obraDaRodovia(c.obj, r));
+  const meds = (c.med || []).slice(-6).reverse();
+  // ritmo: p.p. de % financeiro por mês entre as 7 últimas medições
+  let ritmo = null;
+  if ((c.med || []).length >= 2) {
+    const ms = c.med.slice(-7), a = ms[0], b = ms[ms.length - 1];
+    const meses = (new Date(b[0]) - new Date(a[0])) / (30.44 * 864e5);
+    if (meses > 0) ritmo = (b[2] - a[2]) / meses;
+  }
+  const sintese = [
+    `${c.id}, ${c.emp}. ${c.obj}`,
+    `Valor atual ${brlCurto(c.v_atual)} (original ${brlCurto(c.v_orig)}${c.v_adit ? `; ${num(c.n_adit)} aditivos somando ${brlCurto(c.v_adit)}, ${pct(c.v_orig ? c.v_adit / c.v_orig * 100 : null)} do original` : ""}). Medido ${pct(c.fin)} do valor atual${c.fis != null ? `, físico ${pct(c.fis)}` : ""}; saldo ${brlCurto(c.saldo)}.`,
+    c.fim_vig ? `Vigência até ${data(c.fim_vig)} (${dias < 0 ? `vencida há ${num(-dias)} dias` : `faltam ${num(dias)} dias`})${c.ult_med ? `; última medição em ${data(c.ult_med)}` : ""}.` : "",
+    ritmo != null && c.fin < 100 && c.grupo !== "encerrado" ? (ritmo > 0.05
+      ? `No ritmo das últimas medições (${num(ritmo, 1)} p.p. do valor por mês), o saldo levaria cerca de ${num((100 - c.fin) / ritmo, 0)} meses para ser medido.`
+      : "As últimas medições não mostram avanço financeiro.") : "",
+  ].filter(Boolean);
+  const s = daRod.map(r => [r, ctx.an?.rodovias?.[r]]).filter(([, x]) => x);
+  return `<article class="doc">${cab(`Briefing · ${c.id}`, `${c.modal || c.cat} · ${c.mun}`)}
+    <p>${chipSit(c.sit)} ${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</p>
+    <h2>Síntese</h2>${sintese.map(x => `<p>${esc(x)}</p>`).join("")}
+    <h2>Execução</h2>
+    <table class="t"><tbody>
+      <tr><td>Assinatura</td><td>${data(c.ass)}</td><td>Vigência até</td><td>${data(c.fim_vig)}</td></tr>
+      <tr><td>Valor original</td><td class="n">${brlCurto(c.v_orig)}</td><td>Valor atual</td><td class="n"><b>${brlCurto(c.v_atual)}</b></td></tr>
+      <tr><td>Medido</td><td class="n">${brlCurto(c.medido)} (${pct(c.fin)})</td><td>Saldo</td><td class="n">${brlCurto(c.saldo)}</td></tr>
+      <tr><td>Físico</td><td class="n">${pct(c.fis)}</td><td>Medições</td><td class="n">${num(c.n_med)}</td></tr>
+    </tbody></table>
+    ${(c.med || []).length > 1 ? `<div class="legenda" style="margin-top:14px"><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${c.med.some(m => m[3] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}</div><div class="graf"><canvas id="gCurvaBr" aria-label="Curva de medição"></canvas></div>` : ""}
+    ${meds.length ? `<h2>Últimas medições</h2><table class="t"><thead><tr><th>Data</th><th class="n">Valor liberado</th><th class="n">% acumulado</th><th class="n">% físico</th></tr></thead><tbody>
+      ${meds.map(m => `<tr><td>${data(m[0])}</td><td class="n">${brlCurto(m[1])}</td><td class="n">${pct(m[2])}</td><td class="n">${pct(m[3])}</td></tr>`).join("")}</tbody></table>` : ""}
+    ${c.alertas.length ? `<h2>Pontos de atenção</h2><ul class="lista">${c.alertas.map(a => `<li>${chip(a.nivel === "critico" ? "crítico" : "atenção", a.nivel)}<div><div class="q">${esc(a.txt)}</div><div class="d">${esc(a.base)}</div></div></li>`).join("")}</ul>` : ""}
+    ${s.length ? `<h2>Sinistros na rodovia</h2>${s.map(([r, x]) => `<p><b>${esc(r)}</b>: ${esc(x.leitura)}</p>`).join("")}` : ""}
+    ${rods.length && !daRod.length ? `<p class="nota">O objeto cita ${esc(rods.join(", "))} só como localização; o contrato não conta como obra da rodovia.</p>` : ""}
+    ${rodape(ctx, "; ficha do contrato: e-Obras (Ficha Resumida e Analítica)")}</article>`;
+}
+
+function curva(c, doc) {
+  const cv = doc.querySelector("#gCurvaBr");
+  if (!cv) return;
+  const ds = [{ label: "% financeiro", data: c.med.map(m => m[2]), borderColor: serie(1), backgroundColor: serie(1), borderWidth: 2, pointRadius: 2.5, tension: 0 }];
+  if (c.med.some(m => m[3] != null)) ds.push({ label: "% físico", data: c.med.map(m => m[3]), borderColor: serie(2), backgroundColor: serie(2), borderWidth: 2, pointRadius: 2.5, spanGaps: true, tension: 0 });
+  grafico(cv, { type: "line", data: { labels: c.med.map(m => data(m[0])), datasets: ds },
+    options: { animation: false, scales: { y: { max: 100, ticks: { callback: v => v + "%" } } }, plugins: { tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${pct(x.raw)}` } } } } });
 }

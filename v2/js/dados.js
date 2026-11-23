@@ -66,7 +66,7 @@ export async function contratos() {
 export function obraDaRodovia(obj, cod) {
   const n = parseInt(String(cod).slice(3), 10), am = `AM[\\s-]?0*${n}\\b`;
   if (!new RegExp(`\\b${am}`, "i").test(obj || "")) return false;
-  const local = new RegExp(`\\bkm\\s*\\d+[\\d.,]*\\s*(?:da|na|do)\\s+(?:rodovia\\s+)?${am}|localizad[oa][^.;]{0,60}\\b${am}`, "i");
+  const local = new RegExp(`\\b(?:km|quil[oô]metros?)\\s*\\d+[\\d.,]*(?:\\s*(?:e|a|ao)\\s*\\d+[\\d.,]*)?\\s*(?:da|na|do)\\s+(?:rodovia\\s+)?${am}|localizad[oa][^.;]{0,60}\\b${am}`, "i");
   return !local.test(obj);
 }
 
