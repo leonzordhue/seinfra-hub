@@ -1,0 +1,1811 @@
+{
+ "_meta": {
+  "fonte": "OpenStreetMap (Geofabrik, extrato norte do Brasil) roteado com OSRM 5.27.1; sedes kelvins/municipios-brasileiros (IBGE); população IBGE Censo 2022 (SIDRA 4709); hospitais CNES/DATASUS (API dados abertos) + OSM amenity=hospital; terminais flutuantes SEINFRA-AM (atlas-amazonas)",
+  "url": {
+   "osm": "https://download.geofabrik.de/south-america/brazil/norte-latest.osm.pbf",
+   "sedes": "https://raw.githubusercontent.com/kelvins/municipios-brasileiros/main/csv/municipios.csv",
+   "populacao": "https://apisidra.ibge.gov.br/values/t/4709/n6/in%20n3%2013/v/93/p/last",
+   "cnes": "https://apidadosabertos.saude.gov.br/cnes/estabelecimentos",
+   "terminais": "https://leonzordhue.github.io/atlas-amazonas/geojson/TERMINAIS_FLUTUANTES_SEINFRA.geojson",
+   "osrm": "https://github.com/Project-OSRM/osrm-backend"
+  },
+  "gerado_em": "2026-11-23T18:20:36Z",
+  "servidor_osrm": "OSRM local no GitHub Actions",
+  "metodologia": {
+   "tempo": "Duração do OSRM (perfil car.lua: velocidade por classe de via, maxspeed e superfície do OSM; track incluído a 15 km/h). É tempo de fluxo livre: sem trânsito, chuva ou atoleiro.",
+   "ligacao_rodoviaria": "Há rota OSRM sede→Manaus, sede e Manaus a até 3000 m de uma via e rota não menor que 95% da linha reta. Travessias de balsa até 25 km contam (a balsa Manaus–Careiro é parte da BR-319); linhas fluviais mais longas foram retiradas da malha.",
+   "balsa": "Trecho de balsa no OSRM: duration do OSM ou 5 km/h. Espera, horário e fila não entram.",
+   "hospital": "Menor tempo por estrada até hospital geral, especializado ou unidade mista do CNES (ativo, com coordenada) ou hospital do OSM. Sede sem malha no OSM: hospital a até 3 km em linha reta, tempo estimado a 20 km/h com fator 1,3 (estimado=true).",
+   "isocronas": "Grade de 0.05° (~5,5 km); cada célula com via recebe o tempo do primeiro nó de via do OSM nela. Faixas cumulativas de 60, 120, 240 min a partir de Manaus e da sede mais próxima. Polígono = união das células, simplificado.",
+   "populacao_por_faixa": "População do município inteiro atribuída ao tempo da sede (Censo 2022). Aproximação: ignora quem mora fora da sede (zona rural, comunidades ribeirinhas)."
+  },
+  "limitacoes": [
+   "Malha do OSM incompleta nos ramais e nas vias urbanas do interior: falta de via vira 'sem ligação' ou tempo maior.",
+   "Tempo de espera de balsa não incluído; trechos fluviais acima de 25 km não contam como ligação rodoviária.",
+   "BR-319 (trecho do meio) e ramais de terra podem estar intransitáveis na cheia; o OSRM não sabe disso.",
+   "Coordenada do CNES vem do cadastro da unidade e pode estar errada; hospital do OSM pode estar desatualizado.",
+   "Coordenada da sede é um ponto (praça/prefeitura), não o centro populacional."
+  ],
+  "balsas_longas_removidas": 73
+ },
+ "resumo": {
+  "municipios": 62,
+  "com_ligacao": 19,
+  "com_ligacao_via_balsa": 11,
+  "pop_total": 3941613,
+  "ano_pop": "2022",
+  "pop_sem_ligacao": 1134516,
+  "pop_manaus_ate_min": {
+   "60": 2124852,
+   "120": 2251671,
+   "240": 2298100
+  },
+  "pop_hospital_ate_120": 3834928,
+  "hospitais": 294,
+  "terminais": 31,
+  "celulas_grade": 14284
+ },
+ "municipios": [
+  {
+   "cod": "1300029",
+   "nome": "Alvarães",
+   "lat": -3.22727,
+   "lon": -64.8007,
+   "pop": 15866,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 530.8,
+   "encaixe_via_m": 1346,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE ALVARAES",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 11,
+    "km": 5.9,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Alvarães (Distrito de Nogueira)",
+    "tipo": null,
+    "fonte": null,
+    "min": 18,
+    "km": 10.4,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1300060",
+   "nome": "Amaturá",
+   "lat": -3.37455,
+   "lon": -68.2005,
+   "pop": 10819,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 908.5,
+   "encaixe_via_m": 186,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE AMATURA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.6,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Amaturá (Comunidade Nova Italia)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 4.5
+   }
+  },
+  {
+   "cod": "1300086",
+   "nome": "Anamã",
+   "lat": -3.56697,
+   "lon": -61.3963,
+   "pop": 9962,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 160.6,
+   "encaixe_via_m": 1054,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL FRANCISCO SALES DE MOURA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 0.9,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Anamã (Distrito do Arixi)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 16.1
+   }
+  },
+  {
+   "cod": "1300102",
+   "nome": "Anori",
+   "lat": -3.74603,
+   "lon": -61.6575,
+   "pop": 17194,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 194.6,
+   "encaixe_via_m": 25,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE ANORI",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 9,
+    "km": 3.9,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Anori (Comunidade Vila do Cuianã)",
+    "tipo": null,
+    "fonte": null,
+    "min": 9,
+    "km": 3.9,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1300144",
+   "nome": "Apuí",
+   "lat": -7.19409,
+   "lon": -59.896,
+   "pop": 20647,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 1693,
+   "km_manaus": 1094.4,
+   "km_linha_reta_manaus": 453.4,
+   "encaixe_via_m": 7,
+   "hospital_mais_proximo": {
+    "nome": "Hospital (sem nome no OSM)",
+    "tipo": "Hospital (OSM)",
+    "fonte": "OSM",
+    "min": 4,
+    "km": 2.8,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Parintins (Comunidade do Bom Socorro do Zé Açú)",
+    "tipo": null,
+    "fonte": null,
+    "min": 1529,
+    "km": 953.6,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1300201",
+   "nome": "Atalaia do Norte",
+   "lat": -4.37055,
+   "lon": -70.1967,
+   "pop": 15314,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 1137.6,
+   "encaixe_via_m": 148,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE ATALAIA DO NORTE",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 1.0,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
+    "tipo": null,
+    "fonte": null,
+    "min": 3,
+    "km": 1.0,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1300300",
+   "nome": "Autazes",
+   "lat": -3.58574,
+   "lon": -59.1256,
+   "pop": 41564,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 112.2,
+   "encaixe_via_m": 96,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE AUTAZES",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.5,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Borba (Distrito do Axinim)",
+    "tipo": null,
+    "fonte": null,
+    "min": 140,
+    "km": 69.9,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1300409",
+   "nome": "Barcelos",
+   "lat": -0.983373,
+   "lon": -62.9311,
+   "pop": 18834,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 401.2,
+   "encaixe_via_m": 124,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE BARCELOS",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.8,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Barcelos (Distrito de Moura)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 154.0
+   }
+  },
+  {
+   "cod": "1300508",
+   "nome": "Barreirinha",
+   "lat": -2.79886,
+   "lon": -57.0679,
+   "pop": 31051,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 329.9,
+   "encaixe_via_m": 63,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE BARREIRINHA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 1,
+    "km": 0.6,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Barreirinha (Distrito Cametá de Ramos)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 39.0
+   }
+  },
+  {
+   "cod": "1300607",
+   "nome": "Benjamin Constant",
+   "lat": -4.37768,
+   "lon": -70.0342,
+   "pop": 37648,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 1119.8,
+   "encaixe_via_m": 4,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL GERAL DE BENJAMIN CONSTANT DOUTOR MELVINO DE JESUS",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.8,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
+    "tipo": null,
+    "fonte": null,
+    "min": 34,
+    "km": 30.0,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1300631",
+   "nome": "Beruri",
+   "lat": -3.89874,
+   "lon": -61.3616,
+   "pop": 20718,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 172.2,
+   "encaixe_via_m": 85,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE BERURI AM",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.6,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Beruri (Comunidade Santa Maria do Pupunhal)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 23.4
+   }
+  },
+  {
+   "cod": "1300680",
+   "nome": "Boa Vista do Ramos",
+   "lat": -2.97409,
+   "lon": -57.5873,
+   "pop": 23785,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 270.7,
+   "encaixe_via_m": 3,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE BOA VISTA DO RAMOS",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 5,
+    "km": 3.4,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Barreirinha (Distrito Cametá de Ramos)",
+    "tipo": null,
+    "fonte": null,
+    "min": 50,
+    "km": 32.5,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1300706",
+   "nome": "Boca do Acre",
+   "lat": -8.74232,
+   "lon": -67.3919,
+   "pop": 35447,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 1897,
+   "km_manaus": 1551.6,
+   "km_linha_reta_manaus": 1027.1,
+   "encaixe_via_m": 67,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE BOCA DO ACRE",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 12,
+    "km": 8.8,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 1784,
+    "km": 1552.2,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1300805",
+   "nome": "Borba",
+   "lat": -4.39154,
+   "lon": -59.5874,
+   "pop": 33080,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 149.5,
+   "encaixe_via_m": 10,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL DE BORBA VO MUNDOCA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 1,
+    "km": 0.7,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Benjamin Constant (Comunidade Filadélfia)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 5.3
+   }
+  },
+  {
+   "cod": "1300839",
+   "nome": "Caapiranga",
+   "lat": -3.31537,
+   "lon": -61.2206,
+   "pop": 13469,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 134.9,
+   "encaixe_via_m": 285,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE CAAPIRANGA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 6,
+    "km": 2.8,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Anamã (Distrito do Arixi)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 36.7
+   }
+  },
+  {
+   "cod": "1300904",
+   "nome": "Canutama",
+   "lat": -6.52582,
+   "lon": -64.3953,
+   "pop": 16869,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 615.1,
+   "encaixe_via_m": 4,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE CANUTAMA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.6,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Tapauá (Comunidade Foz do Tapauá)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 84.9
+   }
+  },
+  {
+   "cod": "1301001",
+   "nome": "Carauari",
+   "lat": -4.88161,
+   "lon": -66.9086,
+   "pop": 28742,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 788.7,
+   "encaixe_via_m": 5,
+   "hospital_mais_proximo": {
+    "nome": "Hsopital Regional de Carauari",
+    "tipo": "Hospital (OSM)",
+    "fonte": "OSM",
+    "min": 6,
+    "km": 3.7,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Juruá (Porto de Juruá)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 182.7
+   }
+  },
+  {
+   "cod": "1301100",
+   "nome": "Careiro",
+   "lat": -3.76803,
+   "lon": -60.369,
+   "pop": 30792,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 81.9,
+   "encaixe_via_m": 4247,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE CASTANHO",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": null,
+    "km_linha_reta": 6.2
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 83.5
+   }
+  },
+  {
+   "cod": "1301159",
+   "nome": "Careiro da Várzea",
+   "lat": -3.314,
+   "lon": -59.5557,
+   "pop": 19637,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 267,
+   "km_manaus": 117.7,
+   "km_linha_reta_manaus": 56.1,
+   "encaixe_via_m": 1762,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE CASTANHO",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 161,
+    "km": 142.5,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 49,
+    "km": 32.3,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1301209",
+   "nome": "Coari",
+   "lat": -4.09412,
+   "lon": -63.1441,
+   "pop": 70616,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 363.1,
+   "encaixe_via_m": 85,
+   "hospital_mais_proximo": {
+    "nome": "Pronto Socorro",
+    "tipo": "Hospital (OSM)",
+    "fonte": "OSM",
+    "min": 1,
+    "km": 0.7,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Tefé (Comunidade Caimbé)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 153.8
+   }
+  },
+  {
+   "cod": "1301308",
+   "nome": "Codajás",
+   "lat": -3.83053,
+   "lon": -62.0658,
+   "pop": 23549,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 240.3,
+   "encaixe_via_m": 478,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE CODAJAS",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.4,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Anori (Comunidade Vila do Cuianã)",
+    "tipo": null,
+    "fonte": null,
+    "min": 114,
+    "km": 73.7,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1301407",
+   "nome": "Eirunepé",
+   "lat": -6.65677,
+   "lon": -69.8662,
+   "pop": 33170,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 1159.3,
+   "encaixe_via_m": 3,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE EIRUNEPE",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 0.9,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 257.6
+   }
+  },
+  {
+   "cod": "1301506",
+   "nome": "Envira",
+   "lat": -7.43789,
+   "lon": -70.0281,
+   "pop": 17186,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 1207.4,
+   "encaixe_via_m": 30,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE ENVIRA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 0.9,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 342.4
+   }
+  },
+  {
+   "cod": "1301605",
+   "nome": "Fonte Boa",
+   "lat": -2.52342,
+   "lon": -66.0942,
+   "pop": 25871,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 677.7,
+   "encaixe_via_m": 170,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL REGIONAL DE FONTE BOA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.5,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Japurá (Comunidade Acanauí)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 96.8
+   }
+  },
+  {
+   "cod": "1301654",
+   "nome": "Guajará",
+   "lat": -7.53797,
+   "lon": -72.5907,
+   "pop": 13815,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 2322,
+   "km_manaus": 2050.2,
+   "km_linha_reta_manaus": 1475.5,
+   "encaixe_via_m": 60,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE GUAJARA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.2,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 2209,
+    "km": 2050.9,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1301704",
+   "nome": "Humaitá",
+   "lat": -7.51171,
+   "lon": -63.0327,
+   "pop": 57473,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 1071,
+   "km_manaus": 695.3,
+   "km_linha_reta_manaus": 591.4,
+   "encaixe_via_m": 18,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL REGIONAL DR LUIZA DA CONCEICAO FERNANDES",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 2.0,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 958,
+    "km": 696.0,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1301803",
+   "nome": "Ipixuna",
+   "lat": -7.04791,
+   "lon": -71.6934,
+   "pop": 24311,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 1364.4,
+   "encaixe_via_m": 22,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE IPIXUNA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.0,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 341.6
+   }
+  },
+  {
+   "cod": "1301852",
+   "nome": "Iranduba",
+   "lat": -3.27479,
+   "lon": -60.19,
+   "pop": 61163,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": false,
+   "tempo_manaus_min": 39,
+   "km_manaus": 38.6,
+   "km_linha_reta_manaus": 25.5,
+   "encaixe_via_m": 34,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE IRANDUBA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 5,
+    "km": 2.1,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 275,
+    "km": 136.8,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1301902",
+   "nome": "Itacoatiara",
+   "lat": -3.13861,
+   "lon": -58.4449,
+   "pop": 103598,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": false,
+   "tempo_manaus_min": 256,
+   "km_manaus": 270.5,
+   "km_linha_reta_manaus": 175.0,
+   "encaixe_via_m": 43,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL REGIONAL JOSE MENDES",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 1,
+    "km": 0.4,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 489,
+    "km": 365.2,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1301951",
+   "nome": "Itamarati",
+   "lat": -6.43852,
+   "lon": -68.2437,
+   "pop": 10937,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 982.9,
+   "encaixe_via_m": 22,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE ITAMARATI",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 2.2,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Benjamin Constant (Comunidade Feijoal)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 278.1
+   }
+  },
+  {
+   "cod": "1302009",
+   "nome": "Itapiranga",
+   "lat": -2.74081,
+   "lon": -58.0293,
+   "pop": 10162,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": false,
+   "tempo_manaus_min": 340,
+   "km_manaus": 339.5,
+   "km_linha_reta_manaus": 225.2,
+   "encaixe_via_m": 15,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE ITAPIRANGA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.1,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 573,
+    "km": 434.2,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1302108",
+   "nome": "Japurá",
+   "lat": -1.88237,
+   "lon": -66.9291,
+   "pop": 8858,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 779.6,
+   "encaixe_via_m": 6664,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE JAPURA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": null,
+    "km_linha_reta": 7.7
+   },
+   "terminal_mais_proximo": {
+    "nome": "Japurá (Comunidade Acanauí)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 36.2
+   }
+  },
+  {
+   "cod": "1302207",
+   "nome": "Juruá",
+   "lat": -3.48438,
+   "lon": -66.0718,
+   "pop": 10742,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 672.9,
+   "encaixe_via_m": 143,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE JURUA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.5,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Juruá (Porto de Juruá)",
+    "tipo": null,
+    "fonte": null,
+    "min": 5,
+    "km": 1.8,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1302306",
+   "nome": "Jutaí",
+   "lat": -2.75814,
+   "lon": -66.7595,
+   "pop": 25172,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 749.4,
+   "encaixe_via_m": 253,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE JUTAI",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.6,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Jutaí (Vila Copatana)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 21.6
+   }
+  },
+  {
+   "cod": "1302405",
+   "nome": "Lábrea",
+   "lat": -7.26413,
+   "lon": -64.7948,
+   "pop": 45448,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 1314,
+   "km_manaus": 850.2,
+   "km_linha_reta_manaus": 701.3,
+   "encaixe_via_m": 25,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL REGIONAL DE LABREA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 1,
+    "km": 0.9,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 1201,
+    "km": 850.8,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1302504",
+   "nome": "Manacapuru",
+   "lat": -3.29066,
+   "lon": -60.6216,
+   "pop": 101883,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": false,
+   "tempo_manaus_min": 99,
+   "km_manaus": 101.8,
+   "km_linha_reta_manaus": 69.3,
+   "encaixe_via_m": 12,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL GERAL DE MANACAPURU",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.5,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 335,
+    "km": 200.0,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1302553",
+   "nome": "Manaquiri",
+   "lat": -3.44078,
+   "lon": -60.4612,
+   "pop": 17107,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 275,
+   "km_manaus": 155.5,
+   "km_linha_reta_manaus": 60.6,
+   "encaixe_via_m": 37,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL RAIMUNDO RODRIGUES IRMAO",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 2.2,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 162,
+    "km": 156.2,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1302603",
+   "nome": "Manaus",
+   "lat": -3.11866,
+   "lon": -60.0212,
+   "pop": 2063689,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": false,
+   "tempo_manaus_min": 0,
+   "km_manaus": 0.0,
+   "km_linha_reta_manaus": 0.0,
+   "encaixe_via_m": 32,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL ADVENTISTA DE MANAUS",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 0,
+    "km": 0.1,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 238,
+    "km": 98.4,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1302702",
+   "nome": "Manicoré",
+   "lat": -5.80462,
+   "lon": -61.2895,
+   "pop": 53914,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 921,
+   "km_manaus": 454.6,
+   "km_linha_reta_manaus": 330.1,
+   "encaixe_via_m": 15,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR HAMILTON CIDADE",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.7,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 808,
+    "km": 455.3,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1302801",
+   "nome": "Maraã",
+   "lat": -1.85313,
+   "lon": -65.573,
+   "pop": 15529,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 632.6,
+   "encaixe_via_m": 586,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE MARAA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 12,
+    "km": 4.0,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Japurá (Comunidade Acanauí)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 115.2
+   }
+  },
+  {
+   "cod": "1302900",
+   "nome": "Maués",
+   "lat": -3.39289,
+   "lon": -57.7067,
+   "pop": 61204,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 258.7,
+   "encaixe_via_m": 24,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL DE MAUES DONA MUNDIQUINHA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 0.7,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Boa Vista Do Ramos (Comunidade Menino de Deus)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 31.4
+   }
+  },
+  {
+   "cod": "1303007",
+   "nome": "Nhamundá",
+   "lat": -2.20793,
+   "lon": -56.7112,
+   "pop": 20136,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 381.3,
+   "encaixe_via_m": 987,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE NHAMUNDA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.3,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Nhamundá (Rua Tiradentes)",
+    "tipo": null,
+    "fonte": null,
+    "min": 2,
+    "km": 1.0,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1303106",
+   "nome": "Nova Olinda do Norte",
+   "lat": -3.90037,
+   "lon": -59.094,
+   "pop": 27062,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 134.7,
+   "encaixe_via_m": 24,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE NOVA OLINDA DO NORTE",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.6,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Borba (Distrito do Axinim)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 35.1
+   }
+  },
+  {
+   "cod": "1303205",
+   "nome": "Novo Airão",
+   "lat": -2.63637,
+   "lon": -60.9434,
+   "pop": 15761,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": false,
+   "tempo_manaus_min": 197,
+   "km_manaus": 193.9,
+   "km_linha_reta_manaus": 115.6,
+   "encaixe_via_m": 21,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE NOVO AIRAO",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 2.0,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 433,
+    "km": 292.1,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1303304",
+   "nome": "Novo Aripuanã",
+   "lat": -5.12593,
+   "lon": -60.3732,
+   "pop": 23818,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 2106,
+   "km_manaus": 1370.4,
+   "km_linha_reta_manaus": 226.6,
+   "encaixe_via_m": 54,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL DONA EDITH MENDES WECKNER",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.3,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Parintins (Comunidade do Bom Socorro do Zé Açú)",
+    "tipo": null,
+    "fonte": null,
+    "min": 1936,
+    "km": 1210.9,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1303403",
+   "nome": "Parintins",
+   "lat": -2.63741,
+   "lon": -56.729,
+   "pop": 96372,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 3316,
+   "km_manaus": 2132.8,
+   "km_linha_reta_manaus": 369.5,
+   "encaixe_via_m": 32,
+   "hospital_mais_proximo": {
+    "nome": "Centro de Saúde Doutor Todda",
+    "tipo": "Hospital (OSM)",
+    "fonte": "OSM",
+    "min": 4,
+    "km": 1.8,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Parintins (Comunidade do Bom Socorro do Zé Açú)",
+    "tipo": null,
+    "fonte": null,
+    "min": 174,
+    "km": 54.2,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1303502",
+   "nome": "Pauini",
+   "lat": -7.71311,
+   "lon": -66.992,
+   "pop": 19373,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 925.3,
+   "encaixe_via_m": 107,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE PAUINI",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 0.8,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Tapauá (Comunidade Foz do Tapauá)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 359.8
+   }
+  },
+  {
+   "cod": "1303536",
+   "nome": "Presidente Figueiredo",
+   "lat": -2.02981,
+   "lon": -60.0234,
+   "pop": 30668,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": false,
+   "tempo_manaus_min": 126,
+   "km_manaus": 128.2,
+   "km_linha_reta_manaus": 121.1,
+   "encaixe_via_m": 280,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL GERAL E MATERNIDADE ERALDO NEVES FALCAO",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 1.7,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 361,
+    "km": 224.8,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1303569",
+   "nome": "Rio Preto da Eva",
+   "lat": -2.7045,
+   "lon": -59.6858,
+   "pop": 24936,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": false,
+   "tempo_manaus_min": 87,
+   "km_manaus": 84.0,
+   "km_linha_reta_manaus": 59.2,
+   "encaixe_via_m": 22,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE RIO PRETO DA EVA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 6,
+    "km": 2.4,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 320,
+    "km": 178.6,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1303601",
+   "nome": "Santa Isabel do Rio Negro",
+   "lat": -0.410824,
+   "lon": -65.0092,
+   "pop": 14164,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 630.8,
+   "encaixe_via_m": 198,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE SANTA ISABEL DO RIO NEGRO",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 1.6,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Japurá (Comunidade Acanauí)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 237.2
+   }
+  },
+  {
+   "cod": "1303700",
+   "nome": "Santo Antônio do Içá",
+   "lat": -3.09544,
+   "lon": -67.9463,
+   "pop": 28211,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 879.9,
+   "encaixe_via_m": 74,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE SANTO ANTONIO DO ICA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 0,
+    "km": 0.2,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Santo Antônio Do Içá (Vila da Betânia)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 14.1
+   }
+  },
+  {
+   "cod": "1304005",
+   "nome": "Silves",
+   "lat": -2.81748,
+   "lon": -58.248,
+   "pop": 11559,
+   "ligacao_rodoviaria": true,
+   "travessia_balsa": true,
+   "tempo_manaus_min": 354,
+   "km_manaus": 340.6,
+   "km_linha_reta_manaus": 199.7,
+   "encaixe_via_m": 2390,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE SILVES",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 9,
+    "km": 4.3,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Careiro (Comunidade Purupuru)",
+    "tipo": null,
+    "fonte": null,
+    "min": 587,
+    "km": 435.2,
+    "estimado": false
+   }
+  },
+  {
+   "cod": "1303809",
+   "nome": "São Gabriel da Cachoeira",
+   "lat": -0.11909,
+   "lon": -67.084,
+   "pop": 51795,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 852.9,
+   "encaixe_via_m": 80,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL DE GUARNICAO DE SAO GABRIEL DA CACHOEIRA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 1,
+    "km": 0.5,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Japurá (Comunidade Acanauí)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 196.5
+   }
+  },
+  {
+   "cod": "1303908",
+   "nome": "São Paulo de Olivença",
+   "lat": -3.47292,
+   "lon": -68.9646,
+   "pop": 32967,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 993.6,
+   "encaixe_via_m": 381,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE SAO PAULO DE OLIVENCA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": null,
+    "km_linha_reta": 14.7
+   },
+   "terminal_mais_proximo": {
+    "nome": "São Paulo De Olivença (Comunidade  Campo Alegre)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 47.9
+   }
+  },
+  {
+   "cod": "1303957",
+   "nome": "São Sebastião do Uatumã",
+   "lat": -2.55915,
+   "lon": -57.8731,
+   "pop": 11670,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 246.5,
+   "encaixe_via_m": 74,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE SAO SEBASTIAO DO UATUMA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 1.2,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "São Sebastião Do Uatumã (Distrito de Santana)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 12.8
+   }
+  },
+  {
+   "cod": "1304062",
+   "nome": "Tabatinga",
+   "lat": -4.2416,
+   "lon": -69.9383,
+   "pop": 66764,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 1107.5,
+   "encaixe_via_m": 5,
+   "hospital_mais_proximo": {
+    "nome": "HOSPITAL DE GUARNICAO DE TABATINGA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 1.2,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 31.2
+   }
+  },
+  {
+   "cod": "1304104",
+   "nome": "Tapauá",
+   "lat": -5.62085,
+   "lon": -63.1808,
+   "pop": 19599,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 447.3,
+   "encaixe_via_m": 139,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE TAPAUA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 1.7,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Tapauá (Comunidade Foz do Tapauá)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 135.0
+   }
+  },
+  {
+   "cod": "1304203",
+   "nome": "Tefé",
+   "lat": -3.36822,
+   "lon": -64.7193,
+   "pop": 73669,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 522.3,
+   "encaixe_via_m": 11,
+   "hospital_mais_proximo": {
+    "nome": "CLIMED",
+    "tipo": "Hospital especializado",
+    "fonte": "CNES",
+    "min": 4,
+    "km": 2.4,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Alvarães (Distrito de Nogueira)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 9.7
+   }
+  },
+  {
+   "cod": "1304237",
+   "nome": "Tonantins",
+   "lat": -2.86582,
+   "lon": -67.7919,
+   "pop": 19247,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 863.3,
+   "encaixe_via_m": 55,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE TONANTINS HOSPITAL FREI FRANCISCO",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 6,
+    "km": 3.2,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Santo Antônio Do Içá (Vila da Betânia)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 38.6
+   }
+  },
+  {
+   "cod": "1304260",
+   "nome": "Uarini",
+   "lat": -2.99609,
+   "lon": -65.1133,
+   "pop": 14431,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 565.6,
+   "encaixe_via_m": 1504,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE UARINI",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": null,
+    "km_linha_reta": 5.7
+   },
+   "terminal_mais_proximo": {
+    "nome": "Alvarães (Distrito de Nogueira)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 50.5
+   }
+  },
+  {
+   "cod": "1304302",
+   "nome": "Urucará",
+   "lat": -2.52936,
+   "lon": -57.7538,
+   "pop": 18631,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 260.2,
+   "encaixe_via_m": 108,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE URUCARA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 3,
+    "km": 1.3,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "São Sebastião Do Uatumã (Distrito de Santana)",
+    "tipo": null,
+    "fonte": null,
+    "min": null,
+    "km_linha_reta": 26.4
+   }
+  },
+  {
+   "cod": "1304401",
+   "nome": "Urucurituba",
+   "lat": -3.12841,
+   "lon": -58.1496,
+   "pop": 23945,
+   "ligacao_rodoviaria": false,
+   "travessia_balsa": false,
+   "tempo_manaus_min": null,
+   "km_manaus": null,
+   "km_linha_reta_manaus": 207.8,
+   "encaixe_via_m": 12,
+   "hospital_mais_proximo": {
+    "nome": "UNIDADE HOSPITALAR DE URUCURITUBA",
+    "tipo": "Hospital geral",
+    "fonte": "CNES",
+    "min": 2,
+    "km": 1.1,
+    "estimado": false
+   },
+   "terminal_mais_proximo": {
+    "nome": "Urucurituba (Comunidade do Tabocal)",
+    "tipo": null,
+    "fonte": null,
+    "min": 4,
+    "km": 1.8,
+    "estimado": false
+   }
+  }
+ ]
+}
