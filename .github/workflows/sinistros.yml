@@ -23,7 +23,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: dados
+  group: dados-${{ github.workflow }}  # um por robô: grupo único fazia o pendente novo cancelar o anterior
   cancel-in-progress: false
 
 jobs:
