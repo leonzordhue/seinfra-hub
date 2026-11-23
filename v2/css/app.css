@@ -233,3 +233,9 @@ dl.ficha dd { margin: 0; color: var(--tinta); }
 .nav-grupo { padding: 10px 10px 3px; }
 .lateral { padding: 14px 12px; }
 .lateral .rodape { padding-top: 10px; }
+
+/* ícones próprios (v2/img/icones.svg, embutidos no index.html) */
+.nav svg.ext { width: 13px; height: 13px; margin-left: auto; opacity: .75; }
+.mods a { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; align-items: start; }
+.mods .mod-ic { grid-row: span 2; width: 36px; height: 36px; padding: 7px; border-radius: 8px; background: var(--sup-3); color: var(--azul); fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.mods a:hover .mod-ic { background: var(--azul); color: #fff; }

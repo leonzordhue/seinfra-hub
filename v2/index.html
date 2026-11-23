@@ -14,6 +14,24 @@
   <script type="module" src="js/app.js"></script>
 </head>
 <body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+<!-- Ícones DMOB Hub v2 · grade 24 px, traço 1,6, pontas arredondadas, cor = currentColor · [Nexus] 23/11/2026 -->
+<symbol id="i-inicio" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="8" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="4.5" rx="1.5"/><rect x="13.5" y="11" width="7" height="9.5" rx="1.5"/><rect x="3.5" y="14.5" width="7" height="6" rx="1.5"/></symbol>
+<symbol id="i-rodovia" viewBox="0 0 24 24"><path d="M3.5 21 9.2 3M20.5 21 14.8 3"/><path d="M12 3.5v2M12 9v3M12 15.5v5"/></symbol>
+<symbol id="i-ramal" viewBox="0 0 24 24"><path d="M4 21V3M8.5 21V3"/><path d="M8.5 14c4 0 6.5-2.5 8-6.5L18.5 3" stroke-dasharray="1.6 2.6"/><path d="M8.5 19c5 0 8.5-3 10.5-8.5L21 6" stroke-dasharray="1.6 2.6"/></symbol>
+<symbol id="i-viario" viewBox="0 0 24 24"><path d="M2.5 16.5h19"/><path d="M4.5 16.5V9h5v7.5M11.5 16.5V4.5h6v12M19.5 16.5v-5"/><path d="M13.7 8h1.6M13.7 11h1.6M6.3 12h1.4"/><path d="M3 20.5h3M10.5 20.5h3M18 20.5h3"/></symbol>
+<symbol id="i-aerodromo" viewBox="0 0 24 24"><path d="M2.5 20.5h19"/><path d="M3.5 15.5l2.6.6 3.6-2.6-4.4-4.6 1.9-.6 6.4 3.5 4-2c1-.5 2.6-.2 2.8.6.2.8-.6 1.6-1.6 2.1L7.5 18z"/></symbol>
+<symbol id="i-terminal" viewBox="0 0 24 24"><path d="M3 13.5h18l-2.6 4.5H5.6z"/><path d="M7 13.5V9.5h9v4M6 9.5h11M11.5 9.5V5.5"/><path d="M2.5 21c1.6 0 1.6-1 3.2-1s1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 3.2 1 1.6-1 3.2-1 1.6 1 2.9 1"/></symbol>
+<symbol id="i-condicao" viewBox="0 0 24 24"><path d="M4 16.5a8 8 0 1 1 16 0"/><path d="M12 16.5l4.2-5.2"/><circle cx="12" cy="16.5" r="1.3"/><path d="M6.5 11.5l1 .8M12 8.5v1.3M17.5 11.5l-1 .8"/><path d="M3 20.5h18"/></symbol>
+<symbol id="i-obra" viewBox="0 0 24 24"><path d="M10 3.5h4l4.6 15.5H5.4z"/><path d="M8.3 9.5h7.4M7.1 14h9.8"/><path d="M3.5 19h17v2h-17z"/></symbol>
+<symbol id="i-licitacao" viewBox="0 0 24 24"><path d="M13.2 3.8l7 7-3 3-7-7z"/><path d="M15.5 6.1l2.4-2.4M18 13.4l2.4-2.4"/><path d="M11.4 11.4 3.5 19.3"/><path d="M12.5 20.5h8"/></symbol>
+<symbol id="i-briefing" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="1.8"/><path d="M9 3h6v3H9z"/><path d="M8.5 11h7M8.5 14.5h7M8.5 18h4"/></symbol>
+<symbol id="i-atlas" viewBox="0 0 24 24"><path d="M3.5 6.5 9 4.5l6 2 5.5-2v6"/><path d="M3.5 6.5v13l5.5-2 4 1.4"/><path d="M9 4.5v13M15 6.5v4"/><path d="M17.5 13a3 3 0 0 1 3 3c0 2.2-3 5-3 5s-3-2.8-3-5a3 3 0 0 1 3-3z"/><circle cx="17.5" cy="16" r=".6"/></symbol>
+<symbol id="i-planejamento" viewBox="0 0 24 24"><path d="M3.5 3.5v17h17"/><path d="M7 7.5h6M10 11.5h7M8.5 15.5h5"/><path d="M18.5 4.5l1.8 1.8-1.8 1.8-1.8-1.8z"/></symbol>
+<symbol id="i-sinistro" viewBox="0 0 24 24"><path d="M2.5 17v-3.2l2-4.3h7.2l3 4.3h2.8a2 2 0 0 1 2 2V17"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="15.5" cy="17.5" r="1.8"/><path d="M8.3 17.5h5.4"/><path d="M19 3.2l.7 2 2.1-.2-1.4 1.6 1 1.9-2.1-.6L18 9.4l-.4-2.1-2-.8 1.8-1.1-.2-2.1z"/></symbol>
+<symbol id="i-bi" viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><path d="M6.5 20.5v-4M11 20.5v-6.5M15.5 20.5v-3.5M20 20.5v-8"/><path d="M4.5 10.5l4.5-4 4 3 6.5-6"/><path d="M15.5 3.5h4v4"/></symbol>
+<symbol id="i-externo" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 4 19V7.5A1.5 1.5 0 0 1 5.5 6H10"/></symbol>
+</svg>
 <div class="topo-movel"><button type="button" id="menu" aria-label="Abrir menu">Menu</button><strong>DMOB Hub</strong></div>
 <div class="casca">
   <nav class="lateral" aria-label="Módulos">
@@ -22,23 +40,23 @@
       <div><strong>DMOB Hub</strong><br><span>Departamento de Mobilidade</span></div>
     </div>
     <div class="nav">
-      <a href="#/inicio" data-rota="inicio"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg>Início</a>
+      <a href="#/inicio" data-rota="inicio"><svg aria-hidden="true"><use href="#i-inicio"/></svg>Início</a>
       <div class="nav-grupo">Modais</div>
-      <a href="#/m/rodovias" data-rota="m/rodovias"><svg viewBox="0 0 24 24"><path d="M8 3 4 21M16 3l4 18M12 5v3M12 11v3M12 17v3"/></svg>Rodovias</a>
-      <a href="#/m/ramais" data-rota="m/ramais"><svg viewBox="0 0 24 24"><path d="M4 20c4-6 6-10 16-16"/><path d="M9 13c2 1 4 3 5 7"/></svg>Ramais</a>
-      <a href="#/m/viario" data-rota="m/viario"><svg viewBox="0 0 24 24"><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>Viário urbano</a>
-      <a href="#/m/aerodromos" data-rota="m/aerodromos"><svg viewBox="0 0 24 24"><path d="M2 16l20-6-3-3-6 2-5-5-2 1 3 6-5 2-2-1-1 1z"/></svg>Aeródromos</a>
-      <a href="#/m/terminais" data-rota="m/terminais"><svg viewBox="0 0 24 24"><path d="M3 18h18M5 18l2-8h10l2 8M9 10V6h6v4"/></svg>Terminais</a>
-      <a href="#/m/icm" data-rota="m/icm"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8"/><path d="M14 8h6v6"/></svg>Condição viária</a>
+      <a href="#/m/rodovias" data-rota="m/rodovias"><svg aria-hidden="true"><use href="#i-rodovia"/></svg>Rodovias</a>
+      <a href="#/m/ramais" data-rota="m/ramais"><svg aria-hidden="true"><use href="#i-ramal"/></svg>Ramais</a>
+      <a href="#/m/viario" data-rota="m/viario"><svg aria-hidden="true"><use href="#i-viario"/></svg>Viário urbano</a>
+      <a href="#/m/aerodromos" data-rota="m/aerodromos"><svg aria-hidden="true"><use href="#i-aerodromo"/></svg>Aeródromos</a>
+      <a href="#/m/terminais" data-rota="m/terminais"><svg aria-hidden="true"><use href="#i-terminal"/></svg>Terminais</a>
+      <a href="#/m/icm" data-rota="m/icm"><svg aria-hidden="true"><use href="#i-condicao"/></svg>Condição viária</a>
       <div class="nav-grupo">Gestão</div>
-      <a href="#/obras" data-rota="obras"><svg viewBox="0 0 24 24"><path d="M3 20h18"/><path d="M5 20V9l7-5 7 5v11"/><path d="M9 20v-6h6v6"/></svg>Obras e contratos</a>
-      <a href="#/licitacoes" data-rota="licitacoes"><svg viewBox="0 0 24 24"><path d="M7 3h8l4 4v14H7z"/><path d="M15 3v4h4M10 12h6M10 16h6"/></svg>Licitações</a>
-      <a href="#/briefings" data-rota="briefings"><svg viewBox="0 0 24 24"><path d="M6 3h12v18H6z"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>Briefings</a>
-      <a href="#/m/atlas" data-rota="m/atlas"><svg viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg>Atlas</a>
-      <a href="https://leonzordhue.github.io/Planejamento-rodoviario" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM4 10h16M10 4v16"/></svg>Planejamento<span class="ext">↗</span></a>
+      <a href="#/obras" data-rota="obras"><svg aria-hidden="true"><use href="#i-obra"/></svg>Obras e contratos</a>
+      <a href="#/licitacoes" data-rota="licitacoes"><svg aria-hidden="true"><use href="#i-licitacao"/></svg>Licitações</a>
+      <a href="#/briefings" data-rota="briefings"><svg aria-hidden="true"><use href="#i-briefing"/></svg>Briefings</a>
+      <a href="#/m/atlas" data-rota="m/atlas"><svg aria-hidden="true"><use href="#i-atlas"/></svg>Atlas</a>
+      <a href="https://leonzordhue.github.io/Planejamento-rodoviario" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-planejamento"/></svg>Planejamento<svg class="ext" aria-label="abre em nova aba"><use href="#i-externo"/></svg></a>
       <div class="nav-grupo">Segurança e inteligência</div>
-      <a href="#/sinistros" data-rota="sinistros"><svg viewBox="0 0 24 24"><path d="M12 3 2 21h20L12 3z"/><path d="M12 10v5M12 18h.01"/></svg>Sinistros</a>
-      <a href="#/m/bi" data-rota="m/bi"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>BI e análises</a>
+      <a href="#/sinistros" data-rota="sinistros"><svg aria-hidden="true"><use href="#i-sinistro"/></svg>Sinistros</a>
+      <a href="#/m/bi" data-rota="m/bi"><svg aria-hidden="true"><use href="#i-bi"/></svg>BI e análises</a>
     </div>
     <div class="rodape">SEINFRA-AM · DMOB<br><button type="button" id="tema">Tema claro / escuro</button></div>
   </nav>

@@ -3,6 +3,9 @@ import { contratos, talvez } from "../dados.js";
 import { esc, num, pct, data, brlCurto } from "../fmt.js";
 import { $, kpi, chip, fonte } from "../ui.js";
 
+const ICONE = { "#/obras": "obra", "#/sinistros": "sinistro", "#/licitacoes": "licitacao", "#/briefings": "briefing", "#/m/rodovias": "rodovia",
+  "#/m/ramais": "ramal", "#/m/viario": "viario", "#/m/icm": "condicao", "#/m/atlas": "atlas", "#/m/bi": "bi" };
+
 export async function render(el) {
   const [{ meta, lista }, an, lic] = await Promise.all([contratos(), talvez("sinistros_analise"), talvez("licitacoes")]);
   const rod = lista.filter(c => c.modal);
@@ -52,5 +55,5 @@ export async function render(el) {
          ["#/m/icm", "Condição viária", "IRI e buracos do levantamento RoadLab"],
          ["#/m/atlas", "Atlas", "Mapa integrado dos modais"],
          ["#/m/bi", "BI e análises", "Indicadores e cruzamentos"]]
-        .map(([h, t, s]) => `<a class="cartao" href="${h}"><strong>${t}</strong><span>${s}</span></a>`).join("")}</div></section>`;
+        .map(([h, t, s]) => `<a class="cartao" href="${h}"><svg class="mod-ic" aria-hidden="true"><use href="#i-${ICONE[h]}"/></svg><strong>${t}</strong><span>${s}</span></a>`).join("")}</div></section>`;
 }
