@@ -1,9 +1,9 @@
 // Briefings de uma página, por município, rodovia ou contrato, montados dos dados do Hub e prontos para imprimir/PDF.
 // [Nexus] 23/11/2026. Fontes: eobras.json, sinistros.json, sinistros_analise.json, licitacoes.json, icm.json.
 // A IA não escreve nada aqui: toda frase sai de uma conta sobre os dados, com a fonte no rodapé.
-import { contratos, talvez, municipios, obraDaRodovia } from "../dados.js";
+import { contratos, talvez, municipios, obraDaRodovia, CURVA_S } from "../dados.js";
 import { esc, num, pct, data, brlCurto, semAcento, plural } from "../fmt.js";
-import { $, chip, chipSit, opcoes, grafico, serie } from "../ui.js";
+import { $, chip, chipSit, opcoes, grafico, serie, css } from "../ui.js";
 
 const estado = { tipo: "municipio", alvo: "" };
 const rxRod = cod => new RegExp(`\\bAM[\\s-]?0*${parseInt(cod.slice(3), 10)}\\b`, "i");
@@ -51,7 +51,7 @@ export async function render(el, params) {
     if (estado.tipo === "contrato") {
       const c = porId.get(estado.alvo);
       if (!c) { doc.innerHTML = `<p class="vazio">Contrato não encontrado no e-Obras.</p>`; return; }
-      doc.innerHTML = docContrato(c, ctx); curva(c, doc); return;
+      doc.innerHTML = docContrato(c, ctx); curva(c, doc); grafPrev(c, doc); return;
     }
     doc.innerHTML = estado.tipo === "municipio" ? docMunicipio(estado.alvo, ctx) : docRodovia(estado.alvo, ctx);
   };
@@ -217,6 +217,8 @@ function docContrato(c, ctx) {
     <p>${esc(leituraFis)}</p>
     <p class="nota">Prazo: da assinatura (${data(c.ass)}) até ${c.fim_exec ? "o fim da execução" : "o fim da vigência"} (${data(fimPrazo)}).</p>
     ${(c.med || []).length > 1 ? `<h2>Curva de medição</h2><div class="legenda"><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${c.med.some(m => m[3] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}</div><div class="graf graf-doc"><canvas id="gCurvaBr" aria-label="Curva de medição"></canvas></div>` : ""}
+    ${blocoPrevisao(c)}
+    ${blocoRisco(c)}
     ${meds.length ? `<h2>Últimas medições</h2><table class="t"><thead><tr><th>Data</th><th class="n">Valor liberado</th><th class="n">% acumulado</th><th class="n">% físico</th></tr></thead><tbody>
       ${meds.map(m => `<tr><td>${data(m[0])}</td><td class="n">${brlCurto(m[1])}</td><td class="n">${pct(m[2])}</td><td class="n">${pct(m[3])}</td></tr>`).join("")}</tbody></table>` : ""}
     ${c.alertas.length ? `<h2>Pontos de atenção</h2><ul class="lista">${c.alertas.map(a => `<li>${chip(a.nivel === "critico" ? "crítico" : "atenção", a.nivel)}<div><div class="q">${esc(a.txt)}</div><div class="d">${esc(a.base)}</div></div></li>`).join("")}</ul>` : ""}
@@ -230,4 +232,63 @@ function curva(c, doc) {
   if (c.med.some(m => m[3] != null)) ds.push({ label: "% físico", data: c.med.map(m => m[3]), borderColor: serie(2), backgroundColor: serie(2), borderWidth: 2, pointRadius: 2.5, spanGaps: true, tension: 0 });
   grafico(cv, { type: "line", data: { labels: c.med.map(m => data(m[0])), datasets: ds },
     options: { animation: false, scales: { y: { max: 100, ticks: { callback: v => v + "%" } } }, plugins: { tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${pct(x.raw)}` } } } } });
+}
+
+// ── previsão de conclusão e nota de risco (ideias 8 e 9) [Claude] 23/11/2026 ──
+// Cálculos em dados.js: previsao() (curva S logística de referência + regressão das últimas 6 medições) e risco().
+const NOME_BASE = { fis: "físico", fin: "financeiro acumulado" };
+function blocoPrevisao(c) {
+  const p = c.prev;
+  if (!p || p.situacao === "encerrado") return "";
+  const b = NOME_BASE[p.base];
+  const frases = [];
+  if (p.previstoHoje != null && p.situacao !== "concluida") frases.push(`Pela curva S de referência, o contrato deveria estar com ${pct(p.previstoHoje, 0)} executado hoje; o ${b} está em ${pct(p.atual)}.`);
+  if (p.situacao === "projetada") frases.push(`No ritmo das últimas ${num(p.n)} medições (${num(p.ritmo, 1)} p.p. por mês${p.retomada ? ", supondo retomada hoje, porque a última medição tem mais de 90 dias" : ""}), a conclusão provável é ${data(p.conclusao)}, ${p.atraso > 0 ? `${num(p.atraso)} dias depois do fim ${c.fim_exec ? "da execução" : "da vigência"}` : "dentro do prazo"}.`);
+  else frases.push(`${p.motivo}${p.atraso > 0 ? ` O prazo terminou há ${num(p.atraso)} dias sem a obra concluída.` : ""}`);
+  if (p.aditivo) frases.push(`Aditivo de prazo provavelmente necessário${p.alemExec > 0 ? `: ${num(p.alemExec)} dias além do fim da execução` : ""}${p.alemVig > 0 ? `${p.alemExec > 0 ? " e" : ":"} ${num(p.alemVig)} dias além da vigência` : ""}. A prorrogação deve ser formalizada antes do término do prazo.`);
+  const lin = (r, v) => `<tr><td>${r}</td><td class="n">${v}</td></tr>`;
+  return `<h2>Previsão de conclusão</h2>
+    ${p.curva.length ? `<div class="legenda"><span><i style="background:var(--tinta-3)"></i>Prevista (curva S de referência)</span><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${p.real.some(r => r[2] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}${p.conclusao ? `<span><i style="background:${serie(p.base === "fis" ? 2 : 1)};opacity:.5"></i>Projeção no ritmo recente</span>` : ""}</div>
+    <div class="graf graf-doc"><canvas id="gPrevBr" aria-label="Curva S prevista e realizada"></canvas></div>` : ""}
+    ${frases.map(x => `<p>${esc(x)}</p>`).join("")}
+    <table class="t"><tbody>
+      ${lin(c.fim_exec ? "Fim da execução" : "Fim da vigência", data(p.fim))}${c.fim_exec && c.fim_vig ? lin("Fim da vigência", data(c.fim_vig)) : ""}
+      ${lin("Previsto hoje (curva S)", pct(p.previstoHoje, 0))}${lin(`Realizado (${b})`, pct(p.atual))}
+      ${lin("Ritmo recente", p.ritmo == null ? "—" : `${num(p.ritmo, 1)} p.p./mês`)}${lin("Conclusão provável", p.conclusao ? data(p.conclusao) : "—")}
+      ${lin("Atraso projetado", p.atraso == null ? "—" : p.atraso > 0 ? `${num(p.atraso)} dias` : "nenhum")}${p.alemVig != null ? lin("Além da vigência", p.alemVig > 0 ? `${num(p.alemVig)} dias` : "não") : ""}
+    </tbody></table>
+    <p class="nota">Curva prevista: o e-Obras não publica o cronograma do contrato, então ela é uma referência teórica, a curva S logística de desembolso de obras (Kenley e Wilson, 1986), com inclinação ${num(CURVA_S.k)} e inflexão na metade do prazo, entre a assinatura e o fim ${c.fim_exec ? "da execução" : "da vigência"}. Ritmo: regressão linear por mínimos quadrados do % ${b} nas últimas 6 medições. Base legal do aditivo: ${esc(p.baseLegal)}.</p>`;
+}
+
+function blocoRisco(c) {
+  const r = c.risco;
+  if (!r) return "";
+  return `<h2>Nota de risco</h2>
+    <p>${chip(`${r.nota} de 100 · ${r.faixa}`, r.nivel)}</p>
+    <table class="t"><thead><tr><th>Componente</th><th>Situação</th><th class="n">Peso</th><th class="n">Pontos</th></tr></thead><tbody>
+      ${r.comp.map(x => `<tr><td>${esc(x.rot)}<div class="peq">${esc(x.base)}</div></td><td>${esc(x.detalhe)}<div class="peq">${esc(x.regra)}</div></td><td class="n">${x.peso}</td><td class="n">${num(x.pontos, 1)}</td></tr>`).join("")}
+      <tr><td colspan="3"><b>Total</b></td><td class="n"><b>${num(r.nota)}</b></td></tr></tbody></table>
+    <p class="nota">Faixas: baixo até 24, médio 25 a 49, alto 50 a 74, crítico 75 ou mais. A nota ordena a atenção do DMOB; não é juízo sobre a empresa.</p>`;
+}
+
+function grafPrev(c, doc) {
+  const cv = doc.querySelector("#gPrevBr"), p = c.prev;
+  if (!cv || !p) return;
+  const fimX = Math.max(p.curva.at(-1)[0], p.conclusao ? +new Date(p.conclusao) : 0, Date.now());
+  const prev = p.curva.map(([x, y]) => ({ x, y }));
+  if (fimX > prev.at(-1).x) prev.push({ x: fimX, y: 100 });
+  const linha = (label, pts, cor, extra = {}) => ({ label, data: pts, borderColor: cor, backgroundColor: cor, borderWidth: 2, pointRadius: 2.5, tension: 0, ...extra });
+  const ds = [linha("Prevista (curva S)", prev, css("--tinta-3"), { borderDash: [5, 4], pointRadius: 0 }),
+    linha("% financeiro", p.real.filter(r => r[1] != null).map(r => ({ x: r[0], y: r[1] })), serie(1))];
+  const fis = p.real.filter(r => r[2] != null).map(r => ({ x: r[0], y: r[2] }));
+  if (fis.length) ds.push(linha("% físico", fis, serie(2)));
+  if (p.conclusao) {
+    const ult = p.base === "fis" ? fis.at(-1) : ds[1].data.at(-1);
+    const x0 = p.retomada ? Date.now() : ult.x;
+    ds.push(linha("Projeção", [{ x: x0, y: p.atual }, { x: +new Date(p.conclusao), y: 100 }], serie(p.base === "fis" ? 2 : 1), { borderDash: [3, 3], pointRadius: [0, 3.5], borderWidth: 1.5 }));
+  }
+  const mes = v => new Date(v).toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
+  grafico(cv, { type: "line", data: { datasets: ds },
+    options: { animation: false, parsing: false, scales: { x: { type: "linear", min: prev[0].x, max: fimX, ticks: { callback: mes, maxTicksLimit: 8 } }, y: { min: 0, max: 100, ticks: { callback: v => v + "%" } } },
+      plugins: { tooltip: { callbacks: { title: xs => data(new Date(xs[0].raw.x).toISOString().slice(0, 10)), label: x => ` ${x.dataset.label}: ${pct(x.raw.y)}` } } } } });
 }

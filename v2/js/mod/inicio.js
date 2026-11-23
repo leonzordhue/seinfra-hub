@@ -11,8 +11,9 @@ export async function render(el) {
   const rod = lista.filter(c => c.modal);
   const at = rod.filter(c => c.grupo === "ativo");
   const soma = (cs, k) => cs.reduce((s, c) => s + (c[k] || 0), 0);
-  const criticos = at.concat(rod.filter(c => c.grupo === "atencao")).filter(c => c.alertas.some(a => a.nivel === "critico"))
-    .sort((a, b) => b.v_atual - a.v_atual).slice(0, 6);
+  // top 5 pela nota de risco (0-100, ver risco() em dados.js); empate: maior valor primeiro [Claude] 23/11/2026
+  const criticos = at.concat(rod.filter(c => c.grupo === "atencao")).filter(c => c.risco)
+    .sort((a, b) => b.risco.nota - a.risco.nota || b.v_atual - a.v_atual).slice(0, 5);
   const hoje = new Date().toISOString().slice(0, 10), em15 = new Date(Date.now() + 15 * 864e5).toISOString().slice(0, 10);
   const abrindo = (lic?.pncp || []).filter(l => l.rodoviario && l.encerramento && l.encerramento >= hoje && l.encerramento <= em15)
     .sort((a, b) => a.encerramento.localeCompare(b.encerramento));
@@ -36,9 +37,9 @@ export async function render(el) {
       ${an ? kpi("Sinistros nos últimos 12 meses", num(an.totais.ultimos_12m), `${num(an.totais.fatais_ultimos_12m)} com morte`) : ""}
     </div>
     <section class="secao grade g-3">
-      <div class="cartao"><header><div><h2>Contratos com alerta crítico</h2><p>Maiores valores primeiro</p></div><a href="#/obras" class="mais">Ver obras →</a></header>
-        <div class="corpo">${criticos.length ? `<ul class="lista">${criticos.map(c => `<li><div><div class="q"><b>${esc(c.id)}</b> · ${brlCurto(c.v_atual)}</div>
-          <div class="d">${esc((c.obj || "").slice(0, 110))}…</div><div style="margin-top:4px">${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</div></div></li>`).join("")}</ul>` : `<p class="vazio">Nenhum contrato rodoviário com alerta crítico.</p>`}</div></div>
+      <div class="cartao"><header><div><h2>Contratos de maior risco</h2><p>Top 5 pela nota de risco de gestão (0 a 100)</p></div><a href="#/obras" class="mais">Ver obras →</a></header>
+        <div class="corpo">${criticos.length ? `<ul class="lista">${criticos.map(c => `<li>${chip(num(c.risco.nota), c.risco.nivel, `Risco ${c.risco.faixa}`)}<div><div class="q"><a href="#/briefings?contrato=${encodeURIComponent(c.id)}"><b>${esc(c.id)}</b></a> · ${brlCurto(c.v_atual)}${c.prev.situacao === "projetada" ? ` · conclusão prevista ${data(c.prev.conclusao)}` : ""}</div>
+          <div class="d">${esc((c.obj || "").slice(0, 110))}…</div><div style="margin-top:4px">${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</div></div></li>`).join("")}</ul>` : `<p class="vazio">Nenhum contrato rodoviário ativo com nota de risco.</p>`}</div></div>
       <div class="cartao"><header><div><h2>Onde agir primeiro (sinistros)</h2><p>Índice de prioridade por rodovia</p></div><a href="#/sinistros" class="mais">Ver sinistros →</a></header>
         <div class="corpo">${top.length ? `<ul class="lista">${top.map(r => `<li>${chip(num(r.prioridade, 0), r.faixa === "Alta" ? "critico" : r.faixa === "Média" ? "alerta" : "")}<div><div class="q"><b>${esc(r.cod)}</b> · ${num(r.ocorrencias)} ocorrências, ${num(r.fatais)} com morte</div><div class="d">${esc(r.leitura.slice(0, 170))}…</div></div></li>`).join("")}</ul>` : `<p class="vazio">Sem dados de sinistros.</p>`}</div></div>
       <div class="cartao"><header><div><h2>Licitações fechando em 15 dias</h2><p>Objetos do modal rodoviário no PNCP</p></div><a href="#/licitacoes" class="mais">Ver licitações →</a></header>

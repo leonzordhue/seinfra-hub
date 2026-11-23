@@ -1,11 +1,17 @@
 // Obras e contratos do modal rodoviário (e-Obras). [Nexus] 23/11/2026
 // Fonte: data/eobras.json (exportar_hub.py, rotina de segunda 10h). Regras: valor atual = original + aditado;
 // % financeiro = medido / valor atual; saldo = valor atual - medido (ver _meta.regras).
-import { contratos, MODAIS, REGRAS, municipios } from "../dados.js";
+import { contratos, MODAIS, REGRAS, municipios, RISCO_PESOS, FAIXAS_RISCO } from "../dados.js";
 import { esc, brl, brlCurto, pct, data, num, semAcento } from "../fmt.js";
 import { $, kpi, chip, chipSit, barra, tabela, grafico, gaveta, fonte, opcoes, serie, css } from "../ui.js";
 
-const estado = { modal: "rodoviario", grupo: "ativo", mun: "", alerta: "", q: "" };
+const estado = { modal: "rodoviario", grupo: "ativo", mun: "", alerta: "", risco: "", q: "" };
+// chip da nota de risco (0-100) e coluna "conclusão prevista": ver previsao() e risco() em dados.js [Claude] 23/11/2026
+export const chipRisco = r => r ? chip(`${r.nota} · ${r.faixa}`, r.nivel, "Nota de risco de gestão (0 a 100)") : "—";
+export function txtConclusao(p) {
+  if (p.situacao === "projetada") return `${data(p.conclusao)}${p.atraso > 0 ? `<div class="peq">${num(p.atraso)} dias além do prazo</div>` : `<div class="peq">no prazo</div>`}`;
+  return { concluida: "concluída", encerrado: "—", parada: "sem avanço", "sem-dados": "sem ritmo" }[p.situacao] || "—";
+}
 
 export async function render(el) {
   const { meta, lista } = await contratos();
@@ -23,6 +29,7 @@ export async function render(el) {
         .map(([v, r]) => `<button type="button" data-v="${v}" aria-pressed="${estado.grupo === v}">${r}</button>`).join("")}</div>
       <select id="fMun" aria-label="Município">${opcoes(muns, estado.mun, "Todos os municípios")}</select>
       <select id="fAlerta" aria-label="Alerta">${opcoes(REGRAS.map(r => r.txt), estado.alerta, "Com ou sem alerta")}</select>
+      <select id="fRisco" aria-label="Faixa de risco">${opcoes(FAIXAS_RISCO.map(f => f[0]), estado.risco, "Qualquer risco")}</select>
       <input type="search" id="fQ" placeholder="Buscar contrato, objeto, empresa, rodovia…" value="${esc(estado.q)}" aria-label="Buscar">
     </div>
     <div id="kpis" class="grade g-kpi"></div>
@@ -30,7 +37,13 @@ export async function render(el) {
       <div class="cartao"><header><div><h2>Investimento por modal</h2><p>Valor atual (original + aditivos) dos contratos filtrados, em R$ milhões</p></div></header><div class="corpo"><div class="graf"><canvas id="gModal" aria-label="Valor por modal"></canvas></div></div></div>
       <div class="cartao"><header><div><h2>O que pede atenção</h2><p>Regras de gestão aplicadas aos contratos filtrados; passe o mouse para ver a base legal</p></div></header><div class="corpo" id="alertas"></div></div>
     </section>
-    <section class="secao cartao"><header><div><h2>Contratos</h2></div><span class="contagem" id="cont"></span></header><div class="corpo" id="tab"></div></section>`;
+    <section class="secao cartao"><header><div><h2>Contratos</h2></div><span class="contagem" id="cont"></span></header><div class="corpo" id="tab"></div>
+      <details class="corpo" style="border-top:1px solid var(--borda)"><summary style="cursor:pointer;color:var(--azul)">Como se calcula a nota de risco e a conclusão prevista</summary>
+        <p class="peq" style="font-size:13px">Nota de 0 a 100 = soma dos pontos dos componentes abaixo (cada um vale de 0 a 1 vezes o peso). Faixas: ${FAIXAS_RISCO.map((f, i) => `${f[0]} ${f[1]}${FAIXAS_RISCO[i + 1] ? `–${FAIXAS_RISCO[i + 1][1] - 1}` : "–100"}`).join("; ")}. Contratos encerrados não recebem nota.</p>
+        <table class="t"><thead><tr><th>Componente</th><th class="n">Peso</th><th>Como pontua</th><th>Base</th></tr></thead><tbody>
+          ${RISCO_PESOS.map(r => `<tr><td>${esc(r.rot)}</td><td class="n">${r.peso}</td><td>${esc(r.regra)}</td><td>${esc(r.base)}</td></tr>`).join("")}</tbody></table>
+        <p class="peq" style="font-size:13px">Conclusão prevista: regressão linear (mínimos quadrados) do % físico acumulado nas últimas 6 medições (financeiro, se não houver físico), projetada até 100%. Se a última medição tem mais de 90 dias, a projeção supõe retomada hoje no mesmo ritmo. É estimativa, não substitui o cronograma do contrato.</p>
+      </details></section>`;
 
   const pinta = () => {
     const q = semAcento(estado.q);
@@ -39,6 +52,7 @@ export async function render(el) {
       (!estado.grupo || c.grupo === estado.grupo) &&
       (!estado.mun || municipios(c).includes(estado.mun)) &&
       (!estado.alerta || c.alertas.some(a => a.txt === estado.alerta)) &&
+      (!estado.risco || c.risco?.faixa === estado.risco) &&
       (!q || semAcento(`${c.id} ${c.obj} ${c.emp} ${c.mun} ${c.rod || ""} ${c.bem}`).includes(q)));
     const soma = k => fl.reduce((s, c) => s + (c[k] || 0), 0);
     const vAtual = soma("v_atual"), med = soma("medido");
@@ -76,6 +90,8 @@ export async function render(el) {
       { k: "fin", rot: "Financeiro", n: 1, html: c => `${pct(c.fin)}${barra(c.fin)}` },
       { k: "saldo", rot: "Saldo", n: 1, html: c => brlCurto(c.saldo) },
       { k: "fim_vig", rot: "Vigência até", html: c => data(c.fim_vig) },
+      { k: "conclusao", rot: "Conclusão prevista", v: c => c.prev.conclusao, html: c => txtConclusao(c.prev) },
+      { k: "risco", rot: "Risco", n: 1, v: c => c.risco?.nota, html: c => chipRisco(c.risco) },
     ], fl, { ordem: { k: "v_atual", dir: -1 }, onLinha: ficha });
   };
 
@@ -86,6 +102,7 @@ export async function render(el) {
   liga("#fModal", "modal"); liga("#fGrupo", "grupo");
   $("#fMun", el).onchange = e => { estado.mun = e.target.value; pinta(); };
   $("#fAlerta", el).onchange = e => { estado.alerta = e.target.value; pinta(); };
+  $("#fRisco", el).onchange = e => { estado.risco = e.target.value; pinta(); };
   let t; $("#fQ", el).oninput = e => { clearTimeout(t); t = setTimeout(() => { estado.q = e.target.value; pinta(); }, 150); };
   pinta();
 }
@@ -113,6 +130,8 @@ export function ficha(c) {
       <dt>Saldo</dt><dd>${brl(c.saldo)}</dd>
       <dt>Físico</dt><dd>${pct(c.fis)}</dd>
       <dt>Medições</dt><dd>${num(c.n_med)}${c.ult_med ? `, última em ${data(c.ult_med)}` : ""}</dd>
+      ${c.prev ? `<dt>Conclusão prevista</dt><dd>${txtConclusao(c.prev)}</dd>` : ""}
+      ${c.risco ? `<dt>Nota de risco</dt><dd>${chipRisco(c.risco)} <a href="#/briefings?contrato=${encodeURIComponent(c.id)}">ver componentes</a></dd>` : ""}
     </dl>
     ${(c.med || []).length > 1 ? `<h3>Curva de medição</h3><div class="legenda"><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${c.med.some(m => m[3] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}</div><div class="graf"><canvas id="gCurva" aria-label="Curva de medição"></canvas></div>` : ""}
     <p class="peq" style="font-size:12.5px;color:var(--tinta-3);margin-top:14px">Fonte: e-Obras, Ficha Resumida e Analítica do contrato.</p>`);

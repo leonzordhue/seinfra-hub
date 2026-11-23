@@ -53,10 +53,121 @@ export function alertas(c, hoje = new Date()) {
   return REGRAS.filter(r => { try { return r.f(c, hoje); } catch { return false; } });
 }
 
+// ── Previsão de conclusão (ideia 8, [Claude] 23/11/2026) ─────────────────────
+// O e-Obras não publica o cronograma físico-financeiro, então a curva PREVISTA é uma referência teórica:
+// curva S logística de desembolso entre a assinatura e o fim da execução (ou da vigência), forma usada em
+// previsão de fluxo de caixa de obras (Kenley & Wilson, "The S-curve: a logit model of construction cash flow",
+// Construction Management and Economics, 1986). k = inclinação, t0 = ponto de inflexão (fração do prazo).
+// k = 8 e t0 = 0,5 dão a curva simétrica típica: ~12% no 1º quarto do prazo, 50% na metade, ~88% no 3º quarto.
+export const CURVA_S = { k: 8, t0: 0.5 };
+export function curvaS(f, { k, t0 } = CURVA_S) {
+  const L = x => 1 / (1 + Math.exp(-k * (x - t0)));
+  const x = Math.max(0, Math.min(1, f));
+  return (L(x) - L(0)) / (L(1) - L(0)) * 100; // normalizada: 0% na assinatura, 100% no fim do prazo
+}
+// Ritmo recente: regressão linear por mínimos quadrados ordinários (% acumulado × tempo) nas últimas 6 medições.
+export function regressao(pts) {
+  const n = pts.length;
+  if (n < 2) return null;
+  const mx = pts.reduce((s, p) => s + p[0], 0) / n, my = pts.reduce((s, p) => s + p[1], 0) / n;
+  const sxx = pts.reduce((s, p) => s + (p[0] - mx) ** 2, 0);
+  if (!sxx) return null;
+  return pts.reduce((s, p) => s + (p[0] - mx) * (p[1] - my), 0) / sxx; // p.p. por dia
+}
+export const BASE_PRAZO = "Lei 14.133/2021, arts. 107 e 111 (prorrogação de prazo por termo aditivo, formalizada antes do término; no contrato por escopo a vigência se prorroga até a conclusão do objeto)";
+const BASE_PRAZO_8666 = "Lei 8.666/1993, art. 57, § 1º (contratos assinados na lei antiga; prorrogação justificada por escrito)";
+const iso = t => new Date(t).toISOString().slice(0, 10);
+
+export function previsao(c, hoje = new Date()) {
+  const h = +hoje, ini = c.ass ? +new Date(c.ass) : null;
+  const fimS = c.fim_exec || c.fim_vig, fim = fimS ? +new Date(fimS) : null;
+  const med = (c.med || []).filter(m => m[0]);
+  const real = med.map(m => [+new Date(m[0]), m[2], m[3] ?? null]);
+  const prazoOk = ini != null && fim != null && fim > ini;
+  const frac = t => (t - ini) / (fim - ini);
+  const p = {
+    ini: c.ass || null, fim: fimS || null, real, curva: [], previstoHoje: null, base: null, atual: null,
+    ritmo: null, n: 0, conclusao: null, atraso: null, alemExec: null, alemVig: null, aditivo: false, retomada: false,
+    situacao: "sem-dados", motivo: "",
+    baseLegal: c.ass && c.ass < "2024-01-01" ? `${BASE_PRAZO}; ${BASE_PRAZO_8666}` : BASE_PRAZO,
+  };
+  if (prazoOk) {
+    for (let i = 0; i <= 40; i++) { const t = ini + (fim - ini) * i / 40; p.curva.push([t, curvaS(i / 40)]); }
+    p.previstoHoje = curvaS(frac(h));
+  }
+  // físico manda na conclusão; sem físico nas medições, usa o financeiro acumulado
+  const fisPts = real.filter(r => r[2] != null);
+  p.base = c.fis != null && fisPts.length >= 2 ? "fis" : "fin";
+  const pts = (p.base === "fis" ? fisPts.map(r => [r[0], r[2]]) : real.filter(r => r[1] != null).map(r => [r[0], r[1]])).slice(-6);
+  p.atual = p.base === "fis" ? c.fis : (c.fin ?? pts.at(-1)?.[1] ?? null);
+  p.n = pts.length;
+  if (p.atual != null && p.atual >= 99.5) { p.situacao = "concluida"; p.motivo = "Execução concluída (100%)."; return p; }
+  if (grupoSit(c.sit) === "encerrado") { p.situacao = "encerrado"; p.motivo = `Contrato ${String(c.sit || "encerrado").toLowerCase()} no e-Obras.`; return p; }
+  if (pts.length < 2) { p.motivo = med.length ? "Só uma medição: sem ritmo para projetar." : "Sem medições no e-Obras."; }
+  else {
+    const b = regressao(pts.map(q => [q[0] / DIA, q[1]])); // x em dias
+    p.ritmo = b == null ? null : b * 30.44; // p.p. por mês
+    if (!(p.ritmo > 0.05)) { p.situacao = "parada"; p.motivo = "As últimas medições não mostram avanço."; }
+    else {
+      let t0 = pts.at(-1)[0];
+      // parada há mais de 90 dias (mesma régua da regra "sem-med"): projeta como se retomasse hoje no ritmo recente
+      if ((h - t0) / DIA > 90) { t0 = h; p.retomada = true; }
+      p.conclusao = iso(Math.max(h, t0 + (100 - p.atual) / b * DIA));
+      p.situacao = "projetada";
+    }
+  }
+  // atraso: projetado; sem projeção, o já decorrido além do prazo (obra não concluída) é o atraso mínimo
+  const ref = p.conclusao ? +new Date(p.conclusao) : (fim != null && h > fim ? h : null);
+  if (ref != null && fim != null) p.atraso = Math.round((ref - fim) / DIA);
+  if (ref != null && c.fim_exec) p.alemExec = Math.round((ref - +new Date(c.fim_exec)) / DIA);
+  if (ref != null && c.fim_vig) p.alemVig = Math.round((ref - +new Date(c.fim_vig)) / DIA);
+  p.aditivo = (p.alemExec ?? 0) > 0 || (p.alemVig ?? 0) > 0;
+  return p;
+}
+
+// ── Nota de risco do contrato, 0 a 100 (ideia 9, [Claude] 23/11/2026) ─────────
+// Soma ponderada de 5 componentes, cada um normalizado de 0 a 1. Pesos somam 100 e aparecem na página.
+export const RISCO_PESOS = [
+  { id: "alertas", rot: "Alertas de gestão", peso: 30, regra: "0,5 por alerta crítico + 0,25 por alerta (teto 1)", base: "Regras de alerta do Hub (Lei 14.133/2021, arts. 105 a 107, 125 e 145)" },
+  { id: "atraso", rot: "Atraso projetado", peso: 25, regra: "dias de atraso sobre o fim da execução ÷ 365 (teto 1)", base: "Previsão por regressão das últimas 6 medições; Lei 14.133/2021, arts. 107 e 111" },
+  { id: "sem_med", rot: "Dias sem medição", peso: 20, regra: "(dias desde a última medição − 30) ÷ 335 (teto 1); sem medição alguma conta 1 se já passou 90 dias da assinatura", base: "Critério DMOB (medição mensal; alerta aos 90 dias)" },
+  { id: "aditivo", rot: "Aditivos sobre o original", peso: 10, regra: "% aditivado ÷ 50% (25% vale 0,5)", base: "Lei 14.133/2021, art. 125 (limite de 25%; 50% em reforma)" },
+  { id: "saldo", rot: "Saldo × prazo restante", peso: 15, regra: "(fração do valor a medir − fração do prazo restante) ÷ 0,5 (0 a 1)", base: "Lei 14.133/2021, art. 115 (execução fiel, nos prazos pactuados)" },
+];
+export const FAIXAS_RISCO = [["baixo", 0, "ok"], ["médio", 25, ""], ["alto", 50, "alerta"], ["crítico", 75, "critico"]];
+export const faixaRisco = n => n == null ? null : FAIXAS_RISCO.filter(f => n >= f[1]).at(-1);
+
+export function risco(c, p = previsao(c), hoje = new Date()) {
+  if (grupoSit(c.sit) === "encerrado") return null; // contrato encerrado não entra na nota
+  const h = +hoje, cl = v => Math.max(0, Math.min(1, v || 0));
+  const al = c.alertas || alertas(c, hoje);
+  const diasSem = c.ult_med ? (h - +new Date(c.ult_med)) / DIA : (c.ass && (h - +new Date(c.ass)) / DIA > 90 ? 365 : 0);
+  const ini = c.ass ? +new Date(c.ass) : null, fimS = c.fim_exec || c.fim_vig, fim = fimS ? +new Date(fimS) : null;
+  const restante = ini != null && fim > ini ? cl((fim - h) / (fim - ini)) : null;
+  const v = {
+    alertas: cl(al.filter(a => a.nivel === "critico").length * 0.5 + al.filter(a => a.nivel !== "critico").length * 0.25),
+    atraso: cl((p.atraso ?? 0) / 365),
+    sem_med: cl((diasSem - 30) / 335),
+    aditivo: c.v_orig > 0 ? cl(c.v_adit / c.v_orig / 0.5) : 0,
+    saldo: restante == null || c.fin == null ? 0 : cl(((100 - c.fin) / 100 - restante) / 0.5),
+  };
+  const det = {
+    alertas: al.length ? al.map(a => a.txt).join("; ") : "nenhum alerta",
+    atraso: p.atraso == null ? "sem projeção" : p.atraso > 0 ? `${Math.round(p.atraso)} dias além do prazo` : "dentro do prazo",
+    sem_med: c.ult_med ? `${Math.round(diasSem)} dias` : "nenhuma medição",
+    aditivo: c.v_orig > 0 ? `${(c.v_adit / c.v_orig * 100).toFixed(1).replace(".", ",")}% do original` : "sem valor original",
+    saldo: restante == null || c.fin == null ? "sem prazo ou financeiro" : `${(100 - c.fin).toFixed(0)}% a medir, ${(restante * 100).toFixed(0)}% do prazo restante`,
+  };
+  const comp = RISCO_PESOS.map(r => ({ ...r, valor: v[r.id], pontos: v[r.id] * r.peso, detalhe: det[r.id] }));
+  const nota = Math.round(comp.reduce((s, x) => s + x.pontos, 0));
+  const f = faixaRisco(nota);
+  return { nota, faixa: f[0], nivel: f[2], comp };
+}
+
 export async function contratos() {
   const d = await carregar("eobras");
   const lista = Object.entries(d.ct).map(([id, c]) => ({ id, ...c, modal: modal(c), grupo: grupoSit(c.sit) }));
-  lista.forEach(c => { c.alertas = alertas(c); });
+  lista.forEach(c => { c.alertas = alertas(c); c.prev = previsao(c); c.risco = risco(c, c.prev); });
   return { meta: d._meta, lista };
 }
 
