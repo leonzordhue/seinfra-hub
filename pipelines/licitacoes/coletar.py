@@ -94,12 +94,16 @@ def coletar_pncp(desde, dias, anterior):
 def coletar_csc():
     rx = re.compile(r'<div class="lic-item">(.*?)(?=<div class="lic-item">|<nav|<aside|</section)', re.S)
     limpa = lambda s: re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", s))).strip()
-    itens, p = [], 1
+    itens, p, vistos = [], 1, set()
     while p <= 200:
         t = get(f"https://www.csc.am.gov.br/site/licitacao?p={p}", timeout=60).decode("utf-8", "replace")  # site declara UTF-8
         blocos = rx.findall(t)
-        if not blocos:
+        # o site devolve a última página de novo quando p passa do fim: parar quando nada for inédito
+        novos = [b for b in blocos if b not in vistos]
+        if not novos:
             break
+        vistos.update(novos)
+        blocos = novos
         for b in blocos:
             g = lambda r: (m := re.search(r, b, re.S)) and limpa(m.group(1))
             obj = g(r'class="lic-desc">(.*?)</p>') or ""
