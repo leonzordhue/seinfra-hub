@@ -368,7 +368,7 @@ h1 .escudo, h2 .escudo { font-size: .72em; }
 
 /* painel do dia */
 .painel { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr); gap: 20px; align-items: stretch; margin-bottom: 20px; }
-.painel .resumo { margin: 0; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; border-top: 3px solid var(--azul); }
+.painel .resumo { margin: 0; padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; }
 .resumo .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); }
 .resumo p { font-size: 17px; line-height: 1.65; }
 .resumo .acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
