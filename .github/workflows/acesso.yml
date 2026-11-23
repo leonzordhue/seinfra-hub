@@ -1,0 +1,60 @@
+# Acessibilidade rodoviária das sedes do AM (OSM + OSRM) -> data/acesso.json e data/acesso_isocronas.geojson, mensal. [Claude] 23/11/2026
+# O pesado (download da malha do Norte, docker OSRM) roda só aqui, nunca no PC.
+name: Acessibilidade rodoviária (mensal)
+
+on:
+  schedule:
+    - cron: "0 9 5 * *"   # dia 5 de cada mês, 05h Manaus (Geofabrik já publicou o extrato do dia)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dados
+  cancel-in-progress: false
+
+jobs:
+  calcular:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      IMG: ghcr.io/project-osrm/osrm-backend:v5.27.1
+      PY: pipelines/acesso/acesso.py
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq osmium-tool
+          pip install osmium==4.3.2 shapely==2.1.1
+      - run: python -I $PY --teste
+      - name: Malha OSM (Geofabrik, Norte) recortada no AM e vizinhos
+        run: |
+          mkdir -p w
+          curl -fsSL --retry 3 -o w/norte.osm.pbf https://download.geofabrik.de/south-america/brazil/norte-latest.osm.pbf
+          osmium extract -b -74.5,-11.5,-53.5,3 w/norte.osm.pbf -o w/am.osm.pbf --overwrite
+          osmium tags-filter w/am.osm.pbf w/highway w/route=ferry r/type=restriction nwr/amenity=hospital -o w/am_vias.osm.pbf --overwrite
+          rm w/norte.osm.pbf w/am.osm.pbf
+          python -I $PY preparar --pbf w/am_vias.osm.pbf --saida w/am.osm.pbf --trab w
+      - name: OSRM (perfil car + track)
+        run: |
+          docker pull -q $IMG
+          docker run --rm $IMG cat /opt/car.lua > w/car.lua
+          python -I $PY perfil w/car.lua w/car_am.lua
+          docker run --rm -v "$PWD/w:/data" -v "$PWD/w/car_am.lua:/opt/car_am.lua" $IMG osrm-extract -p /opt/car_am.lua --small-component-size 50 /data/am.osm.pbf
+          docker run --rm -v "$PWD/w:/data" $IMG osrm-partition /data/am.osrm
+          docker run --rm -v "$PWD/w:/data" $IMG osrm-customize /data/am.osrm
+          docker run -d --name osrm -p 5000:5000 -v "$PWD/w:/data" $IMG osrm-routed --algorithm mld --max-table-size 10000 /data/am.osrm
+          for i in $(seq 90); do curl -fs "http://localhost:5000/nearest/v1/driving/-60.02,-3.12" >/dev/null && exit 0; sleep 2; done
+          docker logs osrm; exit 1
+      - run: python -I $PY calcular --osrm http://localhost:5000 --trab w
+      - name: Publicar
+        run: |
+          git config user.name "dmob-bot"
+          git config user.email "dmob-bot@users.noreply.github.com"
+          git add data/acesso.json data/acesso_isocronas.geojson
+          git diff --cached --quiet && { echo "sem novidade"; exit 0; }
+          git commit -m "dados: acessibilidade rodoviária $(date -u +%d/%m/%Y)"
+          git pull --rebase && git push
