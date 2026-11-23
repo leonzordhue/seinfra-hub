@@ -1,0 +1,71 @@
+# Mapa do Hub v2: data/mapa_municipios.json, mapa_malha.geojson, mapa_trechos.json e data/mapa.pmtiles. [Claude] 23/11/2026
+# Semanal (seg 10h Manaus) e manual geram tudo, inclusive o .pmtiles (tippecanoe compilado aqui, nunca no PC).
+# Push que muda eobras/sinistros/icm só refaz os JSON (rápido). Push feito por outro robô com GITHUB_TOKEN não dispara;
+# esses casos são pegos na rodada semanal.
+name: Mapa (semanal)
+
+on:
+  schedule:
+    - cron: "0 14 * * 1"   # segunda 10h00 Manaus
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - data/eobras.json
+      - data/sinistros_analise.json
+      - data/icm.json
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dados
+  cancel-in-progress: false
+
+env:
+  TIPPECANOE: "2.79.0"
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -I pipelines/mapa/gerar.py --teste
+
+      - name: tippecanoe (cache)
+        if: github.event_name != 'push'
+        id: cache-tip
+        uses: actions/cache@v4
+        with:
+          path: ~/tippecanoe-bin
+          key: tippecanoe-${{ env.TIPPECANOE }}-${{ runner.os }}
+      - name: Compilar tippecanoe (felt/tippecanoe)
+        if: github.event_name != 'push' && steps.cache-tip.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq build-essential libsqlite3-dev zlib1g-dev
+          git clone --depth 1 --branch "$TIPPECANOE" https://github.com/felt/tippecanoe /tmp/tippecanoe
+          make -C /tmp/tippecanoe -j"$(nproc)"
+          mkdir -p ~/tippecanoe-bin && cp /tmp/tippecanoe/tippecanoe ~/tippecanoe-bin/
+      - name: Gerar (JSON + pmtiles)
+        if: github.event_name != 'push'
+        run: |
+          export PATH="$HOME/tippecanoe-bin:$PATH"
+          tippecanoe --version
+          python -I pipelines/mapa/gerar.py --tiles
+      - name: Gerar (só JSON)
+        if: github.event_name == 'push'
+        run: python -I pipelines/mapa/gerar.py
+
+      - name: Publicar
+        run: |
+          git config user.name "dmob-bot"
+          git config user.email "dmob-bot@users.noreply.github.com"
+          git add data/mapa_municipios.json data/mapa_malha.geojson data/mapa_trechos.json
+          [ -f data/mapa.pmtiles ] && git add data/mapa.pmtiles
+          git diff --cached --quiet && { echo "sem novidade"; exit 0; }
+          git commit -m "dados: mapa $(date -u +%d/%m/%Y)"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 10; done; exit 1
