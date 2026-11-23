@@ -24,8 +24,9 @@ const ROTAS = {
   briefings: () => import("./mod/briefings.js"),
   consulta: () => import("./mod/consulta.js"),
   mapa: () => import("./mod/mapa.js"),
+  "sinistros-oficiais": () => import("./mod/sinistros_oficiais.js"),
 };
-const TITULOS = { inicio: "Início", obras: "Obras e contratos", sinistros: "Sinistros", licitacoes: "Licitações", briefings: "Briefings", consulta: "Consulta livre", mapa: "Mapa do Amazonas" };
+const TITULOS = { inicio: "Início", obras: "Obras e contratos", sinistros: "Sinistros", licitacoes: "Licitações", briefings: "Briefings", consulta: "Consulta livre", mapa: "Mapa do Amazonas", "sinistros-oficiais": "Sinistros: bases oficiais" };
 
 // Módulos de mapa e cadastro (Rodovias, Ramais, Viário...) rodam do index.html raiz em modo embutido, dentro desta casca.
 // Um só iframe fica carregado: trocar de módulo chama loadModule() lá dentro, sem recarregar os dados.

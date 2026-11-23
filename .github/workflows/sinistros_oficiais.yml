@@ -1,0 +1,35 @@
+# Sinistros em bases oficiais (RENAEST/SENATRAN + PRF) -> data/sinistros_oficiais.json, todo mês. [Claude] 23/11/2026
+# O ZIP do RENAEST tem ~540 MB (base nacional acumulada): baixa só aqui no Actions, nunca no PC.
+name: Sinistros oficiais (mensal)
+
+on:
+  schedule:
+    - cron: "0 12 20 * *"   # dia 20, 08h Manaus (a SENATRAN publica o mês por volta do dia 12)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dados
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -I pipelines/sinistros_oficiais/coletar.py --teste
+      - run: python -I pipelines/sinistros_oficiais/coletar.py
+      - name: Publicar
+        run: |
+          git config user.name "dmob-bot"
+          git config user.email "dmob-bot@users.noreply.github.com"
+          git add data/sinistros_oficiais.json
+          git diff --cached --quiet && { echo "sem novidade"; exit 0; }
+          git commit -m "dados: sinistros oficiais $(date -u +%d/%m/%Y)"
+          git pull --rebase && git push
