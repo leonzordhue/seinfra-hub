@@ -6,6 +6,56 @@ import { esc, num, pct, data, brlCurto, semAcento, plural } from "../fmt.js";
 import { $, chip, chipSit, opcoes, grafico, serie, css } from "../ui.js";
 
 const estado = { tipo: "municipio", alvo: "" };
+// v3: briefing como documento oficial A4 (cabeçalho institucional, seções numeradas, tabelas limpas). [Claude] 23/11/2026
+const ESTILO = `<style>
+  .doc { counter-reset: dsec; max-width: 920px; }
+  .doc .doc-cab { align-items: center; border-bottom: 3px solid var(--azul); padding-bottom: 12px; margin-bottom: 0; }
+  .doc-org { display: grid; gap: 1px; font-size: 12px; line-height: 1.4; color: var(--tinta-3); }
+  .doc-org b { font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta); }
+  .doc-tit { border-top: 2px solid var(--ouro); margin-top: 2px; padding: 18px 0 2px; }
+  .doc-tipo { display: block; font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin-bottom: 4px; }
+  .doc-tit h1 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); letter-spacing: -.015em; }
+  .doc-tit p { margin: 4px 0 0; color: var(--tinta-3); font-size: 14px; }
+  .doc-meta { display: flex; flex-wrap: wrap; margin: 14px 0 0; border: 1px solid var(--borda); border-radius: var(--raio); }
+  .doc-meta div { padding: 6px 12px; border-left: 1px solid var(--borda); }
+  .doc-meta div:first-child { border-left: 0; }
+  .doc-meta dt { font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-3); }
+  .doc-meta dd { margin: 0; font-size: 13px; font-weight: 500; color: var(--tinta); }
+  .doc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
+  .doc h2 { counter-increment: dsec; display: flex; gap: 10px; align-items: center; font-size: 1.02rem; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--borda-2); }
+  .doc h2::before { content: counter(dsec); display: inline-grid; place-items: center; min-width: 22px; height: 22px; border-radius: 3px; background: var(--azul); color: var(--sup); font: 600 12px var(--f-corpo); }
+  .doc p { max-width: 82ch; line-height: 1.6; }
+  .doc .sint p { color: var(--tinta); }
+  .doc .t { font-size: 13.5px; }
+  .doc .t tr.tot td { border-top: 1.5px solid var(--borda-2); font-weight: 600; color: var(--tinta); }
+  .doc .t .obj { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+  .kv { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 0 32px; margin: 2px 0 10px; }
+  .kv div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--borda); font-size: 14px; }
+  .kv dt { color: var(--tinta-3); }
+  .kv dd { margin: 0; color: var(--tinta); text-align: right; font-variant-numeric: tabular-nums; }
+  .risco-cab { display: flex; align-items: center; gap: 12px; margin: 4px 0 10px; }
+  .risco-cab .nota-risco { width: 48px; height: 48px; font-size: 18px; }
+  .risco-cab b { display: block; color: var(--tinta); font-weight: 600; }
+  .risco-cab span { font-size: 13px; color: var(--tinta-3); }
+  .doc-rod { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; margin-top: 30px; padding-top: 10px; border-top: 2px solid var(--azul); font-size: 12px; color: var(--tinta-3); }
+  .doc-rod p { margin: 0; max-width: 90ch; }
+  /* a marca é azul-escura: no tema escuro vai sobre plaqueta branca */
+  :root[data-theme="dark"] .doc .doc-cab img { background: #fff; padding: 4px 8px; border-radius: 4px; box-sizing: content-box; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .doc .doc-cab img { background: #fff; padding: 4px 8px; border-radius: 4px; box-sizing: content-box; } }
+  @media (max-width: 640px) { .doc .doc-cab img { height: 30px; } .doc .t .obj { min-width: 200px; } .doc-meta div { flex: 1 1 50%; } }
+  @media print {
+    /* app.css v3 redefine .casca como grid depois do bloco print: sem isto o documento sai na coluna de 256 px */
+    .casca { display: block !important; }
+    .doc { font-size: 10pt; }
+    .doc .tab-rolo { overflow: visible; }
+    .doc h2 { break-after: avoid; margin-top: 18px; }
+    .doc .t { font-size: 8.5pt; } .doc .t th { font-size: 7pt; padding: 5px 6px; } .doc .t td { padding: 5px 6px; }
+    .doc .t tr, .kv div, .doc .graf-doc, .and { break-inside: avoid; }
+    .doc .t .obj { -webkit-line-clamp: 2; }
+    .doc h2::before, .nota-risco, .chip, .doc-meta, .doc-cab { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>`;
+const T = h => `<div class="tab-rolo">${h}</div>`;
 const rxRod = cod => new RegExp(`\\bAM[\\s-]?0*${parseInt(cod.slice(3), 10)}\\b`, "i");
 
 export async function render(el, params) {
@@ -22,7 +72,7 @@ export async function render(el, params) {
   const porId = new Map(lista.map(c => [c.id, c]));
   const TIPOS = [["municipio", "Município"], ["rodovia", "Rodovia"], ["contrato", "Contrato"]];
 
-  el.innerHTML = `
+  el.innerHTML = `${ESTILO}
     <div class="cab nao-imprime"><div><h1>Briefings</h1>
       <p>Resumo de uma página para reunião, visita ou resposta a parlamentar: de um município, de uma rodovia ou de um contrato. Use "Imprimir / PDF" para salvar.</p></div></div>
     <div class="filtros nao-imprime">
@@ -51,7 +101,7 @@ export async function render(el, params) {
     if (estado.tipo === "contrato") {
       const c = porId.get(estado.alvo);
       if (!c) { doc.innerHTML = `<p class="vazio">Contrato não encontrado no e-Obras.</p>`; return; }
-      doc.innerHTML = docContrato(c, ctx); curva(c, doc); grafPrev(c, doc); return;
+      doc.innerHTML = docContrato(c, ctx); curvaContrato(doc.querySelector("#gCurvaBr"), c); return;
     }
     doc.innerHTML = estado.tipo === "municipio" ? docMunicipio(estado.alvo, ctx) : docRodovia(estado.alvo, ctx);
   };
@@ -78,24 +128,28 @@ export async function render(el, params) {
   opts(); pinta();
 }
 
-const cab = (titulo, sub) => `<div class="doc-cab"><div><h1>${esc(titulo)}</h1><div class="nota">${esc(sub)}</div></div>
-  <img src="../assets/marca_seinfra.webp" alt="Secretaria de Infraestrutura" width="182" height="40"></div>`;
-const rodape = (ctx, extra = "") => `<p class="nota" style="margin-top:22px;border-top:1px solid var(--borda);padding-top:8px">
-  DMOB/SEINFRA-AM · gerado em ${new Date().toLocaleDateString("pt-BR")}. Fontes: e-Obras (posição ${esc(ctx.eMeta.posicao)})${ctx.an ? `; sinistros por notícias (${esc(ctx.an._meta.gerado)})` : ""}${ctx.lic ? `; PNCP (${data(ctx.lic._meta.gerado)})` : ""}${extra}.
-  Valores: valor atual = original + aditivos; saldo = valor atual − medido.</p>`;
+// cabeçalho institucional: órgão, tipo do briefing, título, subtítulo e carimbo (emissão, base, natureza)
+const cab = (tipo, titulo, sub, ctx) => `<header class="doc-cab"><div class="doc-org"><b>Governo do Estado do Amazonas</b>
+    <span>Secretaria de Estado de Infraestrutura (SEINFRA)</span><span>Departamento de Mobilidade (DMOB)</span></div>
+    <img src="../assets/marca_seinfra.webp" alt="Secretaria de Infraestrutura" width="182" height="40"></header>
+  <div class="doc-tit"><span class="doc-tipo">Briefing · ${esc(tipo)}</span><h1>${esc(titulo)}</h1>${sub ? `<p>${esc(sub)}</p>` : ""}</div>
+  <dl class="doc-meta"><div><dt>Emissão</dt><dd>${new Date().toLocaleDateString("pt-BR")}</dd></div>
+    <div><dt>Base</dt><dd>e-Obras, posição ${esc(ctx.eMeta.posicao)}</dd></div><div><dt>Natureza</dt><dd>Informativo, gerado dos dados do Hub</dd></div></dl>`;
+const rodape = (ctx, extra = "") => `<footer class="doc-rod"><p>Fontes: e-Obras (posição ${esc(ctx.eMeta.posicao)})${ctx.an ? `; sinistros por notícias (${esc(ctx.an._meta.gerado)})` : ""}${ctx.lic ? `; PNCP (${data(ctx.lic._meta.gerado)})` : ""}${extra}.
+  Valores: valor atual = original + aditivos; saldo = valor atual − medido.</p><p>DMOB/SEINFRA-AM · ${new Date().toLocaleDateString("pt-BR")}</p></footer>`;
 
 // modo "andamento": valor, físico, financeiro, saldo e vigência; modo "encerrada": assinatura, término, valor final e medido
 function tabelaObras(cs, modo = "andamento") {
   if (!cs.length) return `<p>Nenhum contrato.</p>`;
-  const ini = c => `<td><b>${esc(c.id)}</b><div class="peq">${esc(c.emp)}</div></td><td class="obj">${esc((c.obj || "").slice(0, 160))}<div class="peq">${esc(c.modal || c.cat || "")}</div></td>`;
+  const ini = c => `<td><b>${esc(c.id)}</b><div class="peq">${esc(c.emp)}</div></td><td><div class="obj" title="${esc(c.obj)}">${esc(c.obj || "")}</div><div class="peq">${esc(c.modal || c.cat || "")}</div></td>`;
   if (modo === "encerrada") {
-    return `<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th>Assinatura</th><th>Término</th><th class="n">Valor final</th><th class="n">Medido</th><th class="n">Físico</th></tr></thead><tbody>
+    return T(`<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th>Assinatura</th><th>Término</th><th class="n">Valor final</th><th class="n">Medido</th><th class="n">Físico</th></tr></thead><tbody>
     ${[...cs].sort((a, b) => String(b.ass).localeCompare(String(a.ass))).map(c => `<tr>${ini(c)}<td>${chipSit(c.sit)}</td><td>${data(c.ass)}</td><td>${data(c.fim_exec || c.ult_med || c.desde)}</td>
-      <td class="n">${brlCurto(c.v_atual)}</td><td class="n">${brlCurto(c.medido)}<div class="peq">${pct(c.fin)}</div></td><td class="n">${pct(c.fis)}</td></tr>`).join("")}</tbody></table>`;
+      <td class="n">${brlCurto(c.v_atual)}</td><td class="n">${brlCurto(c.medido)}<div class="peq">${pct(c.fin)}</div></td><td class="n">${pct(c.fis)}</td></tr>`).join("")}</tbody></table>`);
   }
-  return `<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th class="n">Valor atual</th><th class="n">Físico</th><th class="n">Financeiro</th><th class="n">Saldo</th><th>Vigência até</th></tr></thead><tbody>
+  return T(`<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th class="n">Valor atual</th><th class="n">Físico</th><th class="n">Financeiro</th><th class="n">Saldo</th><th>Vigência até</th></tr></thead><tbody>
     ${[...cs].sort((a, b) => b.v_atual - a.v_atual).map(c => `<tr>${ini(c)}
-    <td>${chipSit(c.sit)}${c.alertas.map(a => `<div class="peq">${esc(a.txt)}</div>`).join("")}</td><td class="n">${brlCurto(c.v_atual)}</td><td class="n">${pct(c.fis)}</td><td class="n">${pct(c.fin)}</td><td class="n">${brlCurto(c.saldo)}</td><td>${data(c.fim_vig)}</td></tr>`).join("")}</tbody></table>`;
+    <td>${chipSit(c.sit)}${c.alertas.length ? `<div class="peq" title="${esc(c.alertas.map(a => a.txt).join("; "))}">${esc(c.alertas[0].txt)}${c.alertas.length > 1 ? ` +${c.alertas.length - 1}` : ""}</div>` : ""}</td><td class="n">${brlCurto(c.v_atual)}</td><td class="n">${pct(c.fis)}</td><td class="n">${pct(c.fin)}</td><td class="n">${brlCurto(c.saldo)}</td><td>${data(c.fim_vig)}</td></tr>`).join("")}</tbody></table>`);
 }
 const soma = (cs, k) => cs.reduce((s, c) => s + (c[k] || 0), 0);
 
@@ -126,16 +180,16 @@ function docMunicipio(mun, ctx) {
     ocs.length ? `${plural(ocs.length, "acidente em rodovia estadual foi noticiado", "acidentes em rodovias estaduais foram noticiados")} no município desde 2019 (${num(ocs.filter(o => o.fatal).length)} com morte).` : "",
   ].filter(Boolean);
   const nome = semAcento(mun);
-  return `<article class="doc">${cab(`Briefing · ${mun}`, "Departamento de Mobilidade (DMOB) · SEINFRA-AM")}
-    <h2>Síntese</h2>${sintese.map(s => `<p>${esc(s)}</p>`).join("")}
-    ${porCat.length ? `<h2>Investimento por tipo de obra</h2><table class="t"><thead><tr><th>Tipo</th><th class="n">Contratos</th><th class="n">Valor contratado</th><th class="n">Medido</th></tr></thead><tbody>
+  return `<article class="doc">${cab("Município", mun, "Obras, contratos, rodovias e segurança viária da SEINFRA no município", ctx)}
+    <h2>Síntese</h2><div class="sint">${sintese.map(s => `<p>${esc(s)}</p>`).join("")}</div>
+    ${porCat.length ? `<h2>Investimento por tipo de obra</h2>${T(`<table class="t"><thead><tr><th>Tipo</th><th class="n">Contratos</th><th class="n">Valor contratado</th><th class="n">Medido</th></tr></thead><tbody>
       ${porCat.map(x => `<tr><td>${esc(x.k)}</td><td class="n">${num(x.n)}</td><td class="n">${brlCurto(x.valor)}</td><td class="n">${brlCurto(x.medido)}</td></tr>`).join("")}
-      <tr><td><b>Total</b></td><td class="n"><b>${num(cs.length)}</b></td><td class="n"><b>${brlCurto(soma(cs, "v_atual"))}</b></td><td class="n"><b>${brlCurto(soma(cs, "medido"))}</b></td></tr></tbody></table>` : ""}
+      <tr class="tot"><td>Total</td><td class="n">${num(cs.length)}</td><td class="n">${brlCurto(soma(cs, "v_atual"))}</td><td class="n">${brlCurto(soma(cs, "medido"))}</td></tr></tbody></table>`)}` : ""}
     <h2>Em andamento (${num(at.length)})</h2>${tabelaObras(at)}
     ${atn.length ? `<h2>Paralisadas, expiradas ou em tomada de contas (${num(atn.length)})</h2>${tabelaObras(atn)}` : ""}
     ${conc.length ? `<h2>Concluídas e encerradas (${num(conc.length)})</h2>${tabelaObras(conc, "encerrada")}` : ""}
-    ${rodsMun.length ? `<h2>Rodovias estaduais no município</h2><table class="t"><thead><tr><th>Rodovia</th><th>Trecho</th><th class="n">Extensão</th><th>Condição (IRI)</th><th class="n">Buracos</th></tr></thead><tbody>
-      ${rodsMun.map(r => `<tr><td><b>${esc(r.codigo)}</b></td><td>${esc(r.inicio)} → ${esc(r.fim)}</td><td class="n">${num(r.extensao_total_km, 1)} km</td><td>${esc(r.nivel_geral)} (${num(r.iri_medio, 2)})</td><td class="n">${num(r.n_buracos)}</td></tr>`).join("")}</tbody></table>` : ""}
+    ${rodsMun.length ? `<h2>Rodovias estaduais no município</h2>${T(`<table class="t"><thead><tr><th>Rodovia</th><th>Trecho</th><th class="n">Extensão</th><th>Condição (IRI)</th><th class="n">Buracos</th></tr></thead><tbody>
+      ${rodsMun.map(r => `<tr><td><b>${esc(r.codigo)}</b></td><td>${esc(r.inicio)} → ${esc(r.fim)}</td><td class="n">${num(r.extensao_total_km, 1)} km</td><td>${esc(r.nivel_geral)} (${num(r.iri_medio, 2)})</td><td class="n">${num(r.n_buracos)}</td></tr>`).join("")}</tbody></table>`)}` : ""}
     ${ocs.length ? `<h2>Sinistros noticiados (desde 2019)</h2><ul class="lista">${ocs.sort((a, b) => b.data.localeCompare(a.data)).slice(0, 6).map(o => `<li><div><div class="q">${data(o.data)} · ${esc(o.rodovia)} · ${esc(o.tipo)}${o.fatal ? " · com morte" : ""}</div></div></li>`).join("")}</ul>` : ""}
     ${blocoLic(ctx.lic, o => semAcento(o).includes(nome))}
     ${rodape(ctx, rodsMun.length ? "; condição: levantamento RoadLab (data/icm.json)" : "")}</article>`;
@@ -155,9 +209,9 @@ function docRodovia(cod, ctx) {
     `${plural(at.length, "contrato ativo ou pendente cita", "contratos ativos ou pendentes citam")} a rodovia no objeto (${brlCurto(soma(at, "v_atual"))}; saldo ${brlCurto(soma(at, "saldo"))}).`,
     s ? `Sinistros: ${s.leitura}` : "Sem acidente noticiado nesta rodovia desde 2019.",
   ];
-  return `<article class="doc">${cab(`Briefing · ${cod}`, "Departamento de Mobilidade (DMOB) · SEINFRA-AM")}
-    <h2>Síntese</h2>${sintese.map(x => `<p>${esc(x)}</p>`).join("")}
-    ${s ? `<p>${chip(`Prioridade ${num(s.prioridade, 0)} · ${s.faixa}`, s.faixa === "Alta" ? "critico" : s.faixa === "Média" ? "alerta" : "")} ${chip(`${num(s.fatais_100km_ano, 2)} fatais por 100 km/ano`)} ${chip(`tendência ${num(s.tendencia, 2)}×`)}</p>` : ""}
+  return `<article class="doc">${cab("Rodovia", cod, nomes.length ? nomes.join(" · ") : "Rodovia estadual do Amazonas", ctx)}
+    <h2>Síntese</h2><div class="sint">${sintese.map(x => `<p>${esc(x)}</p>`).join("")}</div>
+    ${s ? `<p class="doc-chips">${chip(`Prioridade ${num(s.prioridade, 0)} · ${s.faixa}`, s.faixa === "Alta" ? "critico" : s.faixa === "Média" ? "alerta" : "")} ${chip(`${num(s.fatais_100km_ano, 2)} fatais por 100 km/ano`)} ${chip(`tendência ${num(s.tendencia, 2)}×`)}</p>` : ""}
     <h2>Obras e contratos na rodovia (${num(at.length)})</h2>${tabelaObras(at)}
     ${soLocal.length ? `<h2>Obras com acesso pela rodovia (${num(soLocal.length)})</h2><p class="nota">Ramais, estradas e comunidades que citam a ${esc(cod)} só como localização; não entram nos números da rodovia.</p>${tabelaObras(soLocal)}` : ""}
     ${s?.trechos_criticos?.length ? `<h2>Trechos críticos</h2><p>${s.trechos_criticos.map(t => `km ${t.km_ini}–${t.km_fim}: ${t.ocorrencias} ocorrências (${t.fatais} com morte)`).join("; ")}.</p>` : ""}
@@ -202,42 +256,89 @@ function docContrato(c, ctx) {
       ? `No ritmo das últimas medições (${num(ritmo, 1)} p.p. do valor por mês), o saldo levaria cerca de ${num((100 - c.fin) / ritmo, 0)} meses para ser medido.`
       : "As últimas medições não mostram avanço financeiro.") : "",
   ].filter(Boolean);
-  return `<article class="doc">${cab(`Briefing · ${c.id}`, `${c.modal || c.cat} · ${c.mun}`)}
-    <p>${chipSit(c.sit)} ${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</p>
-    <h2>Síntese</h2>${sintese.map(x => `<p>${esc(x)}</p>`).join("")}
+  const kv = pares => `<dl class="kv">${pares.filter(Boolean).map(([r, v]) => `<div><dt>${r}</dt><dd>${v}</dd></div>`).join("")}</dl>`;
+  // a curva de medição só ganha seção própria quando não há previsão (a previsão já mostra o realizado)
+  const temPrev = c.prev && c.prev.situacao !== "encerrado" && c.prev.curva.length;
+  return `<article class="doc">${cab("Contrato", c.id, `${c.modal || c.cat} · ${c.mun} · ${c.emp}`, ctx)}
+    <div class="doc-chips">${chipSit(c.sit)} ${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</div>
+    <h2>Síntese</h2><div class="sint">${sintese.map(x => `<p>${esc(x)}</p>`).join("")}</div>
     <h2>Execução</h2>
-    <table class="t"><tbody>
-      <tr><td>Assinatura</td><td>${data(c.ass)}</td><td>Vigência até</td><td>${data(c.fim_vig)}</td></tr>
-      <tr><td>Valor original</td><td class="n">${brlCurto(c.v_orig)}</td><td>Valor atual</td><td class="n"><b>${brlCurto(c.v_atual)}</b></td></tr>
-      <tr><td>Medido</td><td class="n">${brlCurto(c.medido)} (${pct(c.fin)})</td><td>Saldo</td><td class="n">${brlCurto(c.saldo)}</td></tr>
-      <tr><td>Físico</td><td class="n">${pct(c.fis)}</td><td>Medições</td><td class="n">${num(c.n_med)}</td></tr>
-    </tbody></table>
+    ${kv([["Assinatura", data(c.ass)], ["Vigência até", data(c.fim_vig)], c.fim_exec && ["Execução até", data(c.fim_exec)],
+      ["Valor original", brlCurto(c.v_orig)], ["Aditivos", `${brlCurto(c.v_adit)} (${num(c.n_adit)})`], ["Valor atual", `<b>${brlCurto(c.v_atual)}</b>`],
+      ["Medido", `${brlCurto(c.medido)} (${pct(c.fin)})`], ["Saldo", brlCurto(c.saldo)], ["Físico", pct(c.fis)], ["Medições", num(c.n_med)]])}
     <h2>Andamento físico</h2>
     <div class="and">${barraAnd("Físico", c.fis, serie(2))}${barraAnd("Financeiro", c.fin, serie(1))}${barraAnd("Prazo decorrido", prazo, "var(--tinta-3)")}</div>
     <p>${esc(leituraFis)}</p>
     <p class="nota">Prazo: da assinatura (${data(c.ass)}) até ${c.fim_exec ? "o fim da execução" : "o fim da vigência"} (${data(fimPrazo)}).</p>
-    ${(c.med || []).length > 1 ? `<h2>Curva de medição</h2><div class="legenda"><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${c.med.some(m => m[3] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}</div><div class="graf graf-doc"><canvas id="gCurvaBr" aria-label="Curva de medição"></canvas></div>` : ""}
-    ${blocoPrevisao(c)}
+    ${!temPrev && (c.med || []).length > 1 ? `<h2>Curva de medição</h2>${legendaCurva(c)}<div class="graf graf-doc"><canvas id="gCurvaBr" aria-label="Curva de medição acumulada"></canvas></div>` : ""}
+    ${blocoPrevisao(c, kv)}
     ${blocoRisco(c)}
-    ${meds.length ? `<h2>Últimas medições</h2><table class="t"><thead><tr><th>Data</th><th class="n">Valor liberado</th><th class="n">% acumulado</th><th class="n">% físico</th></tr></thead><tbody>
-      ${meds.map(m => `<tr><td>${data(m[0])}</td><td class="n">${brlCurto(m[1])}</td><td class="n">${pct(m[2])}</td><td class="n">${pct(m[3])}</td></tr>`).join("")}</tbody></table>` : ""}
+    ${meds.length ? `<h2>Últimas medições</h2>${T(`<table class="t"><thead><tr><th>Data</th><th class="n">Valor liberado</th><th class="n">% acumulado</th><th class="n">% físico</th></tr></thead><tbody>
+      ${meds.map(m => `<tr><td>${data(m[0])}</td><td class="n">${brlCurto(m[1])}</td><td class="n">${pct(m[2])}</td><td class="n">${pct(m[3])}</td></tr>`).join("")}</tbody></table>`)}` : ""}
     ${c.alertas.length ? `<h2>Pontos de atenção</h2><ul class="lista">${c.alertas.map(a => `<li>${chip(a.nivel === "critico" ? "crítico" : "atenção", a.nivel)}<div><div class="q">${esc(a.txt)}</div><div class="d">${esc(a.base)}</div></div></li>`).join("")}</ul>` : ""}
     ${rodape({ ...ctx, an: null, lic: null }, "; ficha do contrato: Ficha Resumida e Analítica")}</article>`;
 }
 
-function curva(c, doc) {
-  const cv = doc.querySelector("#gCurvaBr");
+// ── curva do contrato no tempo (briefing e ficha de obras.js) ── [Claude] 23/11/2026
+// Realizado: % financeiro acumulado e % físico do e-Obras. Prevista: curva S logística de referência (dados.js previsao(),
+// Kenley e Wilson, 1986), tracejada. Projeção: regressão das últimas 6 medições, pontilhada. Linha vertical = hoje.
+const MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const mesAno = v => { const d = new Date(v); return `${MES[d.getMonth()]}/${String(d.getFullYear()).slice(2)}`; };
+export function legendaCurva(c) {
+  const p = c.prev, temFis = (c.med || []).some(m => m[3] != null), prev = p && p.situacao !== "encerrado" && p.curva.length;
+  const ln = (cor, rot, tipo = "solid") => `<span><i style="width:18px;height:0;border-radius:0;background:none;border-top:2px ${tipo} ${cor};vertical-align:middle"></i>${rot}</span>`;
+  return `<div class="legenda">${ln(serie(1), "Financeiro acumulado")}${temFis ? ln(serie(2), "Físico") : ""}${prev ? ln(css("--tinta-3"), "Prevista (curva S de referência)", "dashed") : ""}${prev && p.conclusao ? ln(serie(p.base === "fis" ? 2 : 1), "Projeção no ritmo recente", "dotted") : ""}</div>`;
+}
+const HOJE = {
+  id: "hoje",
+  afterDatasetsDraw(ch) {
+    const a = ch.chartArea, px = ch.scales.x.getPixelForValue(Date.now());
+    if (!(px >= a.left && px <= a.right)) return;
+    const ctx = ch.ctx, cor = css("--tinta-2"); // neutro: ouro já é a cor do físico
+    ctx.save();
+    ctx.fillStyle = cor; ctx.globalAlpha = .07; ctx.fillRect(px - 4, a.top, 8, a.bottom - a.top);
+    ctx.globalAlpha = .7; ctx.strokeStyle = cor; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px, a.top); ctx.lineTo(px, a.bottom); ctx.stroke();
+    ctx.font = `600 11px ${css("--f-corpo") || "Outfit"}`; ctx.textBaseline = "top"; ctx.globalAlpha = 1; ctx.fillStyle = cor;
+    const dir = px > a.right - 48; ctx.textAlign = dir ? "right" : "left";
+    ctx.fillText("hoje", px + (dir ? -6 : 6), a.top + 2);
+    ctx.restore();
+  },
+};
+export function curvaContrato(cv, c) {
   if (!cv) return;
-  const ds = [{ label: "% financeiro", data: c.med.map(m => m[2]), borderColor: serie(1), backgroundColor: serie(1), borderWidth: 2, pointRadius: 2.5, tension: 0 }];
-  if (c.med.some(m => m[3] != null)) ds.push({ label: "% físico", data: c.med.map(m => m[3]), borderColor: serie(2), backgroundColor: serie(2), borderWidth: 2, pointRadius: 2.5, spanGaps: true, tension: 0 });
-  grafico(cv, { type: "line", data: { labels: c.med.map(m => data(m[0])), datasets: ds },
-    options: { animation: false, scales: { y: { max: 100, ticks: { callback: v => v + "%" } } }, plugins: { tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${pct(x.raw)}` } } } } });
+  const p = c.prev && c.prev.situacao !== "encerrado" ? c.prev : null;
+  const real = (c.med || []).filter(m => m[0]).map(m => [+new Date(m[0]), m[2], m[3] ?? null]);
+  const fin = real.filter(r => r[1] != null).map(r => ({ x: r[0], y: r[1] })), fis = real.filter(r => r[2] != null).map(r => ({ x: r[0], y: r[2] }));
+  const linha = (label, pts, cor, extra = {}) => ({ label, data: pts, borderColor: cor, backgroundColor: cor, borderWidth: 2, tension: 0,
+    pointRadius: pts.length <= 12 ? 2.5 : 0, ...extra });
+  const ds = [linha("Financeiro acumulado", fin, serie(1))];
+  if (fis.length) ds.push(linha("Físico", fis, serie(2)));
+  let x0 = real[0]?.[0] ?? Date.now(), x1 = real.at(-1)?.[0] ?? Date.now();
+  if (p?.curva.length) {
+    const prev = p.curva.map(([x, y]) => ({ x, y }));
+    x0 = Math.min(x0, prev[0].x);
+    x1 = Math.max(x1, prev.at(-1).x, p.conclusao ? +new Date(p.conclusao) : 0, Date.now());
+    if (x1 > prev.at(-1).x) prev.push({ x: x1, y: 100 });
+    ds.unshift(linha("Prevista (curva S)", prev, css("--tinta-3"), { borderDash: [6, 4], borderWidth: 1.5, pointRadius: 0 }));
+  }
+  if (p?.conclusao) {
+    const ult = (p.base === "fis" ? fis : fin).at(-1);
+    if (ult) ds.push(linha("Projeção", [{ x: p.retomada ? Date.now() : ult.x, y: p.atual }, { x: +new Date(p.conclusao), y: 100 }],
+      serie(p.base === "fis" ? 2 : 1), { borderDash: [2, 3], borderWidth: 1.5, pointRadius: [0, 3] }));
+  }
+  if (c.grupo !== "encerrado") x1 = Math.max(x1, Date.now());
+  return grafico(cv, { type: "line", data: { datasets: ds }, plugins: [HOJE],
+    options: { animation: false, parsing: false, interaction: { mode: "nearest", intersect: false, axis: "x" },
+      scales: { x: { type: "linear", min: x0, max: x1, grid: { display: false }, ticks: { callback: mesAno, maxTicksLimit: 6 } },
+        y: { min: 0, max: 100, ticks: { stepSize: 25, callback: v => v + "%" } } },
+      plugins: { tooltip: { callbacks: { title: xs => data(new Date(xs[0].raw.x).toISOString().slice(0, 10)), label: x => ` ${x.dataset.label}: ${pct(x.raw.y)}` } } } } });
 }
 
 // ── previsão de conclusão e nota de risco (ideias 8 e 9) [Claude] 23/11/2026 ──
 // Cálculos em dados.js: previsao() (curva S logística de referência + regressão das últimas 6 medições) e risco().
 const NOME_BASE = { fis: "físico", fin: "financeiro acumulado" };
-function blocoPrevisao(c) {
+function blocoPrevisao(c, kv) {
   const p = c.prev;
   if (!p || p.situacao === "encerrado") return "";
   const b = NOME_BASE[p.base];
@@ -246,17 +347,13 @@ function blocoPrevisao(c) {
   if (p.situacao === "projetada") frases.push(`No ritmo das últimas ${num(p.n)} medições (${num(p.ritmo, 1)} p.p. por mês${p.retomada ? ", supondo retomada hoje, porque a última medição tem mais de 90 dias" : ""}), a conclusão provável é ${data(p.conclusao)}, ${p.atraso > 0 ? `${num(p.atraso)} dias depois do fim ${c.fim_exec ? "da execução" : "da vigência"}` : "dentro do prazo"}.`);
   else frases.push(`${p.motivo}${p.atraso > 0 ? ` O prazo terminou há ${num(p.atraso)} dias sem a obra concluída.` : ""}`);
   if (p.aditivo) frases.push(`Aditivo de prazo provavelmente necessário${p.alemExec > 0 ? `: ${num(p.alemExec)} dias além do fim da execução` : ""}${p.alemVig > 0 ? `${p.alemExec > 0 ? " e" : ":"} ${num(p.alemVig)} dias além da vigência` : ""}. A prorrogação deve ser formalizada antes do término do prazo.`);
-  const lin = (r, v) => `<tr><td>${r}</td><td class="n">${v}</td></tr>`;
   return `<h2>Previsão de conclusão</h2>
-    ${p.curva.length ? `<div class="legenda"><span><i style="background:var(--tinta-3)"></i>Prevista (curva S de referência)</span><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${p.real.some(r => r[2] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}${p.conclusao ? `<span><i style="background:${serie(p.base === "fis" ? 2 : 1)};opacity:.5"></i>Projeção no ritmo recente</span>` : ""}</div>
-    <div class="graf graf-doc"><canvas id="gPrevBr" aria-label="Curva S prevista e realizada"></canvas></div>` : ""}
+    ${p.curva.length ? `${legendaCurva(c)}<div class="graf graf-doc"><canvas id="gCurvaBr" aria-label="Curva S prevista, realizado e projeção"></canvas></div>` : ""}
     ${frases.map(x => `<p>${esc(x)}</p>`).join("")}
-    <table class="t"><tbody>
-      ${lin(c.fim_exec ? "Fim da execução" : "Fim da vigência", data(p.fim))}${c.fim_exec && c.fim_vig ? lin("Fim da vigência", data(c.fim_vig)) : ""}
-      ${lin("Previsto hoje (curva S)", pct(p.previstoHoje, 0))}${lin(`Realizado (${b})`, pct(p.atual))}
-      ${lin("Ritmo recente", p.ritmo == null ? "—" : `${num(p.ritmo, 1)} p.p./mês`)}${lin("Conclusão provável", p.conclusao ? data(p.conclusao) : "—")}
-      ${lin("Atraso projetado", p.atraso == null ? "—" : p.atraso > 0 ? `${num(p.atraso)} dias` : "nenhum")}${p.alemVig != null ? lin("Além da vigência", p.alemVig > 0 ? `${num(p.alemVig)} dias` : "não") : ""}
-    </tbody></table>
+    ${kv([[c.fim_exec ? "Fim da execução" : "Fim da vigência", data(p.fim)], c.fim_exec && c.fim_vig && ["Fim da vigência", data(c.fim_vig)],
+      ["Previsto hoje (curva S)", pct(p.previstoHoje, 0)], [`Realizado (${b})`, pct(p.atual)],
+      ["Ritmo recente", p.ritmo == null ? "—" : `${num(p.ritmo, 1)} p.p./mês`], ["Conclusão provável", p.conclusao ? `<b>${data(p.conclusao)}</b>` : "—"],
+      ["Atraso projetado", p.atraso == null ? "—" : p.atraso > 0 ? `${num(p.atraso)} dias` : "nenhum"], p.alemVig != null && ["Além da vigência", p.alemVig > 0 ? `${num(p.alemVig)} dias` : "não"]])}
     <p class="nota">Curva prevista: o e-Obras não publica o cronograma do contrato, então ela é uma referência teórica, a curva S logística de desembolso de obras (Kenley e Wilson, 1986), com inclinação ${num(CURVA_S.k)} e inflexão na metade do prazo, entre a assinatura e o fim ${c.fim_exec ? "da execução" : "da vigência"}. Ritmo: regressão linear por mínimos quadrados do % ${b} nas últimas 6 medições. Base legal do aditivo: ${esc(p.baseLegal)}.</p>`;
 }
 
@@ -264,31 +361,9 @@ function blocoRisco(c) {
   const r = c.risco;
   if (!r) return "";
   return `<h2>Nota de risco</h2>
-    <p>${chip(`${r.nota} de 100 · ${r.faixa}`, r.nivel)}</p>
-    <table class="t"><thead><tr><th>Componente</th><th>Situação</th><th class="n">Peso</th><th class="n">Pontos</th></tr></thead><tbody>
+    <div class="risco-cab"><span class="nota-risco ${r.nivel}">${num(r.nota)}</span><div><b>Risco ${esc(r.faixa)}</b><span>nota de 0 a 100, soma dos componentes abaixo</span></div></div>
+    ${T(`<table class="t"><thead><tr><th>Componente</th><th>Situação</th><th class="n">Peso</th><th class="n">Pontos</th></tr></thead><tbody>
       ${r.comp.map(x => `<tr><td>${esc(x.rot)}<div class="peq">${esc(x.base)}</div></td><td>${esc(x.detalhe)}<div class="peq">${esc(x.regra)}</div></td><td class="n">${x.peso}</td><td class="n">${num(x.pontos, 1)}</td></tr>`).join("")}
-      <tr><td colspan="3"><b>Total</b></td><td class="n"><b>${num(r.nota)}</b></td></tr></tbody></table>
+      <tr class="tot"><td colspan="3">Total</td><td class="n">${num(r.nota)}</td></tr></tbody></table>`)}
     <p class="nota">Faixas: baixo até 24, médio 25 a 49, alto 50 a 74, crítico 75 ou mais. A nota ordena a atenção do DMOB; não é juízo sobre a empresa.</p>`;
-}
-
-function grafPrev(c, doc) {
-  const cv = doc.querySelector("#gPrevBr"), p = c.prev;
-  if (!cv || !p) return;
-  const fimX = Math.max(p.curva.at(-1)[0], p.conclusao ? +new Date(p.conclusao) : 0, Date.now());
-  const prev = p.curva.map(([x, y]) => ({ x, y }));
-  if (fimX > prev.at(-1).x) prev.push({ x: fimX, y: 100 });
-  const linha = (label, pts, cor, extra = {}) => ({ label, data: pts, borderColor: cor, backgroundColor: cor, borderWidth: 2, pointRadius: 2.5, tension: 0, ...extra });
-  const ds = [linha("Prevista (curva S)", prev, css("--tinta-3"), { borderDash: [5, 4], pointRadius: 0 }),
-    linha("% financeiro", p.real.filter(r => r[1] != null).map(r => ({ x: r[0], y: r[1] })), serie(1))];
-  const fis = p.real.filter(r => r[2] != null).map(r => ({ x: r[0], y: r[2] }));
-  if (fis.length) ds.push(linha("% físico", fis, serie(2)));
-  if (p.conclusao) {
-    const ult = p.base === "fis" ? fis.at(-1) : ds[1].data.at(-1);
-    const x0 = p.retomada ? Date.now() : ult.x;
-    ds.push(linha("Projeção", [{ x: x0, y: p.atual }, { x: +new Date(p.conclusao), y: 100 }], serie(p.base === "fis" ? 2 : 1), { borderDash: [3, 3], pointRadius: [0, 3.5], borderWidth: 1.5 }));
-  }
-  const mes = v => new Date(v).toLocaleDateString("pt-BR", { month: "short", year: "2-digit" });
-  grafico(cv, { type: "line", data: { datasets: ds },
-    options: { animation: false, parsing: false, scales: { x: { type: "linear", min: prev[0].x, max: fimX, ticks: { callback: mes, maxTicksLimit: 8 } }, y: { min: 0, max: 100, ticks: { callback: v => v + "%" } } },
-      plugins: { tooltip: { callbacks: { title: xs => data(new Date(xs[0].raw.x).toISOString().slice(0, 10)), label: x => ` ${x.dataset.label}: ${pct(x.raw.y)}` } } } } });
 }

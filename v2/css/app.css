@@ -425,6 +425,8 @@ h1 .escudo, h2 .escudo { font-size: .72em; }
 @media print {
   .faixa-gov, .barra-app, .rodape-app, .paleta-veu, .pular { display: none !important; }
   .area { display: block; }
+  .casca { display: block; }  /* o bloco v3 redefinia .casca como grid depois do @media print antigo */
+  main { max-width: none; padding: 0; }
 }
 .painel .esq-col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 .painel .esq-col .resumo { flex: 1; }

@@ -9,6 +9,22 @@ const aberta = l => /Divulgada|aberta|andamento/i.test(l.situacao || "") && (!l.
 // o objeto do PNCP vem cortado; a descrição do 1º item tem o texto inteiro
 const texto = l => l.descricao || l.objeto || "";
 const hoje = () => new Date().toISOString().slice(0, 10);
+// v3: tabelas enxutas, preços × SICRO com distribuição por faixa e barra de desvio. [Claude] 23/11/2026
+const ESTILO = `<style>
+  #tab .obj, #tabCsc .obj, #pTab .obj, #pCompras .obj, #sTab .obj { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .dist { margin: 16px 0 14px; }
+  .dist-b { display: flex; height: 12px; border-radius: 3px; overflow: hidden; background: var(--sup-3); }
+  .dist-b i { display: block; height: 100%; }
+  .dist .legenda { margin: 8px 0 0; }
+  .dist .legenda b { color: var(--tinta); font-weight: 600; margin-left: 4px; }
+  .dv { display: grid; justify-items: end; gap: 4px; }
+  .dv b { font-weight: 600; color: var(--tinta); }
+  .dv-b { position: relative; display: block; width: 96px; height: 6px; background: var(--sup-3); border-radius: 3px; }
+  .dv-b::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--eixo); }
+  .dv-b i { position: absolute; top: 0; bottom: 0; background: var(--s6); }
+  .dv-b.ok i { background: var(--ok); } .dv-b.alerta i { background: var(--alerta); } .dv-b.critico i { background: var(--critico); }
+  #precos h3.sub { font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 24px 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--azul); }
+</style>`;
 
 export async function render(el) {
   const d = await talvez("licitacoes");
@@ -19,7 +35,7 @@ export async function render(el) {
   const M = d._meta, P = d.pncp;
   const sits = [...new Set(P.map(l => l.situacao).filter(Boolean))].sort();
   const mods = [...new Set(P.map(l => l.modalidade).filter(Boolean))].sort();
-  el.innerHTML = `
+  el.innerHTML = `${ESTILO}
     <div class="cab"><div><h1>Licitações</h1>
       <p>Editais da SEINFRA publicados no PNCP e na lista do CSC-AM. O filtro "modal rodoviário" separa os objetos de rodovia, ramal, estrada, ponte, drenagem e viário.</p></div>
       <div class="fontes">${fonte("PNCP e CSC", data(M.gerado))}${fonte("editais no PNCP", num(M.total_pncp))}</div></div>
@@ -52,7 +68,7 @@ export async function render(el) {
     tabela($("#tab", el), [
       { k: "publicacao", rot: "Publicação", html: l => data(l.publicacao) },
       { k: "edital", rot: "Edital", html: l => `<a href="${esc(l.link)}" target="_blank" rel="noopener"><b>${esc(l.edital)}</b></a><div class="peq">${esc(l.modalidade)}</div>` },
-      { k: "objeto", rot: "Objeto", html: l => `<div class="obj">${esc(texto(l).slice(0, 260))}</div>${l.processo ? `<div class="peq">Processo ${esc(l.processo)}</div>` : ""}` },
+      { k: "objeto", rot: "Objeto", html: l => `<div class="obj" title="${esc(texto(l))}">${esc(texto(l))}</div>${l.processo ? `<div class="peq">Processo ${esc(l.processo)}</div>` : ""}` },
       { k: "situacao", rot: "Situação", html: l => chip(l.situacao || "—", aberta(l) ? "ok" : /Revogada|Anulada|Deserta|Fracassada|Suspensa/i.test(l.situacao) ? "alerta" : "") },
       { k: "encerramento", rot: "Propostas até", html: l => data(l.encerramento) },
       { k: "estimado", rot: "Estimado", n: 1, html: l => l.estimado ? brlCurto(l.estimado) : "sigiloso" },
@@ -62,7 +78,7 @@ export async function render(el) {
     const csc = d.csc.filter(l => (!estado.rod || l.rodoviario) && (!q || semAcento(`${l.objeto} ${l.numero}`).includes(q)));
     tabela($("#tabCsc", el), [
       { k: "numero", rot: "Número", html: l => l.link ? `<a href="${esc(l.link)}" target="_blank" rel="noopener">${esc(l.numero)}</a>` : esc(l.numero) },
-      { k: "objeto", rot: "Objeto", html: l => `<div class="obj">${esc((l.objeto || "").slice(0, 220))}</div>` },
+      { k: "objeto", rot: "Objeto", html: l => `<div class="obj" title="${esc(l.objeto)}">${esc(l.objeto || "")}</div>` },
       { k: "tipo", rot: "Tipo" }, { k: "data", rot: "Data" }, { k: "status", rot: "Status" },
     ], csc, { limite: 100 });
   };
@@ -82,6 +98,14 @@ const pe = { faixa: "casadas", conf: "", ed: "", q: "" };
 const FAIXA = { dentro: ["dentro de ±10%", "ok"], acima: ["acima", "alerta"], "muito acima": ["muito acima (>25%)", "critico"], abaixo: ["abaixo", ""] };
 const fx = d => d == null ? "—" : `${d > 0 ? "+" : ""}${pct(d * 100)}`;
 const refBr = r => r ? `${r.slice(5)}/${r.slice(0, 4)}` : "—";
+// cor da faixa: status (ok/alerta/crítico); "abaixo" fica neutro
+const COR_FX = { abaixo: "var(--s6)", dentro: "var(--ok)", acima: "var(--alerta)", "muito acima": "var(--critico)" };
+// barra divergente: centro = SICRO; escala ±100% (desvios maiores encostam na ponta)
+function barraDesvio(i) {
+  if (i.desvio == null) return "—";
+  const v = Math.max(-1, Math.min(1, i.desvio)) * 50;
+  return `<div class="dv"><b>${fx(i.desvio)}</b><span class="dv-b ${FAIXA[i.faixa]?.[1] || ""}" aria-hidden="true"><i style="${v >= 0 ? `left:50%;width:${v}%` : `right:50%;width:${-v}%`}"></i></span></div>`;
+}
 
 async function precos(el) {
   const d = await talvez("precos");
@@ -100,8 +124,9 @@ async function precos(el) {
           <input type="search" id="pQ" placeholder="Buscar serviço ou código…" aria-label="Buscar serviço">
         </div>
         <div id="pKpi" class="grade g-kpi"></div>
+        <div id="pDist" class="dist"></div>
         <div id="pTab"></div>
-        <h3 style="margin:20px 0 6px">Compras analisadas</h3>
+        <h3 class="sub">Compras analisadas</h3>
         <div id="pCompras"></div>
         <p class="peq" style="color:var(--tinta-3);font-size:12.5px;margin-top:10px">${esc(M.metodologia)} BDI de referência para obra rodoviária: cerca de 20% a 30% (Acórdão TCU 2622/2013-Plenário).</p>
       </div></section>
@@ -119,21 +144,23 @@ async function precos(el) {
       kpi("Com par no SICRO", pct(I.length ? M.casadas / I.length * 100 : null), `${num(M.casadas_por_codigo)} pelo código; ${pct((M.valor_casado_pct || 0) * 100)} do valor`) +
       kpi("Dentro de ±10%", num(cas.filter(i => i.faixa === "dentro").length), "linhas filtradas", true) +
       kpi("Muito acima (>25%)", num(cas.filter(i => i.faixa === "muito acima").length), "olhar a composição");
+    // distribuição das linhas casadas por faixa (parte-todo: barra 100% empilhada)
+    const fxs = ["abaixo", "dentro", "acima", "muito acima"].map(k => ({ k, n: cas.filter(i => i.faixa === k).length })).filter(x => x.n);
+    $("#pDist", el).innerHTML = cas.length ? `<div class="dist-b" role="img" aria-label="${esc(fxs.map(x => `${FAIXA[x.k][0]}: ${x.n}`).join("; "))}">${fxs.map(x => `<i style="width:${x.n / cas.length * 100}%;background:${COR_FX[x.k]}" title="${esc(FAIXA[x.k][0])}: ${num(x.n)}"></i>`).join("")}</div>
+      <div class="legenda">${fxs.map(x => `<span><i style="background:${COR_FX[x.k]}"></i>${esc(FAIXA[x.k][0])}<b>${num(x.n)}</b> (${pct(x.n / cas.length * 100, 0)})</span>`).join("")}</div>` : "";
     tabela($("#pTab", el), [
       { k: "edital", rot: "Edital", html: i => `<b>${esc(i.edital)}</b><div class="peq">item ${esc(i.item)}</div>` },
-      { k: "descricao", rot: "Serviço (planilha)", html: i => `<div class="obj">${esc(i.descricao.slice(0, 160))}</div><div class="peq">${esc(i.tabela)} ${esc(i.codigo)}</div>` },
-      { k: "unidade", rot: "Unid." },
-      { k: "quantidade", rot: "Qtd.", n: 1, html: i => num(i.quantidade, 2) },
+      { k: "descricao", rot: "Serviço (planilha)", html: i => `<div class="obj" title="${esc(i.descricao)}">${esc(i.descricao)}</div><div class="peq">${esc(i.tabela)} ${esc(i.codigo)} · ${num(i.quantidade, 2)} ${esc(String(i.unidade || "").toLowerCase())}</div>` },
       { k: "preco_unitario", rot: "Preço orçado", n: 1, html: i => `${brl(i.preco_unitario)}<div class="peq">BDI ${i.bdi == null ? "não declarado" : pct(i.bdi * 100, 2)}</div>` },
       { k: "sicro_custo_ref", rot: "SICRO", n: 1, html: i => i.sicro_codigo ? `${brl(i.sicro_custo_ref)}<div class="peq" title="${esc(i.sicro_descricao)}">${esc(i.sicro_codigo)} · ${refBr(i.sicro_ref)}</div>` : "—" },
-      { k: "desvio", rot: "Desvio", n: 1, html: i => fx(i.desvio) },
-      { k: "faixa", rot: "Triagem", v: i => i.desvio, html: i => i.faixa ? chip(FAIXA[i.faixa][0], FAIXA[i.faixa][1], i.confianca) : `<span class="peq">${i.sicro_codigo ? "sem custo na data-base" : "sem par"}</span>` },
-      { k: "confianca", rot: "Par", html: i => i.confianca ? `<span class="peq">${esc(i.confianca)}${i.similaridade != null ? ` · ${num(i.similaridade * 100)}%` : ""}</span>` : "—" },
-    ], fl, { ordem: { k: "desvio", dir: -1 } });
+      { k: "desvio", rot: "Desvio", n: 1, html: barraDesvio },
+      { k: "faixa", rot: "Triagem", v: i => i.desvio, html: i => (i.faixa ? chip(FAIXA[i.faixa][0], FAIXA[i.faixa][1]) : `<span class="peq">${i.sicro_codigo ? "sem custo na data-base" : "sem par"}</span>`)
+        + (i.confianca ? `<div class="peq" title="Como a linha foi casada com o SICRO">par ${esc(i.confianca)}${i.similaridade != null ? ` · ${num(i.similaridade * 100)}%` : ""}</div>` : "") },
+    ], fl, { ordem: { k: "desvio", dir: -1 }, limite: 80 });
   };
   tabela($("#pCompras", el), [
     { k: "edital", rot: "Edital", html: c => `<a href="${esc(c.link)}" target="_blank" rel="noopener"><b>${esc(c.edital)}</b></a><div class="peq">${data(c.publicacao)}</div>` },
-    { k: "objeto", rot: "Objeto e achados", html: c => `<div class="obj">${esc((c.objeto || "").slice(0, 200))}</div>${c.achados.map(a => `<div class="peq">${esc(a)}</div>`).join("")}` },
+    { k: "objeto", rot: "Objeto e achados", html: c => `<div class="obj" title="${esc(c.objeto)}">${esc(c.objeto || "")}</div>${c.achados.map(a => `<div class="peq">${esc(a)}</div>`).join("")}` },
     { k: "planilha", rot: "Planilha", v: c => c.planilha?.linhas || 0, html: c => c.planilha ? `<a href="${esc(c.planilha.url)}" target="_blank" rel="noopener">PDF</a><div class="peq">${c.planilha.linhas ? `${num(c.planilha.casadas)}/${num(c.planilha.linhas)} casadas · base ${c.planilha.data_base.map(refBr).join(", ")}` : "não lida"}</div>` : "—" },
     { k: "estimado", rot: "Estimado", n: 1, html: c => brlCurto(c.estimado) },
     { k: "homologado", rot: "Homologado", n: 1, html: c => brlCurto(c.homologado) },
@@ -166,7 +193,7 @@ async function precos(el) {
     $("#sCont", el).textContent = `${num(r.length)} itens · SICRO AM ${refBr(S.ref)}`;
     tabela($("#sTab", el), [
       { k: "cod", rot: "Código", html: x => `<b>${esc(x.cod)}</b><div class="peq">${esc(x.tipo)}</div>` },
-      { k: "desc", rot: "Descrição", html: x => `<div class="obj">${esc(x.desc)}</div>` },
+      { k: "desc", rot: "Descrição", html: x => `<div class="obj" title="${esc(x.desc)}">${esc(x.desc)}</div>` },
       { k: "un", rot: "Unid." },
       { k: "v", rot: "Custo (sem deson.)", n: 1, html: x => brl(x.v) },
       { k: "vd", rot: "Com desoneração", n: 1, html: x => x.vd == null ? "—" : brl(x.vd) },

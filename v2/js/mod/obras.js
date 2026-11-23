@@ -3,11 +3,43 @@
 // % financeiro = medido / valor atual; saldo = valor atual - medido (ver _meta.regras).
 import { contratos, MODAIS, REGRAS, municipios, RISCO_PESOS, FAIXAS_RISCO } from "../dados.js";
 import { esc, brl, brlCurto, pct, data, num, semAcento } from "../fmt.js";
-import { $, kpi, chip, chipSit, barra, tabela, grafico, gaveta, fonte, opcoes, serie, css } from "../ui.js";
+import { $, kpi, chip, chipSit, barra, tabela, grafico, gaveta, fonte, opcoes, serie } from "../ui.js";
+import { curvaContrato, legendaCurva } from "./briefings.js";
+
+// v3: gráfico de modal com rótulo, tabela enxuta, ficha diagramada. [Claude] 23/11/2026
+const ESTILO = `<style>
+  .nota-risco.pq { width: 30px; height: 26px; font-size: 13px; display: inline-grid; }
+  .ob-al { font-size: 12px; margin-top: 4px; max-width: 24ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ob-al.critico { color: var(--critico); } .ob-al.alerta { color: var(--alerta); }
+  #tab .obj { min-width: 220px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .t-modal { font-size: 13px; margin-top: 10px; }
+  .t-modal td, .t-modal th { padding: 6px 10px; }
+  .fc-tipo { display: block; font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin: 6px 0 4px; }
+  .fc-id { font-size: 1.3rem; }
+  .fc-obj { color: var(--tinta); margin: 8px 0 10px; line-height: 1.5; }
+  .fc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .fc-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--borda); border: 1px solid var(--borda); border-radius: var(--raio); overflow: hidden; margin: 16px 0 4px; }
+  .fc-kpi div { background: var(--sup); padding: 10px 12px; }
+  .fc-kpi span { display: block; font-size: 11.5px; color: var(--tinta-3); }
+  .fc-kpi b { display: block; font: 600 1.05rem/1.25 var(--f-titulo); color: var(--tinta); margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .fc-kpi small { font-size: 11.5px; color: var(--tinta-3); }
+  .gaveta h3.fc-h { font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 20px 0 4px; padding-bottom: 6px; border-bottom: 2px solid var(--azul); }
+  .gaveta dl.ficha { gap: 0; margin: 0; }
+  .gaveta dl.ficha dt, .gaveta dl.ficha dd { padding: 6px 0; border-bottom: 1px solid var(--borda); }
+  .gaveta dl.ficha dd { text-align: right; font-variant-numeric: tabular-nums; }
+  .fc-risco { display: flex; align-items: center; gap: 12px; padding: 10px 0; font-size: 14px; }
+  .fc-risco b { color: var(--tinta); }
+  .fc-rod { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 16px; font-size: 12.5px; color: var(--tinta-3); }
+  .t-modal td:first-child { white-space: nowrap; }
+  #fModal, #fGrupo { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  #fModal button, #fGrupo button { white-space: nowrap; }
+  @media (max-width: 560px) { .fc-kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); } .t-modal th:nth-child(3), .t-modal td:nth-child(3) { display: none; } }
+</style>`;
 
 const estado = { modal: "rodoviario", grupo: "ativo", mun: "", alerta: "", risco: "", q: "" };
 // chip da nota de risco (0-100) e coluna "conclusão prevista": ver previsao() e risco() em dados.js [Claude] 23/11/2026
 export const chipRisco = r => r ? chip(`${r.nota} · ${r.faixa}`, r.nivel, "Nota de risco de gestão (0 a 100)") : "—";
+const notaRisco = r => r ? `<span class="nota-risco pq ${r.nivel}" title="Risco ${esc(r.faixa)}: nota ${r.nota} de 100">${r.nota}</span>` : `<span class="peq">—</span>`;
 export function txtConclusao(p) {
   if (p.situacao === "projetada") return `${data(p.conclusao)}${p.atraso > 0 ? `<div class="peq">${num(p.atraso)} dias além do prazo</div>` : `<div class="peq">no prazo</div>`}`;
   return { concluida: "concluída", encerrado: "—", parada: "sem avanço", "sem-dados": "sem ritmo" }[p.situacao] || "—";
@@ -16,7 +48,7 @@ export function txtConclusao(p) {
 export async function render(el) {
   const { meta, lista } = await contratos();
   const muns = [...new Set(lista.flatMap(municipios))].sort((a, b) => a.localeCompare(b, "pt-BR"));
-  el.innerHTML = `
+  el.innerHTML = `${ESTILO}
     <div class="cab"><div><h1>Obras e contratos rodoviários</h1>
       <p>Contratos da SEINFRA no e-Obras ligados ao modal rodoviário: rodovias e estradas, ramais, viário urbano e pontes. Clique num contrato para ver a ficha e a curva de medição.</p></div>
       <div class="fontes">${fonte("e-Obras, posição", meta.posicao)}${fonte("gerado", data(meta.gerado))}</div></div>
@@ -34,7 +66,7 @@ export async function render(el) {
     </div>
     <div id="kpis" class="grade g-kpi"></div>
     <section class="secao grade g-2">
-      <div class="cartao"><header><div><h2>Investimento por modal</h2><p>Valor atual (original + aditivos) dos contratos filtrados, em R$ milhões</p></div></header><div class="corpo"><div class="graf"><canvas id="gModal" aria-label="Valor por modal"></canvas></div></div></div>
+      <div class="cartao"><header><div><h2 id="tModal">Investimento por modal</h2><p>Valor atual (original + aditivos) dos contratos filtrados</p></div></header><div class="corpo"><div class="graf" id="gModalBox"><canvas id="gModal" aria-label="Valor por modal"></canvas></div><div id="tModalTab"></div><p class="nota" style="margin:10px 0 0;font-size:12px;color:var(--tinta-3)">Fonte: e-Obras. Valor atual = original + aditivos; saldo = valor atual − medido.</p></div></div>
       <div class="cartao"><header><div><h2>O que pede atenção</h2><p>Regras de gestão aplicadas aos contratos filtrados; passe o mouse para ver a base legal</p></div></header><div class="corpo" id="alertas"></div></div>
     </section>
     <section class="secao cartao"><header><div><h2>Contratos</h2></div><span class="contagem" id="cont"></span></header><div class="corpo" id="tab"></div>
@@ -68,11 +100,16 @@ export async function render(el) {
       kpi("Com alerta", num(comAlerta), `${pct(fl.length ? comAlerta / fl.length * 100 : null, 0)} dos contratos`);
     $("#cont", el).textContent = `${num(fl.length)} contratos`;
 
-    // investimento por modal (1 série: azul; a categoria está no eixo)
-    const porModal = MODAIS.map(m => fl.filter(c => c.modal === m).reduce((s, c) => s + (c.v_atual || 0), 0) / 1e6);
-    grafico($("#gModal", el), { type: "bar", data: { labels: MODAIS, datasets: [{ label: "R$ milhões", data: porModal, backgroundColor: serie(1), borderRadius: 4, maxBarThickness: 48 }] },
-      options: { indexAxis: "y", scales: { x: { grid: { color: css("--grade") }, ticks: { callback: v => num(v) } }, y: { grid: { display: false } } },
-        plugins: { tooltip: { callbacks: { label: x => ` ${brlCurto(x.raw * 1e6)} · ${num(fl.filter(c => c.modal === MODAIS[x.dataIndex]).length)} contratos` } } } } });
+    // investimento por modal: ranking em barra horizontal, rótulo em R$ na ponta (1 série, sem legenda; destaque no maior)
+    const porModal = MODAIS.map(m => { const cs = fl.filter(c => c.modal === m); return { m, n: cs.length, v: cs.reduce((s, c) => s + (c.v_atual || 0), 0), med: cs.reduce((s, c) => s + (c.medido || 0), 0), saldo: cs.reduce((s, c) => s + (c.saldo || 0), 0) }; })
+      .filter(x => x.n).sort((a, b) => b.v - a.v);
+    const top = porModal[0], vModal = porModal.reduce((s, x) => s + x.v, 0);
+    $("#tModal", el).textContent = top && vModal ? `${top.m}: ${pct(top.v / vModal * 100, 0)} do valor` : "Investimento por modal";
+    $("#gModalBox", el).style.height = `${Math.max(1, porModal.length) * 34 + 12}px`;
+    grafico($("#gModal", el), { type: "bar", data: { labels: porModal.map(x => x.m), datasets: [{ label: "Valor atual", data: porModal.map(x => x.v), backgroundColor: porModal.map((x, i) => i ? serie(6) : serie(1)) }] },
+      options: { indexAxis: "y", layout: { padding: { right: 70 } }, plugins: { rotulos: { fmt: brlCurto }, tooltip: { callbacks: { label: x => ` ${brlCurto(x.raw)} · ${num(porModal[x.dataIndex].n)} contratos` } } } } });
+    $("#tModalTab", el).innerHTML = porModal.length ? `<div class="tab-rolo"><table class="t t-modal"><thead><tr><th>Modal</th><th class="n">Contratos</th><th class="n">Medido</th><th class="n">Saldo</th></tr></thead><tbody>
+      ${porModal.map(x => `<tr><td>${esc(x.m)}</td><td class="n">${num(x.n)}</td><td class="n">${brlCurto(x.med)}</td><td class="n">${brlCurto(x.saldo)}</td></tr>`).join("")}</tbody></table></div>` : "";
 
     // alertas agregados
     const cont = REGRAS.map(r => ({ r, n: fl.filter(c => c.alertas.includes(r)).length })).filter(x => x.n);
@@ -82,16 +119,13 @@ export async function render(el) {
     el.querySelectorAll("[data-alerta]").forEach(b => b.onclick = () => { estado.alerta = b.dataset.alerta; $("#fAlerta", el).value = estado.alerta; pinta(); });
 
     tabela($("#tab", el), [
-      { k: "id", rot: "Contrato", html: c => `<b style="color:var(--tinta)">${esc(c.id)}</b><div class="peq">${esc(c.modal || c.cat)}</div>` },
-      { k: "obj", rot: "Objeto", html: c => `<div class="obj">${esc((c.obj || "").slice(0, 170))}${(c.obj || "").length > 170 ? "…" : ""}</div><div class="peq">${esc(c.mun)} · ${esc(c.emp)}</div>` },
-      { k: "sit", rot: "Situação", html: c => chipSit(c.sit) + (c.alertas.length ? `<div style="margin-top:4px">${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</div>` : "") },
-      { k: "v_atual", rot: "Valor atual", n: 1, html: c => brlCurto(c.v_atual) },
-      { k: "fis", rot: "Físico", n: 1, html: c => c.fis == null ? "—" : `${pct(c.fis)}${barra(c.fis)}` },
-      { k: "fin", rot: "Financeiro", n: 1, html: c => `${pct(c.fin)}${barra(c.fin)}` },
-      { k: "saldo", rot: "Saldo", n: 1, html: c => brlCurto(c.saldo) },
-      { k: "fim_vig", rot: "Vigência até", html: c => data(c.fim_vig) },
-      { k: "conclusao", rot: "Conclusão prevista", v: c => c.prev.conclusao, html: c => txtConclusao(c.prev) },
-      { k: "risco", rot: "Risco", n: 1, v: c => c.risco?.nota, html: c => chipRisco(c.risco) },
+      { k: "id", rot: "Contrato", html: c => `<b style="color:var(--tinta)" title="${esc(c.id)}">${esc(c.id.replace(/-SEINFRA$/, ""))}</b><div class="peq">${esc(c.modal || c.cat)}</div>` },
+      { k: "obj", rot: "Objeto", html: c => `<div class="obj" title="${esc(c.obj)}">${esc(c.obj || "")}</div><div class="peq">${esc(c.mun)} · ${esc(c.emp)}</div>` },
+      { k: "sit", rot: "Situação", html: c => chipSit(c.sit) + (c.alertas.length ? `<div class="ob-al ${c.alertas[0].nivel}" title="${esc(c.alertas.map(a => a.txt).join("; "))}">${esc(c.alertas[0].txt)}${c.alertas.length > 1 ? ` +${c.alertas.length - 1}` : ""}</div>` : "") },
+      { k: "v_atual", rot: "Valor atual", n: 1, html: c => `${brlCurto(c.v_atual)}<div class="peq">saldo ${brlCurto(c.saldo)}</div>` },
+      { k: "fis", rot: "Físico", n: 1, html: c => `${c.fis == null ? "—" : pct(c.fis) + barra(c.fis)}<div class="peq">financeiro ${pct(c.fin)}</div>` },
+      { k: "conclusao", rot: "Conclusão", v: c => c.prev.conclusao, html: c => txtConclusao(c.prev) },
+      { k: "risco", rot: "Risco", n: 1, v: c => c.risco?.nota, html: c => notaRisco(c.risco) },
     ], fl, { ordem: { k: "v_atual", dir: -1 }, onLinha: ficha });
   };
 
@@ -109,37 +143,38 @@ export async function render(el) {
 
 // Ficha do contrato + curva de medição (% acumulado financeiro e físico)
 export function ficha(c) {
+  const lin = (r, v) => `<dt>${r}</dt><dd>${v}</dd>`;
   const g = gaveta(`
-    <h2 style="margin-top:4px">${esc(c.id)}</h2>
-    <p style="margin:6px 0 0">${chipSit(c.sit)} ${c.modal ? chip(c.modal) : ""} ${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</p>
-    <p style="color:var(--tinta)">${esc(c.obj)}</p>
+    <span class="fc-tipo">Contrato${c.modal ? ` · ${esc(c.modal)}` : ""}</span>
+    <h2 class="fc-id">${esc(c.id)}</h2>
+    <p class="fc-obj">${esc(c.obj)}</p>
+    <div class="fc-chips">${chipSit(c.sit)} ${c.alertas.map(a => chip(a.txt, a.nivel, a.base)).join(" ")}</div>
+    <div class="fc-kpi">
+      <div><span>Valor atual</span><b>${brlCurto(c.v_atual)}</b></div>
+      <div><span>Medido</span><b>${pct(c.fin)}</b><small>${brlCurto(c.medido)}</small></div>
+      <div><span>Físico</span><b>${pct(c.fis)}</b></div>
+      <div><span>Saldo</span><b>${brlCurto(c.saldo)}</b></div>
+    </div>
+    <h3 class="fc-h">Identificação</h3>
     <dl class="ficha">
-      <dt>Empresa</dt><dd>${esc(c.emp)}</dd>
-      <dt>Município</dt><dd>${esc(c.mun)}</dd>
-      ${c.rod ? `<dt>Rodovia</dt><dd>${esc(c.rod)}</dd>` : ""}
-      ${c.dim ? `<dt>Dimensão</dt><dd>${num(c.dim, 2)} ${esc(c.un || "")}</dd>` : ""}
-      <dt>Assinatura</dt><dd>${data(c.ass)}</dd>
-      <dt>Vigência até</dt><dd>${data(c.fim_vig)}</dd>
-      ${c.fim_exec ? `<dt>Execução até</dt><dd>${data(c.fim_exec)}</dd>` : ""}
-      <dt>Valor original</dt><dd>${brl(c.v_orig)}</dd>
-      <dt>Aditivos (${num(c.n_adit)})</dt><dd>${brl(c.v_adit)} ${c.v_orig ? `(${pct(c.v_adit / c.v_orig * 100)} do original)` : ""}</dd>
-      <dt>Valor atual</dt><dd><b>${brl(c.v_atual)}</b></dd>
-      <dt>Medido</dt><dd>${brl(c.medido)} (${pct(c.fin)})</dd>
-      ${c.reaj_med ? `<dt>Reajuste medido</dt><dd>${brl(c.reaj_med)}</dd>` : ""}
-      <dt>Pago</dt><dd>${brl(c.pago)}</dd>
-      <dt>Saldo</dt><dd>${brl(c.saldo)}</dd>
-      <dt>Físico</dt><dd>${pct(c.fis)}</dd>
-      <dt>Medições</dt><dd>${num(c.n_med)}${c.ult_med ? `, última em ${data(c.ult_med)}` : ""}</dd>
-      ${c.prev ? `<dt>Conclusão prevista</dt><dd>${txtConclusao(c.prev)}</dd>` : ""}
-      ${c.risco ? `<dt>Nota de risco</dt><dd>${chipRisco(c.risco)} <a href="#/briefings?contrato=${encodeURIComponent(c.id)}">ver componentes</a></dd>` : ""}
+      ${lin("Empresa", esc(c.emp))}${lin("Município", esc(c.mun))}${c.rod ? lin("Rodovia", esc(c.rod)) : ""}
+      ${c.dim ? lin("Dimensão", `${num(c.dim, 2)} ${esc(c.un || "")}`) : ""}
     </dl>
-    ${(c.med || []).length > 1 ? `<h3>Curva de medição</h3><div class="legenda"><span><i style="background:${serie(1)}"></i>% financeiro acumulado</span>${c.med.some(m => m[3] != null) ? `<span><i style="background:${serie(2)}"></i>% físico</span>` : ""}</div><div class="graf"><canvas id="gCurva" aria-label="Curva de medição"></canvas></div>` : ""}
-    <p class="peq" style="font-size:12.5px;color:var(--tinta-3);margin-top:14px">Fonte: e-Obras, Ficha Resumida e Analítica do contrato.</p>`);
-  const cv = $("#gCurva", g);
-  if (cv) {
-    const ds = [{ label: "% financeiro", data: c.med.map(m => m[2]), borderColor: serie(1), backgroundColor: serie(1), borderWidth: 2, pointRadius: 3, tension: 0 }];
-    if (c.med.some(m => m[3] != null)) ds.push({ label: "% físico", data: c.med.map(m => m[3]), borderColor: serie(2), backgroundColor: serie(2), borderWidth: 2, pointRadius: 3, spanGaps: true, tension: 0 });
-    grafico(cv, { type: "line", data: { labels: c.med.map(m => data(m[0])), datasets: ds },
-      options: { scales: { y: { max: 100, ticks: { callback: v => v + "%" } } }, plugins: { tooltip: { callbacks: { label: x => ` ${x.dataset.label}: ${pct(x.raw)}` } } } } });
-  }
+    <h3 class="fc-h">Prazos</h3>
+    <dl class="ficha">
+      ${lin("Assinatura", data(c.ass))}${lin("Vigência até", data(c.fim_vig))}${c.fim_exec ? lin("Execução até", data(c.fim_exec)) : ""}
+      ${lin("Medições", `${num(c.n_med)}${c.ult_med ? `, última em ${data(c.ult_med)}` : ""}`)}
+      ${c.prev ? lin("Conclusão prevista", txtConclusao(c.prev)) : ""}
+    </dl>
+    <h3 class="fc-h">Valores</h3>
+    <dl class="ficha">
+      ${lin("Valor original", brl(c.v_orig))}
+      ${lin(`Aditivos (${num(c.n_adit)})`, `${brl(c.v_adit)}${c.v_orig ? `<div class="peq">${pct(c.v_adit / c.v_orig * 100)} do original</div>` : ""}`)}
+      ${lin("Valor atual", `<b>${brl(c.v_atual)}</b>`)}${lin("Medido", `${brl(c.medido)} (${pct(c.fin)})`)}
+      ${c.reaj_med ? lin("Reajuste medido", brl(c.reaj_med)) : ""}${lin("Pago", brl(c.pago))}${lin("Saldo", brl(c.saldo))}
+    </dl>
+    ${c.risco ? `<h3 class="fc-h">Nota de risco</h3><div class="fc-risco">${notaRisco(c.risco).replace(" pq", "")}<div><b>Risco ${esc(c.risco.faixa)}</b><div class="peq">nota de 0 a 100 · <a href="#/briefings?contrato=${encodeURIComponent(c.id)}">ver componentes</a></div></div></div>` : ""}
+    ${(c.med || []).length > 1 ? `<h3 class="fc-h">Curva de medição e previsão</h3>${legendaCurva(c)}<div class="graf"><canvas id="gCurva" aria-label="Curva de medição acumulada e previsão"></canvas></div>` : ""}
+    <div class="fc-rod"><span>Fonte: e-Obras, Ficha Resumida e Analítica do contrato.</span><a href="#/briefings?contrato=${encodeURIComponent(c.id)}">Abrir briefing para imprimir</a></div>`);
+  curvaContrato($("#gCurva", g), c);
 }
