@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   # commit feito pelo GITHUB_TOKEN (bots de dados) não dispara "push": publica quando eles terminam
   workflow_run:
-    workflows: ["Sinistros (diário)", "Licitações (diário)", "Mapa (semanal)", "Sinistros oficiais (mensal)", "Acessibilidade rodoviária (mensal)"]
+    workflows: ["Sinistros (diário)", "Licitações (diário)", "Mapa (semanal)", "Sinistros oficiais (mensal)", "Acessibilidade rodoviária (mensal)", "Ambiente e rios (diário)"]
     types: [completed]
 
 permissions:
