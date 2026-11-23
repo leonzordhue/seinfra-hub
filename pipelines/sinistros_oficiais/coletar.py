@@ -275,6 +275,15 @@ def main(amostra):
     loc = list(linhas_am(z, "Localidade", amostra))
     ren = agrega_renaest(linhas_am(z, "Acidentes", amostra), linhas_am(z, "Vitimas", amostra), loc)
     ult = ultimo_ano_completo(ren["serie"])
+    # qtde_habitantes do RENAEST vem errado no AM (Careiro da Várzea 80, Barcelos 1.091, Rio Preto da Eva 8.530; 23/11/2026).
+    # Usa a estimativa do IBGE (SIDRA 6579, já gravada em data/mapa_municipios.json pelo robô do mapa) quando existir.
+    try:
+        ibge = json.load(open(os.path.join(RAIZ, "data", "mapa_municipios.json"), encoding="utf-8"))["municipios"]
+    except Exception:
+        ibge = {}
+    for cod, m in ren["municipios"].items():
+        if ibge.get(cod, {}).get("pop"):
+            m["pop_renaest"], m["pop"], m["pop_fonte"] = m["pop"], ibge[cod]["pop"], "IBGE estimativa (SIDRA 6579)"
     pop_am = sum(m["pop"] or 0 for m in ren["municipios"].values())
     for m in ren["municipios"].values():  # taxa = óbitos / população x 100 mil (indicador OMS/ONSV)
         a = m["anos"].get(ult, {})
@@ -315,7 +324,7 @@ def main(amostra):
             "fontes": {
                 "renaest": {"fonte": "SENATRAN, Registro Nacional de Sinistros e Estatísticas de Trânsito (Res. CONTRAN 808/2020)", "url": url, "arquivo": nome,
                             "periodo": [min(ren["serie"], default=None), max(ren["serie"], default=None)], "ultimo_ano_completo": ult,
-                            "populacao": "qtde_habitantes da tabela Localidade do RENAEST (estimativa populacional IBGE carregada pela SENATRAN), ano mais recente por município",
+                            "populacao": "estimativa IBGE (SIDRA 6579, data/mapa_municipios.json); o qtde_habitantes do RENAEST vem inconsistente no AM e fica só como pop_renaest",
                             "feridos": "vítimas com gravidade_lesao LEVE ou GRAVE (tabela Vitimas); a maioria das vítimas vem como NAO INFORMADO, então é piso",
                             "rodovia_estadual": "regex AM-xxx em end_acidente (estimativa por texto) e, à parte, tp_rodovia = ESTADUAL"},
                 "prf": {"fonte": "Polícia Rodoviária Federal, dados abertos, Acidentes agrupados por ocorrência (datatran)", "url": PRF_PAG,
