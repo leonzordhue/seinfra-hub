@@ -44,7 +44,7 @@ export async function render(el, params) {
 }
 
 const cab = (titulo, sub) => `<div class="doc-cab"><div><h1>${esc(titulo)}</h1><div class="nota">${esc(sub)}</div></div>
-  <img src="../assets/marca_gov_seinfra.webp" alt="Governo do Amazonas · SEINFRA" width="250" height="40"></div>`;
+  <img src="../assets/marca_seinfra.webp" alt="Secretaria de Infraestrutura" width="182" height="40"></div>`;
 const rodape = (ctx, extra = "") => `<p class="nota" style="margin-top:22px;border-top:1px solid var(--borda);padding-top:8px">
   DMOB/SEINFRA-AM · gerado em ${new Date().toLocaleDateString("pt-BR")}. Fontes: e-Obras (posição ${esc(ctx.eMeta.posicao)})${ctx.an ? `; sinistros por notícias (${esc(ctx.an._meta.gerado)})` : ""}${ctx.lic ? `; PNCP (${data(ctx.lic._meta.gerado)})` : ""}${extra}.
   Valores: valor atual = original + aditivos; saldo = valor atual − medido.</p>`;

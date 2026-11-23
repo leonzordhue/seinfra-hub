@@ -25,14 +25,35 @@ const ROTAS = {
 };
 const TITULOS = { inicio: "Início", obras: "Obras e contratos", sinistros: "Sinistros", licitacoes: "Licitações", briefings: "Briefings" };
 
+// Módulos de mapa e cadastro (Rodovias, Ramais, Viário...) rodam do index.html raiz em modo embutido, dentro desta casca.
+// Um só iframe fica carregado: trocar de módulo chama loadModule() lá dentro, sem recarregar os dados.
+const EMBUTIDOS = { rodovias: "Rodovias", ramais: "Ramais", viario: "Viário urbano", aerodromos: "Aeródromos", terminais: "Terminais",
+  icm: "Condição viária", atlas: "Atlas", bi: "BI e análises" };
+let quadro = null;
+function abrirEmbutido(mod) {
+  const caixa = $("#embutido");
+  if (!quadro) {
+    quadro = document.createElement("iframe");
+    quadro.title = "Módulo do DMOB Hub";
+    quadro.src = `../index.html?embed=1#mod=${mod}`;
+    caixa.append(quadro);
+  } else {
+    try { quadro.contentWindow.loadModule(mod); } catch { quadro.src = `../index.html?embed=1#mod=${mod}`; }  // ainda carregando: o hash abre o módulo
+  }
+  caixa.hidden = false; $("#conteudo").hidden = true;
+}
+
 async function navegar() {
   const [rota, qs] = (location.hash.replace(/^#\/?/, "") || "inicio").split("?");
-  const id = ROTAS[rota] ? rota : "inicio";
+  const emb = rota.startsWith("m/") && EMBUTIDOS[rota.slice(2)] ? rota.slice(2) : null;
+  const id = emb ? rota : ROTAS[rota] ? rota : "inicio";
   const el = $("#conteudo");
   fecharGaveta(); destruirGraficos();
   document.querySelectorAll(".nav a[data-rota]").forEach(a => a.dataset.rota === id ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
-  document.title = `${TITULOS[id]} · DMOB Hub`;
+  document.title = `${emb ? EMBUTIDOS[emb] : TITULOS[id]} · DMOB Hub`;
   $(".lateral").classList.remove("aberta");
+  if (emb) { abrirEmbutido(emb); return; }
+  $("#embutido").hidden = true; el.hidden = false;
   el.innerHTML = `<div class="grade g-kpi" aria-busy="true"><div class="esq"></div><div class="esq"></div><div class="esq"></div><div class="esq"></div></div>`;
   try {
     const m = await ROTAS[id]();

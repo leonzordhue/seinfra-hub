@@ -204,3 +204,32 @@ dl.ficha dd { margin: 0; color: var(--tinta); }
   .t th { position: static; }
   a { color: #000; text-decoration: none; }
 }
+
+/* ── módulos embutidos (Rodovias, Ramais, Viário, Atlas, BI...: index.html?embed=1) ── */
+#embutido { grid-column: 2; grid-row: 1; min-width: 0; }
+#embutido[hidden], main[hidden] { display: none; }
+#embutido iframe { display: block; width: 100%; height: 100vh; border: 0; background: var(--bg); }
+@media (max-width: 900px) {
+  #embutido { grid-column: 1; }
+  #embutido iframe { height: calc(100vh - 52px); }
+}
+
+/* ── acabamento v2.1 ── */
+.mais { font-size: 13.5px; font-weight: 500; color: var(--azul); text-decoration: none; white-space: nowrap; align-self: flex-start; padding: 2px 0; }
+.mais:hover { text-decoration: underline; text-underline-offset: 3px; }
+.cartao > header { flex-wrap: nowrap; }
+.cartao > header > div { min-width: 0; }
+.resumo { background: var(--sup); border: 1px solid var(--borda); border-radius: var(--raio); padding: 16px 18px; margin-bottom: 16px; display: grid; gap: 6px; }
+.resumo .eyebrow { font-size: 12.5px; font-weight: 500; color: var(--tinta-3); }
+.resumo p { margin: 0; font-size: 15.5px; color: var(--tinta); line-height: 1.6; max-width: 95ch; }
+.resumo b { font-weight: 600; }
+.mods a { transition: border-color .14s, background-color .14s; }
+.mods a:hover { background: var(--sup-2); }
+.kpi .val { letter-spacing: -.01em; }
+.cartao h2 { line-height: 1.3; }
+.marca { gap: 8px; padding: 2px 8px 12px; margin-bottom: 6px; }
+.marca img { max-width: 140px; }
+.nav a { padding: 7px 10px; }
+.nav-grupo { padding: 10px 10px 3px; }
+.lateral { padding: 14px 12px; }
+.lateral .rodape { padding-top: 10px; }

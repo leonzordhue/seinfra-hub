@@ -1764,6 +1764,34 @@
       .module-card:hover { transform: none; }
     }
 </style>
+<style>
+/* [Nexus] 23/11/2026: modo embutido. A v2 (/v2/) abre estes módulos dentro dela: index.html?embed=1#mod=rodovias */
+html.embed .topbar-gov, html.embed .site-header, html.embed .sidebar, html.embed .sidebar-overlay,
+html.embed .module-topbar, html.embed .site-footer { display: none !important; }
+html.embed .canvas-wrap { margin-left: 0 !important; }
+/* mesma estética da v2 (corporate-trust + identidade SEINFRA) dentro da plataforma */
+html.embed body { background: #F6F8FB; font-family: "Outfit", system-ui, sans-serif; color: #3B4657; }
+html.embed #moduleCanvas { padding: 24px clamp(16px, 3vw, 36px) 48px !important; }
+html.embed .mod-hero-pro { background: none !important; box-shadow: none !important; border: 0 !important; padding: 0 0 8px !important; min-height: 0 !important; margin-bottom: 12px !important; }
+html.embed .mod-hero-pro-pattern, html.embed .mod-hero-pro-glow, html.embed .mod-hero-pro-side { display: none !important; }
+html.embed .mod-hero-pro-inner { padding: 0 !important; display: block !important; }
+html.embed .mod-hero-pro-title { font-family: "Lexend Deca", system-ui, sans-serif !important; font-weight: 600 !important; font-size: clamp(1.35rem, 2.4vw, 1.75rem) !important; color: #0F1722 !important; letter-spacing: -.01em !important; text-transform: none !important; }
+html.embed .mod-hero-pro-sub { color: #5B6777 !important; font-size: 14px !important; }
+html.embed .kpi-card { background: #fff !important; border: 1px solid #E1E7EF !important; border-left: 1px solid #E1E7EF !important; border-radius: 8px !important; box-shadow: 0 1px 2px rgba(15,23,34,.06) !important; }
+html.embed .kpi-card::before, html.embed .kpi-card::after { display: none !important; }
+html.embed .kpi-card-label { font-family: "Outfit", system-ui, sans-serif !important; font-size: 13px !important; font-weight: 500 !important; text-transform: none !important; letter-spacing: 0 !important; color: #5B6777 !important; }
+html.embed .kpi-card-value { font-family: "Lexend Deca", system-ui, sans-serif !important; font-weight: 600 !important; color: #0F1722 !important; font-variant-numeric: tabular-nums; }
+html.embed .kpi-card-foot { color: #5B6777 !important; font-size: 12.5px !important; }
+html.embed .panel-card { border: 1px solid #E1E7EF !important; border-radius: 8px !important; box-shadow: 0 1px 2px rgba(15,23,34,.06) !important; background: #fff !important; }
+html.embed .panel-title { font-family: "Lexend Deca", system-ui, sans-serif !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: -.01em !important; color: #0F1722 !important; }
+html.embed .tab-bar { background: none !important; border-bottom: 1px solid #E1E7EF !important; }
+html.embed .tab-item { font-family: "Outfit", system-ui, sans-serif !important; text-transform: none !important; letter-spacing: 0 !important; font-size: 14px !important; font-weight: 500 !important; background: none !important; border: 0 !important; border-bottom: 2px solid transparent !important; border-radius: 0 !important; color: #5B6777 !important; box-shadow: none !important; }
+html.embed .tab-item.active { color: #002D72 !important; border-bottom-color: #F5A623 !important; }
+html.embed .filter-select, html.embed .filter-row input { border-radius: 6px !important; border: 1px solid #C7D0DC !important; font-family: "Outfit", system-ui, sans-serif !important; }
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<script>if (/[?&]embed=1/.test(location.search)) { document.documentElement.classList.add("embed");
+  document.addEventListener("DOMContentLoaded", () => { if (window.Chart) { Chart.defaults.font.family = "Outfit, system-ui, sans-serif"; Chart.defaults.color = "#5B6777"; } }); }</script>
 </head>
 <body>
 
@@ -1777,9 +1805,9 @@
   <header class="site-header">
     <div class="header-brand">
       <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
-      <picture><source srcset="assets/marca_gov_seinfra.webp" type="image/webp">
-      <img src="assets/marca_gov_seinfra.png" width="900" height="144" fetchpriority="high"
-           alt="Secretaria de Infraestrutura · Governo do Amazonas"
+      <picture><source srcset="assets/marca_seinfra.webp" type="image/webp">
+      <img src="assets/marca_seinfra.png" width="341" height="75" fetchpriority="high"
+           alt="Secretaria de Infraestrutura"
            class="brand-marca"/></picture>
     </div>
     <div class="header-right">
