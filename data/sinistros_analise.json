@@ -1,6 +1,6 @@
 {
  "_meta": {
-  "gerado": "2026-11-23 10:50",
+  "gerado": "2026-11-23 11:52",
   "periodo": [
    "2019-01-01",
    "2026-11-23"
@@ -9,9 +9,9 @@
   "fonte_base": {
    "fonte": "Google News (busca pt-BR) -> link real da matéria; texto da matéria conferido pelas regras de coletor/coletar.py",
    "escopo": "somente rodovias estaduais do Amazonas (AM-xxx); BR fica de fora",
-   "atualizado": "2026-11-23 09:56",
-   "noticias": 189,
-   "ocorrencias": 134
+   "atualizado": "2026-11-23 11:52",
+   "noticias": 317,
+   "ocorrencias": 226
   },
   "metodos": {
    "ups": "DENATRAN (1987), Manual de identificação, análise e tratamento de pontos negros: morte 13, atropelamento com ferido 6, ferido 4, só danos 1",
@@ -40,61 +40,61 @@
   ]
  },
  "totais": {
-  "ocorrencias": 125,
-  "fatais": 76,
-  "mortos": 189,
-  "feridos": 289,
-  "ups": 1139,
-  "noticias": 189,
-  "arquivadas_wayback": 89,
-  "rodovias_com_registro": 5,
+  "ocorrencias": 215,
+  "fatais": 133,
+  "mortos": 253,
+  "feridos": 395,
+  "ups": 1979,
+  "noticias": 317,
+  "arquivadas_wayback": 217,
+  "rodovias_com_registro": 6,
   "ultimos_12m": 18,
-  "12m_anteriores": 43,
+  "12m_anteriores": 45,
   "fatais_ultimos_12m": 14,
-  "fatais_12m_anteriores": 28
+  "fatais_12m_anteriores": 29
  },
  "por_ano": {
   "2019": {
-   "ocorrencias": 11,
-   "fatais": 8,
-   "mortos": 13,
-   "ups": 110
+   "ocorrencias": 42,
+   "fatais": 26,
+   "mortos": 40,
+   "ups": 384
   },
   "2020": {
-   "ocorrencias": 9,
-   "fatais": 4,
-   "mortos": 5,
-   "ups": 69
+   "ocorrencias": 29,
+   "fatais": 17,
+   "mortos": 18,
+   "ups": 263
   },
   "2021": {
-   "ocorrencias": 7,
-   "fatais": 4,
-   "mortos": 5,
-   "ups": 58
+   "ocorrencias": 29,
+   "fatais": 19,
+   "mortos": 23,
+   "ups": 275
   },
   "2022": {
-   "ocorrencias": 12,
-   "fatais": 6,
-   "mortos": 4,
-   "ups": 99
+   "ocorrencias": 21,
+   "fatais": 13,
+   "mortos": 8,
+   "ups": 192
   },
   "2023": {
-   "ocorrencias": 11,
-   "fatais": 3,
-   "mortos": 81,
-   "ups": 64
+   "ocorrencias": 15,
+   "fatais": 4,
+   "mortos": 82,
+   "ups": 86
   },
   "2024": {
-   "ocorrencias": 24,
-   "fatais": 18,
-   "mortos": 35,
-   "ups": 252
+   "ocorrencias": 27,
+   "fatais": 20,
+   "mortos": 36,
+   "ups": 279
   },
   "2025": {
-   "ocorrencias": 36,
-   "fatais": 20,
+   "ocorrencias": 37,
+   "fatais": 21,
    "mortos": 32,
-   "ups": 313
+   "ups": 326
   },
   "2026": {
    "ocorrencias": 15,
@@ -104,54 +104,69 @@
   }
  },
  "serie_mensal": {
-  "2019-01": 1,
+  "2019-01": 3,
   "2019-02": 1,
   "2019-03": 2,
   "2019-04": 1,
-  "2019-05": 3,
-  "2019-07": 2,
-  "2019-08": 1,
+  "2019-05": 4,
+  "2019-07": 5,
+  "2019-08": 3,
+  "2019-09": 2,
+  "2019-10": 5,
+  "2019-11": 9,
+  "2019-12": 7,
+  "2020-01": 1,
   "2020-02": 1,
-  "2020-05": 1,
-  "2020-06": 1,
+  "2020-03": 1,
+  "2020-05": 3,
+  "2020-06": 3,
   "2020-07": 2,
-  "2020-08": 1,
-  "2020-11": 2,
-  "2020-12": 1,
-  "2021-01": 1,
-  "2021-07": 1,
-  "2021-09": 1,
-  "2021-10": 1,
-  "2021-11": 2,
-  "2021-12": 1,
+  "2020-08": 2,
+  "2020-09": 1,
+  "2020-10": 3,
+  "2020-11": 8,
+  "2020-12": 4,
+  "2021-01": 2,
+  "2021-03": 5,
+  "2021-04": 2,
+  "2021-05": 3,
+  "2021-06": 1,
+  "2021-07": 3,
+  "2021-09": 3,
+  "2021-10": 2,
+  "2021-11": 3,
+  "2021-12": 5,
   "2022-02": 1,
-  "2022-03": 1,
-  "2022-07": 3,
-  "2022-09": 2,
-  "2022-10": 1,
+  "2022-03": 2,
+  "2022-04": 1,
+  "2022-06": 1,
+  "2022-07": 5,
+  "2022-09": 3,
+  "2022-10": 4,
   "2022-11": 2,
   "2022-12": 2,
-  "2023-01": 2,
-  "2023-02": 2,
+  "2023-01": 3,
+  "2023-02": 3,
   "2023-03": 1,
   "2023-07": 2,
   "2023-09": 2,
-  "2023-10": 1,
+  "2023-10": 2,
+  "2023-11": 1,
   "2023-12": 1,
-  "2024-01": 1,
+  "2024-01": 2,
   "2024-02": 3,
   "2024-03": 1,
-  "2024-04": 3,
+  "2024-04": 4,
   "2024-05": 1,
   "2024-06": 1,
   "2024-07": 1,
   "2024-09": 1,
   "2024-10": 2,
   "2024-11": 2,
-  "2024-12": 8,
+  "2024-12": 9,
   "2025-01": 3,
   "2025-02": 3,
-  "2025-03": 1,
+  "2025-03": 2,
   "2025-04": 2,
   "2025-05": 4,
   "2025-06": 5,
@@ -169,56 +184,60 @@
   "2026-11": 1
  },
  "por_mes": {
-  "jan": 8,
-  "fev": 11,
-  "mar": 9,
-  "abr": 10,
-  "mai": 14,
-  "jun": 8,
-  "jul": 15,
-  "ago": 7,
-  "set": 8,
-  "out": 7,
-  "nov": 12,
-  "dez": 16
+  "jan": 14,
+  "fev": 12,
+  "mar": 17,
+  "abr": 14,
+  "mai": 20,
+  "jun": 12,
+  "jul": 22,
+  "ago": 10,
+  "set": 14,
+  "out": 20,
+  "nov": 29,
+  "dez": 31
  },
  "sazonalidade": {
-  "chuvoso_dez_mai": 68,
-  "seco_jun_nov": 57
+  "chuvoso_dez_mai": 108,
+  "seco_jun_nov": 107
  },
  "por_dia_semana": {
-  "seg": 26,
-  "ter": 14,
-  "qua": 14,
-  "qui": 13,
-  "sex": 20,
-  "sáb": 16,
-  "dom": 22
+  "seg": 43,
+  "ter": 20,
+  "qua": 27,
+  "qui": 33,
+  "sex": 34,
+  "sáb": 26,
+  "dom": 32
  },
  "por_tipo": {
-  "Colisão": 57,
-  "Capotamento": 27,
-  "Acidente (geral)": 15,
-  "Atropelamento": 15,
-  "Saída de pista": 6,
-  "Tombamento": 5
+  "Colisão": 94,
+  "Capotamento": 49,
+  "Atropelamento": 25,
+  "Acidente (geral)": 24,
+  "Saída de pista": 14,
+  "Tombamento": 9
  },
  "por_municipio": {
-  "Manaus": 61,
-  "Itacoatiara": 20,
-  "Rio Preto da Eva": 11,
-  "Iranduba": 6,
-  "Manacapuru": 4,
+  "Manaus": 135,
+  "Itacoatiara": 23,
+  "Rio Preto da Eva": 12,
+  "Iranduba": 7,
+  "Manacapuru": 7,
+  "Novo Airão": 3,
   "Silves": 2,
   "Presidente Figueiredo": 2,
-  "Novo Airão": 1,
+  "Autazes": 2,
   "Itapiranga": 1
  },
  "por_fonte": {
   "g1.globo.com": 89,
+  "acritica.com": 71,
+  "d24am.com": 48,
   "G1": 19,
   "Portal - Rios de Notícias": 15,
   "Portal do Zacarias": 11,
+  "emtempo.com.br": 10,
   "A Crítica": 9,
   "D24AM": 8,
   "Portal do Holanda": 5,
@@ -226,46 +245,57 @@
   "Amazonas1": 4,
   "cenarium": 3,
   "Prefeitura de Manaus": 3,
-  "Estradas": 2,
-  "AGÊNCIA CENARIUM": 2,
-  "todahora.com": 1,
-  "Rádio Rio Mar": 1
+  "Estradas": 2
  },
  "ranking": [
   "AM-070",
-  "AM-010",
   "AM-363",
+  "AM-010",
   "AM-352"
  ],
  "rodovias": {
   "AM-010": {
-   "ocorrencias": 81,
-   "fatais": 47,
-   "mortos": 88,
-   "feridos": 194,
-   "ups": 714,
+   "ocorrencias": 125,
+   "fatais": 72,
+   "mortos": 111,
+   "feridos": 252,
+   "ups": 1091,
    "extensao_km": 268.24,
-   "taxa_100km_ano": 3.83,
+   "taxa_100km_ano": 5.9,
    "taxa_ic95": [
-    3.04,
-    4.76
+    4.91,
+    7.03
    ],
-   "fatais_100km_ano": 2.22,
+   "fatais_100km_ano": 3.401,
    "fatais_ic95": [
-    1.631,
-    2.952
+    2.661,
+    4.283
    ],
-   "ups_100km_ano": 33.72,
+   "ups_100km_ano": 51.53,
    "ultimos_12m": 10,
-   "media_anual_36m_antes": 16.0,
-   "tendencia": 0.62,
+   "media_anual_36m_antes": 17.0,
+   "tendencia": 0.59,
    "trechos_criticos": [
     {
      "km_ini": 135,
      "km_fim": 140,
-     "ocorrencias": 5,
-     "fatais": 5,
-     "ups": 65
+     "ocorrencias": 6,
+     "fatais": 6,
+     "ups": 78
+    },
+    {
+     "km_ini": 80,
+     "km_fim": 85,
+     "ocorrencias": 3,
+     "fatais": 3,
+     "ups": 39
+    },
+    {
+     "km_ini": 100,
+     "km_fim": 105,
+     "ocorrencias": 3,
+     "fatais": 3,
+     "ups": 39
     },
     {
      "km_ini": 5,
@@ -275,38 +305,24 @@
      "ups": 30
     },
     {
-     "km_ini": 85,
-     "km_fim": 90,
+     "km_ini": 55,
+     "km_fim": 60,
      "ocorrencias": 2,
-     "fatais": 1,
-     "ups": 17
-    },
-    {
-     "km_ini": 30,
-     "km_fim": 35,
-     "ocorrencias": 2,
-     "fatais": 1,
-     "ups": 17
-    },
-    {
-     "km_ini": 60,
-     "km_fim": 65,
-     "ocorrencias": 2,
-     "fatais": 1,
-     "ups": 17
+     "fatais": 2,
+     "ups": 26
     }
    ],
    "tipos": {
-    "Colisão": 33,
-    "Capotamento": 18,
-    "Acidente (geral)": 11,
-    "Atropelamento": 10,
-    "Saída de pista": 5,
-    "Tombamento": 4
+    "Colisão": 52,
+    "Capotamento": 29,
+    "Acidente (geral)": 16,
+    "Atropelamento": 13,
+    "Saída de pista": 10,
+    "Tombamento": 5
    },
    "tipo_predominante": "Colisão",
    "intervencao_sugerida": "3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica",
-   "km_informado_pct": 32,
+   "km_informado_pct": 37,
    "iri_medio": 2.05,
    "condicao": "Bom",
    "obras_ativas": [
@@ -336,57 +352,87 @@
     }
    ],
    "ultima": "2026-11-12",
-   "prioridade": 43.9,
+   "prioridade": 27.3,
    "fatores": {
-    "ups": 0.73,
-    "fatal": 0.73,
+    "ups": 0.46,
+    "fatal": 0.45,
     "tendencia": 0.0,
     "iri": 0.0,
     "sem_obra": 0.0
    },
-   "posicao": 2,
-   "faixa": "Média",
-   "leitura": "81 ocorrências desde 2019 (47 com morte); 2,22 ocorrências fatais por 100 km/ano; trecho mais grave: km 135–140 (5 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00058/2020-SEINFRA, CT-00006/2021-SEINFRA, CT-00027/2021-SEINFRA."
+   "posicao": 3,
+   "faixa": "Baixa",
+   "leitura": "125 ocorrências desde 2019 (72 com morte); 3,401 ocorrências fatais por 100 km/ano; trecho mais grave: km 135–140 (6 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00058/2020-SEINFRA, CT-00006/2021-SEINFRA, CT-00027/2021-SEINFRA."
   },
   "AM-070": {
-   "ocorrencias": 33,
-   "fatais": 20,
-   "mortos": 88,
-   "feridos": 30,
-   "ups": 303,
+   "ocorrencias": 76,
+   "fatais": 50,
+   "mortos": 127,
+   "feridos": 68,
+   "ups": 736,
    "extensao_km": 83.47,
-   "taxa_100km_ano": 5.01,
+   "taxa_100km_ano": 11.54,
    "taxa_ic95": [
-    3.45,
-    7.03
+    9.09,
+    14.44
    ],
-   "fatais_100km_ano": 3.036,
+   "fatais_100km_ano": 7.589,
    "fatais_ic95": [
-    1.853,
-    4.688
+    5.632,
+    10.005
    ],
-   "ups_100km_ano": 45.99,
+   "ups_100km_ano": 111.71,
    "ultimos_12m": 4,
-   "media_anual_36m_antes": 6.33,
-   "tendencia": 0.63,
+   "media_anual_36m_antes": 8.0,
+   "tendencia": 0.5,
    "trechos_criticos": [
     {
      "km_ini": 5,
      "km_fim": 10,
-     "ocorrencias": 4,
+     "ocorrencias": 6,
+     "fatais": 5,
+     "ups": 69
+    },
+    {
+     "km_ini": 70,
+     "km_fim": 75,
+     "ocorrencias": 3,
      "fatais": 3,
-     "ups": 43
+     "ups": 39
+    },
+    {
+     "km_ini": 0,
+     "km_fim": 5,
+     "ocorrencias": 4,
+     "fatais": 2,
+     "ups": 28
+    },
+    {
+     "km_ini": 20,
+     "km_fim": 25,
+     "ocorrencias": 2,
+     "fatais": 2,
+     "ups": 26
+    },
+    {
+     "km_ini": 15,
+     "km_fim": 20,
+     "ocorrencias": 3,
+     "fatais": 0,
+     "ups": 12
     }
    ],
    "tipos": {
-    "Colisão": 21,
-    "Capotamento": 6,
-    "Atropelamento": 5,
-    "Acidente (geral)": 1
+    "Colisão": 38,
+    "Capotamento": 16,
+    "Atropelamento": 11,
+    "Acidente (geral)": 5,
+    "Tombamento": 3,
+    "Saída de pista": 3
    },
    "tipo_predominante": "Colisão",
    "intervencao_sugerida": "3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica",
-   "km_informado_pct": 24,
+   "km_informado_pct": 33,
    "iri_medio": 1.49,
    "condicao": "Excelente",
    "obras_ativas": [
@@ -408,7 +454,7 @@
    },
    "posicao": 1,
    "faixa": "Alta",
-   "leitura": "33 ocorrências desde 2019 (20 com morte); 3,036 ocorrências fatais por 100 km/ano; trecho mais grave: km 5–10 (4 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00006/2020-SEINFRA."
+   "leitura": "76 ocorrências desde 2019 (50 com morte); 7,589 ocorrências fatais por 100 km/ano; trecho mais grave: km 5–10 (6 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00006/2020-SEINFRA."
   },
   "AM-240": {
    "ocorrencias": 2,
@@ -453,35 +499,78 @@
    "ultima": "2025-08-23",
    "prioridade": null
   },
-  "AM-352": {
-   "ocorrencias": 3,
-   "fatais": 3,
-   "mortos": 5,
-   "feridos": 38,
-   "ups": 39,
-   "extensao_km": 98.46,
-   "taxa_100km_ano": 0.39,
+  "AM-254": {
+   "ocorrencias": 2,
+   "fatais": 1,
+   "mortos": 1,
+   "feridos": 10,
+   "ups": 17,
+   "extensao_km": 166.54,
+   "taxa_100km_ano": 0.15,
    "taxa_ic95": [
-    0.08,
-    1.13
+    0.02,
+    0.55
    ],
-   "fatais_100km_ano": 0.386,
+   "fatais_100km_ano": 0.076,
    "fatais_ic95": [
-    0.078,
-    1.128
+    0.001,
+    0.423
    ],
-   "ups_100km_ano": 5.02,
+   "ups_100km_ano": 1.29,
+   "ultimos_12m": 0,
+   "media_anual_36m_antes": 0.0,
+   "tendencia": null,
+   "trechos_criticos": [],
+   "tipos": {
+    "Colisão": 1,
+    "Capotamento": 1
+   },
+   "tipo_predominante": "Colisão",
+   "intervencao_sugerida": "3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica",
+   "km_informado_pct": 50,
+   "iri_medio": null,
+   "condicao": null,
+   "obras_ativas": [
+    {
+     "ct": "CT-00006/2026-SEINFRA",
+     "sit": "Andamento",
+     "fis": 27.24,
+     "obj": "Recuperação e manutenção da 1ª etapa (41,95 km) da rodovia AM-254, localizada nos municípios de Autazes e Careiro/AM."
+    }
+   ],
+   "ultima": "2019-10-19",
+   "prioridade": null
+  },
+  "AM-352": {
+   "ocorrencias": 4,
+   "fatais": 4,
+   "mortos": 6,
+   "feridos": 38,
+   "ups": 52,
+   "extensao_km": 98.46,
+   "taxa_100km_ano": 0.51,
+   "taxa_ic95": [
+    0.14,
+    1.32
+   ],
+   "fatais_100km_ano": 0.515,
+   "fatais_ic95": [
+    0.138,
+    1.318
+   ],
+   "ups_100km_ano": 6.69,
    "ultimos_12m": 2,
    "media_anual_36m_antes": 0.0,
    "tendencia": null,
    "trechos_criticos": [],
    "tipos": {
     "Colisão": 2,
-    "Capotamento": 1
+    "Capotamento": 1,
+    "Atropelamento": 1
    },
    "tipo_predominante": "Colisão",
    "intervencao_sugerida": "3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica",
-   "km_informado_pct": 33,
+   "km_informado_pct": 25,
    "iri_medio": 3.09,
    "condicao": "Bom",
    "obras_ativas": [
@@ -499,17 +588,17 @@
     }
    ],
    "ultima": "2026-05-23",
-   "prioridade": 10.1,
+   "prioridade": 6.9,
    "fatores": {
-    "ups": 0.11,
-    "fatal": 0.13,
+    "ups": 0.06,
+    "fatal": 0.07,
     "tendencia": 0.0,
     "iri": 0.21,
     "sem_obra": 0.0
    },
    "posicao": 4,
    "faixa": "Baixa",
-   "leitura": "3 ocorrências desde 2019 (3 com morte); 0,386 ocorrências fatais por 100 km/ano; tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00006/2020-SEINFRA, CT-00069/2022-SEINFRA."
+   "leitura": "4 ocorrências desde 2019 (4 com morte); 0,515 ocorrências fatais por 100 km/ano; tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00006/2020-SEINFRA, CT-00069/2022-SEINFRA."
   },
   "AM-363": {
    "ocorrencias": 6,
@@ -546,16 +635,16 @@
    "condicao": "Bom",
    "obras_ativas": [],
    "ultima": "2026-04-13",
-   "prioridade": 36.2,
+   "prioridade": 32.3,
    "fatores": {
-    "ups": 0.11,
-    "fatal": 0.11,
+    "ups": 0.04,
+    "fatal": 0.05,
     "tendencia": 1.0,
     "iri": 0.31,
     "sem_obra": 1.0
    },
-   "posicao": 3,
-   "faixa": "Média",
+   "posicao": 2,
+   "faixa": "Baixa",
    "leitura": "6 ocorrências desde 2019 (4 com morte); 0,344 ocorrências fatais por 100 km/ano; alta recente: 2 nos últimos 12 meses (×3,0 sobre a média); tipo mais comum: acidente (geral). Estudar: vistoria de campo do trecho (sinalização, pavimento, acostamento); sem obra ativa no e-Obras."
   }
  }
