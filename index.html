@@ -10367,6 +10367,9 @@ window.addEventListener("DOMContentLoaded", () => {
   injectSvgIcons();
   // 1. PRIMEIRO renderiza a home (placeholders) — paint instantâneo.
   HUB.restore();
+  // 1b. a v2 (/v2/) abre os módulos ainda não portados por link: index.html#mod=rodovias
+  const _modHash = (location.hash.match(/mod=(\w+)/) || [])[1];
+  if (_modHash && HUB.modules[_modHash]) loadModule(_modHash);
   // 2. liga listeners globais
   window.addEventListener("resize", () => {
     Object.values(HUB.state.maps).forEach(m => { try { m && m.invalidateSize(); } catch (e) {} });

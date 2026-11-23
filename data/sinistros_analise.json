@@ -1,0 +1,562 @@
+{
+ "_meta": {
+  "gerado": "2026-11-23 09:57",
+  "periodo": [
+   "2019-01-01",
+   "2026-11-23"
+  ],
+  "anos_observados": 7.89,
+  "fonte_base": {
+   "fonte": "Google News (busca pt-BR) -> link real da matéria; texto da matéria conferido pelas regras de coletor/coletar.py",
+   "escopo": "somente rodovias estaduais do Amazonas (AM-xxx); BR fica de fora",
+   "atualizado": "2026-11-23 09:56",
+   "noticias": 189,
+   "ocorrencias": 134
+  },
+  "metodos": {
+   "ups": "DENATRAN (1987), Manual de identificação, análise e tratamento de pontos negros: morte 13, atropelamento com ferido 6, ferido 4, só danos 1",
+   "taxas": "ocorrências ÷ (extensão não planejada/100 × anos observados); IC 95% Poisson (Wilson-Hilferty)",
+   "trecho_critico": "janelas de 5 km pelo km citado; mínimo 2 ocorrências",
+   "tendencia": "últimos 12 meses ÷ média anual dos 36 meses anteriores",
+   "prioridade": {
+    "pesos": {
+     "ups": 0.35,
+     "fatal": 0.25,
+     "tendencia": 0.15,
+     "iri": 0.15,
+     "sem_obra": 0.1
+    },
+    "escalas": "UPS e fatais: v / pior rodovia; tendência 1,0→0 a 2,0→1; IRI 2,7→0 a 4,6→1 m/km (faixas DNIT)",
+    "minimo_ocorrencias": 3,
+    "faixas": "Alta ≥ 60; Média ≥ 35; Baixa < 35"
+   },
+   "intervencoes": "indicação para estudo de campo (DNIT: Manual de Sinalização Rodoviária 2010; Manual de Projeto de Interseções 2005)"
+  },
+  "cuidados": [
+   "A base são notícias: acidente sem matéria não aparece, e as rodovias perto de Manaus têm mais cobertura.",
+   "Mortos é o mínimo citado nas matérias; quem morreu depois no hospital pode faltar.",
+   "O km vem do texto da matéria e nem sempre é informado.",
+   "A data é a da publicação (Google News) ou a da matéria (Wayback), não necessariamente a do acidente."
+  ]
+ },
+ "totais": {
+  "ocorrencias": 125,
+  "fatais": 76,
+  "mortos": 189,
+  "feridos": 289,
+  "ups": 1139,
+  "noticias": 189,
+  "arquivadas_wayback": 89,
+  "rodovias_com_registro": 5,
+  "ultimos_12m": 18,
+  "12m_anteriores": 43,
+  "fatais_ultimos_12m": 14,
+  "fatais_12m_anteriores": 28
+ },
+ "por_ano": {
+  "2019": {
+   "ocorrencias": 11,
+   "fatais": 8,
+   "mortos": 13,
+   "ups": 110
+  },
+  "2020": {
+   "ocorrencias": 9,
+   "fatais": 4,
+   "mortos": 5,
+   "ups": 69
+  },
+  "2021": {
+   "ocorrencias": 7,
+   "fatais": 4,
+   "mortos": 5,
+   "ups": 58
+  },
+  "2022": {
+   "ocorrencias": 12,
+   "fatais": 6,
+   "mortos": 4,
+   "ups": 99
+  },
+  "2023": {
+   "ocorrencias": 11,
+   "fatais": 3,
+   "mortos": 81,
+   "ups": 64
+  },
+  "2024": {
+   "ocorrencias": 24,
+   "fatais": 18,
+   "mortos": 35,
+   "ups": 252
+  },
+  "2025": {
+   "ocorrencias": 36,
+   "fatais": 20,
+   "mortos": 32,
+   "ups": 313
+  },
+  "2026": {
+   "ocorrencias": 15,
+   "fatais": 13,
+   "mortos": 14,
+   "ups": 174
+  }
+ },
+ "serie_mensal": {
+  "2019-01": 1,
+  "2019-02": 1,
+  "2019-03": 2,
+  "2019-04": 1,
+  "2019-05": 3,
+  "2019-07": 2,
+  "2019-08": 1,
+  "2020-02": 1,
+  "2020-05": 1,
+  "2020-06": 1,
+  "2020-07": 2,
+  "2020-08": 1,
+  "2020-11": 2,
+  "2020-12": 1,
+  "2021-01": 1,
+  "2021-07": 1,
+  "2021-09": 1,
+  "2021-10": 1,
+  "2021-11": 2,
+  "2021-12": 1,
+  "2022-02": 1,
+  "2022-03": 1,
+  "2022-07": 3,
+  "2022-09": 2,
+  "2022-10": 1,
+  "2022-11": 2,
+  "2022-12": 2,
+  "2023-01": 2,
+  "2023-02": 2,
+  "2023-03": 1,
+  "2023-07": 2,
+  "2023-09": 2,
+  "2023-10": 1,
+  "2023-12": 1,
+  "2024-01": 1,
+  "2024-02": 3,
+  "2024-03": 1,
+  "2024-04": 3,
+  "2024-05": 1,
+  "2024-06": 1,
+  "2024-07": 1,
+  "2024-09": 1,
+  "2024-10": 2,
+  "2024-11": 2,
+  "2024-12": 8,
+  "2025-01": 3,
+  "2025-02": 3,
+  "2025-03": 1,
+  "2025-04": 2,
+  "2025-05": 4,
+  "2025-06": 5,
+  "2025-07": 3,
+  "2025-08": 5,
+  "2025-09": 2,
+  "2025-10": 2,
+  "2025-11": 3,
+  "2025-12": 3,
+  "2026-03": 3,
+  "2026-04": 4,
+  "2026-05": 5,
+  "2026-06": 1,
+  "2026-07": 1,
+  "2026-11": 1
+ },
+ "por_mes": {
+  "jan": 8,
+  "fev": 11,
+  "mar": 9,
+  "abr": 10,
+  "mai": 14,
+  "jun": 8,
+  "jul": 15,
+  "ago": 7,
+  "set": 8,
+  "out": 7,
+  "nov": 12,
+  "dez": 16
+ },
+ "sazonalidade": {
+  "chuvoso_dez_mai": 68,
+  "seco_jun_nov": 57
+ },
+ "por_dia_semana": {
+  "seg": 26,
+  "ter": 14,
+  "qua": 14,
+  "qui": 13,
+  "sex": 20,
+  "sáb": 16,
+  "dom": 22
+ },
+ "por_tipo": {
+  "Colisão": 57,
+  "Capotamento": 27,
+  "Acidente (geral)": 15,
+  "Atropelamento": 15,
+  "Saída de pista": 6,
+  "Tombamento": 5
+ },
+ "por_municipio": {
+  "Manaus": 61,
+  "Itacoatiara": 20,
+  "Rio Preto da Eva": 11,
+  "Iranduba": 6,
+  "Manacapuru": 4,
+  "Silves": 2,
+  "Presidente Figueiredo": 2,
+  "Novo Airão": 1,
+  "Itapiranga": 1
+ },
+ "por_fonte": {
+  "g1.globo.com": 89,
+  "G1": 19,
+  "Portal - Rios de Notícias": 15,
+  "Portal do Zacarias": 11,
+  "A Crítica": 9,
+  "D24AM": 8,
+  "Portal do Holanda": 5,
+  "amazonas atual": 5,
+  "Amazonas1": 4,
+  "cenarium": 3,
+  "Prefeitura de Manaus": 3,
+  "Estradas": 2,
+  "AGÊNCIA CENARIUM": 2,
+  "todahora.com": 1,
+  "Rádio Rio Mar": 1
+ },
+ "ranking": [
+  "AM-070",
+  "AM-010",
+  "AM-363",
+  "AM-352"
+ ],
+ "rodovias": {
+  "AM-010": {
+   "ocorrencias": 81,
+   "fatais": 47,
+   "mortos": 88,
+   "feridos": 194,
+   "ups": 714,
+   "extensao_km": 268.24,
+   "taxa_100km_ano": 3.83,
+   "taxa_ic95": [
+    3.04,
+    4.76
+   ],
+   "fatais_100km_ano": 2.22,
+   "fatais_ic95": [
+    1.631,
+    2.952
+   ],
+   "ups_100km_ano": 33.72,
+   "ultimos_12m": 10,
+   "media_anual_36m_antes": 16.0,
+   "tendencia": 0.62,
+   "trechos_criticos": [
+    {
+     "km_ini": 135,
+     "km_fim": 140,
+     "ocorrencias": 5,
+     "fatais": 5,
+     "ups": 65
+    },
+    {
+     "km_ini": 5,
+     "km_fim": 10,
+     "ocorrencias": 3,
+     "fatais": 2,
+     "ups": 30
+    },
+    {
+     "km_ini": 85,
+     "km_fim": 90,
+     "ocorrencias": 2,
+     "fatais": 1,
+     "ups": 17
+    },
+    {
+     "km_ini": 30,
+     "km_fim": 35,
+     "ocorrencias": 2,
+     "fatais": 1,
+     "ups": 17
+    },
+    {
+     "km_ini": 60,
+     "km_fim": 65,
+     "ocorrencias": 2,
+     "fatais": 1,
+     "ups": 17
+    }
+   ],
+   "tipos": {
+    "Colisão": 33,
+    "Capotamento": 18,
+    "Acidente (geral)": 11,
+    "Atropelamento": 10,
+    "Saída de pista": 5,
+    "Tombamento": 4
+   },
+   "tipo_predominante": "Colisão",
+   "intervencao_sugerida": "3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica",
+   "km_informado_pct": 32,
+   "iri_medio": 2.05,
+   "condicao": "Bom",
+   "obras_ativas": [
+    {
+     "ct": "CT-00058/2020-SEINFRA",
+     "sit": "Em recebimento",
+     "fis": 100.0,
+     "obj": "Demolição da ponte antiga existente na AM-010 sobre o Rio Preto, no município de Rio Preto da Eva/AM."
+    },
+    {
+     "ct": "CT-00006/2021-SEINFRA",
+     "sit": "Andamento",
+     "fis": null,
+     "obj": "Manutenção/conservação de sinalização horizontal e vertical na rodovia AM-010 (KM 17 ao 266) compreendendo os municípios de Manaus, Rio Preto da Eva e Itacoatia"
+    },
+    {
+     "ct": "CT-00027/2021-SEINFRA",
+     "sit": "Andamento",
+     "fis": 10.17,
+     "obj": "Obras e serviços de engenharia para a reforma e modernização da Rodovia AM-010."
+    },
+    {
+     "ct": "CT-00057/2022-SEINFRA",
+     "sit": "Andamento",
+     "fis": 85.19,
+     "obj": "Obras e serviços remanescentes de engenharia para a Reforma e Modernização da Rodovia AM-010."
+    }
+   ],
+   "ultima": "2026-11-12",
+   "prioridade": 43.9,
+   "fatores": {
+    "ups": 0.73,
+    "fatal": 0.73,
+    "tendencia": 0.0,
+    "iri": 0.0,
+    "sem_obra": 0.0
+   },
+   "posicao": 2,
+   "faixa": "Média",
+   "leitura": "81 ocorrências desde 2019 (47 com morte); 2,22 ocorrências fatais por 100 km/ano; trecho mais grave: km 135–140 (5 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00058/2020-SEINFRA, CT-00006/2021-SEINFRA, CT-00027/2021-SEINFRA."
+  },
+  "AM-070": {
+   "ocorrencias": 33,
+   "fatais": 20,
+   "mortos": 88,
+   "feridos": 30,
+   "ups": 303,
+   "extensao_km": 83.47,
+   "taxa_100km_ano": 5.01,
+   "taxa_ic95": [
+    3.45,
+    7.03
+   ],
+   "fatais_100km_ano": 3.036,
+   "fatais_ic95": [
+    1.853,
+    4.688
+   ],
+   "ups_100km_ano": 45.99,
+   "ultimos_12m": 4,
+   "media_anual_36m_antes": 6.33,
+   "tendencia": 0.63,
+   "trechos_criticos": [
+    {
+     "km_ini": 5,
+     "km_fim": 10,
+     "ocorrencias": 4,
+     "fatais": 3,
+     "ups": 43
+    }
+   ],
+   "tipos": {
+    "Colisão": 21,
+    "Capotamento": 6,
+    "Atropelamento": 5,
+    "Acidente (geral)": 1
+   },
+   "tipo_predominante": "Colisão",
+   "intervencao_sugerida": "3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica",
+   "km_informado_pct": 24,
+   "iri_medio": 1.49,
+   "condicao": "Excelente",
+   "obras_ativas": [
+    {
+     "ct": "CT-00006/2020-SEINFRA",
+     "sit": "Em recebimento",
+     "fis": 94.0,
+     "obj": "Obras e serviços de engenharia para conservação e manutenção das Rodovias Estaduais do Amazonas Lote 02 (AM-070 Manaus/Manacapuru: 83,50 Km, AM-352 Novo Airão: "
+    }
+   ],
+   "ultima": "2026-05-17",
+   "prioridade": 60.0,
+   "fatores": {
+    "ups": 1.0,
+    "fatal": 1.0,
+    "tendencia": 0.0,
+    "iri": 0.0,
+    "sem_obra": 0.0
+   },
+   "posicao": 1,
+   "faixa": "Alta",
+   "leitura": "33 ocorrências desde 2019 (20 com morte); 3,036 ocorrências fatais por 100 km/ano; trecho mais grave: km 5–10 (4 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00006/2020-SEINFRA."
+  },
+  "AM-240": {
+   "ocorrencias": 2,
+   "fatais": 2,
+   "mortos": 4,
+   "feridos": 3,
+   "ups": 26,
+   "extensao_km": 79.48,
+   "taxa_100km_ano": 0.32,
+   "taxa_ic95": [
+    0.04,
+    1.15
+   ],
+   "fatais_100km_ano": 0.319,
+   "fatais_ic95": [
+    0.036,
+    1.151
+   ],
+   "ups_100km_ano": 4.14,
+   "ultimos_12m": 0,
+   "media_anual_36m_antes": 0.67,
+   "tendencia": 0.0,
+   "trechos_criticos": [
+    {
+     "km_ini": 5,
+     "km_fim": 10,
+     "ocorrencias": 2,
+     "fatais": 2,
+     "ups": 26
+    }
+   ],
+   "tipos": {
+    "Capotamento": 1,
+    "Colisão": 1
+   },
+   "tipo_predominante": "Capotamento",
+   "intervencao_sugerida": "correção de curva e superelevação, defensas, sinalização de curva e controle de velocidade",
+   "km_informado_pct": 100,
+   "iri_medio": null,
+   "condicao": null,
+   "obras_ativas": [],
+   "ultima": "2025-08-23",
+   "prioridade": null
+  },
+  "AM-352": {
+   "ocorrencias": 3,
+   "fatais": 3,
+   "mortos": 5,
+   "feridos": 38,
+   "ups": 39,
+   "extensao_km": 98.46,
+   "taxa_100km_ano": 0.39,
+   "taxa_ic95": [
+    0.08,
+    1.13
+   ],
+   "fatais_100km_ano": 0.386,
+   "fatais_ic95": [
+    0.078,
+    1.128
+   ],
+   "ups_100km_ano": 5.02,
+   "ultimos_12m": 2,
+   "media_anual_36m_antes": 0.0,
+   "tendencia": null,
+   "trechos_criticos": [],
+   "tipos": {
+    "Colisão": 2,
+    "Capotamento": 1
+   },
+   "tipo_predominante": "Colisão",
+   "intervencao_sugerida": "3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica",
+   "km_informado_pct": 33,
+   "iri_medio": 3.09,
+   "condicao": "Bom",
+   "obras_ativas": [
+    {
+     "ct": "CT-00006/2020-SEINFRA",
+     "sit": "Em recebimento",
+     "fis": 94.0,
+     "obj": "Obras e serviços de engenharia para conservação e manutenção das Rodovias Estaduais do Amazonas Lote 02 (AM-070 Manaus/Manacapuru: 83,50 Km, AM-352 Novo Airão: "
+    },
+    {
+     "ct": "CT-00069/2022-SEINFRA",
+     "sit": "Andamento",
+     "fis": 41.0,
+     "obj": "Obras e serviços de engenharia para recuperação da Rodovia AM-352, no Estado do Amazonas."
+    }
+   ],
+   "ultima": "2026-05-23",
+   "prioridade": 10.1,
+   "fatores": {
+    "ups": 0.11,
+    "fatal": 0.13,
+    "tendencia": 0.0,
+    "iri": 0.21,
+    "sem_obra": 0.0
+   },
+   "posicao": 4,
+   "faixa": "Baixa",
+   "leitura": "3 ocorrências desde 2019 (3 com morte); 0,386 ocorrências fatais por 100 km/ano; tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00006/2020-SEINFRA, CT-00069/2022-SEINFRA."
+  },
+  "AM-363": {
+   "ocorrencias": 6,
+   "fatais": 4,
+   "mortos": 4,
+   "feridos": 24,
+   "ups": 57,
+   "extensao_km": 147.2,
+   "taxa_100km_ano": 0.52,
+   "taxa_ic95": [
+    0.19,
+    1.12
+   ],
+   "fatais_100km_ano": 0.344,
+   "fatais_ic95": [
+    0.093,
+    0.881
+   ],
+   "ups_100km_ano": 4.91,
+   "ultimos_12m": 2,
+   "media_anual_36m_antes": 0.67,
+   "tendencia": 3.0,
+   "trechos_criticos": [],
+   "tipos": {
+    "Acidente (geral)": 3,
+    "Tombamento": 1,
+    "Saída de pista": 1,
+    "Capotamento": 1
+   },
+   "tipo_predominante": "Acidente (geral)",
+   "intervencao_sugerida": "vistoria de campo do trecho (sinalização, pavimento, acostamento)",
+   "km_informado_pct": 17,
+   "iri_medio": 3.29,
+   "condicao": "Bom",
+   "obras_ativas": [],
+   "ultima": "2026-04-13",
+   "prioridade": 36.2,
+   "fatores": {
+    "ups": 0.11,
+    "fatal": 0.11,
+    "tendencia": 1.0,
+    "iri": 0.31,
+    "sem_obra": 1.0
+   },
+   "posicao": 3,
+   "faixa": "Média",
+   "leitura": "6 ocorrências desde 2019 (4 com morte); 0,344 ocorrências fatais por 100 km/ano; alta recente: 2 nos últimos 12 meses (×3,0 sobre a média); tipo mais comum: acidente (geral). Estudar: vistoria de campo do trecho (sinalização, pavimento, acostamento); sem obra ativa no e-Obras."
+  }
+ }
+}

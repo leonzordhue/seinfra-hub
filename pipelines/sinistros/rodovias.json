@@ -1,0 +1,43 @@
+{
+  "_meta": {
+    "fonte": "Rodovias estaduais do SER/AM (planilha Rodovias, GeoJSON RODOVIAS_ESTADUAIS_AMAZONAS v2). Nomes alternativos: base de conhecimento DMOB e notícias que trazem o código e o nome juntos.",
+    "regra": "nomes_fortes valem sozinhos na notícia; nomes_busca só ampliam a busca e exigem o código AM-xxx no texto para contar.",
+    "atualizado": "2026-11-06"
+  },
+  "rodovias": {
+    "AM-010": {"trecho": "Manaus – Rio Preto da Eva – Itacoatiara", "nomes_fortes": ["Manaus-Itacoatiara", "Manaus–Itacoatiara", "Manaus/Itacoatiara", "estrada de Itacoatiara"], "nomes_busca": []},
+    "AM-020": {"trecho": "Manaus (Puraquequara)", "nomes_fortes": [], "nomes_busca": ["estrada do Puraquequara"]},
+    "AM-070": {"trecho": "Manaus/Iranduba – Manacapuru", "nomes_fortes": ["Manoel Urbano", "Manuel Urbano"], "nomes_busca": ["estrada de Manacapuru"]},
+    "AM-151": {"trecho": "Iranduba", "nomes_fortes": ["Carlos Braga"], "nomes_busca": []},
+    "AM-170": {"trecho": "Santa Isabel do Rio Negro (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-175": {"trecho": "Pauini (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-239": {"trecho": "São Gabriel da Cachoeira", "nomes_fortes": [], "nomes_busca": ["estrada de Camanaus"]},
+    "AM-240": {"trecho": "Presidente Figueiredo – Balbina", "nomes_fortes": ["estrada de Balbina"], "nomes_busca": []},
+    "AM-249": {"trecho": "Vila do Copacá", "nomes_fortes": [], "nomes_busca": []},
+    "AM-254": {"trecho": "BR-319 – Autazes – Maués", "nomes_fortes": ["estrada de Autazes"], "nomes_busca": []},
+    "AM-280": {"trecho": "Ipixuna (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-326": {"trecho": "Urucurituba (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-328": {"trecho": "Porto de Itapiranga", "nomes_fortes": [], "nomes_busca": []},
+    "AM-329": {"trecho": "Feijó/AC (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-330": {"trecho": "Silves", "nomes_fortes": ["estrada de Silves"], "nomes_busca": []},
+    "AM-336": {"trecho": "Carauari/Tefé/Juruá (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-343": {"trecho": "Coari (planejada)", "nomes_fortes": [], "nomes_busca": ["estrada de Coari"]},
+    "AM-351": {"trecho": "Rio Urubu", "nomes_fortes": [], "nomes_busca": []},
+    "AM-352": {"trecho": "Manacapuru – Novo Airão", "nomes_fortes": ["estrada de Novo Airão", "Washington Régis"], "nomes_busca": []},
+    "AM-354": {"trecho": "Careiro – Manaquiri", "nomes_fortes": ["estrada de Manaquiri"], "nomes_busca": []},
+    "AM-356": {"trecho": "Borba (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-360": {"trecho": "Novo Aripuanã (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-362": {"trecho": "Alvarães", "nomes_fortes": [], "nomes_busca": []},
+    "AM-363": {"trecho": "Itacoatiara – Silves – Itapiranga", "nomes_fortes": ["estrada da Várzea"], "nomes_busca": []},
+    "AM-364": {"trecho": "Vila da Democracia/Manicoré", "nomes_fortes": [], "nomes_busca": ["ramal da Democracia"]},
+    "AM-366": {"trecho": "Tefé – Juruá (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-374": {"trecho": "Santo Antônio do Içá (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-378": {"trecho": "São Paulo de Olivença (planejada)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-449": {"trecho": "Manaus – Puraquequara", "nomes_fortes": [], "nomes_busca": []},
+    "AM-450": {"trecho": "Manaus (Anel Sul / Anel Leste)", "nomes_fortes": ["Anel Sul", "Anel Leste", "Rodoanel de Manaus"], "nomes_busca": ["Rapidão"]},
+    "AM-451": {"trecho": "Aeroporto de Itacoatiara", "nomes_fortes": [], "nomes_busca": []},
+    "AM-452": {"trecho": "Comunidade do Caldeirão (Iranduba)", "nomes_fortes": ["estrada do Caldeirão"], "nomes_busca": []},
+    "AM-453": {"trecho": "Colônia Bela Vista (AM-070 km 56)", "nomes_fortes": [], "nomes_busca": []},
+    "AM-466": {"trecho": "Canutama (planejada)", "nomes_fortes": [], "nomes_busca": []}
+  }
+}

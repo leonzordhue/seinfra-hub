@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # commit feito pelo GITHUB_TOKEN (bots de dados) não dispara "push": publica quando eles terminam
+  workflow_run:
+    workflows: ["Sinistros (diário)", "Licitações (diário)"]
+    types: [completed]
 
 permissions:
   contents: read
@@ -37,6 +41,9 @@ jobs:
             node --check "$f"
             echo "$f: sintaxe OK"
           done
+      - name: Verificar sintaxe dos módulos da v2
+        run: |
+          for f in $(find v2 -name '*.js' 2>/dev/null); do node --check "$f" && echo "$f: OK"; done
 
   deploy:
     needs: check
@@ -47,6 +54,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: main   # no workflow_run, pega o commit novo dos dados
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

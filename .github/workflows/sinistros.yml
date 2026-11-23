@@ -1,0 +1,66 @@
+# Bot de sinistros: busca diária de notícias de acidentes nas rodovias estaduais (AM-XXX e nomes de "decoração"),
+# guarda cópia de cada link no Wayback e refaz a análise (data/sinistros_analise.json). [Nexus] 23/11/2026
+# Carga histórica: rodar manualmente com "desde" (ex.: 2019-01-01) e, se quiser, "rodovias" (ex.: AM-010 AM-070).
+name: Sinistros (diário)
+
+on:
+  schedule:
+    - cron: "0 10 * * *"   # 06h Manaus
+  workflow_dispatch:
+    inputs:
+      desde:
+        description: "Carga histórica a partir de AAAA-MM-DD (vazio = rotina diária)"
+        required: false
+      rodovias:
+        description: "Só estas rodovias, separadas por espaço (vazio = todas)"
+        required: false
+      wayback_portais:
+        description: "Varrer o índice do Wayback (sim/não)"
+        required: false
+        default: "não"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dados
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testes das regras
+        run: python -I pipelines/sinistros/coletar.py --teste
+      - name: Coletar notícias
+        env:
+          DESDE: ${{ inputs.desde }}
+          RODOVIAS: ${{ inputs.rodovias }}
+        run: |
+          if [ -n "$DESDE" ]; then
+            python -I pipelines/sinistros/coletar.py --desde "$DESDE" ${RODOVIAS:+--rodovias $RODOVIAS}
+          else
+            python -I pipelines/sinistros/coletar.py --diario
+          fi
+      - name: Varredura histórica nos portais (Wayback CDX)
+        if: ${{ inputs.wayback_portais == 'sim' }}
+        continue-on-error: true   # o CDX cai com frequência; a próxima rodada continua do cache
+        run: python -I pipelines/sinistros/descobrir_wayback.py && python -I pipelines/sinistros/coletar.py --so-salvar
+      - name: Arquivar links no Wayback
+        continue-on-error: true
+        run: python -I pipelines/sinistros/wayback.py --max 40
+      - name: Análise
+        run: python -I pipelines/sinistros/analisar.py
+      - name: Publicar
+        run: |
+          git config user.name "dmob-bot"
+          git config user.email "dmob-bot@users.noreply.github.com"
+          git add data/sinistros.json data/sinistros.csv data/sinistros_analise.json pipelines/sinistros/_cache.json
+          git diff --cached --quiet && { echo "sem novidade"; exit 0; }
+          git commit -m "dados: sinistros $(date -u +%d/%m/%Y)"
+          git pull --rebase && git push
