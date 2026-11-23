@@ -61,29 +61,65 @@ export function tabela(el, cols, linhas, { ordem = null, limite = 300, onLinha =
 }
 
 // ── gráficos ── (CLAUDE.md: Chart.js sempre destroy() antes de recriar)
+// v3.1: barras com valor escrito na ponta (sem eixo de valores redundante), barras finas, grade leve,
+// linhas com no máximo 5 marcas no eixo. Desligar rótulos: options.plugins.rotulos = false; formatar: { fmt: v => ... }.
 const graficos = new Map();
+const ROTULOS = {
+  id: "rotulos",
+  afterDatasetsDraw(ch, _a, op) {
+    if (op === false || op?.ativo === false || ch.config.type !== "bar") return;
+    const { ctx, chartArea: area } = ch, hz = ch.options.indexAxis === "y";
+    const sc = ch.options.scales || {}, empilhado = !!(sc.x?.stacked || sc.y?.stacked);
+    const fmt = op?.fmt || (v => num(v, Math.abs(v) < 10 && v % 1 ? 1 : 0));
+    const vis = ch.data.datasets.map((d, i) => i).filter(i => ch.isDatasetVisible(i));
+    if (!vis.length) return;
+    ctx.save();
+    ctx.font = `600 12px ${css("--f-corpo") || "Outfit"}`; ctx.fillStyle = css("--tinta-2");
+    const escreve = (el, v) => {
+      if (v == null || isNaN(v) || (!v && !op?.zeros)) return;
+      const t = fmt(v), w = ctx.measureText(t).width;
+      if (hz) { ctx.textAlign = "left"; ctx.textBaseline = "middle"; ctx.fillText(t, Math.min(el.x + 6, area.right + 40 - w), el.y); }
+      else { ctx.textAlign = "center"; ctx.textBaseline = "bottom"; if (el.width >= w * .6 || ch.data.labels.length <= 16) ctx.fillText(t, el.x, el.y - 4); }
+    };
+    if (empilhado) {
+      const ult = vis[vis.length - 1];
+      ch.getDatasetMeta(ult).data.forEach((el, j) => escreve(el, vis.reduce((s, i) => s + (+ch.data.datasets[i].data[j] || 0), 0)));
+    } else vis.forEach(i => ch.getDatasetMeta(i).data.forEach((el, j) => escreve(el, +ch.data.datasets[i].data[j])));
+    ctx.restore();
+  },
+};
 export function grafico(canvas, cfg) {
   const id = canvas.id || (canvas.id = "g" + Math.random().toString(36).slice(2));
   graficos.get(id)?.destroy();
   const C = window.Chart;
   if (!C) { canvas.replaceWith(Object.assign(document.createElement("p"), { className: "vazio", textContent: "Gráfico indisponível (Chart.js não carregou)." })); return; }
+  if (!C.registry.plugins.get("rotulos")) C.register(ROTULOS);
   const tinta = css("--tinta-3"), grade = css("--grade");
   C.defaults.font.family = css("--f-corpo") || "Outfit, sans-serif";
   C.defaults.color = tinta;
+  const o = cfg.options || {}, barra = cfg.type === "bar", hz = o.indexAxis === "y";
+  const rot = barra && o.plugins?.rotulos !== false;
+  const eixoVal = hz ? "x" : "y", eixoCat = hz ? "y" : "x";
+  // o formato do eixo de valores do módulo (ex.: R$ mi) vira o formato do rótulo
+  const cbEixo = o.scales?.[eixoVal]?.ticks?.callback;
+  const fmtRot = o.plugins?.rotulos?.fmt || (cbEixo ? v => cbEixo(v) : null);
   const base = {
     responsive: true, maintainAspectRatio: false, animation: matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 250 },
-    interaction: { mode: "index", intersect: false },
-    // v3: tooltip escuro institucional, grade horizontal leve, eixo X sem rotação, linhas finas sem marcador
-    plugins: { legend: { display: false, labels: { usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 14, color: css("--tinta-2") } },
+    interaction: { mode: "index", intersect: false, axis: hz ? "y" : "x" },
+    layout: { padding: rot ? (hz ? { right: 44 } : { top: 20 }) : 0 },
+    plugins: { rotulos: fmtRot ? { fmt: fmtRot } : {}, legend: { display: false, align: "start", labels: { usePointStyle: true, pointStyle: "rectRounded", boxWidth: 10, boxHeight: 10, padding: 16, color: css("--tinta-2"), font: { size: 12.5 } } },
       tooltip: { backgroundColor: "#00173D", titleColor: "#fff", bodyColor: "rgba(255,255,255,.88)", borderColor: "rgba(255,255,255,.12)", borderWidth: 1,
         padding: { x: 12, y: 10 }, cornerRadius: 6, boxPadding: 4, usePointStyle: true, titleFont: { weight: "600" } } },
-    elements: { line: { borderWidth: 2, tension: .25 }, point: { radius: 0, hoverRadius: 4, hitRadius: 8 }, bar: { borderRadius: 3 } },
+    elements: { line: { borderWidth: 2.25, tension: .3, borderCapStyle: "round" }, point: { radius: 0, hoverRadius: 5, hitRadius: 10, hoverBorderWidth: 2, hoverBorderColor: css("--sup") },
+      bar: { borderRadius: 3, borderSkipped: "start" } },
+    datasets: { bar: { maxBarThickness: hz ? 18 : 30, categoryPercentage: .72, barPercentage: .92 } },
     scales: cfg.type === "doughnut" || cfg.type === "pie" ? undefined : {
-      x: { grid: { display: false }, border: { color: css("--eixo") }, ticks: { color: tinta, maxRotation: 0, autoSkipPadding: 14, font: { size: 12 } } },
-      y: { grid: { color: grade, drawTicks: false }, border: { display: false }, ticks: { color: tinta, precision: 0, padding: 8, font: { size: 12 } }, beginAtZero: true },
+      [eixoCat]: { grid: { display: false }, border: { color: css("--eixo") }, ticks: { color: hz ? css("--tinta-2") : tinta, maxRotation: 0, autoSkipPadding: 14, font: { size: hz ? 12.5 : 12 } } },
+      [eixoVal]: rot ? { display: false, beginAtZero: true, grid: { display: false } }
+        : { grid: { color: grade, drawTicks: false }, border: { display: false }, ticks: { color: tinta, precision: 0, padding: 8, maxTicksLimit: 5, font: { size: 12 } }, beginAtZero: true },
     },
   };
-  const g = new C(canvas, { ...cfg, options: fundir(base, cfg.options || {}) });
+  const g = new C(canvas, { ...cfg, options: fundir(base, o) });
   graficos.set(id, g);
   return g;
 }
@@ -95,7 +131,7 @@ function fundir(a, b) {
 }
 export const serie = i => css(`--s${i}`);
 // barras: ponta arredondada de 4px só no topo, 2px de respiro entre barras
-export const estiloBarra = cor => ({ backgroundColor: cor, borderRadius: { topLeft: 4, topRight: 4 }, borderSkipped: "bottom", maxBarThickness: 36, borderColor: css("--sup"), borderWidth: { left: 1, right: 1 } });
+export const estiloBarra = cor => ({ backgroundColor: cor, borderRadius: 3, borderSkipped: "start", borderColor: css("--sup"), borderWidth: 0 });
 
 // ── gaveta lateral ──
 export function gaveta(html) {
