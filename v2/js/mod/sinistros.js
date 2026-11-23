@@ -6,6 +6,45 @@ import { esc, num, pct, data, semAcento, desentidade } from "../fmt.js";
 import { $, kpi, chip, barra, tabela, grafico, gaveta, fonte, opcoes, serie, css } from "../ui.js";
 
 const estado = { rod: "", ano: "", q: "", fatal: false };
+// barra horizontal: ~30 px por categoria (régua do brief visual v3)
+const alturaH = n => Math.max(120, n * 30 + 16);
+const tituloSazonal = s => {
+  const c = s.chuvoso_dez_mai, sc = s.seco_jun_nov, t = c + sc;
+  if (!t || Math.abs(c - sc) / t < .1) return "Chuva não muda o total de ocorrências";
+  return `${c > sc ? "Período chuvoso" : "Período seco"} tem ${pct(Math.max(c, sc) / t * 100, 0)} das ocorrências`;
+};
+const CSS = `
+  .snt .nota, .nota { font-size: 12.5px; color: var(--tinta-3); margin: 10px 0 0; line-height: 1.5; }
+  .prio { list-style: none; margin: 0; padding: 0; }
+  .prio li { display: grid; grid-template-columns: 28px minmax(92px, auto) minmax(0, 1fr) 56px; gap: 6px 14px; align-items: center; padding: 14px 6px; border-bottom: 1px solid var(--borda); cursor: pointer; }
+  .prio li:last-child { border-bottom: 0; }
+  .prio li:hover, .prio li:focus-visible { background: var(--sup-2); outline: none; }
+  .prio .pos { font: 600 13px var(--f-titulo); color: var(--tinta-3); text-align: right; }
+  .prio .rod { font: 600 15px var(--f-titulo); color: var(--tinta); }
+  .prio .rod small { display: block; font: 400 12px var(--f-corpo); color: var(--tinta-3); margin-top: 3px; }
+  .prio .val { font: 600 22px/1 var(--f-titulo); color: var(--tinta); text-align: right; font-variant-numeric: tabular-nums; }
+  .prio .val small { display: block; font: 500 11.5px var(--f-corpo); margin-top: 4px; }
+  .prio .val .critico { color: var(--critico); } .prio .val .alerta { color: var(--alerta); } .prio .val .ok { color: var(--tinta-3); }
+  .ind { position: relative; height: 14px; border-radius: 3px; overflow: hidden;
+    background: linear-gradient(90deg, var(--sup-3) 0 35%, var(--alerta-bg) 35% 60%, var(--critico-bg) 60% 100%); }
+  .ind i { position: absolute; inset: 3px auto 3px 0; border-radius: 2px; background: var(--s6); }
+  .ind i.critico { background: var(--critico); } .ind i.alerta { background: var(--alerta); }
+  .ind-esc { display: flex; justify-content: space-between; font-size: 11px; color: var(--tinta-3); margin-top: 3px; position: relative; height: 13px; }
+  .ind-esc span { position: absolute; transform: translateX(-50%); } .ind-esc span:first-child { transform: none; } .ind-esc span:last-child { transform: translateX(-100%); }
+  .prio .ler { grid-column: 3 / 5; font-size: 13.5px; color: var(--tinta-2); line-height: 1.45; }
+  .prio .ler b { color: var(--tinta); font-weight: 600; }
+  .acv a.tit { color: var(--tinta); font-weight: 500; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .acv a.tit:hover { color: var(--azul); text-decoration: underline; text-underline-offset: 3px; }
+  .acv .meta { font-size: 12.5px; color: var(--tinta-3); margin-top: 2px; }
+  .acv .meta a { color: var(--tinta-3); }
+  .acv .nt + .nt { margin-top: 8px; }
+  .acv td:first-child { white-space: nowrap; }
+  .acv summary { cursor: pointer; font-size: 12.5px; color: var(--azul); margin-top: 6px; }
+  @media (max-width: 700px) {
+    .prio li { grid-template-columns: 22px minmax(0, 1fr) 52px; }
+    .prio .barra-ind { grid-column: 2 / 4; grid-row: 2; }
+    .prio .ler { grid-column: 2 / 4; }
+  }`;
 
 export async function render(el) {
   const [s, a] = await Promise.all([carregar("sinistros"), carregar("sinistros_analise")]);
@@ -17,8 +56,13 @@ export async function render(el) {
   const arq = s.noticias.filter(n => n.arquivo).length;
   const ranking = a.ranking.map(c => ({ cod: c, ...a.rodovias[c] }));
   const fora = Object.entries(a.rodovias).filter(([c]) => !a.ranking.includes(c)).map(([c, r]) => ({ cod: c, ...r }));
+  const ordena = o => Object.entries(o).sort((x, y) => y[1] - x[1]);
+  const tipos = ordena(a.por_tipo), muns = ordena(a.por_municipio);
+  const somaTipo = tipos.reduce((s, x) => s + x[1], 0), somaMun = muns.reduce((s, x) => s + x[1], 0);
+  const anoAtual = Object.keys(a.por_ano).sort().pop() || "";
 
   el.innerHTML = `
+    <style>${CSS}</style>
     <div class="cab"><div><h1>Sinistros nas rodovias estaduais</h1>
       <p>Acidentes nas rodovias AM-XXX levantados em notícias desde ${data(M.periodo[0])}, com cópia permanente de cada matéria no Wayback Machine. Serve para apontar onde estudar intervenção primeiro.</p></div>
       <div class="fontes">${fonte("atualizado", M.gerado)}${fonte("notícias", num(T.noticias))}${fonte("com cópia arquivada", `${num(arq)} (${pct(T.noticias ? arq / T.noticias * 100 : 0, 0)})`)}</div></div>
@@ -31,19 +75,24 @@ export async function render(el) {
     </div>
     <div class="aviso secao"><b>Como ler:</b> a base são notícias, não boletins de ocorrência.<ul>${M.cuidados.map(c => `<li>${esc(c)}</li>`).join("")}</ul></div>
 
-    <section class="secao cartao"><header><div><h2>Onde agir primeiro</h2>
-      <p>Índice de prioridade de 0 a 100 (rodovias com 3 ocorrências ou mais). Pesos: ${Object.entries(M.metodos.prioridade.pesos).map(([k, v]) => `${({ ups: "severidade", fatal: "fatais", tendencia: "tendência", iri: "IRI", sem_obra: "sem obra ativa" })[k] || k} ${pct(v * 100, 0)}`).join(", ")}. Faixas: ${esc(M.metodos.prioridade.faixas)}.</p></div></header>
-      <div class="corpo" id="rank"></div></section>
+    <section class="secao cartao"><header><div><h2>${ranking[0] ? `${esc(ranking[0].cod)} é a prioridade ${ranking[0].faixa === "Alta" ? "alta" : "maior"} do ranking` : "Onde agir primeiro"}</h2>
+      <p>Índice de prioridade de 0 a 100, só rodovias com ${num(M.metodos.prioridade.minimo_ocorrencias || 3)} ocorrências ou mais. Clique numa rodovia para ver trechos, obras e notícias.</p></div></header>
+      <div class="corpo"><div id="rank"></div>
+        <p class="nota">Pesos: ${Object.entries(M.metodos.prioridade.pesos).map(([k, v]) => `${({ ups: "severidade", fatal: "fatais", tendencia: "tendência", iri: "IRI", sem_obra: "sem obra ativa" })[k] || k} ${pct(v * 100, 0)}`).join(", ")}. Faixas: ${esc(M.metodos.prioridade.faixas)}. Severidade em UPS (DENATRAN); IRI pelas faixas DNIT.</p></div></section>
 
     <section class="secao grade g-2">
-      <div class="cartao"><header><div><h2>Ocorrências por ano</h2><p>${esc(M.metodos.taxas ? "Contagem de ocorrências (várias notícias do mesmo acidente contam uma vez)" : "")}</p></div></header>
-        <div class="corpo"><div class="legenda"><span><i style="background:${serie(1)}"></i>Com morte</span><span><i style="background:${serie(6)}"></i>Sem morte</span></div><div class="graf"><canvas id="gAno"></canvas></div></div></div>
-      <div class="cartao"><header><div><h2>Tipo de acidente</h2><p>Define a intervenção a estudar</p></div></header><div class="corpo"><div class="graf"><canvas id="gTipo"></canvas></div></div></div>
-      <div class="cartao"><header><div><h2>Mês do ano</h2><p>Chuvoso (dez–mai): ${num(a.sazonalidade.chuvoso_dez_mai)} · seco (jun–nov): ${num(a.sazonalidade.seco_jun_nov)}</p></div></header><div class="corpo"><div class="graf"><canvas id="gMes"></canvas></div></div></div>
-      <div class="cartao"><header><div><h2>Município</h2><p>Onde a ocorrência foi registrada</p></div></header><div class="corpo"><div class="graf"><canvas id="gMun"></canvas></div></div></div>
+      <div class="cartao"><header><div><h2>${pct(T.ocorrencias ? T.fatais / T.ocorrencias * 100 : 0, 0)} das ocorrências noticiadas têm morte</h2><p>Ocorrências por ano (várias notícias do mesmo acidente contam uma vez). ${esc(anoAtual)} vai até hoje.</p></div></header>
+        <div class="corpo"><div class="legenda"><span><i style="background:${serie(1)}"></i>Com morte</span><span><i style="background:${serie(6)}"></i>Sem morte</span></div><div class="graf"><canvas id="gAno"></canvas></div>
+          <p class="nota">Fonte: notícias coletadas pelo robô do Hub. Acidente sem morte sai menos no noticiário.</p></div></div>
+      <div class="cartao"><header><div><h2>${esc(tipos[0]?.[0] || "—")} é ${pct(somaTipo ? (tipos[0]?.[1] || 0) / somaTipo * 100 : 0, 0)} das ocorrências</h2><p>Ocorrências por tipo de acidente. O tipo define a intervenção a estudar.</p></div></header>
+        <div class="corpo"><div class="graf" style="height:${alturaH(Math.min(8, tipos.length))}px"><canvas id="gTipo"></canvas></div></div></div>
+      <div class="cartao"><header><div><h2>${tituloSazonal(a.sazonalidade)}</h2><p>Ocorrências por mês do ano, todos os anos somados</p></div></header>
+        <div class="corpo"><div class="legenda"><span><i style="background:${serie(1)}"></i>Chuvoso (dez–mai): ${num(a.sazonalidade.chuvoso_dez_mai)}</span><span><i style="background:${serie(6)}"></i>Seco (jun–nov): ${num(a.sazonalidade.seco_jun_nov)}</span></div><div class="graf"><canvas id="gMes"></canvas></div></div></div>
+      <div class="cartao"><header><div><h2>${esc(muns[0]?.[0] || "—")} concentra ${pct(somaMun ? (muns[0]?.[1] || 0) / somaMun * 100 : 0, 0)} das ocorrências</h2><p>Ocorrências por município de registro (${muns.length > 8 ? "8 maiores" : "todos"})</p></div></header>
+        <div class="corpo"><div class="graf" style="height:${alturaH(Math.min(8, muns.length))}px"><canvas id="gMun"></canvas></div></div></div>
     </section>
 
-    <section class="secao cartao"><header><div><h2>Acervo de notícias</h2><p>Cada ocorrência com o link original e a cópia guardada no Wayback Machine (vale mesmo se o portal apagar a matéria).</p></div><span class="contagem" id="cont"></span></header>
+    <section class="secao cartao"><header><div><h2>Acervo de notícias</h2><p>Cada ocorrência com a matéria original e a cópia no Wayback Machine, que vale mesmo se o portal apagar a página.</p></div><span class="contagem" id="cont"></span></header>
       <div class="corpo">
         <div class="filtros">
           <select id="fRod" aria-label="Rodovia">${opcoes(rods, estado.rod, "Todas as rodovias")}</select>
@@ -58,17 +107,22 @@ export async function render(el) {
       <dt>fonte</dt><dd>${esc(M.fonte_base.fonte)}. ${esc(M.fonte_base.escopo)}.</dd></dl></div></details>`;
 
   // ranking
-  tabela($("#rank", el), [
-    { k: "posicao", rot: "#", n: 1 },
-    { k: "cod", rot: "Rodovia", html: r => `<b style="color:var(--tinta)">${esc(r.cod)}</b><div class="peq">${num(r.extensao_km, 0)} km</div>` },
-    { k: "prioridade", rot: "Prioridade", n: 1, html: r => `${num(r.prioridade, 0)} ${chip(r.faixa, r.faixa === "Alta" ? "critico" : r.faixa === "Média" ? "alerta" : "")}${barra(r.prioridade)}` },
-    { k: "ocorrencias", rot: "Ocorrências", n: 1, html: r => `${num(r.ocorrencias)}<div class="peq">${num(r.fatais)} com morte</div>` },
-    { k: "fatais_100km_ano", rot: "Fatais / 100 km·ano", n: 1, html: r => `${num(r.fatais_100km_ano, 2)}<div class="peq">IC 95%: ${num(r.fatais_ic95?.[0], 2)}–${num(r.fatais_ic95?.[1], 2)}</div>` },
-    { k: "tendencia", rot: "Tendência", n: 1, html: r => r.tendencia == null ? "—" : `${num(r.tendencia, 2)}×<div class="peq">${num(r.ultimos_12m)} em 12 m · média ${num(r.media_anual_36m_antes, 1)}/ano</div>` },
-    { k: "iri_medio", rot: "IRI", n: 1, html: r => r.iri_medio == null ? "—" : `${num(r.iri_medio, 2)}<div class="peq">${esc(r.condicao || "")}</div>` },
-    { k: "leitura", rot: "Leitura", sem_ord: 1, html: r => `<div class="obj" style="font-size:13.5px">${esc(r.leitura)}</div>` },
-  ], ranking, { ordem: { k: "prioridade", dir: -1 }, onLinha: r => detalheRodovia(r, ocs), vazio: "Nenhuma rodovia com 3 ocorrências ou mais ainda." });
-  if (fora.length) $("#rank", el).insertAdjacentHTML("beforeend", `<p class="peq" style="font-size:13px;color:var(--tinta-3);margin:10px 0 0">Fora do ranking (menos de 3 ocorrências): ${fora.map(r => `${esc(r.cod)} (${num(r.ocorrencias)})`).join(", ")}.</p>`);
+  // ranking: barra do índice 0–100 sobre as faixas (Baixa < 35 ≤ Média < 60 ≤ Alta, _meta.metodos.prioridade)
+  const nivel = f => f === "Alta" ? "critico" : f === "Média" ? "alerta" : "ok";
+  const ordenado = [...ranking].sort((x, y) => y.prioridade - x.prioridade);
+  $("#rank", el).innerHTML = ordenado.length ? `<ol class="prio">${ordenado.map((r, i) => {
+    const t = r.trechos_criticos?.[0], tend = r.tendencia == null ? "" : r.tendencia > 1.15 ? "em alta" : r.tendencia < .85 ? "em queda" : "estável";
+    return `<li tabindex="0" data-i="${ranking.indexOf(r)}" aria-label="${esc(r.cod)}, prioridade ${num(r.prioridade, 0)}, faixa ${esc(r.faixa)}">
+      <span class="pos">${i + 1}</span>
+      <span class="rod">${esc(r.cod)}<small>${num(r.extensao_km, 0)} km${r.iri_medio != null ? ` · IRI ${num(r.iri_medio, 1)}` : ""}</small></span>
+      <div class="barra-ind"><div class="ind" role="img" aria-label="Índice ${num(r.prioridade, 0)} de 100"><i class="${nivel(r.faixa)}" style="width:${Math.max(1.5, Math.min(100, r.prioridade || 0))}%"></i></div>
+        <div class="ind-esc" aria-hidden="true"><span style="left:0">0</span><span style="left:35%">35</span><span style="left:60%">60</span><span style="left:100%">100</span></div></div>
+      <span class="val">${num(r.prioridade, 0)}<small class="${nivel(r.faixa)}">${esc(r.faixa)}</small></span>
+      <div class="ler"><b>${num(r.ocorrencias)} ocorrências, ${num(r.fatais)} com morte</b> · ${num(r.fatais_100km_ano, 1)} fatais por 100 km/ano${tend ? ` · ${tend} (${num(r.ultimos_12m)} em 12 meses)` : ""}${t ? ` · pior trecho km ${t.km_ini}–${t.km_fim}` : ""}${r.tipo_predominante ? ` · ${esc(r.tipo_predominante.toLowerCase())} predomina` : ""}${r.obras_ativas?.length ? "" : ` · ${chip("sem obra ativa", "alerta")}`}</div>
+    </li>`; }).join("")}</ol>` : `<p class="vazio">Nenhuma rodovia com 3 ocorrências ou mais ainda.</p>`;
+  const abre = ev => { const li = ev.target.closest(".prio li"); if (li && (ev.type === "click" || ev.key === "Enter")) detalheRodovia(ranking[+li.dataset.i], ocs); };
+  $("#rank", el).onclick = abre; $("#rank", el).onkeydown = abre;
+  if (fora.length) $("#rank", el).insertAdjacentHTML("beforeend", `<p class="nota">Fora do ranking (menos de 3 ocorrências): ${fora.map(r => `${esc(r.cod)} (${num(r.ocorrencias)})`).join(", ")}.</p>`);
 
   // gráficos
   const anosG = Object.keys(a.por_ano).sort();
