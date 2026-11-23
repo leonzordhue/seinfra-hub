@@ -6,6 +6,8 @@ import { $, kpi, chip, tabela, fonte, opcoes } from "../ui.js";
 
 const estado = { rod: true, sit: "", mod: "", q: "" };
 const aberta = l => /Divulgada|aberta|andamento/i.test(l.situacao || "") && (!l.encerramento || l.encerramento >= hoje());
+// o objeto do PNCP vem cortado; a descrição do 1º item tem o texto inteiro
+const texto = l => l.descricao || l.objeto || "";
 const hoje = () => new Date().toISOString().slice(0, 10);
 
 export async function render(el) {
@@ -34,7 +36,7 @@ export async function render(el) {
   const pinta = () => {
     const q = semAcento(estado.q);
     const fl = P.filter(l => (!estado.rod || l.rodoviario) && (!estado.sit || l.situacao === estado.sit) && (!estado.mod || l.modalidade === estado.mod) &&
-      (!q || semAcento(`${l.objeto} ${l.edital} ${l.processo}`).includes(q)));
+      (!q || semAcento(`${texto(l)} ${l.edital} ${l.processo}`).includes(q)));
     const ab = fl.filter(aberta);
     const hom = fl.filter(l => l.desconto != null);
     const descMed = hom.length ? hom.reduce((s, l) => s + l.desconto * l.estimado, 0) / hom.reduce((s, l) => s + l.estimado, 0) : null;
@@ -48,7 +50,7 @@ export async function render(el) {
     tabela($("#tab", el), [
       { k: "publicacao", rot: "Publicação", html: l => data(l.publicacao) },
       { k: "edital", rot: "Edital", html: l => `<a href="${esc(l.link)}" target="_blank" rel="noopener"><b>${esc(l.edital)}</b></a><div class="peq">${esc(l.modalidade)}</div>` },
-      { k: "objeto", rot: "Objeto", html: l => `<div class="obj">${esc(l.objeto.slice(0, 220))}</div>${l.processo ? `<div class="peq">Processo ${esc(l.processo)}</div>` : ""}` },
+      { k: "objeto", rot: "Objeto", html: l => `<div class="obj">${esc(texto(l).slice(0, 260))}</div>${l.processo ? `<div class="peq">Processo ${esc(l.processo)}</div>` : ""}` },
       { k: "situacao", rot: "Situação", html: l => chip(l.situacao || "—", aberta(l) ? "ok" : /Revogada|Anulada|Deserta|Fracassada|Suspensa/i.test(l.situacao) ? "alerta" : "") },
       { k: "encerramento", rot: "Propostas até", html: l => data(l.encerramento) },
       { k: "estimado", rot: "Estimado", n: 1, html: l => l.estimado ? brlCurto(l.estimado) : "sigiloso" },

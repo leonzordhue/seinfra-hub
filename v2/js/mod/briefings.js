@@ -59,9 +59,9 @@ const soma = (cs, k) => cs.reduce((s, c) => s + (c[k] || 0), 0);
 
 function blocoLic(lic, teste) {
   if (!lic) return "";
-  const ls = lic.pncp.filter(l => teste(l.objeto || "")).slice(0, 8);
+  const ls = lic.pncp.filter(l => teste(`${l.objeto || ""} ${l.descricao || ""}`)).slice(0, 8);
   return `<h2>Licitações relacionadas</h2>${ls.length ? `<ul class="lista">${ls.map(l => `<li><div><div class="q">${esc(l.edital)} · ${esc(l.situacao || "")} · publicado em ${data(l.publicacao)}</div>
-    <div class="d">${esc(l.objeto.slice(0, 200))}${l.estimado ? ` · estimado ${brlCurto(l.estimado)}` : ""}${l.homologado ? ` · homologado ${brlCurto(l.homologado)}` : ""}</div></div></li>`).join("")}</ul>` : "<p>Nenhum edital no PNCP cita este local no objeto.</p>"}`;
+    <div class="d">${esc((l.descricao || l.objeto).slice(0, 200))}${l.estimado ? ` · estimado ${brlCurto(l.estimado)}` : ""}${l.homologado ? ` · homologado ${brlCurto(l.homologado)}` : ""}</div></div></li>`).join("")}</ul>` : "<p>Nenhum edital no PNCP cita este local no objeto.</p>"}`;
 }
 
 function docMunicipio(mun, ctx) {

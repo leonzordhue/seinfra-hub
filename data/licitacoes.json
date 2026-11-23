@@ -1,7 +1,7 @@
 {
 "_meta": {
 "fonte": "PNCP api/consulta/v1 (CNPJ 05533935000157) e www.csc.am.gov.br/site/licitacao",
-"gerado": "2026-11-23T10:02",
+"gerado": "2026-11-23T10:04",
 "gerador": "pipelines/licitacoes/coletar.py",
 "regras": "desconto = 1 - homologado/estimado (só com os dois > 0); rodoviario = objeto cita rodovia AM, ramal, estrada, pavimentação, ponte, drenagem ou viário (regex RX_ROD)",
 "modalidades": [
@@ -30,7 +30,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/24",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=256672"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=256672",
+"descricao": "NOBREAK, Potencia Saida: 1200VA; Forma Onda: senoidal pura; Tensao Entrada: 115/220V (bivolt automatica); Tensao Saida: 115V; Frequencia Rede: 60Hz; Fator Potencia (min): 0,7; Autonomia: minimo de 30 minutos com carga de 80W; Devera vir acompanhado de cabo de forca, estabilizador interno e filtro de linha interno; Protecao: Sobretensao de rede eletrica; Subtensao de rede eletrica; Fusivel de protecao; N° Tomadas/Saida: 6 Tomadas."
 },
 {
 "id": "05533935000157-1-000023/2026",
@@ -48,7 +49,8 @@
 "srp": false,
 "rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/23",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=256230"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=256230",
+"descricao": "SERVICOS DE ENGENHARIA CIVIL, Contratacao de empresa especializada em Engenharia Civil para execucao de servicos de MANUTENCAO e RECUPERACAO de rodovia, localizada no interior do Estado do Amazonas, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000022/2026",
@@ -66,7 +68,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/22",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=256202"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=256202",
+"descricao": "SERVICOS DE ENGENHARIA CIVIL, Contratacao de empresa especializada em servico de elaboracao de Projetos Basico e Executivo em Metodologia BIM (Building Information Modeling), bem como execucao de obra e servicos de engenharia para a construcao do Centro de Referencia de Atendimento para pessoa com Transtorno do Espectro Autista (TEA), localizado no municipio de Manaus no Estado do Amazonas, conforme Termo de Referencia."
 },
 {
 "id": "05533935000157-1-000021/2026",
@@ -84,7 +87,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/21",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=255409"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=255409",
+"descricao": "SERVICOS DE ENGENHARIA CIVIL, Contratacao de empresa especializada em servico de elaboracao do PROJETO EXECUTIVO, com Instalacao e Homologacao do Sistema PAPI no Aerodromo Municipal Rosemiro Alves da Silva, localizado no municipio de Carauari no Estado do Amazonas, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000020/2026",
@@ -102,7 +106,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/20",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=255370"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=255370",
+"descricao": "INFRAESTRUTURA PORTUARIA E MARITIMA, Contratacao de empresa especializada em servico de obras e servicos de engenharia para construcao de 50 (cinquenta), TERMINAIS FLUTUANTES para atender comunidades rurais e ribeirinhas no Estado do Amazonas, conforme Termo de Referencia."
 },
 {
 "id": "05533935000157-1-000017/2026",
@@ -120,7 +125,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/17",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=255126"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=255126",
+"descricao": "INFRAESTRUTURA PORTUARIA E MARITIMA, Contratacao de empresa especializada em servico de fornecimento, instalacao e adequacao de BALSA FLUTUANTE E RAMPA METALICA PARA TERMINAL DE PASSAGEIROS, no Municipio de Uarini no Estado do Amazonas, conforme Termo de Referencia."
 },
 {
 "id": "05533935000157-1-000016/2026",
@@ -136,9 +142,10 @@
 "homologado": 21804485.58,
 "desconto": 0.02,
 "srp": false,
-"rodoviario": false,
+"rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/16",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254985"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254985",
+"descricao": "SERVICO DE INFRAESTRUTURA VIARIA , Contratacao de empresa especializada em servico de obras de infraestrutura viaria para pavimentacao do RAMAL DO ACUTUBA, localizado no KM 29 da Rodovia AM070, no municipio de Iranduba no Estado do Amazonas, conforme Projeto Basico"
 },
 {
 "id": "05533935000157-1-000015/2026",
@@ -156,7 +163,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/15",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254916"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254916",
+"descricao": "LOCACAO DE VEICULO UTILITARIO, Contratacao de empresa especializada na locacao de veiculo utilitario tipo PICKUP; Capacidade para 05 passageiros (incluindo motorista); Cabine dupla; Motor a diesel; Potencia minima de 180cv; Ar condicionado; Direcao Eletrica; Cambio Automatico; Tracao nas quatro rodas; Vidros e travas eletricas; Som com painel multimidia; SEM MOTORISTA E SEM COMBUSTIVEL; Com jogo de tapetes de borracha, carroceria aberta com capota de lona removivel e fixadores para amarracao de "
 },
 {
 "id": "05533935000157-1-000014/2026",
@@ -174,7 +182,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/14",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254674"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254674",
+"descricao": "SERVICO DE MANUTENCAO PREDIAL, Contratacao de empresa especializada em servico de adequacao da edificacao destinada a FEIRA DA GUTIERREZ, localizado no Municipio de Careiro da Varzea, no Estado do Amazonas, conforme o Termo de Referencia."
 },
 {
 "id": "05533935000157-1-000013/2026",
@@ -192,7 +201,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/13",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254561"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254561",
+"descricao": "CONSTRUCAO CIVIL, Contratacao de empresa especializada em servico de Engenharia para Construcao de SECAO DE COMBATE A INCENDIO (SCI) e Implantacao do acesso, localizado no Aeroporto Municipal de Carauari Rosemiro Alves da Silva (SWCA), conforme Termo de Referencia."
 },
 {
 "id": "05533935000157-1-000012/2026",
@@ -210,7 +220,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/12",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254547"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=254547",
+"descricao": "SERVICOS DE ENGENHARIA CIVIL, Contratacao de empresa especializada em servico de elaboracao do PROJETO EXECUTIVO, com Instalacao e Homologacao do Sistema PAPI no Aerodromo Municipal Rosemiro Alves da Silva, localizado no municipio de Carauari no Estado do Amazonas, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000006/2026",
@@ -226,9 +237,10 @@
 "homologado": null,
 "desconto": null,
 "srp": false,
-"rodoviario": false,
+"rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/6",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=253363"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=253363",
+"descricao": "RECUPERACAO VIARIA, contratacao de empresa especializada para execucao de obra de recuperacao de sistema viario, localizado no interior do Amazonas, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000001/2026",
@@ -244,9 +256,10 @@
 "homologado": null,
 "desconto": null,
 "srp": false,
-"rodoviario": false,
+"rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2026/1",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=252828"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=252828",
+"descricao": "SERVICO DE INFRAESTRUTURA VIARIA , Contratacao de empresa especializada em servico de obras de infraestrutura viaria com manutencao, conservacao e recuperacao da RODOVIA ESTADUAL AM240, localizada no entroncamento do km 103 da RODOVIA FEDERAL BR174 ate a VILA DE BALBINA km 80, no Municipio de Presidente Figueiredo no Estado do Amazonas, conforme Termo de Referencia."
 },
 {
 "id": "05533935000157-1-000035/2025",
@@ -262,9 +275,10 @@
 "homologado": 4750000.0,
 "desconto": 0.0185,
 "srp": false,
-"rodoviario": false,
+"rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/35",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=252237"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=252237",
+"descricao": "CONSTRUCAO CIVIL, Contratacao de empresa especializada em servico de engenharia construcao de PONTE DE ACESSO AO AEROPORTO no Municipio de ITAMARATI, no Estado do Amazonas, conforme Termo de Referencia."
 },
 {
 "id": "05533935000157-1-000034/2025",
@@ -282,7 +296,8 @@
 "srp": false,
 "rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/34",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=252013"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=252013",
+"descricao": "RECUPERACAO VIARIA, Contratacao de empresa especializada para execucao do servico de PAVIMENTACAO E RECUPERACAO DE VIAS RURAIS, com fornecimento de materiais, equipamentos e mao de obra, localizada no interior do Estado do Amazonas e Regiao Metropolitana de Manaus, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000031/2025",
@@ -300,7 +315,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/31",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=251650"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=251650",
+"descricao": "CONECTOR, Padrao Conector: XLR femea para cabo; Numero Contatos: 3; Corpo: em metal; Aplicacao Tipica: Ligacao de microfone a mesa de som; Caracteristicas adicionais: com dispositivo de travamento."
 },
 {
 "id": "05533935000157-1-000026/2025",
@@ -316,9 +332,10 @@
 "homologado": null,
 "desconto": null,
 "srp": false,
-"rodoviario": false,
+"rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/26",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=250091"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=250091",
+"descricao": "RECUPERACAO VIARIA, Contratacao de empresa especializada para execucao do servico de PAVIMENTACAO E RECUPERACAO DE VIAS RURAIS, com fornecimento de materiais, equipamentos e mao de obra, localizada no interior do Estado do Amazonas e Regiao Metropolitana de Manaus, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000025/2025",
@@ -334,9 +351,10 @@
 "homologado": 97410800.0,
 "desconto": 0.01,
 "srp": false,
-"rodoviario": false,
+"rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/25",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=250072"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=250072",
+"descricao": "SERVICOS DE ENGENHARIA CIVIL, Contratacao de empresa especializada em Engenharia Civil para execucao de servicos de MANUTENCAO e RECUPERACAO de rodovia, localizada no interior do Estado do Amazonas, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000024/2025",
@@ -354,7 +372,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/24",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249972"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249972",
+"descricao": "SERVICO DE CONFECCAO E MONTAGEM DE MOBILIARIO, Descricao: contratacao de empresa para prestacao de servicos de fabricacao e montagem de moveis de madeira MDF, tipo planejado, com fornecimento de todos os materiais necessarios, conforme projeto basico"
 },
 {
 "id": "05533935000157-1-000023/2025",
@@ -372,7 +391,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/23",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249905"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249905",
+"descricao": "SERVICO DE IMPRESSAODescricao: servico de impressao de folha de papel formato A4 em impressora colorida laser, led ou cera, com o fornecimento dos suprimentos necessarios, como toner e papel, e operacionalizacao da solucao, conforme discriminacao em Projeto Basico"
 },
 {
 "id": "05533935000157-1-000022/2025",
@@ -390,7 +410,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/22",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249870"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249870",
+"descricao": "SERVICO DE PASSAGEM FLUVIAL, Descricao: Aquisicao de Passagens Fluviais, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000020/2025",
@@ -408,7 +429,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/20",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249505"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249505",
+"descricao": "REFORMA PREDIAL, Contratacao de empresa especializada para a execucao da obra de REFORMA E AMPLIACAO predial, com fornecimento de mao de obra, equipamentos, materiais e demais insumos, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000019/2025",
@@ -426,7 +448,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/19",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249511"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249511",
+"descricao": "RADIO, Tipo: Externo; Radio UHF, compatibilidade com receptores GNSS com no minimo 14 canais selecionaveis, frequencia entre 390 e 473MHz, Potencia configuravel de 2 ate 35W, podendo ser configurado como base (transmissor) ou repetidor, seletor de canais integrado, a prova d`agua e completamente selado com indice de protecao IP67 ou melhor, com display de LCD para a visualizacao dos canais, acompanhado de antena, cabos de conexao entre antena e o receptor base e cabos de programacao; Com certifi"
 },
 {
 "id": "05533935000157-1-000018/2025",
@@ -444,7 +467,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/18",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249364"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=249364",
+"descricao": "CONSTRUCAO CIVIL, Contratacao de empresa especializada em servico de engenharia para CONSTRUCAO E URBANIZACAO da Orla do Municipio de Nhamunda, localizado no Estado do Amazonas, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000015/2025",
@@ -462,7 +486,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/15",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=248515"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=248515",
+"descricao": "REFORMA PREDIAL, Contratacao de empresa especializada para a execucao da obra de REFORMA E AMPLIACAO predial, com fornecimento de mao de obra, equipamentos, materiais e demais insumos, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000009/2025",
@@ -480,7 +505,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/9",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=248074"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=248074",
+"descricao": "REFORMA PREDIAL, Contratacao de empresa especializada para a execucao da obra de REFORMA E AMPLIACAO predial, com fornecimento de mao de obra, equipamentos, materiais e demais insumos, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000001/2025",
@@ -498,7 +524,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2025/1",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=247143"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=247143",
+"descricao": "SERVICOS DE ENGENHARIA CIVIL, Contratacao de empresa especializada para elaboracao de projetos executivos de arquitetura e seus complementares, em metodologia BIM (building information modeling), visando a remodelacao, reforma, modernizacao e ampliacao do Centro Cultural de Parintins/Am, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000017/2024",
@@ -516,7 +543,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/17",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=246631"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=246631",
+"descricao": "RADIO, Tipo: Externo; Radio UHF, compatibilidade com receptores GNSS com no minimo 14 canais selecionaveis, frequencia entre 390 e 473MHz, Potencia configuravel de 2 ate 35W, podendo ser configurado como base (transmissor) ou repetidor, seletor de canais integrado, a prova d`agua e completamente selado com indice de protecao IP67 ou melhor, com display de LCD para a visualizacao dos canais, acompanhado de antena, cabos de conexao entre antena e o receptor base e cabos de programacao; Com certifi"
 },
 {
 "id": "05533935000157-1-000016/2024",
@@ -534,7 +562,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/16",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=246190"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=246190",
+"descricao": "CONTROLE DE ACESSO, ATENDIMENTO E REGISTRO DE PONTO, Contratacao de empresa especializada para fornecimento de solucao de CONTROLE DE ACESSO BIOMETRICO DE PESSOAS e REGISTRO DE PONTO ELETRONICO, composta por equipamentos, software, servicos de instalacao, treinamento, suporte tecnico e manutencao, conforme Projeto Basico"
 },
 {
 "id": "05533935000157-1-000015/2024",
@@ -552,7 +581,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/15",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=246093"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=246093",
+"descricao": "LIDER DE SERVICOS, Contratacao de empresa especializada em servico de Lider de Servicos AREA ADMINISTRATIVA 44 horas semanais, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000014/2024",
@@ -570,7 +600,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/14",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=245853"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=245853",
+"descricao": "REFORMA PREDIAL, Contratacao de empresa especializada em servico de REFORMA E ADAPTACAO predial, com fornecimento de mao de obra, equipamentos, materiais e demais insumos, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000013/2024",
@@ -588,7 +619,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/13",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=245857"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=245857",
+"descricao": "RADIO, Tipo: Externo; Radio UHF, compatibilidade com receptores GNSS com no minimo 14 canais selecionaveis, frequencia entre 390 e 473MHz, Potencia configuravel de 2 ate 35W, podendo ser configurado como base (transmissor) ou repetidor, seletor de canais integrado, a prova d`agua e completamente selado com indice de protecao IP67 ou melhor, com display de LCD para a visualizacao dos canais, acompanhado de antena, cabos de conexao entre antena e o receptor base e cabos de programacao; Com certifi"
 },
 {
 "id": "05533935000157-1-000010/2024",
@@ -604,9 +636,10 @@
 "homologado": 11839980.31,
 "desconto": 0.0512,
 "srp": false,
-"rodoviario": false,
+"rodoviario": true,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/10",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=244732"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=244732",
+"descricao": "SERVICOS DE ENGENHARIA CIVIL, Contratacao de empresa especializada de Engenharia Civil para servico de CONSERVACAO E OU MANUTENCAO de Rodovia Estadual AM-450 - Rapidao Rodoanel Metropolitano de Manaus, no entroncamento com Av. Santos Dumont ate o Viaduto Lydia da Eira Correa, no Municipio de Manaus no Estado do Amazonas, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000008/2024",
@@ -624,7 +657,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/8",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=243684"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=243684",
+"descricao": "LIDER DE SERVICOS, Contratacao de empresa especializada em servico de Lider de Servicos - AREA ADMINISTRATIVA - 44 horas semanais, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000007/2024",
@@ -642,7 +676,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/7",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=243613"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=243613",
+"descricao": "SERVICOS DE ENGENHARIA, Contratacao de empresa especializada em servico de engenharia para REFORMA, REVITALIZACAO E MODERNIZACAO do Estadio Carlos Zamith, conforme Projeto Basico."
 },
 {
 "id": "05533935000157-1-000004/2024",
@@ -660,7 +695,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/4",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=242062"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=242062",
+"descricao": "SERVICOS DE LOCACAO DE VEICULOS AUTOMOTORES, Descricao: contratacao de empresa especializada para prestacao de servico de locacao de veiculo automotor. Tipo: SEDAN; com capacidade para 5 passageiros; motor bicombustivel; Potencia do motor(abastecido com etanol): entre 80 a 115 cv, zero quilometro, 4 portas laterais, com ar condicionado, direcao hidraulica ou eletrica, cambio manual, vidros e travas eletricas nas quatro portas, sistema de som, sem motorista e sem combustivel, com jogo"
 },
 {
 "id": "05533935000157-1-000002/2024",
@@ -678,7 +714,8 @@
 "srp": false,
 "rodoviario": false,
 "link": "https://pncp.gov.br/app/editais/05533935000157/2024/2",
-"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=241929"
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=241929",
+"descricao": "SERVICO DE MANUTENCAO PREDIAL, Contratacao de empresa especializada para prestacao de servicos de MANUTENCAO PREDIAL PREVENTIVA E CORRETIVA, de forma continua e sob demanda, com fornecimento de materiais, equipamentos, pecas e ferramentas; Nas edificacoes, instalacoes prediais e equipamentos dos espacos do orgao demandante, localizados no Estado do Amazonas, conforme condicoes, quantidades e exigencias estabelecidas no Projeto Basico."
 }
 ],
 "csc": [

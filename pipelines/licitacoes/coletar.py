@@ -85,10 +85,30 @@ def coletar_pncp(desde, dias, anterior):
         for mod in MODALIDADES:
             for x in pncp_janela(a, b, mod):
                 r = resumir(x)
+                r["descricao"] = (por_id.get(r["id"]) or {}).get("descricao") or descricao(x)
+                r["rodoviario"] = bool(RX_ROD.search(f"{r['objeto']} {r['descricao'] or ''}"))
                 por_id[r["id"]] = r
                 n += 1
         print(f"PNCP {a:%m/%Y}: {n} lidos até aqui", flush=True)
+    for r in por_id.values():  # registros antigos sem descrição (1ª carga anterior a esta regra)
+        if "descricao" not in r:
+            ano, seq = r["link"].rsplit("/", 2)[-2:]
+            r["descricao"] = descricao({"anoCompra": ano, "sequencialCompra": seq})
+            r["rodoviario"] = bool(RX_ROD.search(f"{r['objeto']} {r['descricao'] or ''}"))
     return sorted(por_id.values(), key=lambda i: i["publicacao"], reverse=True)
+
+
+def descricao(x):
+    """O objetoCompra do PNCP vem cortado (~40 caracteres: "Serviços de Engenharia"); a descrição do 1º item tem o texto inteiro."""
+    try:
+        b = get(f"https://pncp.gov.br/api/pncp/v1/orgaos/{CNPJ}/compras/{x['anoCompra']}/{x['sequencialCompra']}/itens?pagina=1&tamanhoPagina=1",
+                timeout=60, tentativas=2)
+        itens = json.loads(b) if b else []
+        d = re.sub(r"^\(ID-?\d+\)\s*", "", (itens[0].get("descricao") or "") if itens else "")
+        return re.sub(r"\s+", " ", d).strip()[:500] or None
+    except Exception as e:
+        print(f"  itens {x.get('anoCompra')}/{x.get('sequencialCompra')}: {str(e)[:60]}", flush=True)
+        return None
 
 
 def coletar_csc():
