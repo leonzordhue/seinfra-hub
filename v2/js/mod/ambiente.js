@@ -13,6 +13,29 @@ const m2 = v => v == null ? "—" : `${num(v, 2)} m`;
 const NIVEL = { "estiagem": "critico", "inundação": "critico", "inundação severa": "critico", "atenção": "alerta", "normal": "ok" };
 // dia do ano no calendário bissexto (igual ao pipeline: 29/02 tem índice próprio)
 const doy = iso => Math.round((Date.UTC(2000, +iso.slice(5, 7) - 1, +iso.slice(8, 10)) - Date.UTC(2000, 0, 1)) / 864e5);
+const MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+const DIAS = Array.from({ length: 366 }, (_, k) => new Date(Date.UTC(2000, 0, 1 + k)).toISOString().slice(5, 10));  // "MM-DD"
+// rótulo direto: nome da linha de referência sobre ela (à direita) e o ano no fim de cada linha de cota
+const ROT_RIO = {
+  id: "rotRio",
+  afterDatasetsDraw(ch) {
+    const { ctx, chartArea: a, scales: { x, y } } = ch;
+    ctx.save(); ctx.font = `600 11.5px ${css("--f-corpo") || "Outfit"}`;
+    ch.data.datasets.forEach((d, i) => {
+      if (!ch.isDatasetVisible(i)) return;
+      if (d._ref != null) {
+        const py = y.getPixelForValue(d._ref); if (py < a.top || py > a.bottom) return;
+        ctx.fillStyle = d.borderColor; ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+        ctx.fillText(`${d.label} ${num(d._ref, 2)} m`, a.left + 6, py - 3);
+      } else if (d._fim) {
+        let k = d.data.length - 1; while (k >= 0 && d.data[k] == null) k--; if (k < 0) return;
+        ctx.fillStyle = d.borderColor; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+        ctx.fillText(d._fim, Math.min(x.getPixelForValue(k) + 5, a.right + 4), y.getPixelForValue(d.data[k]));
+      }
+    });
+    ctx.restore();
+  },
+};
 
 export async function render(el) {
   const [H, Q] = await Promise.all([talvez("hidro"), talvez("queimadas")]);
@@ -24,6 +47,14 @@ export async function render(el) {
       .amb-sel select { min-width: 220px; }
       .amb-nota { font-size: 14px; color: var(--tinta-2); line-height: 1.55; }
       .amb-nota li { margin: 4px 0; }
+      .amb-vazio { padding: 22px 18px; display: grid; gap: 6px; }
+      .amb-vazio b { font: 600 1.02rem var(--f-titulo); color: var(--tinta); }
+      .amb-vazio span { font-size: 14px; color: var(--tinta-3); max-width: 70ch; }
+      .legenda i.tr { height: 0; border-top: 2px dashed var(--tinta-3); border-radius: 0; background: none; vertical-align: 3px; }
+      .legenda i.pt { border-radius: 50%; }
+      .nota { font-size: 12.5px; color: var(--tinta-3); margin: 10px 0 0; line-height: 1.5; }
+      :root[data-theme="dark"] .amb-mapa .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.35); }
+      @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .amb-mapa .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.35); } }
       @media (max-width: 700px) { .amb-mapa { height: 340px; } }
     </style>
     <div class="cab"><div><h1>Ambiente e rios</h1>
@@ -33,10 +64,11 @@ export async function render(el) {
     <section class="secao" id="queimadas"></section>
     <details class="secao cartao"><summary style="padding:14px 16px;cursor:pointer;font-weight:500;color:var(--tinta)">Fontes, regras e limitações</summary>
       <div class="corpo amb-nota" id="nota"></div></details>`;
-  if (H) rios($("#rios", el), H);
-  else $("#rios", el).innerHTML = `<div class="aviso">Os dados dos rios ainda não foram gerados. A rotina <code>pipelines/hidro/coletar.py</code> roda todo dia às 05h00.</div>`;
-  if (Q) queimadas($("#queimadas", el), Q);
-  else $("#queimadas", el).innerHTML = `<div class="aviso">Os dados de queimadas ainda não foram gerados. A rotina <code>pipelines/queimadas/coletar.py</code> roda todo dia às 05h00.</div>`;
+  const vazio = (t, o) => `<div class="cartao amb-vazio"><b>${t}</b><span>${o} A rotina diária (05h00, GitHub Actions) gera os dados; esta seção aparece sozinha na primeira rodada.</span></div>`;
+  if (H?.estacoes?.length) rios($("#rios", el), H);
+  else $("#rios", el).innerHTML = vazio("Nível dos rios: aguardando a primeira coleta", "Cotas das estações da ANA ainda não estão no Hub.");
+  if (Q?.anos?.length) queimadas($("#queimadas", el), Q);
+  else $("#queimadas", el).innerHTML = vazio("Queimadas perto das rodovias: aguardando a primeira coleta", "Focos do INPE ainda não estão no Hub.");
   $("#nota", el).innerHTML = nota(H, Q);
 }
 
@@ -45,14 +77,14 @@ function rios(sec, H) {
   const E = H.estacoes;
   if (!E.find(e => e.cod === estado.est)) estado.est = E[0].cod;
   sec.innerHTML = `
-    <div class="cartao"><header><div><h2>Nível dos rios</h2><p>Cota na régua de cada estação (não é altitude). Faixa sombreada: mínimo e máximo já registrados para a data; linha tracejada: média.</p></div></header>
+    <div class="cartao"><header><div><h2>${(n => n ? `${n} de ${E.length} estações abaixo da cota de estiagem` : `Nenhuma das ${E.length} estações abaixo da cota de estiagem`)(E.filter(e => e.ultima.situacao === "estiagem").length)}</h2><p>Cota na régua de cada estação, em metros (não é altitude), ao longo do ano. Faixa: mínimo e máximo já registrados para o dia; tracejado: média.</p></div></header>
       <div class="corpo">
         <div class="amb-sel"><select id="fEst" aria-label="Estação">${E.map(e => `<option value="${e.cod}"${e.cod === estado.est ? " selected" : ""}>${esc(e.nome)} · ${esc(e.rio)}</option>`).join("")}</select><span id="chipSit"></span></div>
         <p class="amb-frase" id="frase"></p>
         <div class="grade g-kpi" id="kpisRio"></div>
         <div class="legenda" id="legRio"></div>
         <div class="graf alto"><canvas id="gRio"></canvas></div>
-        <p class="peq" id="refRio"></p>
+        <p class="nota" id="refRio"></p>
       </div></div>
     <div class="cartao secao"><header><div><h2>Todas as estações</h2><p>Clique numa linha para ver o gráfico.</p></div></header><div class="corpo" id="tabRios"></div></div>`;
   const pinta = () => {
@@ -69,24 +101,32 @@ function rios(sec, H) {
       kpi("Cota de estiagem", m2(e.ref.c95), e.ref_fonte.startsWith("Boletim") ? "permanência 95%, boletim ANA" : "permanência 95%, calculada") +
       kpi("Menor cota da série", m2(e.recorde_min.cota_m), data(e.recorde_min.data)) +
       kpi("Maior cota da série", m2(e.recorde_max.cota_m), data(e.recorde_max.data));
-    const datas = e.serie.map(s => s[0]);
-    const faixa = i => datas.map(d => e.clima.dia[doy(d)]?.[i] ?? null);
-    const linha = v => datas.map(() => v);
+    // eixo = calendário (366 dias, 29/02 com índice próprio, igual a doy); cada ano vira uma linha sobre a climatologia
+    const ano = u.data.slice(0, 4), ant = String(+ano - 1);
+    const porAno = y => { const v = DIAS.map(() => null); e.serie.forEach(([d, c]) => { if (d.startsWith(y)) v[doy(d)] = c; }); return v; };
+    const faixa = i => DIAS.map((_, k) => e.clima.dia[k]?.[i] ?? null);
+    const ref = (label, v, cor) => ({ label, data: DIAS.map(() => v), _ref: v, borderColor: cor, borderWidth: 1.25, borderDash: [5, 4], pointRadius: 0, pointHitRadius: 0, order: 4 });
+    const vAnt = porAno(ant), temAnt = vAnt.some(v => v != null);
+    // Chart.js desenha "order" maior primeiro (atrás): faixa no fundo, ano corrente por cima de tudo
     const ds = [
-      { label: "Mínimo histórico", data: faixa(1), borderWidth: 0, pointRadius: 0, fill: false },
-      { label: "Máximo histórico", data: faixa(2), borderWidth: 0, pointRadius: 0, backgroundColor: css("--sup-3"), fill: "-1" },
-      { label: "Média", data: faixa(0), borderColor: css("--tinta-3"), borderDash: [4, 4], borderWidth: 1.5, pointRadius: 0 },
-      { label: "Cota", data: e.serie.map(s => s[1]), borderColor: serie(1), borderWidth: 2.5, pointRadius: 0 },
-      { label: "Estiagem (cota 95%)", data: linha(e.ref.c95), borderColor: css("--critico"), borderWidth: 1, borderDash: [2, 3], pointRadius: 0 },
+      { label: "Mínimo histórico", data: faixa(1), borderWidth: 0, pointRadius: 0, fill: false, order: 9 },
+      { label: "Máximo histórico", data: faixa(2), borderWidth: 0, pointRadius: 0, backgroundColor: css("--sup-3"), fill: "-1", order: 9 },
+      { label: "Média", data: faixa(0), borderColor: css("--tinta-3"), borderDash: [4, 4], borderWidth: 1.25, pointRadius: 0, order: 5 },
+      ...(temAnt ? [{ label: ant, data: vAnt, _fim: ant, borderColor: serie(6), borderWidth: 1.5, pointRadius: 0, spanGaps: true, order: 2 }] : []),
+      { label: ano, data: porAno(ano), _fim: ano, borderColor: serie(1), borderWidth: 2.75, pointRadius: 0, spanGaps: true, order: 0 },
+      ref("Estiagem", e.ref.c95, css("--critico")),
     ];
-    if (e.ref.inund) ds.push({ label: "Inundação (SGB)", data: linha(e.ref.inund), borderColor: serie(2), borderWidth: 1, borderDash: [2, 3], pointRadius: 0 });
-    $("#legRio", sec).innerHTML = `<span><i style="background:${serie(1)}"></i>Cota</span><span><i style="background:${css("--tinta-3")}"></i>Média da data</span><span><i style="background:${css("--sup-3")};outline:1px solid ${css("--borda-2")}"></i>Mín–máx histórico</span><span><i style="background:${css("--critico")}"></i>Estiagem</span>${e.ref.inund ? `<span><i style="background:${serie(2)}"></i>Inundação</span>` : ""}`;
+    if (e.ref.inund) ds.push(ref("Inundação", e.ref.inund, css("--alerta")));
+    $("#legRio", sec).innerHTML = `<span><i style="background:${serie(1)}"></i>${ano}</span>${temAnt ? `<span><i style="background:${serie(6)}"></i>${ant}</span>` : ""}<span><i class="tr"></i>Média do dia</span><span><i style="background:${css("--sup-3")};outline:1px solid ${css("--borda-2")}"></i>Mín–máx histórico (${e.clima.periodo.join("–")})</span>`;
     grafico($("#gRio", sec), {
-      type: "line", data: { labels: datas, datasets: ds },
+      type: "line", data: { labels: DIAS, datasets: ds }, plugins: [ROT_RIO],
       options: {
-        scales: { x: { ticks: { maxTicksLimit: 12, autoSkip: true, callback(v) { const d = this.getLabelForValue(v); return `${d.slice(5, 7)}/${d.slice(2, 4)}`; } } },
+        layout: { padding: { right: 38, top: 6 } },
+        scales: { x: { ticks: { autoSkip: false, maxRotation: 0, callback(v) { const d = this.getLabelForValue(v); const m = +d.slice(0, 2) - 1; return d.endsWith("-01") && (this.chart.width > 520 || m % 2 === 0) ? MES[m] : null; } } },
           y: { beginAtZero: false, ticks: { precision: 1, callback: v => `${num(v, 0)} m` } } },
-        plugins: { tooltip: { callbacks: { title: x => data(x[0].label), label: x => x.raw == null ? null : ` ${x.dataset.label}: ${m2(x.raw)}` } } },
+        plugins: { tooltip: { filter: x => x.raw != null && !x.dataset._ref && x.datasetIndex > 1,
+          callbacks: { title: x => `${x[0].label.slice(3)}/${MES[+x[0].label.slice(0, 2) - 1]}`, label: x => ` ${x.dataset.label}: ${m2(x.raw)}`,
+            footer: x => { const d = e.clima.dia[x[0].dataIndex]; return d ? `faixa histórica ${m2(d[1])} a ${m2(d[2])}` : ""; } } } },
       },
     });
     $("#refRio", sec).innerHTML = `Referências: ${e.ref_fonte.startsWith("Boletim") ? `<a href="${esc(H._meta.boletim_referencia)}" target="_blank" rel="noopener">${esc(e.ref_fonte)}</a>` : esc(e.ref_fonte)}.${e.nota ? ` ${esc(e.nota)}` : ""} Uso: ${esc(e.uso)}.`;
@@ -109,6 +149,11 @@ function queimadas(sec, Q) {
   const R = Q.ranking.map(c => ({ cod: c, ...Q.rodovias[c] }));
   const maxT = Math.max(1, ...R.map(r => r.total));
   const recBuf = Q.recentes.filter(p => p[4]);
+  const mes = Array(12).fill(0);
+  R.forEach(r => r.meses_ano_atual.forEach((v, i) => mes[i] += v));  // soma por rodovia: foco perto de 2 rodovias conta 2 vezes
+  const mesMax = mes.indexOf(Math.max(...mes));
+  const vA = Q.em_buffer[atual], ant = anos[anos.length - 2], vP = Q.em_buffer[ant];
+  const tituloAno = ant == null ? `${num(vA)} focos perto de rodovias em ${esc(atual)}` : `${esc(atual)} já tem ${num(vA)} focos, ${vA === vP ? "igual a" : vA > vP ? `${num(vA - vP)} a mais que` : `${num(vP - vA)} a menos que`} ${esc(ant)}`;
   sec.innerHTML = `
     <div class="cartao"><header><div><h2>Queimadas perto das rodovias estaduais</h2>
       <p>Focos do satélite de referência ${esc(M.satelite)} (INPE) a até ${num(M.buffer_km)} km do eixo de cada rodovia, desde ${anos[0]}.</p></div></header>
@@ -119,19 +164,27 @@ function queimadas(sec, Q) {
         ${kpi("Rodovia com mais focos", esc(R[0]?.cod || "—"), R[0] ? `${num(R[0].total)} desde ${anos[0]}` : "")}
       </div></div></div>
     <section class="secao grade g-2">
-      <div class="cartao"><header><div><h2>Focos por ano a até 5 km</h2><p>Soma das rodovias estaduais (cada foco conta uma vez). ${esc(atual)} vai até hoje.</p></div></header><div class="corpo"><div class="graf"><canvas id="gAnoQ"></canvas></div></div></div>
-      <div class="cartao"><header><div><h2>Mês a mês em ${esc(atual)}</h2><p>Focos a até 5 km das rodovias estaduais</p></div></header><div class="corpo"><div class="graf"><canvas id="gMesQ"></canvas></div></div></div>
+      <div class="cartao"><header><div><h2>${tituloAno}</h2><p>Focos por ano a até ${num(M.buffer_km)} km das rodovias estaduais (cada foco conta uma vez). ${esc(atual)} vai até hoje.</p></div></header>
+        <div class="corpo"><div class="legenda"><span><i style="background:${serie(1)}"></i>${esc(atual)} (até hoje)</span><span><i style="background:${serie(6)}"></i>Anos anteriores</span></div><div class="graf"><canvas id="gAnoQ"></canvas></div></div></div>
+      <div class="cartao"><header><div><h2>${mesMax >= 0 && mes[mesMax] ? `Pico em ${MES[mesMax]}: ${num(mes[mesMax])} focos` : `Mês a mês em ${esc(atual)}`}</h2><p>Focos por mês em ${esc(atual)}, somados por rodovia (foco perto de duas rodovias conta duas vezes)</p></div></header>
+        <div class="corpo"><div class="graf"><canvas id="gMesQ"></canvas></div></div></div>
     </section>
-    <div class="cartao secao"><header><div><h2>Ranking das rodovias</h2><p>Por focos a até 5 km desde ${anos[0]}. "Por 100 km" corrige pelo tamanho da rodovia.</p></div></header><div class="corpo" id="tabQ"></div></div>
+    <div class="cartao secao"><header><div><h2>${R[0] ? `${esc(R[0].cod)} lidera, com ${num(R[0].total)} focos desde ${anos[0]}` : "Ranking das rodovias"}</h2><p>Focos a até ${num(M.buffer_km)} km do eixo, por rodovia, desde ${anos[0]} (${R.length > 12 ? "12 maiores" : "todas"}).</p></div></header>
+      <div class="corpo"><div class="graf" style="height:${Math.max(120, Math.min(12, R.length) * 30 + 16)}px"><canvas id="gRodQ"></canvas></div>
+        <details style="margin-top:12px"><summary style="cursor:pointer;font-size:13.5px;color:var(--azul)">Tabela completa (${num(R.length)} rodovias, com focos por 100 km)</summary><div id="tabQ" style="margin-top:8px"></div></details></div></div>
     <div class="cartao secao"><header><div><h2>Trechos com mais focos</h2><p>Trechos de 5 km (km aproximado pela posição do foco sobre o eixo).</p></div></header><div class="corpo" id="tabTr"></div></div>
-    <div class="cartao secao"><header><div><h2>Focos dos últimos 30 dias</h2><p>Vermelho: a até 5 km de rodovia estadual. Cinza: demais focos no AM.</p></div></header><div class="corpo"><div class="amb-mapa" id="mapaQ" role="img" aria-label="Mapa dos focos de queimada recentes e das rodovias estaduais"></div></div></div>`;
+    <div class="cartao secao"><header><div><h2>${num(recBuf.length)} focos perto de rodovia nos últimos 30 dias</h2><p>Focos dos últimos 30 dias no AM e eixo das rodovias estaduais. Clique num ponto para ver data e município.</p></div></header>
+      <div class="corpo"><div class="legenda"><span><i class="pt" style="background:${css("--critico")}"></i>A até ${num(M.buffer_km)} km de rodovia estadual</span><span><i class="pt" style="background:${css("--tinta-3")}"></i>Demais focos no AM</span><span><i style="background:${css("--azul")};height:3px;vertical-align:3px"></i>Rodovia estadual</span></div>
+        <div class="amb-mapa" id="mapaQ" role="img" aria-label="Mapa dos focos de queimada recentes e das rodovias estaduais"></div>
+        <p class="nota">Fonte: INPE (BDQueimadas), satélite de referência ${esc(M.satelite)}; rodovias do Atlas (SRE).</p></div></div>`;
 
-  grafico($("#gAnoQ", sec), { type: "bar", data: { labels: anos, datasets: [{ label: "Focos a até 5 km", data: anos.map(a => Q.em_buffer[a]), ...estiloBarra(serie(1)) }] },
+  grafico($("#gAnoQ", sec), { type: "bar", data: { labels: anos, datasets: [{ label: "Focos a até 5 km", data: anos.map(a => Q.em_buffer[a]), ...estiloBarra(anos.map(a => a === atual ? serie(1) : serie(6))) }] },
     options: { plugins: { tooltip: { callbacks: { label: x => ` ${num(x.raw)} focos perto de rodovia · ${num(Q.total_am[x.label])} no AM` } } } } });
-  const mes = Array(12).fill(0);
-  R.forEach(r => r.meses_ano_atual.forEach((v, i) => mes[i] += v));  // soma por rodovia: foco perto de 2 rodovias conta 2 vezes
-  grafico($("#gMesQ", sec), { type: "bar", data: { labels: ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"],
-    datasets: [{ label: "Focos", data: mes, ...estiloBarra(serie(2)) }] } });
+  grafico($("#gMesQ", sec), { type: "bar", data: { labels: MES,
+    datasets: [{ label: "Focos", data: mes, ...estiloBarra(mes.map((v, i) => i === mesMax ? serie(2) : serie(6))) }] } });
+  const top = R.slice(0, 12);
+  grafico($("#gRodQ", sec), { type: "bar", data: { labels: top.map(r => r.cod), datasets: [{ label: `Focos desde ${anos[0]}`, data: top.map(r => r.total), ...estiloBarra(top.map((r, i) => i ? serie(6) : serie(1))) }] },
+    options: { indexAxis: "y", plugins: { tooltip: { callbacks: { footer: x => { const r = top[x[0].dataIndex]; return `${num(r.anos[atual])} em ${atual} · ${num(r.por_100km, 1)} por 100 km · ${num(r.extensao_km, 0)} km`; } } } } } });
 
   tabela($("#tabQ", sec), [
     { k: "cod", rot: "Rodovia", html: r => `<b>${esc(r.cod)}</b>` },
