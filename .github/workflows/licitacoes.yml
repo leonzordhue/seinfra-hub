@@ -24,11 +24,18 @@ jobs:
           python-version: "3.12"
       - run: python -I pipelines/licitacoes/coletar.py --teste
       - run: python -I pipelines/licitacoes/coletar.py
+      # Preços x SICRO [Claude] 23/11/2026: lê a planilha orçamentária (PDF com texto) dos editais de obra.
+      # data/sicro_am*.json vêm do PC (sicro_extrato.py, bases-de-custo); aqui só são lidos.
+      - run: pip install pypdf==6.19.0
+      - run: python -I pipelines/licitacoes/precos.py --teste
+      - name: Preços x SICRO
+        continue-on-error: true   # PNCP instável não pode segurar a publicação das licitações
+        run: python -I pipelines/licitacoes/precos.py
       - name: Publicar
         run: |
           git config user.name "dmob-bot"
           git config user.email "dmob-bot@users.noreply.github.com"
-          git add data/licitacoes.json
+          git add data/licitacoes.json data/precos.json
           git diff --cached --quiet && { echo "sem novidade"; exit 0; }
           git commit -m "dados: licitações $(date -u +%d/%m/%Y)"
           git pull --rebase && git push

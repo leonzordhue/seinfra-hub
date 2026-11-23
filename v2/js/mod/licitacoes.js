@@ -1,7 +1,7 @@
 // Licitações da SEINFRA (PNCP + CSC-AM). [Nexus] 23/11/2026
 // Fonte: data/licitacoes.json (pipelines/licitacoes/coletar.py, dias úteis 07h30). Desconto = 1 − homologado/estimado.
 import { talvez } from "../dados.js";
-import { esc, num, pct, data, brlCurto, semAcento } from "../fmt.js";
+import { esc, num, pct, data, brl, brlCurto, semAcento } from "../fmt.js";
 import { $, kpi, chip, tabela, fonte, opcoes } from "../ui.js";
 
 const estado = { rod: true, sit: "", mod: "", q: "" };
@@ -31,7 +31,9 @@ export async function render(el) {
     </div>
     <div id="kpis" class="grade g-kpi"></div>
     <section class="secao cartao"><header><div><h2>Editais no PNCP</h2><p>${esc(M.regras)}</p></div><span class="contagem" id="cont"></span></header><div class="corpo" id="tab"></div></section>
-    <section class="secao cartao"><header><div><h2>Lista do CSC-AM (SEINFRA)</h2><p>O site do CSC não lista as concorrências eletrônicas de 2024 em diante; para elas vale o PNCP.</p></div></header><div class="corpo" id="tabCsc"></div></section>`;
+    <section class="secao cartao"><header><div><h2>Lista do CSC-AM (SEINFRA)</h2><p>O site do CSC não lista as concorrências eletrônicas de 2024 em diante; para elas vale o PNCP.</p></div></header><div class="corpo" id="tabCsc"></div></section>
+    <div id="precos"></div>`;
+  precos($("#precos", el));
 
   const pinta = () => {
     const q = semAcento(estado.q);
@@ -70,4 +72,104 @@ export async function render(el) {
   $("#fMod", el).onchange = e => { estado.mod = e.target.value; pinta(); };
   let t; $("#fQ", el).oninput = e => { clearTimeout(t); t = setTimeout(() => { estado.q = e.target.value; pinta(); }, 150); };
   pinta();
+}
+
+// ── Preços x SICRO ── [Claude] 23/11/2026
+// Fonte: data/precos.json (pipelines/licitacoes/precos.py) e data/sicro_am.json (DNIT, SICRO AM, sintético).
+// desvio = (preço unitário / (1 + BDI do orçamento)) / custo SICRO da mesma data-base - 1 (SICRO = custo direto, sem BDI).
+// Faixas de TRIAGEM (não é conclusão de sobrepreço): |desvio| <= 10% dentro; > 25% muito acima.
+const pe = { faixa: "casadas", conf: "", ed: "", q: "" };
+const FAIXA = { dentro: ["dentro de ±10%", "ok"], acima: ["acima", "alerta"], "muito acima": ["muito acima (>25%)", "critico"], abaixo: ["abaixo", ""] };
+const fx = d => d == null ? "—" : `${d > 0 ? "+" : ""}${pct(d * 100)}`;
+const refBr = r => r ? `${r.slice(5)}/${r.slice(0, 4)}` : "—";
+
+async function precos(el) {
+  const d = await talvez("precos");
+  if (!d) { el.innerHTML = `<section class="secao cartao"><header><div><h2>Preços × SICRO</h2></div></header><div class="corpo"><p class="vazio">O comparativo ainda não foi gerado (<code>pipelines/licitacoes/precos.py</code>).</p></div></section>`; return; }
+  const M = d._meta, I = d.itens, C = d.compras;
+  const eds = [...new Set(I.map(i => i.edital))].sort();
+  el.innerHTML = `
+    <section class="secao cartao"><header><div><h2>Preços × SICRO</h2>
+      <p>Preço unitário da planilha orçamentária anexada ao edital no PNCP contra o custo SICRO AM (DNIT) da mesma data-base, descontado o BDI declarado no orçamento. As faixas são critério de <b>triagem</b> para olhar a composição, não conclusão de sobrepreço.</p></div>
+      <div class="fontes">${fonte("PNCP + SICRO", data(M.gerado_em))}${fonte("linhas casadas", `${num(M.casadas)} de ${num(M.linhas_planilha)}`)}</div></header>
+      <div class="corpo">
+        <div class="filtros">
+          <select id="pFx" aria-label="Faixa"><option value="casadas">Com par no SICRO</option><option value="">Todas as linhas</option>${Object.entries(FAIXA).map(([k, v]) => `<option value="${k}">${esc(v[0])}</option>`).join("")}<option value="sem">Sem par no SICRO</option></select>
+          <select id="pConf" aria-label="Confiança"><option value="">Qualquer confiança</option><option value="alta">Pelo código SICRO</option><option value="texto">Por semelhança de texto</option></select>
+          <select id="pEd" aria-label="Edital">${opcoes(eds, pe.ed, "Todos os editais")}</select>
+          <input type="search" id="pQ" placeholder="Buscar serviço ou código…" aria-label="Buscar serviço">
+        </div>
+        <div id="pKpi" class="grade g-kpi"></div>
+        <div id="pTab"></div>
+        <h3 style="margin:20px 0 6px">Compras analisadas</h3>
+        <div id="pCompras"></div>
+        <p class="peq" style="color:var(--tinta-3);font-size:12.5px;margin-top:10px">${esc(M.metodologia)} BDI de referência para obra rodoviária: cerca de 20% a 30% (Acórdão TCU 2622/2013-Plenário).</p>
+      </div></section>
+    <section class="secao cartao"><header><div><h2>Consultar o SICRO AM</h2><p>Busca no extrato do SICRO (composições, materiais, equipamentos e mão de obra) por código ou termo. Custo de composição = custo direto sem BDI, sem desoneração.</p></div><span class="contagem" id="sCont"></span></header>
+      <div class="corpo"><div class="filtros"><input type="search" id="sQ" placeholder="Ex.: 4011459, concreto asfáltico, imprimação…" aria-label="Buscar no SICRO"></div><div id="sTab"><p class="vazio">Digite ao menos 3 letras ou um código.</p></div></div></section>`;
+
+  const pinta = () => {
+    const q = semAcento(pe.q);
+    const fl = I.filter(i => (pe.faixa === "" || (pe.faixa === "casadas" ? i.sicro_codigo : pe.faixa === "sem" ? !i.sicro_codigo : i.faixa === pe.faixa)) &&
+      (!pe.conf || (i.confianca || "").includes(pe.conf)) && (!pe.ed || i.edital === pe.ed) &&
+      (!q || semAcento(`${i.codigo} ${i.descricao} ${i.sicro_codigo || ""}`).includes(q)));
+    const cas = fl.filter(i => i.desvio != null);
+    $("#pKpi", el).innerHTML =
+      kpi("Linhas", num(fl.length), `de ${num(I.length)} lidas em ${num(M.com_planilha_lida)} planilhas`) +
+      kpi("Com par no SICRO", pct(I.length ? M.casadas / I.length * 100 : null), `${num(M.casadas_por_codigo)} pelo código; ${pct((M.valor_casado_pct || 0) * 100)} do valor`) +
+      kpi("Dentro de ±10%", num(cas.filter(i => i.faixa === "dentro").length), "linhas filtradas", true) +
+      kpi("Muito acima (>25%)", num(cas.filter(i => i.faixa === "muito acima").length), "olhar a composição");
+    tabela($("#pTab", el), [
+      { k: "edital", rot: "Edital", html: i => `<b>${esc(i.edital)}</b><div class="peq">item ${esc(i.item)}</div>` },
+      { k: "descricao", rot: "Serviço (planilha)", html: i => `<div class="obj">${esc(i.descricao.slice(0, 160))}</div><div class="peq">${esc(i.tabela)} ${esc(i.codigo)}</div>` },
+      { k: "unidade", rot: "Unid." },
+      { k: "quantidade", rot: "Qtd.", n: 1, html: i => num(i.quantidade, 2) },
+      { k: "preco_unitario", rot: "Preço orçado", n: 1, html: i => `${brl(i.preco_unitario)}<div class="peq">BDI ${i.bdi == null ? "não declarado" : pct(i.bdi * 100, 2)}</div>` },
+      { k: "sicro_custo_ref", rot: "SICRO", n: 1, html: i => i.sicro_codigo ? `${brl(i.sicro_custo_ref)}<div class="peq" title="${esc(i.sicro_descricao)}">${esc(i.sicro_codigo)} · ${refBr(i.sicro_ref)}</div>` : "—" },
+      { k: "desvio", rot: "Desvio", n: 1, html: i => fx(i.desvio) },
+      { k: "faixa", rot: "Triagem", v: i => i.desvio, html: i => i.faixa ? chip(FAIXA[i.faixa][0], FAIXA[i.faixa][1], i.confianca) : `<span class="peq">${i.sicro_codigo ? "sem custo na data-base" : "sem par"}</span>` },
+      { k: "confianca", rot: "Par", html: i => i.confianca ? `<span class="peq">${esc(i.confianca)}${i.similaridade != null ? ` · ${num(i.similaridade * 100)}%` : ""}</span>` : "—" },
+    ], fl, { ordem: { k: "desvio", dir: -1 } });
+  };
+  tabela($("#pCompras", el), [
+    { k: "edital", rot: "Edital", html: c => `<a href="${esc(c.link)}" target="_blank" rel="noopener"><b>${esc(c.edital)}</b></a><div class="peq">${data(c.publicacao)}</div>` },
+    { k: "objeto", rot: "Objeto e achados", html: c => `<div class="obj">${esc((c.objeto || "").slice(0, 200))}</div>${c.achados.map(a => `<div class="peq">${esc(a)}</div>`).join("")}` },
+    { k: "planilha", rot: "Planilha", v: c => c.planilha?.linhas || 0, html: c => c.planilha ? `<a href="${esc(c.planilha.url)}" target="_blank" rel="noopener">PDF</a><div class="peq">${c.planilha.linhas ? `${num(c.planilha.casadas)}/${num(c.planilha.linhas)} casadas · base ${c.planilha.data_base.map(refBr).join(", ")}` : "não lida"}</div>` : "—" },
+    { k: "estimado", rot: "Estimado", n: 1, html: c => brlCurto(c.estimado) },
+    { k: "homologado", rot: "Homologado", n: 1, html: c => brlCurto(c.homologado) },
+    { k: "valor_por_km", rot: "Valor por km", n: 1, html: c => c.valor_por_km ? `${brlCurto(c.valor_por_km)}<div class="peq">${num(c.extensao_km, 2)} km</div>` : "—" },
+  ], C, { ordem: { k: "planilha", dir: -1 } });
+  $("#pFx", el).value = pe.faixa; $("#pConf", el).value = pe.conf;
+  $("#pFx", el).onchange = e => { pe.faixa = e.target.value; pinta(); };
+  $("#pConf", el).onchange = e => { pe.conf = e.target.value; pinta(); };
+  $("#pEd", el).onchange = e => { pe.ed = e.target.value; pinta(); };
+  let t; $("#pQ", el).oninput = e => { clearTimeout(t); t = setTimeout(() => { pe.q = e.target.value; pinta(); }, 150); };
+  pinta();
+
+  // o extrato SICRO tem ~1,2 MB: só baixa quando a pessoa começa a buscar
+  let S = null, ts;
+  $("#sQ", el).oninput = e => { clearTimeout(ts); ts = setTimeout(async () => {
+    const q = semAcento(e.target.value.trim());
+    if (q.length < 3) { $("#sTab", el).innerHTML = `<p class="vazio">Digite ao menos 3 letras ou um código.</p>`; $("#sCont", el).textContent = ""; return; }
+    if (!S) {
+      $("#sTab", el).innerHTML = `<p class="vazio">Carregando o SICRO…</p>`;
+      const s = await talvez("sicro_am");
+      if (!s) { $("#sTab", el).innerHTML = `<p class="vazio">Extrato SICRO indisponível.</p>`; return; }
+      S = { ref: s._meta.referencia, l: [
+        ...s.comp.map(c => ({ tipo: "Composição", cod: c[0], desc: c[1], un: c[2], v: c[3], vd: null })),
+        ...s.mat.map(c => ({ tipo: "Material", cod: c[0], desc: c[1], un: c[2], v: c[3], vd: null })),
+        ...s.equip.map(c => ({ tipo: "Equipamento", cod: c[0], desc: c[1], un: "h (produtivo)", v: c[2], vd: c[4] })),
+        ...s.mo.map(c => ({ tipo: "Mão de obra", cod: c[0], desc: c[1], un: c[2], v: c[3], vd: c[4] })),
+      ].map(x => ({ ...x, k: semAcento(`${x.cod} ${x.desc}`) })) };
+    }
+    const r = S.l.filter(x => q.split(/\s+/).every(w => x.k.includes(w)));
+    $("#sCont", el).textContent = `${num(r.length)} itens · SICRO AM ${refBr(S.ref)}`;
+    tabela($("#sTab", el), [
+      { k: "cod", rot: "Código", html: x => `<b>${esc(x.cod)}</b><div class="peq">${esc(x.tipo)}</div>` },
+      { k: "desc", rot: "Descrição", html: x => `<div class="obj">${esc(x.desc)}</div>` },
+      { k: "un", rot: "Unid." },
+      { k: "v", rot: "Custo (sem deson.)", n: 1, html: x => brl(x.v) },
+      { k: "vd", rot: "Com desoneração", n: 1, html: x => x.vd == null ? "—" : brl(x.vd) },
+    ], r, { limite: 100 });
+  }, 200); };
 }
