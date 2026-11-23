@@ -281,15 +281,27 @@ def main(amostra):
         m["taxa_obitos_100mil"] = round(a.get("obitos", 0) / m["pop"] * 1e5, 2) if m["pop"] and ult else None
     print(f"  municípios {len(ren['municipios'])}, anos {list(ren['serie'])}, último completo {ult}", flush=True)
 
-    links = prf_links()
-    anos_prf = sorted(a for a in links if a >= PRF_DESDE)
-    if amostra:
-        anos_prf = anos_prf[-1:]
-    linhas = []
-    for a in anos_prf:
-        print(f"PRF {a}", flush=True)
-        linhas += list(prf_linhas(a, links[a]))
-    prf = agrega_prf(linhas)
+    # PRF é opcional: o gov.br às vezes derruba a conexão do runner (Errno 104, 23/11/2026).
+    # Se falhar, reaproveita a PRF da rodada anterior e segue com o RENAEST.
+    anos_prf, prf_erro = [], None
+    try:
+        links = prf_links()
+        anos_prf = sorted(a for a in links if a >= PRF_DESDE)
+        if amostra:
+            anos_prf = anos_prf[-1:]
+        linhas = []
+        for a in anos_prf:
+            print(f"PRF {a}", flush=True)
+            linhas += list(prf_linhas(a, links[a]))
+        prf = agrega_prf(linhas)
+    except Exception as e:
+        prf_erro = f"{type(e).__name__}: {e}"
+        print(f"  PRF indisponível ({prf_erro}); mantendo a rodada anterior", flush=True)
+        try:
+            ant = json.load(open(SAIDA, encoding="utf-8"))
+            prf = ant["prf"]; anos_prf = ant["_meta"]["fontes"]["prf"].get("anos", [])
+        except Exception:
+            prf = agrega_prf([])
 
     robo = json.load(open(ROBO, encoding="utf-8"))["ocorrencias"] if os.path.exists(ROBO) else []
     cob = cobertura(robo, ren)
@@ -308,7 +320,7 @@ def main(amostra):
                             "rodovia_estadual": "regex AM-xxx em end_acidente (estimativa por texto) e, à parte, tp_rodovia = ESTADUAL"},
                 "prf": {"fonte": "Polícia Rodoviária Federal, dados abertos, Acidentes agrupados por ocorrência (datatran)", "url": PRF_PAG,
                         "anos": anos_prf, "escopo": "só rodovias federais patrulhadas pela PRF no AM",
-                        "feridos": "feridos_leves + feridos_graves"},
+                        "feridos": "feridos_leves + feridos_graves", "erro_ultima_coleta": prf_erro},
                 "sim_datasus": {"status": "não incluído", "motivo": "arquivos DO do OpenDataSUS são nacionais e pesados; tabnet sem API. Candidato a etapa futura (CID-10 V01-V89 por município de ocorrência)."},
             },
             "cuidados": [
