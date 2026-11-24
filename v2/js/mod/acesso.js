@@ -8,14 +8,16 @@ import { $, kpi, chip, tabela, fonte, opcoes, grafico, css } from "../ui.js";
 
 const LEAFLET = "https://unpkg.com/leaflet@1.9.4/dist/";
 const AM = [-3.4653, -62.2159];
-// faixas de tempo até Manaus (min); cor da mais perto para a mais longe
-const FAIXAS = [
-  { ate: 60, rot: "até 1 h", cor: "#002D72" },
-  { ate: 120, rot: "1 a 2 h", cor: "#2F6DB5" },
-  { ate: 240, rot: "2 a 4 h", cor: "#86AEDC" },
-  { ate: Infinity, rot: "mais de 4 h", cor: "#F5A623" },
-];
-const SEM = { rot: "sem ligação rodoviária", cor: "#8A94A3" };
+// faixas de tempo até Manaus (min). Paleta sequencial de uma cor (azul): mais perto = mais forte.
+// As cores dependem do tema e são preenchidas em render() por pintarFaixas().
+const FAIXAS = [{ ate: 60, rot: "até 1 h" }, { ate: 120, rot: "1 a 2 h" }, { ate: 240, rot: "2 a 4 h" }, { ate: Infinity, rot: "mais de 4 h" }];
+const SEM = { rot: "sem ligação rodoviária" };
+const ehEscuro = () => { const r = document.documentElement; return r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
+function pintarFaixas() {
+  const azul = ehEscuro() ? ["#B3CCF8", "#6FA0F0", "#3A6DB8", "#2A4570"] : ["#002D72", "#2F62AE", "#7FA3D6", "#C9D8EE"];
+  FAIXAS.forEach((f, i) => { f.cor = azul[i]; });
+  SEM.cor = ehEscuro() ? "#55606F" : "#A3ACB8";  // cinza neutro, fora da escala
+}
 const estado = { lig: "", q: "", origem: "Manaus" };
 let mapa = null;
 
@@ -40,6 +42,14 @@ const ESTILO = `<style>
   @media (max-width: 640px) { .mapa-acesso { height: 360px; } }
   .mapa-acesso .leaflet-popup-content { font-family: var(--f-corpo); font-size: 13px; line-height: 1.45; }
   .leg-circ i { border-radius: 50% !important; }
+  .ac-leg { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: 10px; font-size: 12.5px; color: var(--tinta-2); }
+  .ac-leg .rampa { display: inline-flex; gap: 1px; border-radius: 2px; overflow: hidden; vertical-align: middle; }
+  .ac-leg .rampa i { width: 34px; height: 10px; }
+  .ac-leg .rot-r { display: inline-flex; gap: 1px; }
+  .ac-leg .rot-r span { width: 34px; text-align: center; font-size: 11px; color: var(--tinta-3); }
+  .ac-leg b { font-weight: 600; color: var(--tinta); margin-right: 4px; }
+  .ac-leg .pt { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
+  .ac-graf { position: relative; height: 196px; }
 </style>`;
 
 export async function render(el) {
@@ -49,6 +59,7 @@ export async function render(el) {
     el.innerHTML = `<div class="cab"><div><h1>Acessibilidade rodoviária</h1></div></div><div class="aviso">Os dados ainda não foram gerados. O robô <b>Acessibilidade rodoviária (mensal)</b> (<code>pipelines/acesso/acesso.py</code>) baixa a malha do OpenStreetMap, sobe o OSRM no GitHub Actions e publica <code>data/acesso.json</code> no dia 5 de cada mês.</div>`;
     return;
   }
+  pintarFaixas();
   const M = d._meta, R = d.resumo, mun = d.municipios;
   const sem = mun.filter(m => !m.ligacao_rodoviaria);
   const pt = R.pop_total || 1;
@@ -66,18 +77,20 @@ export async function render(el) {
     </div>
     <div class="aviso secao"><b>Como ler:</b> a população é a do município inteiro, atribuída ao tempo da sede; quem mora em comunidade ou zona rural pode estar bem mais longe. Tempo de fluxo livre, sem espera de balsa e sem considerar estrada intransitável na cheia.</div>
 
-    <section class="secao grade g-2">
-      <div class="cartao"><header><div><h2>Mapa de isócronas</h2><p>Área alcançável por estrada em 1, 2 e 4 horas. Sedes coloridas pelo tempo até Manaus.</p></div></header>
+    <section class="secao cartao"><header><div><h2>Mapa de isócronas</h2><p>Área alcançável por estrada em 1, 2 e 4 horas. Sedes coloridas pelo tempo até Manaus.</p></div></header>
         <div class="corpo">
           <div class="filtros"><div class="seg" id="fOrig" role="group" aria-label="Origem das isócronas">
             <button type="button" data-v="Manaus" aria-pressed="${estado.origem === "Manaus"}">A partir de Manaus</button>
             <button type="button" data-v="Sede municipal mais próxima" aria-pressed="${estado.origem !== "Manaus"}">A partir da sede mais próxima</button></div></div>
           <div id="mapa" class="mapa-acesso" role="region" aria-label="Mapa do Amazonas com isócronas e sedes municipais. Os mesmos dados estão na tabela abaixo."></div>
-          <div class="legenda leg-circ" style="margin-top:10px">${FAIXAS.map(f => `<span><i style="background:${f.cor}"></i>${f.rot}</span>`).join("")}<span><i style="background:${SEM.cor}"></i>${SEM.rot}</span></div>
-        </div></div>
-      <div class="cartao"><header><div><h2>População por tempo até Manaus</h2><p>Soma da população dos municípios pela faixa de tempo da sede</p></div></header>
-        <div class="corpo"><div class="graf alto"><canvas id="gFaixa"></canvas></div></div></div>
-    </section>
+          <div class="ac-leg"><span><b>Tempo por estrada</b></span>
+            <span><span class="rampa">${FAIXAS.map(f => `<i style="background:${f.cor}"></i>`).join("")}</span><br><span class="rot-r">${["1 h", "2 h", "4 h", "+4 h"].map(t => `<span>${t}</span>`).join("")}</span></span>
+            <span><i class="pt" style="background:${SEM.cor}"></i>Sede sem ligação rodoviária</span>
+            <span><i class="pt" style="background:${FAIXAS[0].cor};outline:2px solid var(--sup);outline-offset:-3px"></i>Sede municipal (cor = tempo até Manaus)</span></div>
+        </div></section>
+    <section class="secao cartao"><header><div><h2>${pct(p4 / pt * 100, 0)} da população está a até 4 h de Manaus por estrada</h2><p>População dos municípios pela faixa de tempo da sede até Manaus (pessoas e % do AM). Entre parênteses, número de municípios.</p></div></header>
+      <div class="corpo"><div class="ac-graf"><canvas id="gFaixa" role="img" aria-label="População por faixa de tempo até Manaus"></canvas></div>
+        <p class="peq" style="margin:8px 0 0;font-size:12.5px;color:var(--tinta-3)">Fonte: IBGE Censo ${esc(String(R.ano_pop))}; tempo OSRM sobre OpenStreetMap, fluxo livre.</p></div></section>
 
     <section class="secao cartao"><header><div><h2>Municípios</h2><p>Clique no cabeçalho para ordenar.</p></div><span class="contagem" id="cont"></span></header>
       <div class="corpo">
@@ -100,10 +113,11 @@ export async function render(el) {
 
   // gráfico população por faixa
   const grupos = [...FAIXAS, SEM].map(f => ({ ...f, pop: mun.filter(m => faixa(m) === f).reduce((s, m) => s + (m.pop || 0), 0), n: mun.filter(m => faixa(m) === f).length }));
-  grafico($("#gFaixa", el), { type: "bar", data: { labels: grupos.map(g => `${g.rot} (${g.n})`), datasets: [{ label: "Pessoas", data: grupos.map(g => g.pop),
-    backgroundColor: grupos.map(g => g.cor), borderRadius: 4, maxBarThickness: 30 }] },
-    options: { indexAxis: "y", plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${num(c.raw)} pessoas (${pct(c.raw / pt * 100, 1)})` } } },
-      scales: { x: { grid: { color: css("--grade") } }, y: { grid: { display: false } } } } });
+  // barra horizontal com rótulo na ponta (plugin "rotulos" do ui.js esconde o eixo de valores)
+  grafico($("#gFaixa", el), { type: "bar", data: { labels: grupos.map(g => `${g.rot === SEM.rot ? "sem estrada" : g.rot} (${g.n})`), datasets: [{ label: "Pessoas", data: grupos.map(g => g.pop),
+    backgroundColor: grupos.map(g => g.cor), maxBarThickness: 22 }] },
+    options: { indexAxis: "y", layout: { padding: { right: innerWidth < 600 ? 104 : 120 } },
+      plugins: { rotulos: { fmt: v => `${num(v)} · ${pct(v / pt * 100, 0)}` }, legend: { display: false }, tooltip: { callbacks: { label: c => `${num(c.raw)} pessoas (${pct(c.raw / pt * 100, 1)})` } } } } });
 
   // tabela
   const lig = m => !m.ligacao_rodoviaria ? "Só fluvial / aéreo" : m.travessia_balsa ? "Estrada + balsa" : "Estrada";
@@ -141,8 +155,9 @@ async function desenharMapa(el, mun) {
   const r = document.documentElement;
   const escuro = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   mapa = L.map(box, { scrollWheelZoom: false }).setView(AM, 6);
-  L.tileLayer(`https://{s}.basemaps.cartocdn.com/${escuro ? "dark_all" : "light_all"}/{z}/{x}/{y}{r}.png`, {
-    maxZoom: 18, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>' }).addTo(mapa);
+  // Fundo: Esri World Gray Canvas (sem chave; o CARTO passou a exigir chave e mostrava "API KEY REQUIRED")
+  L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${escuro ? "Dark" : "Light"}_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {
+    maxZoom: 16, attribution: "Fundo: Esri, HERE, Garmin, &copy; colaboradores do OpenStreetMap" }).addTo(mapa);
 
   const geo = await fetch("../data/acesso_isocronas.geojson", { cache: "no-cache" }).then(x => x.ok ? x.json() : null).catch(() => null);
   const corIso = { 60: FAIXAS[0].cor, 120: FAIXAS[1].cor, 240: FAIXAS[2].cor };
@@ -152,7 +167,7 @@ async function desenharMapa(el, mun) {
     if (!geo) return;
     const fs = geo.features.filter(f => f.properties.origem === estado.origem).sort((a, b) => b.properties.ate_min - a.properties.ate_min);
     camada = L.geoJSON({ type: "FeatureCollection", features: fs }, {
-      style: f => ({ color: corIso[f.properties.ate_min], weight: 1, fillColor: corIso[f.properties.ate_min], fillOpacity: 0.28 }),
+      style: f => ({ color: corIso[f.properties.ate_min], weight: 0.8, opacity: 0.7, fillColor: corIso[f.properties.ate_min], fillOpacity: 0.22 }),
       onEachFeature: (f, l) => l.bindTooltip(`Até ${hm(f.properties.ate_min)} ${f.properties.origem === "Manaus" ? "de Manaus" : "da sede mais próxima"}`, { sticky: true }),
     }).addTo(mapa);
     camada.bringToBack();
@@ -164,10 +179,10 @@ async function desenharMapa(el, mun) {
     pintaIso();
   });
 
-  const borda = css("--sup") || "#fff";
+  const borda = css("--tinta-2") || "#33415A";  // contorno escuro: a faixa mais clara some no fundo claro sem ele
   mun.forEach(m => {
     const f = faixa(m), h = m.hospital_mais_proximo, t = m.terminal_mais_proximo;
-    L.circleMarker([m.lat, m.lon], { radius: m.nome === "Manaus" ? 8 : 6, color: borda, weight: 1.5, fillColor: f.cor, fillOpacity: 1 })
+    L.circleMarker([m.lat, m.lon], { radius: m.nome === "Manaus" ? 8 : 6, color: borda, weight: 1, fillColor: f.cor, fillOpacity: 1 })
       .bindPopup(`<b>${esc(m.nome)}</b> · ${num(m.pop)} hab.<br>Manaus: ${m.ligacao_rodoviaria ? `${hm(m.tempo_manaus_min)} (${num(m.km_manaus)} km)${m.travessia_balsa ? ", com balsa" : ""}` : "sem ligação rodoviária"}<br>` +
         `Hospital: ${esc(h?.nome || "—")}${h?.min != null ? ` · ${hm(h.min)}` : ""}<br>Terminal: ${esc(t?.nome || "—")}${t?.min != null ? ` · ${hm(t.min)}` : ""}`)
       .addTo(mapa);

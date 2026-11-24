@@ -161,21 +161,38 @@ function tipoGrafico(r) {
 }
 
 const CSS = `
-.cq-grade{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:14px;align-items:start}
-@media (max-width:900px){.cq-grade{grid-template-columns:1fr}}
-.cq-sql{width:100%;min-height:170px;resize:vertical;font:13.5px/1.5 ui-monospace,Consolas,"Cascadia Mono",monospace;background:var(--sup-2);color:var(--tinta);border:1px solid var(--borda-2);border-radius:6px;padding:10px 12px;tab-size:2}
-.cq-sql:focus{outline:2px solid var(--azul);outline-offset:1px}
-.cq-acoes{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.cq-grade{display:grid;grid-template-columns:272px minmax(0,1fr);gap:16px;align-items:start}
+.cq-lado{display:grid;gap:16px;position:sticky;top:72px}
+@media (max-width:900px){.cq-grade{grid-template-columns:1fr}.cq-lado{order:2;position:static}}
+.cq-prontas{list-style:none;margin:0;padding:4px 0;max-height:46vh;overflow:auto}
+.cq-prontas button{display:block;width:100%;text-align:left;border:0;border-left:3px solid transparent;background:none;padding:7px 14px 7px 13px;font-size:13.5px;line-height:1.35;color:var(--tinta-2);cursor:pointer}
+.cq-prontas button:hover{background:var(--sup-2);color:var(--tinta)}
+.cq-prontas button[aria-current="true"]{border-left-color:var(--ouro);background:var(--azul-3);color:var(--azul);font-weight:600}
+.cq-ed{border:1px solid var(--borda-2);border-radius:var(--raio);overflow:hidden;background:var(--sup)}
+.cq-ed:focus-within{border-color:var(--azul);box-shadow:0 0 0 1px var(--azul)}
+.cq-barra{display:flex;align-items:center;gap:10px;padding:6px 8px 6px 12px;background:var(--sup-2);border-bottom:1px solid var(--borda)}
+.cq-barra .cq-tit{font:600 11.5px var(--f-corpo);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-3);white-space:nowrap}
+.cq-barra .cq-dica{margin-left:auto;font-size:12px;color:var(--tinta-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cq-barra .btn{padding:5px 14px;font-size:13px}
+@media (max-width:600px){.cq-barra .cq-dica{display:none}.cq-barra .btn{margin-left:auto}}
+.cq-area{display:flex;height:220px;min-height:140px;max-height:70vh;overflow:hidden;resize:vertical}
+.cq-num{margin:0;padding:10px 8px 10px 0;min-width:40px;text-align:right;user-select:none;color:var(--tinta-3);background:var(--sup-2);border-right:1px solid var(--borda);overflow:hidden;font:13px/1.6 ui-monospace,Consolas,"Cascadia Mono",monospace}
+.cq-sql{flex:1;min-width:0;border:0;outline:0;resize:none;white-space:pre;overflow:auto;font:13px/1.6 ui-monospace,Consolas,"Cascadia Mono",monospace;background:var(--sup);color:var(--tinta);padding:10px 12px;tab-size:2}
+.cq-acoes{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
 .cq-acoes .peq{color:var(--tinta-3);font-size:13px}
-.cq-tabs{max-height:420px;overflow:auto;font-size:13px}
+.cq-tabs{max-height:40vh;overflow:auto;font-size:13px;padding:6px 14px 10px}
 .cq-tabs details{border-bottom:1px solid var(--borda);padding:4px 0}
 .cq-tabs summary{cursor:pointer;font-weight:600}
-.cq-tabs button{background:none;border:0;padding:1px 4px;cursor:pointer;color:var(--azul);font:inherit;text-align:left}
+.cq-tabs button{background:none;border:0;padding:1px 4px;cursor:pointer;color:var(--azul);font:12.5px ui-monospace,Consolas,monospace;text-align:left}
 .cq-tabs button:hover{text-decoration:underline}
 .cq-tabs ul{list-style:none;margin:2px 0 4px;padding-left:10px}
 .cq-tabs small{color:var(--tinta-3)}
-.cq-prontas{display:flex;flex-wrap:wrap;gap:6px}
-.cq-prontas .btn{font-size:13px;padding:5px 10px}
+#cqRes{margin-top:16px}
+#cqRes .t{font-size:13px}
+#cqRes .t td{padding:6px 10px}
+#cqRes .t th{padding:7px 10px}
+#cqRes .tab-rolo{max-height:520px;overflow:auto;border:1px solid var(--borda);border-radius:var(--raio)}
+#cqGrafBox{margin-bottom:14px}
 .cq-erro{border:1px solid var(--critico);background:var(--critico-bg);color:var(--tinta);border-radius:var(--raio);padding:10px 14px;font-size:13.5px}
 .cq-erro code{display:block;white-space:pre-wrap;margin-top:4px;font-size:12.5px;color:var(--tinta-2)}`;
 
@@ -198,22 +215,32 @@ export async function render(el) {
   el.innerHTML = `<div class="cab"><div><h1>Consulta livre</h1>
       <p>SQL direto sobre os dados do Hub, rodando no seu navegador (DuckDB). Nada sai da máquina e nada é alterado nos arquivos.</p></div>
       <div class="fontes">${fonte("e-Obras", B.meta?.posicao || "—")}${fonte("tabelas", num(tabelas.length))}</div></div>
-    <section class="secao cartao"><header><div><h2>Consultas prontas</h2><p>Clique para carregar no editor e rodar.</p></div></header>
-      <div class="corpo cq-prontas">${PRONTAS.map(([t], i) => `<button type="button" class="btn" data-p="${i}">${esc(t)}</button>`).join("")}</div></section>
-    <div class="cq-grade secao">
-      <section class="cartao"><header><div><h2>SQL</h2><p>Dialeto DuckDB. Ctrl+Enter roda. Mostra até ${num(LIMITE)} linhas.</p></div></header>
-        <div class="corpo"><textarea id="cqSql" class="cq-sql" spellcheck="false" aria-label="Consulta SQL">${esc(PRONTAS[0][1])}</textarea>
-        <div class="cq-acoes"><button type="button" class="btn pri" id="cqRodar">Rodar</button>
-          <button type="button" class="btn" id="cqCsv" disabled>Exportar CSV</button><span class="peq" id="cqInfo" role="status"></span></div></div></section>
-      <aside class="cartao"><header><div><h2>Tabelas</h2><p>Clique num nome para inserir.</p></div></header>
-        <div class="corpo cq-tabs">${tabelas.map(t => `<details><summary><button type="button" data-ins="${esc(t.nome)}">${esc(t.nome)}</button> <small>${num(t.linhas)}</small></summary>
-          <small>${esc(t.origem)}</small><ul>${(t.colunas || []).map(c => `<li><button type="button" data-ins="${esc(c.n)}">${esc(c.n)}</button> <small>${esc(c.t.toLowerCase())}</small></li>`).join("")}</ul></details>`).join("")}</div></aside>
+    <div class="cq-grade">
+      <aside class="cq-lado">
+        <section class="cartao"><header><div><h2>Consultas prontas</h2><p>Carrega no editor e roda.</p></div></header>
+          <ul class="cq-prontas">${PRONTAS.map(([t], i) => `<li><button type="button" data-p="${i}"${i === 0 ? ' aria-current="true"' : ""}>${esc(t)}</button></li>`).join("")}</ul></section>
+        <section class="cartao"><header><div><h2>Tabelas</h2><p>Clique num nome para inserir no cursor.</p></div></header>
+          <div class="cq-tabs">${tabelas.map(t => `<details><summary><button type="button" data-ins="${esc(t.nome)}">${esc(t.nome)}</button> <small>${num(t.linhas)}</small></summary>
+            <small>${esc(t.origem)}</small><ul>${(t.colunas || []).map(c => `<li><button type="button" data-ins="${esc(c.n)}">${esc(c.n)}</button> <small>${esc(c.t.toLowerCase())}</small></li>`).join("")}</ul></details>`).join("")}</div></section>
+      </aside>
+      <div>
+        <div class="cq-ed">
+          <div class="cq-barra"><span class="cq-tit">SQL · DuckDB</span><span class="cq-dica"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> roda · até ${num(LIMITE)} linhas</span>
+            <button type="button" class="btn pri" id="cqRodar">Rodar</button></div>
+          <div class="cq-area"><pre class="cq-num" id="cqNum" aria-hidden="true">1</pre><textarea id="cqSql" class="cq-sql" spellcheck="false" wrap="off" aria-label="Consulta SQL">${esc(PRONTAS[0][1])}</textarea></div>
+        </div>
+        <div class="cq-acoes"><button type="button" class="btn" id="cqCsv" disabled>Exportar CSV</button><span class="peq" id="cqInfo" role="status"></span></div>
+        <section class="cartao" id="cqRes" hidden><header><div><h2>Resultado</h2><p id="cqSub"></p></div><span class="contagem" id="cqCont"></span></header>
+          <div class="corpo"><div class="graf" id="cqGrafBox" hidden><canvas id="cqGraf" aria-label="Gráfico do resultado"></canvas></div><div id="cqTab"></div></div></section>
+      </div>
     </div>
-    <section class="secao cartao" id="cqRes" hidden><header><div><h2>Resultado</h2></div><span class="contagem" id="cqCont"></span></header>
-      <div class="corpo"><div class="graf" id="cqGrafBox" hidden><canvas id="cqGraf" aria-label="Gráfico do resultado"></canvas></div><div id="cqTab"></div></div></section>
     <p class="peq" style="color:var(--tinta-3);font-size:13px;margin-top:16px">Fontes: arquivos de <code>data/</code> do Hub, cada um com <code>_meta</code> de proveniência (e-Obras, PNCP, CSC-AM, notícias de sinistros, ICM). Modal e situação dos contratos seguem a regra do Hub (dados.js). Contrato que cita rodovia só como localização não é da rodovia.</p>`;
 
-  const sql = $("#cqSql", el);
+  const sql = $("#cqSql", el), gutter = $("#cqNum", el);
+  // numeração de linhas: textarea sem quebra automática (wrap=off), então linha lógica = linha visual
+  const numerar = () => { gutter.textContent = Array.from({ length: sql.value.split("\n").length }, (_, i) => i + 1).join("\n"); gutter.scrollTop = sql.scrollTop; };
+  sql.addEventListener("input", numerar); sql.addEventListener("scroll", () => { gutter.scrollTop = sql.scrollTop; });
+  numerar();
   let ultimo = null;
   const rodar = async () => {
     const info = $("#cqInfo", el), box = $("#cqRes", el);
@@ -226,11 +253,17 @@ export async function render(el) {
       $("#cqCont", el).textContent = r.total > LIMITE ? `mostrando ${num(LIMITE)} de ${num(r.total)}` : `${num(r.total)} linhas`;
       box.hidden = false; $("#cqCsv", el).disabled = !r.linhas.length;
       const tipo = tipoGrafico(r), gb = $("#cqGrafBox", el);
-      gb.hidden = !tipo;
+      gb.hidden = !tipo; if (!tipo) $("#cqSub", el).textContent = "";
       if (tipo) {
-        const [a, b] = r.campos, ls = tipo === "bar" ? [...r.linhas].sort((x, y) => (y[b.n] || 0) - (x[b.n] || 0)).slice(0, 30) : r.linhas;
+        // ranking = barra horizontal ordenada (20 maiores, 30 px por barra, rótulo na ponta); tempo = linha
+        const [a, b] = r.campos, ls = tipo === "bar" ? [...r.linhas].sort((x, y) => (y[b.n] || 0) - (x[b.n] || 0)).slice(0, 20) : r.linhas;
+        gb.style.height = tipo === "bar" ? `${ls.length * 30 + 16}px` : "260px";
+        // rótulo compacto (1,4 bi / 800,2 mi / 12,5 mil); valor exato fica na tabela
+        const fmt = v => Math.abs(v) >= 1e9 ? `${num(v / 1e9, 1)} bi` : Math.abs(v) >= 1e6 ? `${num(v / 1e6, 1)} mi` : Math.abs(v) >= 1e4 ? `${num(v / 1e3, 1)} mil` : num(v, Math.abs(v) < 10 && v % 1 ? 1 : 0);
+        $("#cqSub", el).textContent = `${b.n} por ${a.n}${tipo === "bar" && r.linhas.length > 20 ? " · gráfico com os 20 maiores" : ""}`;
         grafico($("#cqGraf", el), { type: tipo, data: { labels: ls.map(l => String(l[a.n] ?? "—").slice(0, 40)),
-          datasets: [{ label: b.n, data: ls.map(l => l[b.n]), ...(tipo === "bar" ? estiloBarra(serie(1)) : { borderColor: serie(1), backgroundColor: serie(1), tension: 0, pointRadius: 2 }) }] } });
+          datasets: [{ label: b.n, data: ls.map(l => l[b.n]), ...(tipo === "bar" ? estiloBarra(serie(1)) : { borderColor: serie(1), backgroundColor: serie(1), tension: 0 }) }] },
+          options: tipo === "bar" ? { indexAxis: "y", layout: { padding: { right: 70 } }, plugins: { rotulos: { fmt } } } : { scales: { y: { ticks: { callback: fmt } } } } });
       }
       const ehNum = c => /^(Int|Uint|Float|Decimal)/.test(c.t);
       const semMilhar = c => /^(ano|year|n|id|mes)$/i.test(c.n); // "2026", não "2.026"
@@ -240,7 +273,7 @@ export async function render(el) {
     } catch (e) {
       const m = String(e.message || e);
       info.textContent = "";
-      box.hidden = false; $("#cqGrafBox", el).hidden = true; $("#cqCsv", el).disabled = true; ultimo = null;
+      box.hidden = false; $("#cqGrafBox", el).hidden = true; $("#cqCsv", el).disabled = true; ultimo = null; $("#cqSub", el).textContent = "";
       $("#cqCont", el).textContent = "";
       $("#cqTab", el).innerHTML = `<div class="cq-erro" role="alert"><b>${esc(erroPt(m))}</b> Mensagem original do DuckDB:<code>${esc(m)}</code></div>`;
     } finally { $("#cqRodar", el).disabled = false; }
@@ -250,11 +283,15 @@ export async function render(el) {
   sql.onkeydown = e => {
     if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); rodar(); }
   };
-  el.querySelector(".cq-prontas").onclick = e => { const b = e.target.closest("[data-p]"); if (!b) return; sql.value = PRONTAS[+b.dataset.p][1]; rodar(); };
+  el.querySelector(".cq-prontas").onclick = e => {
+    const b = e.target.closest("[data-p]"); if (!b) return;
+    el.querySelectorAll(".cq-prontas [data-p]").forEach(x => x === b ? x.setAttribute("aria-current", "true") : x.removeAttribute("aria-current"));
+    sql.value = PRONTAS[+b.dataset.p][1]; numerar(); rodar();
+  };
   el.querySelector(".cq-tabs").onclick = e => {
     const b = e.target.closest("[data-ins]"); if (!b) return;
     e.preventDefault(); // não abre/fecha o <details> ao inserir
-    sql.setRangeText(b.dataset.ins, sql.selectionStart, sql.selectionEnd, "end"); sql.focus();
+    sql.setRangeText(b.dataset.ins, sql.selectionStart, sql.selectionEnd, "end"); sql.focus(); numerar();
   };
   rodar();
 }

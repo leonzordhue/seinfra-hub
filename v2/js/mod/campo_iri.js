@@ -13,7 +13,7 @@
 import { talvez } from "../dados.js";
 import { esc, num, data } from "../fmt.js";
 import { kpi, chip, tabela, fonte, opcoes } from "../ui.js";
-import { mapa, baixar, csv, dist, guardar, ler, estilo } from "./campo_comum.js";
+import { mapa, baixar, csv, dist, guardar, ler, estilo, estiloCampo } from "./campo_comum.js";
 
 export const COEF_PADRAO = { a: 4.19, b: 1.73 };
 const CHAVE_COEF = "dmob-campo-iri-coef", CHAVE_SESS = "dmob-campo-iri-sessoes";
@@ -136,17 +136,16 @@ function onMotion(e) {
 let ui = {};
 export async function render(el, params) {
   pararTudo();  // nova renderização (troca de tema, rota) encerra e salva a gravação em curso
+  estiloCampo();
   estilo("campo-iri-css", `
     .ci-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-    .ci-vel{font:600 44px/1 var(--f-titulo);color:var(--tinta);font-variant-numeric:tabular-nums}
-    .ci-vel small{font-size:16px;color:var(--tinta-3);font-weight:400}
     .ci-mapa{height:420px;border-radius:var(--raio);border:1px solid var(--borda)}
     .ci-leg{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--tinta-2);margin-top:8px}
     .ci-leg i{display:inline-block;width:18px;height:4px;border-radius:2px;margin-right:5px;vertical-align:middle}
     .ci-cal{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
     .ci-cal label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--tinta-2)}
     .ci-cal input{font:inherit;padding:7px 9px;border:1px solid var(--borda-2);border-radius:6px;background:var(--sup);color:var(--tinta)}
-    @media (max-width:600px){.ci-mapa{height:300px}.ci-vel{font-size:36px}}`);
+    @media (max-width:600px){.ci-mapa{height:300px}}`);
   await referencias();
   const coef = coefAtual(), limiar = ler("dmob-campo-iri-limiar", 4);
   const rods = (refs.icm?.rodovias || []).map(r => r.codigo);
@@ -156,22 +155,22 @@ export async function render(el, params) {
     <div class="cab"><div><h1>IRI pelo celular</h1>
       <p>Estima a irregularidade (IRI) a cada 100 m com o acelerômetro e o GPS do celular durante a viagem, conta impactos de buraco e compara com o levantamento oficial do trecho.</p></div>
       <div class="fontes">${fonte("coeficientes", `a = ${num(coef.a, 2)} · b = ${num(coef.b, 2)}`)}${fonte("referência", refs.icm ? `RoadLab Pro ${refs.icm.gerado_em}` : "indisponível")}</div></div>
-    <div class="aviso secao"><b>Estimativa indicativa.</b> Não substitui o levantamento com perfilômetro (ASTM E950; DNIT PRO 182/94). Use para triagem e para apontar trechos a vistoriar.
-      <ul><li>Fixe o celular no painel ou no para-brisa (suporte firme, tela para cima ou em pé). Celular solto no banco não serve.</li>
-      <li>Mantenha velocidade constante entre ${VMIN} e ${VMAX} km/h. Segmento fora da faixa fica cinza e não entra na média.</li>
-      <li>Calibre com um trecho de IRI conhecido antes de usar o número: o resultado depende do carro, do suporte e do aparelho.</li></ul></div>
-
-    <section class="secao cartao"><header><div><h2>Gravação</h2><p id="ciSt">${!temSensor || !temGps ? "Este navegador não oferece acelerômetro ou GPS. Use o modo simular para conhecer a ferramenta." : "Parado. Toque em Iniciar com o carro já em movimento."}</p></div></header>
-      <div class="corpo">
-        <div class="ci-ctl">
-          <button class="btn pri" id="ciIni" type="button"${!temSensor || !temGps ? " disabled" : ""}>Iniciar</button>
-          <button class="btn" id="ciPar" type="button" disabled>Parar e salvar</button>
-          <span style="flex:1"></span>
+    <section class="cartao" id="ciGrav"><div class="corpo cp-painel">
+        <div class="cp-estado" role="status"><span class="ponto" aria-hidden="true"></span><p id="ciSt">${!temSensor || !temGps ? "Este navegador não oferece acelerômetro ou GPS. Use Simular para conhecer a ferramenta." : "Parado. Toque em Iniciar com o carro já em movimento."}</p></div>
+        <div id="ciKpi"></div>
+        <div class="cp-btns">
+          <button class="btn pri" id="ciIni" type="button"${!temSensor || !temGps ? " disabled" : ""}>Iniciar gravação</button>
+          <button class="btn cp-parar" id="ciPar" type="button" disabled>Parar e salvar</button>
+        </div>
+        <div class="cp-sec"><span>Sem sair do lugar:</span>
           <select id="ciRod" aria-label="Rodovia para simular">${opcoes(rods, "AM-010", "Rodovia para simular")}</select>
           <button class="btn" id="ciSim" type="button"${rods.length ? "" : " disabled"}>Simular</button>
         </div>
-        <div class="grade g-kpi secao" id="ciKpi"></div>
       </div></section>
+    <div class="aviso secao"><b>Estimativa indicativa.</b> Não substitui o levantamento com perfilômetro (ASTM E950; DNIT PRO 182/94). Use para triagem e para apontar trechos a vistoriar.
+      <details class="cp-ajuda" style="margin-top:6px"><summary>Como usar</summary><ul><li>Fixe o celular no painel ou no para-brisa (suporte firme, tela para cima ou em pé). Celular solto no banco não serve.</li>
+      <li>Mantenha velocidade constante entre ${VMIN} e ${VMAX} km/h. Segmento fora da faixa fica cinza e não entra na média.</li>
+      <li>Calibre com um trecho de IRI conhecido antes de usar o número: o resultado depende do carro, do suporte e do aparelho.</li></ul></details></div>
 
     <section class="secao cartao"><header><div><h2>Trilha</h2><p>Cor pela classe de IRI estimada (DNIT). Círculos vermelhos: impactos acima do limiar.</p></div></header>
       <div class="corpo"><div class="ci-mapa" id="ciMapa" role="img" aria-label="Mapa da trilha gravada"></div>
@@ -222,6 +221,7 @@ export async function render(el, params) {
 function botoes(gravando) {
   const $ = s => ui.el.querySelector(s);
   $("#ciIni").disabled = gravando || !("DeviceMotionEvent" in window); $("#ciSim").disabled = gravando; $("#ciPar").disabled = !gravando;
+  $("#ciGrav").classList.toggle("gravando", gravando);
 }
 
 async function iniciar(coef, limiar) {
@@ -287,7 +287,7 @@ function aoFixo(seg) {
   else if (R.vel != null) pintarKpi(R);
   const fora = R.vel != null && (R.vel < VMIN || R.vel > VMAX);
   ui.st.innerHTML = R.prec > PREC_MAX ? `GPS impreciso (±${num(R.prec)} m). Aguardando sinal melhor.` :
-    `${R.sim ? "Simulando" : "Gravando"} · ${num(R.segs.length)} segmentos${fora ? " · " + chip(`Velocidade fora de ${VMIN}–${VMAX} km/h`, "alerta") : ""}${!R.sim && !wake ? " · mantenha a tela ligada" : ""}`;
+    `<b class="cp-rot">${R.sim ? "SIMULANDO" : "GRAVANDO"}</b> · ${num(R.segs.length)} segmentos${fora ? " · " + chip(`Velocidade fora de ${VMIN}–${VMAX} km/h`, "alerta") : ""}${!R.sim && !wake ? " · mantenha a tela ligada" : ""}`;
 }
 function resumo(segs, buracos) {
   const v = segs.filter(s => s.valido), km = segs.reduce((s, x) => s + x.d, 0) / 1000;
@@ -297,12 +297,19 @@ function resumo(segs, buracos) {
 function pintarKpi(G) {
   const r = resumo(G?.segs || [], G?.buracos || []), ult = G?.segs.at(-1);
   const fora = G?.vel != null && (G.vel < VMIN || G.vel > VMAX);
-  ui.kpi.innerHTML = `
-    <div class="cartao kpi${fora ? " destaque" : ""}"><div class="rot">Velocidade</div><div class="ci-vel">${G?.vel != null ? num(G.vel) : "—"} <small>km/h</small></div><div class="sub">${fora ? chip("fora da faixa", "alerta") : `faixa ${VMIN}–${VMAX} km/h`}</div></div>
-    ${kpi("IRI do último segmento", ult?.iri != null ? num(ult.iri, 2) : "—", ult ? `${classe(ult.iri)?.rot || ""}${ult.valido ? "" : " · fora da faixa"} · m/km` : "m/km")}
-    ${kpi("IRI médio (válidos)", r.med != null ? num(r.med, 2) : "—", r.cls ? `${r.cls.rot} · ${num(r.nv)} de ${num(r.n)} segmentos` : "m/km")}
-    ${kpi("Percorrido", num(r.km, 1) + " km", `${num(r.n)} segmentos de ${SEG_M} m`)}
-    ${kpi("Impactos (buracos)", num(r.bur), `picos > ${num(G?.limiar ?? ler("dmob-campo-iri-limiar", 4), 1)} m/s²`, r.bur > 0)}`;
+  const c = ult?.iri != null ? classe(ult.iri) : null;
+  // leitura grande (velocidade e IRI do último segmento) + 3 números de apoio
+  ui.kpi.innerHTML = `<div class="cp-leit">
+      <div class="${fora ? "cp-fora" : ""}"><div class="rot">Velocidade</div><div class="cp-num">${G?.vel != null ? num(G.vel) : "—"}<small>km/h</small></div>
+        <div class="cp-sub">${fora ? chip(`fora de ${VMIN}–${VMAX} km/h`, "alerta") : `faixa válida ${VMIN}–${VMAX} km/h`}</div></div>
+      <div><div class="rot">IRI último trecho</div><div class="cp-num">${ult?.iri != null ? num(ult.iri, 1) : "—"}<small>m/km</small></div>
+        <div class="cp-sub">${c ? `<span class="cp-classe" style="--c:${ult.valido ? c.cor : COR_INVALIDO}">${c.rot}</span>${ult.valido ? "" : " · fora da faixa"}` : `a cada ${SEG_M} m`}</div></div>
+    </div>
+    <div class="cp-mini" style="margin-top:10px">
+      <div><div class="rot">IRI médio</div><div class="v">${r.med != null ? num(r.med, 2) : "—"}</div><div class="s">${r.cls ? `${r.cls.rot} · ${num(r.nv)}/${num(r.n)} válidos` : "m/km, só válidos"}</div></div>
+      <div><div class="rot">Percorrido</div><div class="v">${num(r.km, 1)} km</div><div class="s">${num(r.n)} trechos de ${SEG_M} m</div></div>
+      <div${r.bur > 0 ? ' class="cp-fora"' : ""}><div class="rot">Impactos</div><div class="v">${num(r.bur)}</div><div class="s">picos &gt; ${num(G?.limiar ?? ler("dmob-campo-iri-limiar", 4), 1)} m/s²</div></div>
+    </div>`;
 }
 function limparMapa() { camadas?.grupo.clearLayers(); camadas && (camadas.seguir = true); }
 function desenharSeg(s) {

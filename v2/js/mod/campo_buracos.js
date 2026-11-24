@@ -11,7 +11,7 @@
 //   ASTM D6433 gradua pela profundidade e diâmetro) exige medir em campo; a foto não dá escala.
 import { esc, num } from "../fmt.js";
 import { kpi, chip, fonte } from "../ui.js";
-import { mapa, baixar, csv, script, estilo } from "./campo_comum.js";
+import { mapa, baixar, csv, script, estilo, estiloCampo } from "./campo_comum.js";
 
 const ORT = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/";
 const EXIFR = "https://cdn.jsdelivr.net/npm/exifr@7.1.3/dist/lite.umd.js";
@@ -115,6 +115,7 @@ async function adicionar(arquivos) {
 
 // ── tela ──
 export async function render(el) {
+  estiloCampo();
   estilo("campo-bur-css", `
     .cb-ctl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .cb-ctl input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
@@ -122,28 +123,35 @@ export async function render(el) {
     .cb-foto{border:1px solid var(--borda);border-radius:var(--raio);overflow:hidden;background:var(--sup)}
     .cb-foto canvas{display:block;width:100%;height:auto;cursor:crosshair;touch-action:manipulation}
     .cb-foto .cb-rod{padding:8px 10px;font-size:13px;color:var(--tinta-2);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-    .cb-mapa{height:360px;border-radius:var(--raio);border:1px solid var(--borda)}`);
+    .cb-mapa{height:360px;border-radius:var(--raio);border:1px solid var(--borda)}
+    .cb-conf{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--tinta-2);flex:1 1 260px}
+    .cb-conf input{flex:1;accent-color:var(--azul);min-width:120px}
+    .cb-conf b{font-variant-numeric:tabular-nums;color:var(--tinta);min-width:3ch;text-align:right}
+    .cb-exp{margin-left:auto;display:flex;gap:8px}
+    @media (max-width:600px){.cb-exp{margin-left:0}#cbKpi{grid-template-columns:1fr 1fr}#cbKpi .kpi{padding:12px}}`);
   el.innerHTML = `
     <div class="cab"><div><h1>Buracos por foto</h1>
       <p>Tire ou escolha fotos do pavimento. O navegador procura panelas (buracos) em cada foto, marca a posição pelo GPS da foto e monta o mapa. Nada é enviado para servidor.</p></div>
       <div class="fontes">${fonte("modelo", "YOLOv8n (keremberke)")}${fonte("roda em", "seu aparelho")}</div></div>
-    <div class="aviso secao"><b>Triagem, não levantamento.</b> A detecção erra (falso positivo em sombra e poça, buraco perdido em foto escura). Confira cada foto: toque numa caixa para apagar, toque fora para marcar.
-      <ul><li>Severidade = área da caixa na foto (leve &lt; 1,5%, moderada &lt; 6%, grave ≥ 6%). A foto não tem escala: a classificação de norma (DNIT 005/2003-TER, panela; ASTM D6433) exige medir diâmetro e profundidade.</li>
-      <li>Fotografe de pé, a 2 a 4 m do buraco, câmera inclinada para o chão, com a localização da câmera ligada.</li></ul></div>
-
-    <section class="secao cartao"><header><div><h2>Fotos</h2><p id="cbSt">Nenhuma foto ainda.</p></div></header>
-      <div class="corpo">
-        <div class="cb-ctl">
+    <section class="cartao"><div class="corpo cp-painel">
+        <div class="cp-estado" role="status"><span class="ponto" aria-hidden="true"></span><p id="cbSt">Nenhuma foto ainda.</p></div>
+        <div class="cp-btns">
           <label class="btn pri">Tirar foto<input type="file" accept="image/*" capture="environment" id="cbCam"></label>
           <label class="btn">Escolher fotos<input type="file" accept="image/*" multiple id="cbArq"></label>
-          <label style="font-size:14px;display:inline-flex;gap:6px;align-items:center">Confiança mínima <input type="range" id="cbConf" min="0.1" max="0.9" step="0.05" value="${conf}" aria-label="Confiança mínima"> <b id="cbConfV">${num(conf * 100)}%</b></label>
-          <span style="flex:1"></span>
-          <button class="btn" id="cbCsv" type="button">CSV</button><button class="btn" id="cbGeo" type="button">GeoJSON</button><button class="btn" id="cbLimpa" type="button">Limpar</button>
         </div>
-        <div id="cbModelo" class="secao"></div>
-        <div class="grade g-kpi secao" id="cbKpi"></div>
-        <div class="cb-fotos secao" id="cbFotos"></div>
+        <div id="cbModelo"></div>
+        <div class="grade g-kpi" id="cbKpi"></div>
+        <div class="cp-sec">
+          <label class="cb-conf">Confiança mínima <input type="range" id="cbConf" min="0.1" max="0.9" step="0.05" value="${conf}" aria-label="Confiança mínima"> <b id="cbConfV">${num(conf * 100)}%</b></label>
+          <span class="cb-exp"><button class="btn" id="cbCsv" type="button">CSV</button><button class="btn" id="cbGeo" type="button">GeoJSON</button><button class="btn" id="cbLimpa" type="button">Limpar</button></span>
+        </div>
       </div></section>
+    <div class="aviso secao"><b>Triagem, não levantamento.</b> A detecção erra (falso positivo em sombra e poça, buraco perdido em foto escura). Confira cada foto: toque numa caixa para apagar, toque fora para marcar.
+      <details class="cp-ajuda" style="margin-top:6px"><summary>Como fotografar e como é a severidade</summary><ul><li>Severidade = área da caixa na foto (leve &lt; 1,5%, moderada &lt; 6%, grave ≥ 6%). A foto não tem escala: a classificação de norma (DNIT 005/2003-TER, panela; ASTM D6433) exige medir diâmetro e profundidade.</li>
+      <li>Fotografe de pé, a 2 a 4 m do buraco, câmera inclinada para o chão, com a localização da câmera ligada.</li></ul></details></div>
+
+    <section class="secao cartao"><header><div><h2>Fotos analisadas</h2><p>Caixa = buraco detectado, na cor da severidade. Toque para corrigir.</p></div></header>
+      <div class="corpo"><div class="cb-fotos" id="cbFotos"></div></div></section>
 
     <section class="secao cartao"><header><div><h2>Mapa</h2><p>Um marcador por foto, na cor do buraco mais grave.</p></div></header>
       <div class="corpo"><div class="cb-mapa" id="cbMapa" role="img" aria-label="Mapa das fotos com buracos"></div></div></section>

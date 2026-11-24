@@ -1765,33 +1765,286 @@
     }
 </style>
 <style>
-/* [Nexus] 23/11/2026: modo embutido. A v2 (/v2/) abre estes módulos dentro dela: index.html?embed=1#mod=rodovias */
+/* [Nexus] 23/11/2026: modo embutido. A v2 (/v2/) abre estes módulos dentro dela: index.html?embed=1#mod=rodovias
+   [Claude] 23/11/2026: v3 "prancha técnica" no modo embutido. Tokens copiados de v2/css/app.css; as variáveis da v1
+   viram apelidos dos tokens, então o CSS antigo herda cores e fontes sem mexer na lógica dos módulos.
+   Tema: data-theme no <html>, lido de localStorage "dmob-tema" (mesma chave da v2). Nada disto vale sem ?embed=1. */
+html.embed, html.embed .leaflet-container {
+  --azul: #002D72; --azul-2: #1A4A96; --azul-3: #E8EEF8; --noite: #00173D; --ouro: #F5A623; --ouro-2: #B87500;
+  --bg: #F2F4F7; --sup: #FFFFFF; --sup-2: #F7F9FB; --sup-3: #ECF0F5;
+  --tinta: #0B1B33; --tinta-2: #33415A; --tinta-3: #5A6880;
+  --borda: #DDE3EB; --borda-2: #C4CDD9;
+  --critico: #B3261E; --critico-bg: #FBEAE8; --alerta: #855600; --alerta-bg: #FFF3D6; --ok: #0B7343; --ok-bg: #E4F3EA;
+  --grade: #E7EBF0; --eixo: #BFC7D2;
+  --s1: #002D72; --s2: #F5A623; --s3: #1baf7a; --s4: #e87ba4; --s5: #6250d6; --s6: #8FA3BF;
+  --raio: 6px;
+  --f-corpo: "Outfit", system-ui, sans-serif; --f-titulo: "Lexend Deca", "Outfit", system-ui, sans-serif;
+  /* variáveis da v1 -> tokens v3 */
+  --azul-mid: var(--azul-2); --azul-hover: var(--azul-2); --azul-claro: var(--azul-3); --azul-borda: var(--borda-2);
+  --verde: var(--ok); --verde-cl: var(--ok-bg); --verde-brd: var(--borda); --amarelo: var(--ouro); --amarelo-cl: var(--alerta-bg);
+  --amarelo-brd: var(--borda); --vermelho: var(--critico); --vermelho-cl: var(--critico-bg);
+  --cinza-txt: var(--tinta); --cinza-med: var(--tinta-2); --cinza-aux: var(--tinta-3); --cinza-bg: var(--bg); --branco: var(--sup);
+  --font: var(--f-corpo); --font-head: var(--f-titulo); --font-cond: var(--f-corpo);
+  --shadow: 0 0 0 1px var(--borda); --shadow-lg: 0 0 0 1px var(--borda-2); --radius: var(--raio);
+  color-scheme: light;
+}
+/* tema escuro; a camada do mapa (.leaflet-container: controles, popups, painel do Atlas) segue clara sobre o satélite */
+html.embed[data-theme="dark"] {
+  --azul: #8DB4F5; --azul-2: #B3CCF8; --azul-3: #16243A; --noite: #060C18; --ouro: #F5B544; --ouro-2: #F5B544;
+  --bg: #0B111C; --sup: #121A28; --sup-2: #172131; --sup-3: #1E2A3D;
+  --tinta: #EEF2F7; --tinta-2: #C3CCD8; --tinta-3: #95A1B2;
+  --borda: #253246; --borda-2: #34445B;
+  --critico: #F28B82; --critico-bg: #3A1A18; --alerta: #F5B544; --alerta-bg: #33270F; --ok: #5DD39A; --ok-bg: #12301F;
+  --grade: #22304A; --eixo: #34445B;
+  --s1: #6FA0F0; --s2: #F5B544; --s3: #199e70; --s4: #d55181; --s5: #9085e9; --s6: #7D8DA3;
+  color-scheme: dark;
+}
 html.embed .topbar-gov, html.embed .site-header, html.embed .sidebar, html.embed .sidebar-overlay,
 html.embed .module-topbar, html.embed .site-footer { display: none !important; }
-html.embed .canvas-wrap { margin-left: 0 !important; }
-/* mesma estética da v2 (corporate-trust + identidade SEINFRA) dentro da plataforma */
-html.embed body { background: #F6F8FB; font-family: "Outfit", system-ui, sans-serif; color: #3B4657; }
-html.embed #moduleCanvas { padding: 24px clamp(16px, 3vw, 36px) 48px !important; }
-html.embed .mod-hero-pro { background: none !important; box-shadow: none !important; border: 0 !important; padding: 0 0 8px !important; min-height: 0 !important; margin-bottom: 12px !important; }
+html.embed .canvas-wrap { margin-left: 0 !important; background: none !important; }
+html.embed body { background: var(--bg); font: 400 15px/1.55 var(--f-corpo); color: var(--tinta-2); font-variant-numeric: tabular-nums; }
+html.embed #moduleCanvas { padding: 28px clamp(16px, 2.4vw, 32px) 40px !important; background: none !important; }
+html.embed .mod-wrap { max-width: 1480px; }
+html.embed ::selection { background: rgba(245,166,35,.33); }
+html.embed :focus-visible { outline: 2px solid var(--ouro); outline-offset: 2px; border-radius: 4px; }
+html.embed *::-webkit-scrollbar-thumb { background: var(--borda-2); background-clip: content-box; }
+
+/* cabeçalho = .cab da v2 (título Lexend, régua embaixo) */
+html.embed .mod-hero-pro { background: none !important; box-shadow: none !important; border: 0 !important; border-bottom: 1px solid var(--borda) !important; border-radius: 0 !important; padding: 0 0 18px !important; min-height: 0 !important; margin-bottom: 22px !important; }
 html.embed .mod-hero-pro-pattern, html.embed .mod-hero-pro-glow, html.embed .mod-hero-pro-side { display: none !important; }
 html.embed .mod-hero-pro-inner { padding: 0 !important; display: block !important; }
-html.embed .mod-hero-pro-title { font-family: "Lexend Deca", system-ui, sans-serif !important; font-weight: 600 !important; font-size: clamp(1.35rem, 2.4vw, 1.75rem) !important; color: #0F1722 !important; letter-spacing: -.01em !important; text-transform: none !important; }
-html.embed .mod-hero-pro-sub { color: #5B6777 !important; font-size: 14px !important; }
-html.embed .kpi-card { background: #fff !important; border: 1px solid #E1E7EF !important; border-left: 1px solid #E1E7EF !important; border-radius: 8px !important; box-shadow: 0 1px 2px rgba(15,23,34,.06) !important; }
+html.embed .mod-hero-pro-title { font: 600 clamp(1.45rem, 2.2vw, 1.9rem)/1.2 var(--f-titulo) !important; color: var(--tinta) !important; letter-spacing: -.015em !important; text-transform: none !important; }
+html.embed .mod-hero-pro-title em { font: inherit !important; color: inherit !important; background: none !important; -webkit-text-fill-color: currentColor !important; }
+html.embed .mod-hero-pro-sub { color: var(--tinta-3) !important; font-size: 14.5px !important; margin-top: 4px !important; }
+
+/* régua de KPIs: uma faixa, divisórias de 1px, número grande tabular */
+html.embed .kpi-grid { gap: 1px !important; background: var(--borda); border: 1px solid var(--borda); border-radius: var(--raio); overflow: hidden; margin-bottom: 24px; }
+html.embed .kpi-card { background: var(--sup) !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; padding: 16px 18px 18px !important; }
 html.embed .kpi-card::before, html.embed .kpi-card::after { display: none !important; }
-html.embed .kpi-card-label { font-family: "Outfit", system-ui, sans-serif !important; font-size: 13px !important; font-weight: 500 !important; text-transform: none !important; letter-spacing: 0 !important; color: #5B6777 !important; }
-html.embed .kpi-card-value { font-family: "Lexend Deca", system-ui, sans-serif !important; font-weight: 600 !important; color: #0F1722 !important; font-variant-numeric: tabular-nums; }
-html.embed .kpi-card-foot { color: #5B6777 !important; font-size: 12.5px !important; }
-html.embed .panel-card { border: 1px solid #E1E7EF !important; border-radius: 8px !important; box-shadow: 0 1px 2px rgba(15,23,34,.06) !important; background: #fff !important; }
-html.embed .panel-title { font-family: "Lexend Deca", system-ui, sans-serif !important; font-weight: 600 !important; text-transform: none !important; letter-spacing: -.01em !important; color: #0F1722 !important; }
-html.embed .tab-bar { background: none !important; border-bottom: 1px solid #E1E7EF !important; }
-html.embed .tab-item { font-family: "Outfit", system-ui, sans-serif !important; text-transform: none !important; letter-spacing: 0 !important; font-size: 14px !important; font-weight: 500 !important; background: none !important; border: 0 !important; border-bottom: 2px solid transparent !important; border-radius: 0 !important; color: #5B6777 !important; box-shadow: none !important; }
-html.embed .tab-item.active { color: #002D72 !important; border-bottom-color: #F5A623 !important; }
-html.embed .filter-select, html.embed .filter-row input { border-radius: 6px !important; border: 1px solid #C7D0DC !important; font-family: "Outfit", system-ui, sans-serif !important; }
+html.embed .kpi-card-label { font: 500 12.5px/1.3 var(--f-corpo) !important; text-transform: none !important; letter-spacing: 0 !important; color: var(--tinta-3) !important; }
+html.embed .kpi-card-value { font: 600 1.75rem/1.15 var(--f-titulo) !important; color: var(--tinta) !important; margin-top: 6px !important; font-variant-numeric: tabular-nums; }
+html.embed .kpi-card-foot { color: var(--tinta-3) !important; font-size: 12.5px !important; margin-top: 4px !important; }
+@media (max-width: 640px) { html.embed .kpi-card-value { font-size: 1.35rem !important; } }
+
+/* cartões: borda fina, sem sombra; cabeçalho com régua */
+html.embed .panel-card { background: var(--sup) !important; border: 1px solid var(--borda) !important; border-radius: var(--raio) !important; box-shadow: none !important; overflow: hidden; margin-bottom: 24px; }
+html.embed .panel-header { background: var(--sup) !important; border-bottom: 1px solid var(--borda) !important; padding: 14px 18px 12px !important; }
+html.embed .panel-title { font: 600 1.02rem/1.3 var(--f-titulo) !important; text-transform: none !important; letter-spacing: -.01em !important; color: var(--tinta) !important; }
+html.embed .panel-title svg { color: var(--tinta-3); }
+html.embed .panel-body { padding: 14px 18px 16px; }
+html.embed .chart-grid-2 { gap: 24px; }
+
+/* abas: sublinhado, sem caixa */
+html.embed .tab-bar { background: none !important; border-bottom: 1px solid var(--borda) !important; padding: 0 18px !important; gap: 6px !important; }
+html.embed .tab-item { font: 500 14px var(--f-corpo) !important; text-transform: none !important; letter-spacing: 0 !important; background: none !important; border: 0 !important; border-bottom: 2px solid transparent !important; border-radius: 0 !important; color: var(--tinta-3) !important; box-shadow: none !important; padding: 13px 10px 11px !important; margin-bottom: -1px !important; }
+html.embed .tab-item:hover { color: var(--tinta) !important; }
+html.embed .tab-item.active { color: var(--azul) !important; border-bottom-color: var(--ouro) !important; font-weight: 600 !important; }
+html.embed .tab-item.active::before { display: none !important; }
+html.embed .tab-content { background: var(--sup) !important; padding: 18px !important; }
+
+/* segmentos e seletores (padrão .seg / .filtros da v2); texto sobre --azul usa --sup para valer nos dois temas */
+html.embed .icm-seg { border: 1px solid var(--borda-2) !important; border-radius: var(--raio) !important; background: var(--sup); }
+html.embed .icm-seg button { background: none !important; color: var(--tinta-2) !important; font: 500 13.5px var(--f-corpo) !important; padding: 7px 12px !important; border-right: 1px solid var(--borda) !important; }
+html.embed .icm-seg button:last-child { border-right: 0 !important; }
+html.embed .icm-seg button.active { background: var(--azul) !important; color: var(--sup) !important; }
+html.embed .rod-carrossel { background: var(--sup-2) !important; border: 1px solid var(--borda) !important; border-radius: var(--raio) !important; }
+html.embed .rod-carrossel-arrow { background: var(--sup) !important; border-color: var(--borda) !important; color: var(--tinta-2) !important; font-weight: 500 !important; }
+html.embed .rod-carrossel-arrow:first-child { border-radius: var(--raio) 0 0 var(--raio) !important; }
+html.embed .rod-carrossel-arrow.next { border-radius: 0 var(--raio) var(--raio) 0 !important; }
+html.embed .rod-carrossel-arrow:hover { color: var(--azul) !important; background: var(--sup-3) !important; }
+html.embed .rod-chip { background: var(--sup) !important; color: var(--tinta-2) !important; border: 1px solid var(--borda-2) !important; border-radius: var(--raio) !important; box-shadow: none !important; font: 500 13.5px var(--f-corpo) !important; padding: 6px 12px !important; transform: none !important; }
+html.embed .rod-chip:hover { border-color: var(--azul) !important; }
+html.embed .rod-chip.active { background: var(--azul) !important; color: var(--sup) !important; border-color: var(--azul) !important; }
+html.embed .rod-nav-bar { background: var(--sup-2) !important; border: 1px solid var(--borda) !important; border-radius: var(--raio) !important; }
+html.embed .rod-nav-btn { background: var(--sup) !important; border-color: var(--borda-2) !important; border-radius: var(--raio) !important; color: var(--tinta-2) !important; transform: none !important; }
+html.embed .rod-nav-btn:hover:not(.disabled) { border-color: var(--azul) !important; color: var(--azul) !important; }
+html.embed .rod-nav-current { font-family: var(--f-titulo) !important; font-weight: 600 !important; color: var(--tinta) !important; letter-spacing: 0 !important; }
+html.embed .filter-row { background: var(--sup-2) !important; border-bottom: 1px solid var(--borda) !important; padding: 12px 18px !important; }
+html.embed .filter-input, html.embed .filter-select, html.embed .icm-controls select, html.embed .eo-filtros input, html.embed .eo-filtros select,
+html.embed .tm-search input { font: 400 14px var(--f-corpo) !important; color: var(--tinta) !important; background-color: var(--sup) !important; border: 1px solid var(--borda-2) !important; border-radius: var(--raio) !important; box-shadow: none !important; }
+html.embed .filter-input:focus, html.embed .filter-select:focus, html.embed .icm-controls select:focus, html.embed .eo-filtros input:focus,
+html.embed .eo-filtros select:focus, html.embed .tm-search input:focus { outline: 2px solid var(--azul); outline-offset: -1px; border-color: var(--azul) !important; }
+
+/* tabelas: cabeçalho em faixa, linhas de 1px */
+html.embed .data-table, html.embed .sin-tbl { font-size: 13.5px; }
+html.embed .data-table th, html.embed .sin-tbl th { background: var(--sup-2) !important; color: var(--tinta-3) !important; font: 600 11.5px/1.3 var(--f-corpo) !important; letter-spacing: .04em !important; text-transform: uppercase !important; padding: 9px 12px !important; border-bottom: 1px solid var(--borda-2) !important; }
+html.embed .data-table td, html.embed .sin-tbl td { padding: 10px 12px !important; border-bottom: 1px solid var(--borda) !important; color: var(--tinta-2); }
+html.embed .data-table tr:hover td, html.embed .sin-tbl tr:hover td, html.embed .eo-tab tbody tr:hover { background: var(--azul-3) !important; }
+html.embed .eo-tab th.ord { color: var(--ouro-2) !important; }
+
+/* chips de status: retangulares */
+html.embed .chip { font: 600 11.5px/1.4 var(--f-corpo) !important; letter-spacing: 0 !important; text-transform: none !important; border-radius: 4px !important; padding: 2px 7px !important; }
+html.embed .chip-vigente { background: var(--ok-bg) !important; color: var(--ok) !important; border: 0 !important; }
+html.embed .chip-concluida { background: var(--sup-3) !important; color: var(--tinta-2) !important; border: 0 !important; }
+html.embed .chip-paralisada { background: var(--alerta-bg) !important; color: var(--alerta) !important; border: 0 !important; }
+html.embed .chip-atrasada { background: var(--critico-bg) !important; color: var(--critico) !important; border: 0 !important; }
+html.embed .alert-chip { border-radius: var(--raio) !important; font: 500 13.5px/1.4 var(--f-corpo) !important; transform: none !important; }
+html.embed .alert-danger { background: var(--critico-bg) !important; color: var(--critico) !important; border-color: var(--borda) !important; }
+html.embed .alert-warning { background: var(--alerta-bg) !important; color: var(--alerta) !important; border-color: var(--borda) !important; }
+
+/* e-Obras (faixa do contrato, alertas, ficha) */
+html.embed .eo-faixa { background: var(--sup) !important; border-color: var(--borda-2) !important; border-radius: var(--raio) !important; }
+html.embed .eo-bar { background: var(--sup-3) !important; border-radius: 3px !important; }
+html.embed .eo-tag { background: var(--azul) !important; color: var(--sup) !important; font-family: var(--f-corpo) !important; }
+html.embed .eo-al { background: var(--sup) !important; border-radius: var(--raio) !important; }
+html.embed .eo-fonte { background: var(--sup-2) !important; border-color: var(--borda) !important; border-radius: var(--raio) !important; }
+html.embed .eo-l strong, html.embed .eo-filtros input, html.embed .eo-filtros select { color: var(--tinta) !important; }
+
+/* Condição Viária */
+html.embed .icm-block-title { font: 600 11.5px var(--f-corpo) !important; letter-spacing: .06em !important; color: var(--tinta-3) !important; }
+html.embed .icm-note { background: var(--sup-2) !important; border-left-color: var(--azul) !important; border-radius: 0 var(--raio) var(--raio) 0 !important; color: var(--tinta-2) !important; }
+html.embed .icm-road-card { background: var(--sup) !important; border: 1px solid var(--borda) !important; border-radius: var(--raio) !important; box-shadow: none !important; transform: none !important; }
+html.embed .icm-road-card:hover { border-color: var(--azul) !important; }
+html.embed .icm-road-card.sel { border-color: var(--azul) !important; box-shadow: 0 0 0 1px var(--azul) !important; }
+html.embed .icm-road-card-code { font: 600 1.05rem var(--f-titulo) !important; }
+html.embed .dist-bar { border-radius: 3px !important; }
+html.embed .cond-badge { border-radius: 4px !important; font-weight: 600 !important; }
+
+/* Terminais: o hero azul com ondas vira cabeçalho .cab; cartões de lista sem sombra */
+html.embed .tmx-hero { background: none !important; border-radius: 0 !important; border-bottom: 1px solid var(--borda); padding: 0 0 18px !important; margin-bottom: 22px !important; overflow: visible !important; }
+html.embed .tmx-hero::before, html.embed .tmx-wave, html.embed .tmx-chip-dot { display: none !important; }
+html.embed .tmx-hero-inner { max-width: none !important; align-items: flex-end !important; gap: 16px !important; }
+html.embed .tmx-chip { background: none !important; border: 0 !important; padding: 0 !important; margin-bottom: 6px !important; color: var(--ouro-2) !important; font: 600 12px var(--f-corpo) !important; letter-spacing: .06em !important; }
+html.embed .tmx-title { font: 600 clamp(1.45rem, 2.2vw, 1.9rem)/1.2 var(--f-titulo) !important; color: var(--tinta) !important; letter-spacing: -.015em !important; margin-bottom: 4px !important; }
+html.embed .tmx-title br { display: none; }
+html.embed .tmx-title em::before { content: " "; }
+html.embed .tmx-title em { color: inherit !important; }
+html.embed .tmx-sub { color: var(--tinta-3) !important; font-size: 14.5px !important; max-width: 70ch !important; }
+html.embed .tmx-stats { gap: 0 !important; border: 1px solid var(--borda); border-radius: var(--raio); background: var(--sup); overflow: hidden; }
+html.embed .tmx-stats > * { padding: 10px 16px; border-left: 1px solid var(--borda); }
+html.embed .tmx-stats > *:first-child { border-left: 0; }
+html.embed .tmx-stat-val { font: 600 1.5rem/1.15 var(--f-titulo) !important; color: var(--tinta) !important; letter-spacing: 0 !important; }
+html.embed .tmx-stat-val .acc, html.embed .tmx-stat-val .acc2 { color: inherit !important; }
+html.embed .tmx-stat-lbl { font: 500 12.5px var(--f-corpo) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--tinta-3) !important; }
+html.embed .tmx-mapsec, html.embed .tm-filters, html.embed .tm-card { background: var(--sup) !important; border: 1px solid var(--borda) !important; border-radius: var(--raio) !important; box-shadow: none !important; }
+html.embed .tmx-maphdr { padding: 14px 18px 12px !important; border-bottom: 1px solid var(--borda); }
+html.embed .tmx-maptitle { font: 600 1.02rem var(--f-titulo) !important; letter-spacing: -.01em !important; text-transform: none !important; color: var(--tinta) !important; }
+html.embed #tmMap { margin-top: 0 !important; }
+html.embed .tm-filters { padding: 12px 18px !important; }
+html.embed .tm-filter-label, html.embed .tm-count { font: 500 12.5px var(--f-corpo) !important; letter-spacing: 0 !important; text-transform: none !important; color: var(--tinta-3) !important; }
+html.embed .tm-count b { color: var(--tinta) !important; }
+html.embed .tm-list { gap: 0 !important; border: 1px solid var(--borda); border-radius: var(--raio); overflow: hidden; }
+html.embed .tm-card { border: 0 !important; border-bottom: 1px solid var(--borda) !important; border-radius: 0 !important; padding: 12px 18px !important; transform: none !important; opacity: 1 !important; animation: none !important; }
+html.embed .tm-card:last-child { border-bottom: 0 !important; }
+html.embed .tm-card::before { display: none !important; }
+html.embed .tm-card:hover { background: var(--azul-3) !important; }
+html.embed .tm-num { color: var(--tinta-3) !important; opacity: 1 !important; font: 600 13px var(--f-corpo) !important; }
+html.embed .tm-ic { background: var(--sup-3) !important; border-radius: var(--raio) !important; width: 38px !important; height: 38px !important; }
+html.embed .tm-dest { color: var(--tinta) !important; font: 600 14.5px var(--f-corpo) !important; }
+html.embed .tm-badge { background: var(--azul-3) !important; color: var(--azul) !important; border: 0 !important; border-radius: 4px !important; font: 600 11.5px var(--f-corpo) !important; letter-spacing: 0 !important; text-transform: none !important; }
+
+/* Leaflet: controles discretos */
+html.embed .leaflet-bar { border: 1px solid var(--borda-2) !important; box-shadow: none !important; border-radius: var(--raio) !important; overflow: hidden; }
+html.embed .leaflet-bar a { background: var(--sup) !important; color: var(--tinta-2) !important; border-bottom-color: var(--borda) !important; width: 30px !important; height: 30px !important; line-height: 30px !important; font: 400 18px/30px var(--f-corpo) !important; }
+html.embed .leaflet-bar a:hover { background: var(--sup-3) !important; color: var(--azul) !important; }
+html.embed .leaflet-control-scale-line { font: 500 11px var(--f-corpo); color: var(--tinta-2); background: rgba(255,255,255,.82); border-color: var(--tinta-2); }
+html.embed .leaflet-popup-content-wrapper { border-radius: var(--raio); box-shadow: 0 6px 20px rgba(0,23,61,.2); font-family: var(--f-corpo); }
+html.embed .leaflet-tooltip { font-family: var(--f-corpo); border-radius: 4px; }
+html.embed .leaflet-container { color: var(--tinta-2); }
+/* tema escuro: cores fixas em style="" dos módulos (fora do mapa) passam para os tokens */
+html.embed[data-theme="dark"] #moduleCanvas [style*="background:#fff" i]:not(.leaflet-container *) { background: var(--sup) !important; }
+html.embed[data-theme="dark"] #moduleCanvas :is([style*="background:#FEF3DC" i], [style*="background:#FEF3C7" i]):not(.leaflet-container *) { background: var(--alerta-bg) !important; }
+html.embed[data-theme="dark"] #moduleCanvas [style*="color:#8896a8" i]:not(.leaflet-container *) { color: var(--tinta-3) !important; }
+html.embed[data-theme="dark"] #moduleCanvas [style*="color:#4a5568" i]:not(.leaflet-container *) { color: var(--tinta-2) !important; }
+html.embed[data-theme="dark"] #moduleCanvas :is([style*="color:#1A2B5E" i], [style*="color:#1A2540" i]):not(.leaflet-container *) { color: var(--tinta) !important; }
 </style>
+<script>
+/* [Claude] 23/11/2026: modo embutido v3. (1) tema herdado da v2: lê localStorage "dmob-tema" (sem valor, segue o sistema)
+   e põe data-theme no <html>; reaplica a cada loadModule (a v2 chama loadModule ao trocar o tema) e no evento storage.
+   (2) gráficos: todo gráfico da v1 passa por mkChart(); aqui a config ganha o padrão de v2/js/ui.js grafico()
+   (tooltip azul-noite, grade leve, barras finas raio 3 com valor na ponta e sem eixo de valores, linhas 2.25 sem pontos,
+   legenda com pointStyle, cores pelos tokens). Só com ?embed=1; o uso direto da v1 não muda. */
+(function () {
+  if (!/[?&]embed=1/.test(location.search)) return;
+  var raiz = document.documentElement, mq = matchMedia("(prefers-color-scheme: dark)");
+  raiz.classList.add("embed");
+  function tema() { var t = null; try { t = localStorage.getItem("dmob-tema"); } catch (e) {} return t === "dark" || t === "light" ? t : (mq.matches ? "dark" : "light"); }
+  function aplicaTema() { var t = tema(); if (raiz.dataset.theme === t) return false; raiz.dataset.theme = t; return true; }
+  aplicaTema();
+  function redesenha() { if (aplicaTema() && typeof HUB !== "undefined" && HUB.activeModule && window.loadModule) window.loadModule(HUB.activeModule); }
+  addEventListener("storage", function (e) { if (e.key === "dmob-tema") redesenha(); });
+  if (mq.addEventListener) mq.addEventListener("change", redesenha);
+
+  function cor(n) { return getComputedStyle(raiz).getPropertyValue(n).trim(); }
+  // cores fixas da v1 -> tokens v3 (status continua status; azul-marinho e dourado viram a paleta categórica)
+  var MAPA = { "#1a2b5e": "--s1", "#1e3575": "--s1", "#002d72": "--s1", "#f5a623": "--s2", "#2d8540": "--ok", "#c0392b": "--critico",
+    "#b3261e": "--critico", "#b45309": "--alerta", "#475569": "--s6", "#8896a8": "--s6", "#fff": "--sup", "#ffffff": "--sup" };
+  function troca(c) { var k = typeof c === "string" && MAPA[c.toLowerCase()]; return k ? cor(k) : c; }
+  function trocaTudo(c) { return Array.isArray(c) ? c.map(troca) : troca(c); }
+  var nf = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 1 });
+  function abrevia(n) { var a = Math.abs(n); return a >= 1e9 ? nf.format(n / 1e9) + " bi" : a >= 1e6 ? nf.format(n / 1e6) + " mi" : nf.format(n); }
+  // rótulo da barra = unidade do eixo de valores do módulo (ex.: callback "R$ " + v + " mi" -> "R$ 612,4 mi")
+  function rotulo(cb) {
+    var pre = null, suf = "";
+    if (cb) { try { var s = String(cb(1, 0, [{ value: 1 }])), i = s.indexOf("1"); if (i >= 0 && s.indexOf("1", i + 1) < 0) { pre = s.slice(0, i); suf = s.slice(i + 1); } } catch (e) {} }
+    return function (v) { v = +v; if (!v || isNaN(v)) return ""; return pre == null || !(pre + suf).trim() ? abrevia(v) : pre + nf.format(v) + suf; };
+  }
+  function estilo(cfg) {
+    var C = window.Chart; if (!C || !cfg) return;
+    var t2 = cor("--tinta-2"), t3 = cor("--tinta-3"), grade = cor("--grade"), eixo = cor("--eixo"), sup = cor("--sup"), fonte = "Outfit, system-ui, sans-serif";
+    C.defaults.font.family = fonte; C.defaults.color = t3; C.defaults.borderColor = grade;
+    var tipo = cfg.type, o = cfg.options = cfg.options || {}, pl = o.plugins = o.plugins || {}, ds = (cfg.data && cfg.data.datasets) || [];
+    var barra = tipo === "bar", linha = tipo === "line", rosca = tipo === "doughnut" || tipo === "pie", hz = o.indexAxis === "y";
+    pl.tooltip = Object.assign(pl.tooltip || {}, { backgroundColor: "#00173D", titleColor: "#fff", bodyColor: "rgba(255,255,255,.88)", borderColor: "rgba(255,255,255,.12)",
+      borderWidth: 1, padding: { x: 12, y: 10 }, cornerRadius: 6, boxPadding: 4, usePointStyle: true, titleFont: { weight: "600", family: fonte }, bodyFont: { family: fonte } });
+    var lg = pl.legend = pl.legend || {};
+    lg.labels = Object.assign(lg.labels || {}, { usePointStyle: true, pointStyle: "rectRounded", boxWidth: 10, boxHeight: 10, padding: 16, color: t2, font: { size: 12.5, family: fonte } });
+    if (lg.align == null) lg.align = "start";
+    o.animation = matchMedia("(prefers-reduced-motion: reduce)").matches ? false : { duration: 250 };
+    var um = ds.length === 1;
+    ds.forEach(function (d) {
+      if (barra) {
+        // uma série: uma cor só (o título diz o que é); várias: cada cor da v1 vira o token equivalente
+        d.backgroundColor = um && typeof d.backgroundColor === "string" && d.backgroundColor.charAt(0) === "#" ? cor("--s1") : trocaTudo(d.backgroundColor);
+        d.borderWidth = 0; d.borderRadius = 3; d.borderSkipped = "start";
+        if (d.maxBarThickness == null) d.maxBarThickness = hz ? 20 : 30;
+        d.categoryPercentage = .72; d.barPercentage = .92;
+      } else if (linha) {
+        d.borderColor = um && typeof d.borderColor === "string" && d.borderColor.charAt(0) === "#" ? cor("--s1") : trocaTudo(d.borderColor);
+        d.borderWidth = 2.25; d.pointRadius = 0; d.pointHoverRadius = 5; d.pointHitRadius = 10; d.pointHoverBorderWidth = 2; d.pointHoverBorderColor = sup;
+        if (d.tension == null) d.tension = .3;
+      } else if (rosca) {
+        d.backgroundColor = trocaTudo(d.backgroundColor); d.borderColor = sup; d.borderWidth = 2; d.hoverOffset = 4;
+      }
+    });
+    if (rosca) {
+      if (tipo === "doughnut" && o.cutout == null) o.cutout = "62%";
+      if (pl.datalabels !== false) pl.datalabels = Object.assign({ color: "#fff", backgroundColor: "rgba(0,23,61,.72)", borderRadius: 3,
+        padding: { top: 2, bottom: 2, left: 5, right: 5 }, font: { weight: 600, size: 11, family: fonte } }, pl.datalabels || {});
+      return;
+    }
+    if (!barra && !linha) return;
+    var sc = o.scales = o.scales || {}, val = hz ? "x" : "y", cat = hz ? "y" : "x";
+    sc[cat] = sc[cat] || {}; sc[val] = sc[val] || {};
+    [cat, val].forEach(function (k) {
+      var s = sc[k];
+      s.grid = Object.assign(s.grid || {}, { color: grade, drawTicks: false });
+      s.border = Object.assign(s.border || {}, { display: false });
+      s.ticks = Object.assign(s.ticks || {}, { color: t3, padding: 8 });
+      s.ticks.font = Object.assign({ size: 12, family: fonte }, s.ticks.font || {});
+    });
+    sc[cat].grid.display = false; sc[cat].border = { display: true, color: eixo };
+    if (hz) sc[cat].ticks.color = t2;
+    sc[cat].ticks.autoSkipPadding = 14;
+    sc[val].ticks.maxTicksLimit = 5;
+    if (linha) { pl.datalabels = Object.assign(pl.datalabels || {}, { display: false }); o.interaction = o.interaction || { mode: "index", intersect: false }; return; }
+    var dl = pl.datalabels;
+    if (dl === false || (dl && dl.display === false)) return;
+    var empilhado = !!(sc.x.stacked || sc.y.stacked), nCat = ((cfg.data && cfg.data.labels) || []).length;
+    pl.datalabels = Object.assign({ color: t2, backgroundColor: null, borderRadius: 0, padding: 0, offset: 4, anchor: "end", align: hz ? "right" : "top", clamp: true,
+      font: { weight: 600, size: 12, family: fonte } }, dl || {});
+    if (!(dl && dl.formatter)) pl.datalabels.formatter = rotulo(sc[val].ticks.callback);
+    // valor escrito na ponta: o eixo de valores fica redundante (igual à v2); com muitas categorias ou empilhado, mantém o eixo
+    if (!empilhado && nCat <= 20) { sc[val].display = false; o.layout = Object.assign(o.layout || {}, { padding: hz ? { right: 84 } : { top: 22 } }); }
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    var lm = window.loadModule, mk = window.mkChart;
+    if (lm) window.loadModule = function () { aplicaTema(); return lm.apply(this, arguments); };
+    if (mk) window.mkChart = function (id, cfg) { try { estilo(cfg); } catch (e) { console.warn("estilo v3", id, e); } return mk(id, cfg); };
+  });
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
-<script>if (/[?&]embed=1/.test(location.search)) { document.documentElement.classList.add("embed");
-  document.addEventListener("DOMContentLoaded", () => { if (window.Chart) { Chart.defaults.font.family = "Outfit, system-ui, sans-serif"; Chart.defaults.color = "#5B6777"; } }); }</script>
 </head>
 <body>
 
