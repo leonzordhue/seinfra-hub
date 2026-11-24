@@ -105,15 +105,30 @@ export async function render(el) {
   // malha: pinta rodovias pela faixa de prioridade de sinistros; clique abre o briefing da rodovia
   const mapa = $("#malha svg");
   if (mapa) {
-    mapa.setAttribute("role", "group");  // role=img esconderia as rodovias clicáveis do leitor de tela (interativo aninhado)
+    // uma só parada de Tab no mapa ("roving tabindex", ARIA APG): setas passam de rodovia em rodovia, Enter abre o briefing.
+    mapa.setAttribute("role", "group");  // role=img esconderia as rodovias clicáveis do leitor de tela
+    mapa.setAttribute("aria-label", "Malha rodoviária estadual: use as setas para escolher a rodovia e Enter para abrir o briefing");
     mapa.querySelectorAll("path.am").forEach(p => {
       const r = an?.rodovias?.[p.dataset.cod];
       if (r?.faixa === "Alta") p.classList.add("prio-alta"); else if (r?.faixa === "Média") p.classList.add("prio-media");
-      p.setAttribute("tabindex", "0"); p.setAttribute("role", "link");
+      p.setAttribute("tabindex", "-1"); p.setAttribute("role", "link");
       p.setAttribute("aria-label", `${p.dataset.cod}${r?.faixa ? `, prioridade ${r.faixa.toLowerCase()} em sinistros` : ""}: abrir briefing`);
-      const ir = () => { location.hash = `#/briefings?rodovia=${encodeURIComponent(p.dataset.cod)}`; };
-      p.addEventListener("click", ir); p.addEventListener("keydown", e => { if (e.key === "Enter") ir(); });
+      p.addEventListener("click", () => { location.hash = `#/briefings?rodovia=${encodeURIComponent(p.dataset.cod)}`; });
     });
     mapa.querySelectorAll("path.am.prio-media, path.am.prio-alta").forEach(p => p.parentNode.append(p));  // destaque por cima
+    // ordem das setas: prioridade alta primeiro, depois média, depois o código
+    const peso = p => p.classList.contains("prio-alta") ? 0 : p.classList.contains("prio-media") ? 1 : 2;
+    const rods = [...mapa.querySelectorAll("path.am")].sort((a, b) => peso(a) - peso(b) || a.dataset.cod.localeCompare(b.dataset.cod));
+    let i = 0;
+    if (rods.length) rods[0].setAttribute("tabindex", "0");
+    const foca = k => { rods[i].setAttribute("tabindex", "-1"); i = (k + rods.length) % rods.length; rods[i].setAttribute("tabindex", "0"); rods[i].focus(); };
+    mapa.addEventListener("keydown", e => {
+      const k = { ArrowRight: 1, ArrowDown: 1, ArrowLeft: -1, ArrowUp: -1 }[e.key];
+      if (k) { e.preventDefault(); foca(i + k); }
+      else if (e.key === "Home") { e.preventDefault(); foca(0); }
+      else if (e.key === "End") { e.preventDefault(); foca(rods.length - 1); }
+      else if (e.key === "Enter" || e.key === " ") { const p = e.target.closest?.("path.am"); if (p) { e.preventDefault(); p.dispatchEvent(new MouseEvent("click")); } }
+    });
+    mapa.addEventListener("focusin", e => { const k = rods.indexOf(e.target); if (k >= 0) i = k; });
   }
 }

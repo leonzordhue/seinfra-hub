@@ -155,6 +155,8 @@ async function desenharMapa(el, mun) {
   const r = document.documentElement;
   const escuro = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   mapa = L.map(box, { scrollWheelZoom: false }).setView(AM, 6);
+  // o desenho vetorial do Leaflet vira "imagem sem nome" para o leitor de tela; os dados estão na tabela abaixo
+  new MutationObserver(() => box.querySelectorAll("svg:not([aria-hidden])").forEach(s => s.setAttribute("aria-hidden", "true"))).observe(box, { childList: true, subtree: true });
   // Fundo: Esri World Gray Canvas (sem chave; o CARTO passou a exigir chave e mostrava "API KEY REQUIRED")
   L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${escuro ? "Dark" : "Light"}_Gray_Base/MapServer/tile/{z}/{y}/{x}`, {
     maxZoom: 16, attribution: "Fundo: Esri, HERE, Garmin, &copy; colaboradores do OpenStreetMap" }).addTo(mapa);

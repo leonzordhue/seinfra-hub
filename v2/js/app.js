@@ -113,7 +113,9 @@ async function navegar() {
     console.error(e);
     el.innerHTML = `<div class="aviso"><b>Não consegui abrir este módulo.</b> ${String(e.message || e).replace(/</g, "&lt;")}<br>Recarregue a página; se continuar, os dados podem estar sendo atualizados.</div>`;
   }
-  el.focus({ preventScroll: true });
+  // leitor de tela: focar o título anuncia a página nova (focar o <main> leria tudo de uma vez)
+  const h1f = el.querySelector("h1");
+  if (h1f) { h1f.setAttribute("tabindex", "-1"); h1f.focus({ preventScroll: true }); } else el.focus({ preventScroll: true });
   window.scrollTo(0, 0);
 }
 

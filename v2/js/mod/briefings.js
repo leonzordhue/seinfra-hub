@@ -14,7 +14,8 @@ const ESTILO = `<style>
   .doc-org b { font: 600 12px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta); }
   .doc-tit { border-top: 2px solid var(--ouro); margin-top: 2px; padding: 18px 0 2px; }
   .doc-tipo { display: block; font: 600 12px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin-bottom: 4px; }
-  .doc-tit h1 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); letter-spacing: -.015em; }
+  .doc .doc-tit .doc-h::before { content: none; }
+  .doc .doc-tit .doc-h { counter-increment: none; display: block; margin: 0; border: 0; padding: 0; font-size: clamp(1.35rem, 2.4vw, 1.75rem); letter-spacing: -.015em; }
   .doc-tit p { margin: 4px 0 0; color: var(--tinta-3); font-size: 14px; }
   .doc-meta { display: flex; flex-wrap: wrap; margin: 14px 0 0; border: 1px solid var(--borda); border-radius: var(--raio); }
   .doc-meta div { padding: 6px 12px; border-left: 1px solid var(--borda); }
@@ -132,7 +133,7 @@ export async function render(el, params) {
 const cab = (tipo, titulo, sub, ctx) => `<header class="doc-cab"><div class="doc-org"><b>Governo do Estado do Amazonas</b>
     <span>Secretaria de Estado de Infraestrutura (SEINFRA)</span><span>Departamento de Mobilidade (DMOB)</span></div>
     <img src="../assets/marca_seinfra.webp" alt="Secretaria de Infraestrutura" width="182" height="40"></header>
-  <div class="doc-tit"><span class="doc-tipo">Briefing · ${esc(tipo)}</span><h1>${esc(titulo)}</h1>${sub ? `<p>${esc(sub)}</p>` : ""}</div>
+  <div class="doc-tit"><span class="doc-tipo">Briefing · ${esc(tipo)}</span><h2 class="doc-h">${esc(titulo)}</h2>${sub ? `<p>${esc(sub)}</p>` : ""}</div>
   <dl class="doc-meta"><div><dt>Emissão</dt><dd>${new Date().toLocaleDateString("pt-BR")}</dd></div>
     <div><dt>Base</dt><dd>e-Obras, posição ${esc(ctx.eMeta.posicao)}</dd></div><div><dt>Natureza</dt><dd>Informativo, gerado dos dados do Hub</dd></div></dl>`;
 const rodape = (ctx, extra = "") => `<footer class="doc-rod"><p>Fontes: e-Obras (posição ${esc(ctx.eMeta.posicao)})${ctx.an ? `; sinistros por notícias (${esc(ctx.an._meta.gerado)})` : ""}${ctx.lic ? `; PNCP (${data(ctx.lic._meta.gerado)})` : ""}${extra}.

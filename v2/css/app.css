@@ -486,3 +486,4 @@ h1 .escudo, h2 .escudo { font-size: max(12px, .72em); }
 
 /* celular: filtros em coluna, mesma largura */
 @media (max-width: 900px) { .filtros > select, .filtros > input[type=search] { flex: 1 1 100%; width: 100%; } }
+h1[tabindex="-1"]:focus { outline: none; }
