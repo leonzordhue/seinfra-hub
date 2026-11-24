@@ -24,7 +24,7 @@ const COR_IRI = () => escuro() ? ["#3FB37A", "#8BCF6A", "#F5B544", "#F08C3A", "#
 const CAMADAS = [["iri", "Condição (IRI)"], ["sinistros", "Sinistros por km"], ["obras", "Obras ativas"], ["invest", "Investimento por município"]];
 const EXTRAS = [["ramais", "Ramais", "RAMAIS_SEINFRA.geojson"], ["hidrovias", "Hidrovias", "HIDROVIAS.geojson"], ["federais", "Rodovias federais", "RODOVIAS_FEDERAIS.geojson"]];
 
-const estado = { camada: "iri", porHab: false, extras: {} };
+const estado = { camada: "iri", porHab: false, extras: {}, tresD: false };
 let mapa, libs;
 
 function script(src) {
@@ -157,6 +157,8 @@ export async function render(el, params) {
           <div class="seg" id="fHab" role="group" aria-label="Medida do investimento"><button type="button" data-v="" aria-pressed="${!estado.porHab}">Valor total</button><button type="button" data-v="1" aria-pressed="${estado.porHab}">Por habitante</button></div>
           <div class="mp-rot">Sobrepor</div>
           ${EXTRAS.map(([v, r]) => `<label class="mp-extra"><input type="checkbox" data-x="${v}" ${estado.extras[v] ? "checked" : ""}> ${r}</label>`).join("")}
+          ${matchMedia("(hover: hover)").matches ? `<div class="mp-rot">Visualização</div>
+          <label class="mp-extra" title="Inclina o mapa; o município sob o mouse sobe em relevo"><input type="checkbox" id="f3d" ${estado.tresD ? "checked" : ""}> Visão em 3D (relevo)</label>` : ""}
         </div>
       </details>
       <div class="mp-flut mp-leg" id="leg" aria-live="polite"></div>
@@ -221,6 +223,45 @@ export async function render(el, params) {
   m.addLayer({ id: "tr-linha", type: "line", source: "trechos", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#000", "line-width": 4 } });
   m.addLayer({ id: "mun-sel", type: "line", ...fonteDe("municipios"), filter: ["==", ["get", "cod"], ""], paint: { "line-color": escuro() ? "#F5B544" : "#002D72", "line-width": 2.5 } });
 
+  // ── alto relevo do município sob o mouse ──
+  // 2D (padrão): sombra deslocada + o município "levantado" alguns pixels, sem inclinar o mapa (leve, sem 3D).
+  // 3D (opcional, só com mouse): mapa inclinado e extrusão de polígono do MapLibre (fill-extrusion), sem biblioteca extra.
+  const reduz = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const comMouse = matchMedia("(hover: hover)").matches;
+  const fCod = cod => ["==", ["get", "cod"], cod || ""];
+  const realce = escuro() ? "#F5B544" : "#002D72";
+  m.addLayer({ id: "mun-sombra", type: "fill", ...fonteDe("municipios"), filter: fCod(""),
+    paint: { "fill-color": "#00173D", "fill-opacity": escuro() ? 0.6 : 0.3, "fill-translate": [6, 8], "fill-translate-anchor": "viewport" } }, "rod-linha");
+  m.addLayer({ id: "mun-hover", type: "fill", ...fonteDe("municipios"), filter: fCod(""),
+    paint: { "fill-color": escuro() ? "#1E2A3D" : "#E8EEF8", "fill-opacity": 1, "fill-translate": [-3, -5], "fill-translate-anchor": "viewport" } }, "rod-linha");
+  m.addLayer({ id: "mun-hover-borda", type: "line", ...fonteDe("municipios"), filter: fCod(""),
+    paint: { "line-color": realce, "line-width": 2, "line-translate": [-3, -5], "line-translate-anchor": "viewport" } }, "rod-linha");
+  m.addLayer({ id: "mun-3d", type: "fill-extrusion", ...fonteDe("municipios"), filter: fCod(""), layout: { visibility: "none" },
+    paint: { "fill-extrusion-color": "#1A4A96", "fill-extrusion-opacity": 0.95, "fill-extrusion-height": 0,
+      "fill-extrusion-height-transition": { duration: reduz ? 0 : 320, delay: 0 }, "fill-extrusion-vertical-gradient": true } });
+  let hov = null;
+  const ALTURA = 55000;   // metros: em zoom 5 a 7, com o mapa inclinado, dá um degrau bem visível
+  function setHover(cod) {
+    if (cod === hov) return;
+    hov = cod;
+    for (const id of ["mun-sombra", "mun-hover", "mun-hover-borda", "mun-3d"]) m.setFilter(id, fCod(cod));
+    if (estado.tresD && cod) {
+      m.setPaintProperty("mun-3d", "fill-extrusion-height", 0);
+      requestAnimationFrame(() => hov === cod && m.setPaintProperty("mun-3d", "fill-extrusion-height", ALTURA));
+    }
+  }
+  if (comMouse) {
+    m.on("mousemove", "mun-fill", e => setHover(String(e.features[0]?.properties?.cod ?? "")));
+    m.on("mouseleave", "mun-fill", () => setHover(null));
+  }
+  function modo3D(on) {
+    estado.tresD = on;
+    m.setLayoutProperty("mun-3d", "visibility", on ? "visible" : "none");
+    for (const id of ["mun-sombra", "mun-hover", "mun-hover-borda"]) m.setLayoutProperty(id, "visibility", on ? "none" : "visible");
+    m.easeTo({ pitch: on ? 50 : 0, bearing: on ? -12 : 0, duration: reduz ? 0 : 700 });
+    const c = hov; hov = null; setHover(c);
+  }
+
   // ── legenda: rampa contínua (cores em sequência, limites nas divisas, nomes das classes embaixo) ──
   const leg = $("#leg", el);
   const sw = (cor, txt, lin = false) => `<div class="mp-sw"><i class="${lin ? "lin" : ""}" style="background:${cor}"></i>${esc(txt)}</div>`;
@@ -268,6 +309,10 @@ export async function render(el, params) {
         <div class="mp-sep"></div>${sw(SEM, "Sem contrato")}<p>Contrato de vários municípios tem o valor rateado.${estado.porHab ? ` População: IBGE, estimativa ${esc(mun?._meta?.ano_populacao || "")}.` : ""}</p>`;
     }
     m.setPaintProperty("mun-fill", "fill-color", fill); m.setPaintProperty("mun-fill", "fill-opacity", fillOp);
+    // relevo: o município levantado mantém a cor do tema quando a camada pinta municípios; senão, azul claro
+    const corRelevo = fillOp > 0 ? fill : (escuro() ? "#1E2A3D" : "#E8EEF8");
+    m.setPaintProperty("mun-hover", "fill-color", corRelevo);
+    m.setPaintProperty("mun-3d", "fill-extrusion-color", fillOp > 0 ? fill : "#1A4A96");
     m.setPaintProperty("rod-linha", "line-color", rodCor); m.setPaintProperty("rod-linha", "line-width", rodW);
     m.setLayoutProperty("tr-linha", "visibility", trVis);
     for (const [p, v] of Object.entries(trPaint)) m.setPaintProperty("tr-linha", p, v);
@@ -346,6 +391,8 @@ export async function render(el, params) {
   });
   $$("[data-x]", el).forEach(i => i.onchange = () => { estado.extras[i.dataset.x] = i.checked; ligarExtra(i.dataset.x, i.checked); pintar(); });
   EXTRAS.forEach(([v]) => estado.extras[v] && ligarExtra(v, true));
+  const c3d = $("#f3d", el);
+  if (c3d) { c3d.onchange = () => modo3D(c3d.checked); if (estado.tresD) modo3D(true); }
   pintar();
   m.fitBounds([[-73.8, -9.9], [-56.1, 2.3]], { padding: largo ? { top: 20, bottom: 20, left: 250, right: 20 } : { top: 60, bottom: 190, left: 10, right: 10 }, duration: 0 });
 }
