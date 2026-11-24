@@ -169,9 +169,9 @@ const CSS = `
 .cq-prontas button:hover{background:var(--sup-2);color:var(--tinta)}
 .cq-prontas button[aria-current="true"]{border-left-color:var(--ouro);background:var(--azul-3);color:var(--azul);font-weight:600}
 .cq-ed{border:1px solid var(--borda-2);border-radius:var(--raio);overflow:hidden;background:var(--sup)}
-.cq-ed:focus-within{border-color:var(--azul);box-shadow:0 0 0 1px var(--azul)}
+.cq-ed:focus-within{border-color:var(--foco);box-shadow:0 0 0 2px var(--foco)}
 .cq-barra{display:flex;align-items:center;gap:10px;padding:6px 8px 6px 12px;background:var(--sup-2);border-bottom:1px solid var(--borda)}
-.cq-barra .cq-tit{font:600 11.5px var(--f-corpo);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-3);white-space:nowrap}
+.cq-barra .cq-tit{font:600 12px var(--f-corpo);letter-spacing:.06em;text-transform:uppercase;color:var(--tinta-3);white-space:nowrap}
 .cq-barra .cq-dica{margin-left:auto;font-size:12px;color:var(--tinta-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cq-barra .btn{padding:5px 14px;font-size:13px}
 @media (max-width:600px){.cq-barra .cq-dica{display:none}.cq-barra .btn{margin-left:auto}}
@@ -183,7 +183,7 @@ const CSS = `
 .cq-tabs{max-height:40vh;overflow:auto;font-size:13px;padding:6px 14px 10px}
 .cq-tabs details{border-bottom:1px solid var(--borda);padding:4px 0}
 .cq-tabs summary{cursor:pointer;font-weight:600}
-.cq-tabs button{background:none;border:0;padding:1px 4px;cursor:pointer;color:var(--azul);font:12.5px ui-monospace,Consolas,monospace;text-align:left}
+.cq-tabs button{background:none;border:0;padding:4px 6px;min-height:24px;cursor:pointer;color:var(--azul);font:12.5px ui-monospace,Consolas,monospace;text-align:left}
 .cq-tabs button:hover{text-decoration:underline}
 .cq-tabs ul{list-style:none;margin:2px 0 4px;padding-left:10px}
 .cq-tabs small{color:var(--tinta-3)}
@@ -205,6 +205,7 @@ export async function render(el) {
   try {
     banco ||= abrirBanco(t => { const p = $("#cqPasso", el); if (p) p.textContent = t; });
     B = await banco;
+    if (!/^#\/?consulta(\?|$)/.test(location.hash)) return;
   } catch (e) {
     banco = null;
     el.innerHTML += `<div class="aviso"><b>Não consegui abrir o DuckDB.</b> ${esc(e.message || e)}<br>Precisa de acesso a cdn.jsdelivr.net e de um navegador com WebAssembly.</div>`;
@@ -220,8 +221,8 @@ export async function render(el) {
         <section class="cartao"><header><div><h2>Consultas prontas</h2><p>Carrega no editor e roda.</p></div></header>
           <ul class="cq-prontas">${PRONTAS.map(([t], i) => `<li><button type="button" data-p="${i}"${i === 0 ? ' aria-current="true"' : ""}>${esc(t)}</button></li>`).join("")}</ul></section>
         <section class="cartao"><header><div><h2>Tabelas</h2><p>Clique num nome para inserir no cursor.</p></div></header>
-          <div class="cq-tabs">${tabelas.map(t => `<details><summary><button type="button" data-ins="${esc(t.nome)}">${esc(t.nome)}</button> <small>${num(t.linhas)}</small></summary>
-            <small>${esc(t.origem)}</small><ul>${(t.colunas || []).map(c => `<li><button type="button" data-ins="${esc(c.n)}">${esc(c.n)}</button> <small>${esc(c.t.toLowerCase())}</small></li>`).join("")}</ul></details>`).join("")}</div></section>
+          <div class="cq-tabs">${tabelas.map(t => `<details><summary>${esc(t.nome)} <small>${num(t.linhas)} linhas</small></summary>
+            <button type="button" data-ins="${esc(t.nome)}" aria-label="Inserir a tabela ${esc(t.nome)} no editor">inserir ${esc(t.nome)}</button> <small>${esc(t.origem)}</small><ul>${(t.colunas || []).map(c => `<li><button type="button" data-ins="${esc(c.n)}">${esc(c.n)}</button> <small>${esc(c.t.toLowerCase())}</small></li>`).join("")}</ul></details>`).join("")}</div></section>
       </aside>
       <div>
         <div class="cq-ed">

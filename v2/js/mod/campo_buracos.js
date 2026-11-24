@@ -154,7 +154,7 @@ export async function render(el) {
       <div class="corpo"><div class="cb-fotos" id="cbFotos"></div></div></section>
 
     <section class="secao cartao"><header><div><h2>Mapa</h2><p>Um marcador por foto, na cor do buraco mais grave.</p></div></header>
-      <div class="corpo"><div class="cb-mapa" id="cbMapa" role="img" aria-label="Mapa das fotos com buracos"></div></div></section>
+      <div class="corpo"><div class="cb-mapa" id="cbMapa" role="region" aria-label="Mapa das fotos com buracos"></div></div></section>
 
     <details class="secao cartao"><summary style="padding:14px 16px;cursor:pointer;font-weight:500;color:var(--tinta)">Modelo, licença e método</summary>
       <div class="corpo" style="font-size:14px;color:var(--tinta-2)"><ul>

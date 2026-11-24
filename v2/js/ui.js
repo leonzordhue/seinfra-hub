@@ -45,18 +45,19 @@ export function tabela(el, cols, linhas, { ordem = null, limite = 300, onLinha =
     const corpo = ls.slice(0, limite).map((r, i) =>
       `<tr${onLinha ? ` class="clic" tabindex="0" data-i="${linhas.indexOf(r)}"` : ""}>${cols.map(c =>
         `<td class="${c.n ? "n" : ""} ${c.cls || ""}">${c.html ? c.html(r) : esc(r[c.k] ?? "—")}</td>`).join("")}</tr>`).join("");
-    el.innerHTML = `<div class="tab-rolo"><table class="t"><thead><tr>${cols.map(c =>
-      `<th scope="col" class="${c.n ? "n" : ""}" ${c.sem_ord ? "" : `data-ord="${c.k}"`} ${ord.k === c.k ? `aria-sort="${ord.dir > 0 ? "ascending" : "descending"}"` : ""}>${esc(c.rot)}</th>`).join("")}</tr></thead>
+    el.innerHTML = `<div class="tab-rolo" tabindex="0"><table class="t"><thead><tr>${cols.map(c =>
+      `<th scope="col" class="${c.n ? "n" : ""}" ${c.sem_ord ? "" : `data-ord="${c.k}"`} ${ord.k === c.k ? `aria-sort="${ord.dir > 0 ? "ascending" : "descending"}"` : ""}>${c.sem_ord ? esc(c.rot) : `<button type="button" class="ord">${esc(c.rot)}</button>`}</th>`).join("")}</tr></thead>
       <tbody>${corpo || `<tr><td colspan="${cols.length}" class="vazio">${esc(vazio)}</td></tr>`}</tbody></table></div>
       ${ls.length > limite ? `<p class="peq" style="padding:8px 10px;color:var(--tinta-3);font-size:13px">Mostrando ${num(limite)} de ${num(ls.length)}. Use os filtros para refinar.</p>` : ""}`;
   }
   el.onclick = ev => {
     const th = ev.target.closest("th[data-ord]");
-    if (th) { const k = th.dataset.ord; ord = { k, dir: ord.k === k ? -ord.dir : -1 }; pinta(); return; }
+    if (th) { const k = th.dataset.ord; ord = { k, dir: ord.k === k ? -ord.dir : -1 }; pinta(); el.querySelector(`th[data-ord="${k}"] .ord`)?.focus(); return; }
     const tr = ev.target.closest("tr.clic");
     if (tr && onLinha && !ev.target.closest("a")) onLinha(linhas[+tr.dataset.i]);
   };
-  el.onkeydown = ev => { const tr = ev.target.closest("tr.clic"); if (tr && ev.key === "Enter" && onLinha) onLinha(linhas[+tr.dataset.i]); };
+  // linha clicável: Enter ou Espaço abre (a11y: mesmo efeito do clique)
+  el.onkeydown = ev => { const tr = ev.target.closest("tr.clic"); if (tr && ev.target === tr && (ev.key === "Enter" || ev.key === " ") && onLinha) { ev.preventDefault(); onLinha(linhas[+tr.dataset.i]); } };
   pinta();
 }
 
@@ -133,7 +134,9 @@ export const serie = i => css(`--s${i}`);
 // barras: ponta arredondada de 4px só no topo, 2px de respiro entre barras
 export const estiloBarra = cor => ({ backgroundColor: cor, borderRadius: 3, borderSkipped: "start", borderColor: css("--sup"), borderWidth: 0 });
 
-// ── gaveta lateral ──
+// ── gaveta lateral ── (diálogo modal: foco entra, fica preso no Tab, Esc fecha e o foco volta para quem abriu)
+let origemGaveta = null;
+const focaveis = g => $$('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])', g).filter(e => e.offsetParent !== null);
 export function gaveta(html) {
   let g = $(".gaveta"), v = $(".veu");
   if (!g) {
@@ -142,15 +145,31 @@ export function gaveta(html) {
     g.setAttribute("role", "dialog"); g.setAttribute("aria-modal", "true");
     document.body.append(v, g);
     v.onclick = fecharGaveta;
-    document.addEventListener("keydown", e => { if (e.key === "Escape") fecharGaveta(); });
+    document.addEventListener("keydown", e => {
+      if (!g.classList.contains("aberta")) return;
+      if (e.key === "Escape") { fecharGaveta(); return; }
+      if (e.key !== "Tab") return;
+      const f = focaveis(g); if (!f.length) return;
+      if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f[f.length - 1].focus(); }
+      else if (!e.shiftKey && document.activeElement === f[f.length - 1]) { e.preventDefault(); f[0].focus(); }
+    });
   }
-  g.innerHTML = `<button class="btn fechar" type="button" aria-label="Fechar">Fechar</button>${html}`;
+  if (!g.classList.contains("aberta")) origemGaveta = document.activeElement;
+  g.innerHTML = `<button class="btn fechar" type="button">Fechar</button>${html}`;
+  const tit = $("h1, h2, h3", g);
+  if (tit) { tit.id ||= "gaveta-tit"; g.setAttribute("aria-labelledby", tit.id); g.removeAttribute("aria-label"); }
+  else { g.removeAttribute("aria-labelledby"); g.setAttribute("aria-label", "Detalhe"); }
   $(".fechar", g).onclick = fecharGaveta;
   v.classList.add("aberto"); g.classList.add("aberta");
   $(".fechar", g).focus();
   return g;
 }
-export function fecharGaveta() { $(".gaveta")?.classList.remove("aberta"); $(".veu")?.classList.remove("aberto"); }
+export function fecharGaveta() {
+  const g = $(".gaveta"); if (!g?.classList.contains("aberta")) return;
+  g.classList.remove("aberta"); $(".veu")?.classList.remove("aberto");
+  if (origemGaveta?.isConnected) origemGaveta.focus({ preventScroll: true });
+  origemGaveta = null;
+}
 
 export const fonte = (rot, val) => `<span class="fonte">${esc(rot)}: <b>${esc(val)}</b></span>`;
 export const opcoes = (vals, sel = "", todos = "Todos") =>

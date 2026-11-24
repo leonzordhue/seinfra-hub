@@ -59,9 +59,9 @@ const CSS = `
 .mapa-caixa .maplibregl-ctrl-group button + button { border-top-color: var(--borda); }
 :root[data-theme="dark"] .mapa-caixa .maplibregl-ctrl-icon, .mapa-caixa .maplibregl-ctrl-attrib-button { filter: invert(.88); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .mapa-caixa .maplibregl-ctrl-icon, .mapa-caixa .maplibregl-ctrl-attrib-button { filter: invert(.88); } }
-#mapa .maplibregl-ctrl-attrib { background: var(--sup); opacity: .85; color: var(--tinta-3); font-size: 10.5px; }
+#mapa .maplibregl-ctrl-attrib { background: var(--sup); opacity: .85; color: var(--tinta-3); font-size: 12px; }
 #mapa .maplibregl-ctrl-attrib a { color: inherit; }
-#mapa .maplibregl-ctrl-scale { background: var(--sup); color: var(--tinta-2); border-color: var(--tinta-3); opacity: .9; }
+#mapa .maplibregl-ctrl-scale { font-size: 12px; background: var(--sup); color: var(--tinta-2); border-color: var(--tinta-3); opacity: .9; }
 .mp-flut { position: absolute; z-index: 2; background: var(--sup); color: var(--tinta-2); border: 1px solid var(--borda-2); border-radius: var(--raio); box-shadow: 0 2px 10px rgba(0,23,61,.10); }
 .mp-painel { left: 10px; top: 10px; width: 236px; max-height: calc(100% - 20px); overflow: auto; }
 .mp-painel summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 8px; padding: 9px 12px; font: 600 13px var(--f-titulo); color: var(--tinta); }
@@ -71,7 +71,7 @@ const CSS = `
 .mp-painel summary small { font: 400 12px var(--f-corpo); color: var(--tinta-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mp-painel[open] summary small { display: none; }
 .mp-corpo { padding: 2px 8px 10px; border-top: 1px solid var(--borda); }
-.mp-rot { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 10px 4px 4px; }
+.mp-rot { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 10px 4px 4px; }
 .mp-opcoes { display: grid; gap: 1px; }
 .mp-opcoes button { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; border: 0; background: none; padding: 7px 8px; border-radius: 4px; font-size: 13.5px; color: var(--tinta-2); cursor: pointer; }
 .mp-opcoes button::before { content: ""; box-sizing: border-box; width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid var(--borda-2); flex: none; }
@@ -85,19 +85,19 @@ const CSS = `
 .mp-extra input { accent-color: var(--azul); margin: 0; width: 14px; height: 14px; }
 .mp-leg { left: 10px; bottom: 10px; width: 284px; max-width: calc(100% - 20px); padding: 10px 14px 10px; font-size: 12px; }
 .mp-leg b { display: block; color: var(--tinta); font: 600 12.5px var(--f-titulo); margin-bottom: 8px; }
-.mp-leg b small { display: block; font: 400 11.5px var(--f-corpo); color: var(--tinta-3); margin-top: 1px; }
+.mp-leg b small { display: block; font: 400 12px var(--f-corpo); color: var(--tinta-3); margin-top: 1px; }
 .mp-cores { display: flex; gap: 1px; height: 10px; border-radius: 2px; overflow: hidden; }
 .mp-cores i { flex: 1; }
-.mp-lims { position: relative; height: 16px; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--tinta-2); font-size: 11px; }
+.mp-lims { position: relative; height: 16px; margin-top: 4px; font-variant-numeric: tabular-nums; color: var(--tinta-2); font-size: 12px; }
 .mp-lims span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
 .mp-lims span::before { content: ""; position: absolute; left: 50%; top: -4px; height: 3px; border-left: 1px solid var(--tinta-3); }
-.mp-nomes { display: flex; font-size: 10.5px; color: var(--tinta-3); margin-top: 1px; }
+.mp-nomes { display: flex; font-size: 12px; color: var(--tinta-3); margin-top: 1px; }
 .mp-nomes span { flex: 1; min-width: 0; text-align: center; white-space: nowrap; }
 .mp-sw { display: flex; align-items: center; gap: 7px; margin: 4px 0 0; color: var(--tinta-2); }
 .mp-sw i { flex: none; width: 16px; height: 9px; border-radius: 2px; }
 .mp-sw i.lin { height: 3px; }
 .mp-sep { height: 1px; background: var(--borda); margin: 8px 0 6px; }
-.mp-leg p { margin: 7px 0 0; color: var(--tinta-3); font-size: 11px; line-height: 1.4; }
+.mp-leg p { margin: 7px 0 0; color: var(--tinta-3); font-size: 12px; line-height: 1.4; }
 @media (max-width: 700px) {
   .mapa-caixa { height: calc(100vh - 72px); height: calc(100dvh - 72px); min-height: 420px; }
   .mp-painel { width: min(236px, calc(100% - 64px)); }
@@ -105,7 +105,7 @@ const CSS = `
   .mapa-caixa .maplibregl-ctrl-scale { display: none; }
   .mp-leg p { display: none; }
 }
-.mp-ficha .mp-sobre { display: block; font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin: 6px 0 4px; }
+.mp-ficha .mp-sobre { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin: 6px 0 4px; }
 .mp-ficha h2 { font-size: 1.4rem; }
 .mp-ficha h2 small { font: 400 .68em var(--f-corpo); color: var(--tinta-3); margin-left: 6px; }
 .mp-ficha .mp-intro { margin: 6px 0 0; color: var(--tinta-2); font-size: 14px; }

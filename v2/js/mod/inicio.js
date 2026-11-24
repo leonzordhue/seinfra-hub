@@ -105,10 +105,12 @@ export async function render(el) {
   // malha: pinta rodovias pela faixa de prioridade de sinistros; clique abre o briefing da rodovia
   const mapa = $("#malha svg");
   if (mapa) {
+    mapa.setAttribute("role", "group");  // role=img esconderia as rodovias clicáveis do leitor de tela (interativo aninhado)
     mapa.querySelectorAll("path.am").forEach(p => {
       const r = an?.rodovias?.[p.dataset.cod];
       if (r?.faixa === "Alta") p.classList.add("prio-alta"); else if (r?.faixa === "Média") p.classList.add("prio-media");
       p.setAttribute("tabindex", "0"); p.setAttribute("role", "link");
+      p.setAttribute("aria-label", `${p.dataset.cod}${r?.faixa ? `, prioridade ${r.faixa.toLowerCase()} em sinistros` : ""}: abrir briefing`);
       const ir = () => { location.hash = `#/briefings?rodovia=${encodeURIComponent(p.dataset.cod)}`; };
       p.addEventListener("click", ir); p.addEventListener("keydown", e => { if (e.key === "Enter") ir(); });
     });

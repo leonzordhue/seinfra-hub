@@ -23,7 +23,7 @@ const ESTILO = `<style>
   .dv-b::after { content: ""; position: absolute; left: 50%; top: -3px; bottom: -3px; width: 1px; background: var(--eixo); }
   .dv-b i { position: absolute; top: 0; bottom: 0; background: var(--s6); }
   .dv-b.ok i { background: var(--ok); } .dv-b.alerta i { background: var(--alerta); } .dv-b.critico i { background: var(--critico); }
-  #precos h3.sub { font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 24px 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--azul); }
+  #precos h3.sub { font: 600 12px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 24px 0 8px; padding-bottom: 6px; border-bottom: 2px solid var(--azul); }
 </style>`;
 
 export async function render(el) {

@@ -175,7 +175,7 @@ function queimadas(sec, Q) {
     <div class="cartao secao"><header><div><h2>Trechos com mais focos</h2><p>Trechos de 5 km (km aproximado pela posição do foco sobre o eixo).</p></div></header><div class="corpo" id="tabTr"></div></div>
     <div class="cartao secao"><header><div><h2>${num(recBuf.length)} focos perto de rodovia nos últimos 30 dias</h2><p>Focos dos últimos 30 dias no AM e eixo das rodovias estaduais. Clique num ponto para ver data e município.</p></div></header>
       <div class="corpo"><div class="legenda"><span><i class="pt" style="background:${css("--critico")}"></i>A até ${num(M.buffer_km)} km de rodovia estadual</span><span><i class="pt" style="background:${css("--tinta-3")}"></i>Demais focos no AM</span><span><i style="background:${css("--azul")};height:3px;vertical-align:3px"></i>Rodovia estadual</span></div>
-        <div class="amb-mapa" id="mapaQ" role="img" aria-label="Mapa dos focos de queimada recentes e das rodovias estaduais"></div>
+        <div class="amb-mapa" id="mapaQ" role="region" aria-label="Mapa dos focos de queimada recentes e das rodovias estaduais"></div>
         <p class="nota">Fonte: INPE (BDQueimadas), satélite de referência ${esc(M.satelite)}; rodovias do Atlas (SRE).</p></div></div>`;
 
   grafico($("#gAnoQ", sec), { type: "bar", data: { labels: anos, datasets: [{ label: "Focos a até 5 km", data: anos.map(a => Q.em_buffer[a]), ...estiloBarra(anos.map(a => a === atual ? serie(1) : serie(6))) }] },

@@ -86,7 +86,9 @@ function abrirEmbutido(mod) {
   caixa.hidden = false; $("#conteudo").hidden = true;
 }
 
+let navId = 0;
 async function navegar() {
+  const meu = ++navId;  // rota trocada durante um render lento: a antiga não mexe mais na página
   const [rota, qs] = (location.hash.replace(/^#\/?/, "") || "inicio").split("?");
   const emb = rota.startsWith("m/") && EMBUTIDOS[rota.slice(2)] ? rota.slice(2) : null;
   const id = emb ? rota : ROTAS[rota] ? rota : "inicio";
@@ -97,13 +99,14 @@ async function navegar() {
   document.title = `${titulo} · DMOB Hub`;
   const grupo = trilha(id, titulo);
   fecharBusca();
-  $(".lateral").classList.remove("aberta");
+  $(".lateral").classList.remove("aberta"); $("#menu").setAttribute("aria-expanded", "false");
   if (emb) { abrirEmbutido(emb); return; }
   $("#embutido").hidden = true; el.hidden = false;
   el.innerHTML = `<div class="grade g-kpi" aria-busy="true"><div class="esq"></div><div class="esq"></div><div class="esq"></div><div class="esq"></div></div>`;
   try {
     const m = await ROTAS[id]();
     await m.render(el, new URLSearchParams(qs || ""));
+    if (meu !== navId) return;
     const h1 = el.querySelector(".cab h1");
     if (h1 && grupo && !h1.previousElementSibling?.classList.contains("sobre")) h1.insertAdjacentHTML("beforebegin", `<span class="sobre">${grupo}</span>`);
   } catch (e) {
@@ -115,11 +118,18 @@ async function navegar() {
 }
 
 window.addEventListener("hashchange", navegar);
-$("#menu").onclick = () => $(".lateral").classList.toggle("aberta");
+const menu = $("#menu"), lat = $(".lateral");
+lat.id = "nav-lateral"; menu.setAttribute("aria-controls", "nav-lateral"); menu.setAttribute("aria-expanded", "false");
+const menuAberto = v => { lat.classList.toggle("aberta", v); menu.setAttribute("aria-expanded", String(v)); if (v) lat.querySelector("a")?.focus(); else menu.focus(); };
+menu.onclick = () => menuAberto(!lat.classList.contains("aberta"));
+document.addEventListener("keydown", e => { if (e.key === "Escape" && lat.classList.contains("aberta")) menuAberto(false); });
+const temaEscuro = () => { const r = document.documentElement; return r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; };
+$("#tema").setAttribute("aria-pressed", String(temaEscuro()));
 $("#busca").onclick = abrirBusca;
 $("#tema").onclick = () => {
   const r = document.documentElement, escuro = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   r.dataset.theme = escuro ? "light" : "dark";
+  $("#tema").setAttribute("aria-pressed", String(!escuro));
   try { localStorage.setItem("dmob-tema", r.dataset.theme); } catch {}
   navegar();  // recria os gráficos com as cores do tema
 };

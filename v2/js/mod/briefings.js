@@ -11,15 +11,15 @@ const ESTILO = `<style>
   .doc { counter-reset: dsec; max-width: 920px; }
   .doc .doc-cab { align-items: center; border-bottom: 3px solid var(--azul); padding-bottom: 12px; margin-bottom: 0; }
   .doc-org { display: grid; gap: 1px; font-size: 12px; line-height: 1.4; color: var(--tinta-3); }
-  .doc-org b { font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta); }
+  .doc-org b { font: 600 12px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta); }
   .doc-tit { border-top: 2px solid var(--ouro); margin-top: 2px; padding: 18px 0 2px; }
-  .doc-tipo { display: block; font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin-bottom: 4px; }
+  .doc-tipo { display: block; font: 600 12px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin-bottom: 4px; }
   .doc-tit h1 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); letter-spacing: -.015em; }
   .doc-tit p { margin: 4px 0 0; color: var(--tinta-3); font-size: 14px; }
   .doc-meta { display: flex; flex-wrap: wrap; margin: 14px 0 0; border: 1px solid var(--borda); border-radius: var(--raio); }
   .doc-meta div { padding: 6px 12px; border-left: 1px solid var(--borda); }
   .doc-meta div:first-child { border-left: 0; }
-  .doc-meta dt { font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-3); }
+  .doc-meta dt { font-size: 12px; letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-3); }
   .doc-meta dd { margin: 0; font-size: 13px; font-weight: 500; color: var(--tinta); }
   .doc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 0; }
   .doc h2 { counter-increment: dsec; display: flex; gap: 10px; align-items: center; font-size: 1.02rem; margin: 28px 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--borda-2); }
@@ -55,7 +55,7 @@ const ESTILO = `<style>
     .doc h2::before, .nota-risco, .chip, .doc-meta, .doc-cab { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>`;
-const T = h => `<div class="tab-rolo">${h}</div>`;
+const T = h => `<div class="tab-rolo" tabindex="0">${h}</div>`;
 const rxRod = cod => new RegExp(`\\bAM[\\s-]?0*${parseInt(cod.slice(3), 10)}\\b`, "i");
 
 export async function render(el, params) {

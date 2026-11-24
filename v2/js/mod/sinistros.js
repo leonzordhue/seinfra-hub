@@ -20,18 +20,19 @@ const CSS = `
   .prio { list-style: none; margin: 0; padding: 0; }
   .prio li { display: grid; grid-template-columns: 28px minmax(92px, auto) minmax(0, 1fr) 56px; gap: 6px 14px; align-items: center; padding: 14px 6px; border-bottom: 1px solid var(--borda); cursor: pointer; }
   .prio li:last-child { border-bottom: 0; }
-  .prio li:hover, .prio li:focus-visible { background: var(--sup-2); outline: none; }
+  .prio li:hover { background: var(--sup-2); }
+  .prio li:focus-visible { background: var(--azul-3); outline: 2px solid var(--foco); outline-offset: -2px; }
   .prio .pos { font: 600 13px var(--f-titulo); color: var(--tinta-3); text-align: right; }
   .prio .rod { font: 600 15px var(--f-titulo); color: var(--tinta); }
   .prio .rod small { display: block; font: 400 12px var(--f-corpo); color: var(--tinta-3); margin-top: 3px; }
   .prio .val { font: 600 22px/1 var(--f-titulo); color: var(--tinta); text-align: right; font-variant-numeric: tabular-nums; }
-  .prio .val small { display: block; font: 500 11.5px var(--f-corpo); margin-top: 4px; }
+  .prio .val small { display: block; font: 500 12px var(--f-corpo); margin-top: 4px; }
   .prio .val .critico { color: var(--critico); } .prio .val .alerta { color: var(--alerta); } .prio .val .ok { color: var(--tinta-3); }
   .ind { position: relative; height: 14px; border-radius: 3px; overflow: hidden;
     background: linear-gradient(90deg, var(--sup-3) 0 35%, var(--alerta-bg) 35% 60%, var(--critico-bg) 60% 100%); }
   .ind i { position: absolute; inset: 3px auto 3px 0; border-radius: 2px; background: var(--s6); }
   .ind i.critico { background: var(--critico); } .ind i.alerta { background: var(--alerta); }
-  .ind-esc { display: flex; justify-content: space-between; font-size: 11px; color: var(--tinta-3); margin-top: 3px; position: relative; height: 13px; }
+  .ind-esc { display: flex; justify-content: space-between; font-size: 12px; color: var(--tinta-3); margin-top: 3px; position: relative; height: 13px; }
   .ind-esc span { position: absolute; transform: translateX(-50%); } .ind-esc span:first-child { transform: none; } .ind-esc span:last-child { transform: translateX(-100%); }
   .prio .ler { grid-column: 3 / 5; font-size: 13.5px; color: var(--tinta-2); line-height: 1.45; }
   .prio .ler b { color: var(--tinta); font-weight: 600; }
@@ -128,7 +129,7 @@ export async function render(el) {
       <span class="val">${num(r.prioridade, 0)}<small class="${nivel(r.faixa)}">${esc(r.faixa)}</small></span>
       <div class="ler"><b>${num(r.ocorrencias)} ocorrências, ${num(r.fatais)} com morte</b> · ${num(r.fatais_100km_ano, 1)} fatais por 100 km/ano${tend ? ` · ${tend} (${num(r.ultimos_12m)} em 12 meses)` : ""}${t ? ` · pior trecho km ${t.km_ini}–${t.km_fim}` : ""}${r.tipo_predominante ? ` · ${esc(r.tipo_predominante.toLowerCase())} predomina` : ""}${r.obras_ativas?.length ? "" : ` · ${chip("sem obra ativa", "alerta")}`}</div>
     </li>`; }).join("")}</ol>` : `<p class="vazio">Nenhuma rodovia com 3 ocorrências ou mais ainda.</p>`;
-  const abre = ev => { const li = ev.target.closest(".prio li"); if (li && (ev.type === "click" || ev.key === "Enter")) detalheRodovia(ranking[+li.dataset.i], ocs); };
+  const abre = ev => { const li = ev.target.closest(".prio li"); if (li && (ev.type === "click" || ev.key === "Enter" || ev.key === " ")) { ev.preventDefault?.(); detalheRodovia(ranking[+li.dataset.i], ocs); } };
   $("#rank", el).onclick = abre; $("#rank", el).onkeydown = abre;
   if (fora.length) $("#rank", el).insertAdjacentHTML("beforeend", `<p class="nota">Fora do ranking (menos de 3 ocorrências): ${fora.map(r => `${esc(r.cod)} (${num(r.ocorrencias)})`).join(", ")}.</p>`);
 

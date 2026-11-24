@@ -50,7 +50,7 @@ const CSS_CAMPO = `
 .cp-mini > div{background:var(--sup);padding:10px 12px}
 .cp-mini .rot{font-size:12px;color:var(--tinta-3)}
 .cp-mini .v{font:600 20px/1.2 var(--f-titulo);color:var(--tinta);font-variant-numeric:tabular-nums;margin-top:2px}
-.cp-mini .s{font-size:11.5px;color:var(--tinta-3)}
+.cp-mini .s{font-size:12px;color:var(--tinta-3)}
 .cp-sec{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:12px;border-top:1px dashed var(--borda);font-size:13.5px;color:var(--tinta-3)}
 .cp-sec .btn{padding:6px 11px;font-size:13.5px}
 .cp-ajuda{font-size:13.5px;color:var(--tinta-2)}

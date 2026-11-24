@@ -14,16 +14,16 @@ const ESTILO = `<style>
   #tab .obj { min-width: 220px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .t-modal { font-size: 13px; margin-top: 10px; }
   .t-modal td, .t-modal th { padding: 6px 10px; }
-  .fc-tipo { display: block; font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin: 6px 0 4px; }
+  .fc-tipo { display: block; font: 600 12px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--ouro-2); margin: 6px 0 4px; }
   .fc-id { font-size: 1.3rem; }
   .fc-obj { color: var(--tinta); margin: 8px 0 10px; line-height: 1.5; }
   .fc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .fc-kpi { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--borda); border: 1px solid var(--borda); border-radius: var(--raio); overflow: hidden; margin: 16px 0 4px; }
   .fc-kpi div { background: var(--sup); padding: 10px 12px; }
-  .fc-kpi span { display: block; font-size: 11.5px; color: var(--tinta-3); }
+  .fc-kpi span { display: block; font-size: 12px; color: var(--tinta-3); }
   .fc-kpi b { display: block; font: 600 1.05rem/1.25 var(--f-titulo); color: var(--tinta); margin-top: 2px; font-variant-numeric: tabular-nums; }
-  .fc-kpi small { font-size: 11.5px; color: var(--tinta-3); }
-  .gaveta h3.fc-h { font: 600 11.5px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 20px 0 4px; padding-bottom: 6px; border-bottom: 2px solid var(--azul); }
+  .fc-kpi small { font-size: 12px; color: var(--tinta-3); }
+  .gaveta h3.fc-h { font: 600 12px var(--f-corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--tinta-3); margin: 20px 0 4px; padding-bottom: 6px; border-bottom: 2px solid var(--azul); }
   .gaveta dl.ficha { gap: 0; margin: 0; }
   .gaveta dl.ficha dt, .gaveta dl.ficha dd { padding: 6px 0; border-bottom: 1px solid var(--borda); }
   .gaveta dl.ficha dd { text-align: right; font-variant-numeric: tabular-nums; }
@@ -108,7 +108,7 @@ export async function render(el) {
     $("#gModalBox", el).style.height = `${Math.max(1, porModal.length) * 34 + 12}px`;
     grafico($("#gModal", el), { type: "bar", data: { labels: porModal.map(x => x.m), datasets: [{ label: "Valor atual", data: porModal.map(x => x.v), backgroundColor: porModal.map((x, i) => i ? serie(6) : serie(1)) }] },
       options: { indexAxis: "y", layout: { padding: { right: 70 } }, plugins: { rotulos: { fmt: brlCurto }, tooltip: { callbacks: { label: x => ` ${brlCurto(x.raw)} · ${num(porModal[x.dataIndex].n)} contratos` } } } } });
-    $("#tModalTab", el).innerHTML = porModal.length ? `<div class="tab-rolo"><table class="t t-modal"><thead><tr><th>Modal</th><th class="n">Contratos</th><th class="n">Medido</th><th class="n">Saldo</th></tr></thead><tbody>
+    $("#tModalTab", el).innerHTML = porModal.length ? `<div class="tab-rolo" tabindex="0"><table class="t t-modal"><thead><tr><th>Modal</th><th class="n">Contratos</th><th class="n">Medido</th><th class="n">Saldo</th></tr></thead><tbody>
       ${porModal.map(x => `<tr><td>${esc(x.m)}</td><td class="n">${num(x.n)}</td><td class="n">${brlCurto(x.med)}</td><td class="n">${brlCurto(x.saldo)}</td></tr>`).join("")}</tbody></table></div>` : "";
 
     // alertas agregados

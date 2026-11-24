@@ -173,7 +173,7 @@ export async function render(el, params) {
       <li>Calibre com um trecho de IRI conhecido antes de usar o número: o resultado depende do carro, do suporte e do aparelho.</li></ul></details></div>
 
     <section class="secao cartao"><header><div><h2>Trilha</h2><p>Cor pela classe de IRI estimada (DNIT). Círculos vermelhos: impactos acima do limiar.</p></div></header>
-      <div class="corpo"><div class="ci-mapa" id="ciMapa" role="img" aria-label="Mapa da trilha gravada"></div>
+      <div class="corpo"><div class="ci-mapa" id="ciMapa" role="region" aria-label="Mapa da trilha gravada"></div>
         <div class="ci-leg">${CLASSES.map((c, i) => `<span><i style="background:${c.cor}"></i>${c.rot} ${isFinite(c.max) ? `≤ ${num(c.max, 1)}` : `> ${num(CLASSES[i - 1].max, 1)}`}</span>`).join("")}<span><i style="background:${COR_INVALIDO}"></i>Fora de ${VMIN}–${VMAX} km/h</span></div></div></section>
 
     <section class="secao cartao"><header><div><h2>Comparação com o levantamento oficial</h2><p>Segmentos válidos com trecho oficial a menos de 60 m. Referência: data/icm.json (${esc(refs.icm?.fonte || "indisponível")}), que também é estimativa por celular, não perfilômetro.</p></div><span class="contagem" id="ciCompN"></span></header>

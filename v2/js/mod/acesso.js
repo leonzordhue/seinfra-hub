@@ -46,7 +46,7 @@ const ESTILO = `<style>
   .ac-leg .rampa { display: inline-flex; gap: 1px; border-radius: 2px; overflow: hidden; vertical-align: middle; }
   .ac-leg .rampa i { width: 34px; height: 10px; }
   .ac-leg .rot-r { display: inline-flex; gap: 1px; }
-  .ac-leg .rot-r span { width: 34px; text-align: center; font-size: 11px; color: var(--tinta-3); }
+  .ac-leg .rot-r span { width: 34px; text-align: center; font-size: 12px; color: var(--tinta-3); }
   .ac-leg b { font-weight: 600; color: var(--tinta); margin-right: 4px; }
   .ac-leg .pt { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: -1px; margin-right: 5px; }
   .ac-graf { position: relative; height: 196px; }

@@ -2,7 +2,7 @@
 import { contratos, municipios, talvez } from "./dados.js";
 import { esc, semAcento, brlCurto } from "./fmt.js";
 
-let indice = null, veu = null, sel = 0, itens = [];
+let indice = null, veu = null, sel = 0, itens = [], volta = null;
 
 async function montar() {
   const [{ lista }, an, icm] = await Promise.all([contratos(), talvez("sinistros_analise"), talvez("icm")]);
@@ -35,6 +35,7 @@ function pinta(q) {
   const ul = veu.querySelector("ul");
   ul.innerHTML = itens.length ? itens.map((o, i) => `<li><a href="${esc(o.href)}"${o.ext ? ' target="_blank" rel="noopener"' : ""} id="pb${i}" role="option" aria-selected="${i === 0}"><span>${o.tipo}</span><div>${esc(o.t)}<small>${esc(o.d)}</small></div></a></li>`).join("")
     : `<li class="nada">Nada encontrado para “${esc(q)}”.</li>`;
+  veu.querySelector("input").setAttribute("aria-activedescendant", itens.length ? "pb0" : "");
 }
 
 function mover(d) {
@@ -42,6 +43,7 @@ function mover(d) {
   veu.querySelector(`#pb${sel}`)?.setAttribute("aria-selected", "false");
   sel = (sel + d + itens.length) % itens.length;
   const a = veu.querySelector(`#pb${sel}`); a.setAttribute("aria-selected", "true"); a.scrollIntoView({ block: "nearest" });
+  veu.querySelector("input").setAttribute("aria-activedescendant", "pb" + sel);
 }
 
 export async function abrirBusca() {
@@ -53,21 +55,23 @@ export async function abrirBusca() {
       <div class="dica"><kbd>↑</kbd> <kbd>↓</kbd> navegar · <kbd>Enter</kbd> abrir · <kbd>Esc</kbd> fechar</div></div>`;
     document.body.append(veu);
     const inp = veu.querySelector("input");
-    veu.addEventListener("click", e => { if (e.target === veu || e.target.closest("a")) fecharBusca(); });
+    veu.addEventListener("click", e => { if (e.target === veu) fecharBusca(true); else if (e.target.closest("a")) fecharBusca(); });
     inp.addEventListener("input", () => indice && pinta(inp.value));
     inp.addEventListener("keydown", e => {
       if (e.key === "ArrowDown") { e.preventDefault(); mover(1); }
       else if (e.key === "ArrowUp") { e.preventDefault(); mover(-1); }
       else if (e.key === "Enter") { const a = veu.querySelector(`#pb${sel}`); if (a) { e.preventDefault(); a.click(); } }
-      else if (e.key === "Escape") fecharBusca();
+      else if (e.key === "Escape") fecharBusca(true);
+      else if (e.key === "Tab") e.preventDefault();  // o campo é o único foco do diálogo; as setas navegam
     });
   }
+  if (veu.hidden) volta = document.activeElement;
   veu.hidden = false;
   const inp = veu.querySelector("input"); inp.value = ""; inp.focus();
   if (!indice) { try { indice = await montar(); } catch (e) { veu.querySelector("ul").innerHTML = `<li class="nada">Não consegui montar o índice: ${esc(e.message)}</li>`; return; } }
   pinta(inp.value);
 }
-export function fecharBusca() { if (veu) veu.hidden = true; }
+export function fecharBusca(devolver = false) { if (!veu || veu.hidden) return; veu.hidden = true; if (devolver) volta?.focus?.(); }
 
 document.addEventListener("keydown", e => {
   const campo = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
