@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
   # commit feito pelo GITHUB_TOKEN (bots de dados) não dispara "push": publica quando eles terminam
   workflow_run:
-    workflows: ["Sinistros (diário)", "Licitações (diário)", "Mapa (semanal)", "Sinistros oficiais (mensal)", "Acessibilidade rodoviária (mensal)", "Ambiente e rios (diário)"]
+    workflows: ["Sinistros (diário)", "Licitações (diário)", "Mapa (semanal)", "Sinistros oficiais (mensal)", "Acessibilidade rodoviária (mensal)", "Ambiente e rios (diário)", "Terminais (diário)"]
     types: [completed]
 
 permissions:
@@ -64,4 +64,12 @@ jobs:
           path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
+        continue-on-error: true
+        uses: actions/deploy-pages@v4
+      # a API de artefatos às vezes falha ("No artifacts named github-pages") quando dois deploys correm juntos: tenta de novo
+      - name: Aguardar antes da 2ª tentativa
+        if: steps.deployment.outcome == 'failure'
+        run: sleep 45
+      - name: Deploy to GitHub Pages (2ª tentativa)
+        if: steps.deployment.outcome == 'failure'
         uses: actions/deploy-pages@v4

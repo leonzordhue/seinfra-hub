@@ -1,0 +1,157 @@
+// Terminais fluviais: flutuantes entregues + programa "Portos Autorizados" (termos de cessão 2026). [Nexus] 24/11/2026
+// Dados: data/terminais.json (robô pipelines/terminais/coletar.py lê a planilha de acompanhamento do DMOB).
+import { carregar } from "../dados.js";
+import { esc, num, data, semAcento } from "../fmt.js";
+import { $, kpi, chip, fonte, tabela, gaveta } from "../ui.js";
+import { script, folha, estilo, dist, baixar, csv } from "./campo_comum.js";
+
+// etapas do programa, na ordem do processo (SEAPLANC → SEAENG → AJU → assinatura → entrega)
+const ETAPAS = [
+  { id: "a_iniciar", rot: "Aguardando solicitação", cor: "var(--s6)" },
+  { id: "producao", rot: "Termo em produção", cor: "#6FA0F0" },
+  { id: "assinatura", rot: "Aguardando assinatura", cor: "var(--ouro)" },
+  { id: "assinado", rot: "Termo assinado", cor: "#1baf7a" },
+  { id: "pronto", rot: "Pronto para entrega", cor: "#0B7343" },
+];
+const ETAPA = Object.fromEntries(ETAPAS.map(e => [e.id, e]));
+const nivel = e => e === "cancelado" ? "critico" : e === "assinado" || e === "pronto" || e === "entregue" ? "ok" : e === "assinatura" ? "alerta" : "";
+const hoje = new Date();
+const dias = iso => iso ? Math.round((hoje - new Date(iso)) / 864e5) : null;
+
+const CSS = `
+.funil { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; border: 1px solid var(--borda); border-radius: var(--raio); overflow: hidden; background: var(--sup); }
+.funil > div { padding: 14px 16px 16px; border-left: 1px solid var(--borda); position: relative; }
+.funil > div:first-child { border-left: 0; }
+.funil .n { font: 600 1.7rem/1.1 var(--f-titulo); color: var(--tinta); font-variant-numeric: tabular-nums; }
+.funil .r { font-size: 12.5px; color: var(--tinta-3); margin-top: 4px; }
+.funil .b { height: 6px; border-radius: 3px; margin-top: 12px; background: var(--sup-3); overflow: hidden; }
+.funil .b i { display: block; height: 100%; border-radius: 3px; }
+.funil .seta { position: absolute; right: -7px; top: 50%; width: 12px; height: 12px; transform: translateY(-50%) rotate(45deg); background: var(--sup); border-top: 1px solid var(--borda); border-right: 1px solid var(--borda); z-index: 1; }
+.mapa-term { height: 520px; border-radius: 0 0 var(--raio) var(--raio); }
+.mapa-term .leaflet-popup-content { font: 13px/1.45 var(--f-corpo); }
+.leg-term { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12.5px; color: var(--tinta-2); padding: 10px 18px; border-top: 1px solid var(--borda); }
+.leg-term i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; border: 2px solid var(--sup); box-shadow: 0 0 0 1px var(--borda-2); }
+.leg-term i.q { border-radius: 2px; }
+.t .proc { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.aviso-coord { font-size: 12px; color: var(--alerta); }
+@media (max-width: 900px) { .funil { grid-template-columns: repeat(2, minmax(0, 1fr)); } .funil > div { border-top: 1px solid var(--borda); } .funil .seta { display: none; } .mapa-term { height: 380px; } }`;
+
+export async function render(el) {
+  estilo("terminais-css", CSS);
+  const d = await carregar("terminais");
+  const ped = d.pedidos, ent = d.entregues;
+  const ativos = ped.filter(p => p.etapa !== "cancelado");
+  const cont = id => ped.filter(p => p.etapa === id).length;
+  const res = d.resumo_planilha || {};
+  // pronto p/ entrega vem do quadro-resumo da planilha (não há linha com esse status)
+  const nEtapa = { a_iniciar: cont("a_iniciar"), producao: cont("producao"), assinatura: cont("assinatura"), assinado: cont("assinado"), pronto: res["Terminais prontos p/ Entrega"] ?? cont("pronto") };
+  const maxE = Math.max(...Object.values(nEtapa), 1);
+  const munsPed = new Set(ativos.map(p => p.municipio));
+  const munsEnt = new Set(ent.map(t => t.municipio));
+  const novos = [...munsPed].filter(m => !munsEnt.has(m));
+  // pedido a menos de 2 km de um terminal já entregue: possível duplicidade
+  ped.forEach(p => { if (p.lat != null) { const t = ent.find(t => dist([p.lat, p.lon], [t.lat, t.lon]) < 2000); if (t) p.perto = t.localidade; } });
+  const semCoord = ativos.filter(p => p.lat == null && p.localidade);
+  const parados = ativos.filter(p => p.etapa === "assinatura" && dias(p.datas.protocolo) > 21);
+
+  el.innerHTML = `
+    <div class="cab"><div><h1>Terminais fluviais</h1>
+      <p>Terminais flutuantes entregues pela SEINFRA e o programa Portos Autorizados de 2026: termos de cessão por município, da solicitação à entrega.</p></div>
+      <div class="fontes">${fonte("Planilha DMOB", data(d._meta.gerado_em))}${fonte("Entregues", `${num(ent.length)} terminais`)}</div></div>
+
+    <div class="grade g-kpi">
+      ${kpi("Terminais entregues", num(ent.length), `${num(munsEnt.size)} municípios`)}
+      ${kpi("Pedidos em andamento (2026)", num(ativos.length), `${num(munsPed.size)} municípios`, true)}
+      ${kpi("Aguardando assinatura", num(nEtapa.assinatura), parados.length ? `${num(parados.length)} há mais de 21 dias do protocolo` : "dentro do prazo")}
+      ${kpi("Municípios novos", num(novos.length), "sem terminal entregue até hoje")}
+      ${kpi("Cancelados", num(cont("cancelado")), "pedidos encerrados")}
+    </div>
+
+    <section class="secao"><h2>Andamento do programa</h2>
+      <p class="nota" style="margin:4px 0 12px;color:var(--tinta-3);font-size:13px">Termos de cessão por etapa. "Pronto para entrega" vem do quadro-resumo da planilha.</p>
+      <div class="funil">${ETAPAS.map((e, i) => `<div><div class="n">${num(nEtapa[e.id])}</div><div class="r">${e.rot}</div>
+        <div class="b"><i style="width:${nEtapa[e.id] / maxE * 100}%;background:${e.cor}"></i></div>${i < ETAPAS.length - 1 ? '<span class="seta" aria-hidden="true"></span>' : ""}</div>`).join("")}</div>
+    </section>
+
+    <section class="secao"><h2>Onde estão</h2>
+      <div class="cartao" style="margin-top:12px"><header><div><h2>${num(ent.length)} entregues e ${num(ativos.filter(p => p.lat != null).length)} pedidos no mapa</h2><p>Clique num ponto para ver a ficha${semCoord.length ? ` · ${num(semCoord.length)} pedido(s) sem coordenada válida` : ""}</p></div></header>
+        <div id="mapaTerm" class="mapa-term" role="region" aria-label="Mapa dos terminais fluviais"></div>
+        <div class="leg-term"><span><i class="q" style="background:var(--azul)"></i>Entregue</span>${ETAPAS.slice(1, 4).map(e => `<span><i style="background:${e.cor}"></i>${e.rot}</span>`).join("")}<span><i style="background:var(--critico)"></i>Cancelado</span></div>
+      </div>
+    </section>
+
+    <section class="secao"><h2>Pedidos de 2026</h2>
+      <div class="filtros" style="margin-top:12px"><input type="search" id="fT" placeholder="Buscar município, localidade ou processo" aria-label="Buscar pedidos">
+        <select id="fE" aria-label="Etapa"><option value="">Todas as etapas</option>${ETAPAS.map(e => `<option value="${e.id}">${e.rot}</option>`).join("")}<option value="cancelado">Cancelado</option></select>
+        <button class="btn" id="csvT" type="button">Baixar CSV</button><span class="contagem" id="nT"></span></div>
+      <div class="cartao" id="tabPed"></div>
+    </section>
+
+    <section class="secao"><h2>Terminais entregues</h2>
+      <div class="cartao" style="margin-top:12px" id="tabEnt"></div>
+      <p class="nota" style="font-size:12.5px;color:var(--tinta-3);margin-top:10px">Fonte: ${esc(d._meta.fonte)}. ${esc(d._meta.metodologia)}</p>
+    </section>`;
+
+  const colsPed = [
+    { k: "municipio", rot: "Município", html: p => `<b style="color:var(--tinta)">${esc(p.municipio)}</b>${p.processo ? `<div class="peq proc">Proc. ${esc(p.processo)}</div>` : ""}` },
+    { k: "localidade", rot: "Localidade", html: p => `${esc(p.localidade || "—")}${p.coord_aviso && p.lat == null ? `<div class="aviso-coord">coordenada a conferir</div>` : ""}${p.perto ? `<div class="aviso-coord">a menos de 2 km do entregue “${esc(p.perto)}”</div>` : ""}` },
+    { k: "etapa", rot: "Etapa", v: p => ETAPAS.findIndex(e => e.id === p.etapa), html: p => chip(p.status, nivel(p.etapa)) },
+    { k: "protocolo", rot: "Protocolo", n: 1, v: p => p.datas.protocolo, html: p => p.datas.protocolo ? `${data(p.datas.protocolo)}<div class="peq">${num(dias(p.datas.protocolo))} dias</div>` : "—" },
+    { k: "assin", rot: "Assinatura", n: 1, v: p => p.datas.assinatura, html: p => p.datas.assinatura ? data(p.datas.assinatura) : "—" },
+    { k: "entrega", rot: "Entrega", n: 1, v: p => p.datas.entrega, html: p => p.datas.entrega ? data(p.datas.entrega) : "—" },
+  ];
+  const filtrar = () => {
+    const q = semAcento($("#fT").value), e = $("#fE").value;
+    const ls = ped.filter(p => (!e || p.etapa === e) && (!q || semAcento(`${p.municipio} ${p.localidade} ${p.processo}`).includes(q)));
+    $("#nT").textContent = `${num(ls.length)} de ${num(ped.length)}`;
+    tabela($("#tabPed"), colsPed, ls, { ordem: { k: "etapa", dir: -1 }, onLinha: ficha });
+    return ls;
+  };
+  $("#fT").oninput = filtrar; $("#fE").onchange = filtrar;
+  $("#csvT").onclick = () => baixar("pedidos_terminais_2026.csv", csv(["municipio", "localidade", "processo", "status", "lat", "lon", "protocolo", "assinatura", "entrega"],
+    filtrar().map(p => [p.municipio, p.localidade, p.processo, p.status, p.lat, p.lon, p.datas.protocolo, p.datas.assinatura, p.datas.entrega])), "text/csv");
+  filtrar();
+  tabela($("#tabEnt"), [
+    { k: "municipio", rot: "Município", html: t => `<b style="color:var(--tinta)">${esc(t.municipio)}</b>` },
+    { k: "localidade", rot: "Localidade" },
+    { k: "coord", rot: "Coordenada", n: 1, sem_ord: 1, html: t => `<span class="peq">${num(t.lat, 2)}, ${num(t.lon, 2)}</span>` },
+  ], ent, { ordem: { k: "municipio", dir: 1 } });
+
+  function ficha(p) {
+    const etapas = [["Protocolo", p.datas.protocolo], ["SEAPLANC", p.datas.seaplanc], ["SEAENG", p.datas.seaeng], ["AJU", p.datas.aju], ["SEAAF", p.datas.seaaf], ["Assinatura", p.datas.assinatura], ["Entrega", p.datas.entrega]];
+    gaveta(`<span class="sobre" style="display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ouro-2)">Terminal flutuante · pedido 2026</span>
+      <h2 style="font-size:1.3rem;margin:4px 0 2px">${esc(p.localidade || p.municipio)}</h2><p style="margin:0;color:var(--tinta-3)">${esc(p.municipio)}${p.processo ? ` · processo ${esc(p.processo)}` : ""}</p>
+      <p style="margin:12px 0">${chip(p.status, nivel(p.etapa))}</p>
+      <dl class="ficha">${etapas.map(([r, v]) => `<dt>${r}</dt><dd>${v ? data(v) : "—"}</dd>`).join("")}
+        <dt>Coordenada</dt><dd>${p.lat != null ? `${num(p.lat, 5)}, ${num(p.lon, 5)}` : `a conferir${p.coord_aviso ? ` (${esc(p.coord_aviso)})` : ""}`}</dd></dl>
+      ${p.perto ? `<p class="aviso">Fica a menos de 2 km do terminal entregue “${esc(p.perto)}”: confirmar se não é o mesmo ponto.</p>` : ""}
+      <p style="font-size:12.5px;color:var(--tinta-3)">Fonte: planilha de acompanhamento do DMOB.</p>`);
+  }
+
+  // mapa (Leaflet; fundo Esri cinza sem chave, claro ou escuro conforme o tema)
+  try {
+    folha("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css");
+    await script("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js");
+    const L = window.L, box = $("#mapaTerm");
+    if (!box) return;
+    const escuro = getComputedStyle(document.documentElement).colorScheme === "dark";
+    const m = L.map(box, { scrollWheelZoom: false, preferCanvas: true }).setView([-3.4653, -62.2159], 6);
+    L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${escuro ? "Dark" : "Light"}_Gray_Base/MapServer/tile/{z}/{y}/{x}`,
+      { maxZoom: 16, attribution: "Esri" }).addTo(m);
+    const cor = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+    const sup = cor("--sup");
+    ent.forEach(t => L.circleMarker([t.lat, t.lon], { radius: 6, color: sup, weight: 2, fillColor: cor("--azul"), fillOpacity: 1 })
+      .bindPopup(`<b>${esc(t.localidade)}</b><br>${esc(t.municipio)} · entregue`).addTo(m));
+    const corEtapa = { producao: "#6FA0F0", assinatura: cor("--ouro"), assinado: "#1baf7a", pronto: "#0B7343", cancelado: cor("--critico"), a_iniciar: cor("--s6") };
+    const pts = [];
+    ped.filter(p => p.lat != null).forEach(p => {
+      pts.push([p.lat, p.lon]);
+      L.circleMarker([p.lat, p.lon], { radius: 7, color: sup, weight: 2, fillColor: corEtapa[p.etapa] || cor("--s6"), fillOpacity: p.etapa === "cancelado" ? .55 : 1 })
+        .on("click", () => ficha(p)).bindTooltip(`${esc(p.localidade || p.municipio)} · ${esc(p.status)}`).addTo(m);
+    });
+    const tudo = pts.concat(ent.map(t => [t.lat, t.lon]));
+    if (tudo.length) m.fitBounds(tudo, { padding: [24, 24], maxZoom: 7 });
+  } catch (e) {
+    $("#mapaTerm").innerHTML = `<p class="vazio">Mapa indisponível: ${esc(e.message)}</p>`;
+  }
+}

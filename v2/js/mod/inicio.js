@@ -7,7 +7,7 @@ import { $, kpi, chip, fonte } from "../ui.js";
 const DESCR = {
   "#/inicio": "Resumo do dia, riscos e prazos", "#/mapa": "Malha, condição, sinistros e investimento por município",
   "#/m/rodovias": "Cadastro da malha estadual, quadros e mapas", "#/m/ramais": "Ramais por município, acervo e mapas",
-  "#/m/viario": "Obras urbanas por município", "#/m/aerodromos": "Aeródromos da SEINFRA", "#/m/terminais": "Terminais flutuantes",
+  "#/m/viario": "Obras urbanas por município", "#/m/aerodromos": "Aeródromos da SEINFRA", "#/terminais": "Entregues e pedidos de 2026 (Portos Autorizados)",
   "#/m/icm": "IRI e buracos do levantamento RoadLab", "#/obras": "Contratos, alertas da Lei 14.133, risco e previsão",
   "#/licitacoes": "Editais no PNCP e no CSC, preços × SICRO", "#/briefings": "Uma página por município, rodovia ou contrato",
   "#/sinistros": "Notícias desde 2019, prioridade por rodovia", "#/sinistros-oficiais": "RENAEST e PRF; cobertura do monitor",

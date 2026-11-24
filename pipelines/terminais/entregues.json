@@ -1,0 +1,219 @@
+[
+ {
+  "municipio": "Japurá",
+  "localidade": "Comunidade Acanauí",
+  "lat": -1.8214,
+  "lon": -66.60935,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Alvarães",
+  "localidade": "Distrito de Nogueira",
+  "lat": -3.30389,
+  "lon": -64.77853,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Amaturá",
+  "localidade": "Comunidade Nova Italia",
+  "lat": -3.40794,
+  "lon": -68.22404,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Anamã",
+  "localidade": "Distrito do Arixi",
+  "lat": -3.47613,
+  "lon": -61.50977,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Anori",
+  "localidade": "Comunidade Vila do Cuianã",
+  "lat": -3.77333,
+  "lon": -61.64444,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Atalaia do Norte",
+  "localidade": "Porto de Atalaia do Norte",
+  "lat": -4.36293,
+  "lon": -70.1924,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Autazes",
+  "localidade": "Comunidade Vila do Novo Céu",
+  "lat": -3.38436,
+  "lon": -59.27321,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Barcelos",
+  "localidade": "Distrito de Moura",
+  "lat": -1.45722,
+  "lon": -61.62972,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Barreirinha",
+  "localidade": "Distrito Cametá de Ramos",
+  "lat": -2.83611,
+  "lon": -57.41722,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Benjamin Constant",
+  "localidade": "Comunidade Feijoal",
+  "lat": -4.29514,
+  "lon": -69.53769,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Benjamin Constant",
+  "localidade": "Comunidade Filadélfia",
+  "lat": -4.37867,
+  "lon": -70.03389,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Beruri",
+  "localidade": "Comunidade Santa Maria do Pupunhal",
+  "lat": -3.726,
+  "lon": -61.24186,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Boa Vista do Ramos",
+  "localidade": "Comunidade Menino de Deus",
+  "lat": -3.15968,
+  "lon": -57.54784,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Boa Vista do Ramos",
+  "localidade": "Comunidade de Jesus do Lago Preto do Ramos",
+  "lat": -3.26628,
+  "lon": -57.99386,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Borba",
+  "localidade": "Distrito do Axinim",
+  "lat": -4.05022,
+  "lon": -59.37214,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Careiro",
+  "localidade": "Comunidade Purupuru",
+  "lat": -3.38278,
+  "lon": -59.72278,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Humaitá",
+  "localidade": "Comunidade de Auxiliadora",
+  "lat": -6.24962,
+  "lon": -61.83792,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Juruá",
+  "localidade": "Porto de Juruá",
+  "lat": -3.47058,
+  "lon": -66.06476,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Jutaí",
+  "localidade": "Vila Copatana",
+  "lat": -2.85194,
+  "lon": -66.93,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Manicoré",
+  "localidade": "Comunidade Cachoeirinha",
+  "lat": -5.49083,
+  "lon": -60.825,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Manicoré",
+  "localidade": "Comunidade Democracia",
+  "lat": -6.48333,
+  "lon": -61.4,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Maués",
+  "localidade": "Comunidade Bom Jesus do Canela",
+  "lat": -3.60494,
+  "lon": -57.98478,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Nhamundá",
+  "localidade": "Rua Tiradentes",
+  "lat": -2.19238,
+  "lon": -56.70922,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Parintins",
+  "localidade": "Comunidade do Bom Socorro do Zé Açú",
+  "lat": -2.67402,
+  "lon": -56.62769,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Parintins",
+  "localidade": "Distrito do Mocambo",
+  "lat": -2.45918,
+  "lon": -57.28159,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Santo Antônio do Içá",
+  "localidade": "Vila da Betânia",
+  "lat": -3.07245,
+  "lon": -68.07091,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "São Paulo de Olivença",
+  "localidade": "Comunidade Campo Alegre",
+  "lat": -3.58621,
+  "lon": -69.38079,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "São Sebastião do Uatumã",
+  "localidade": "Distrito de Santana",
+  "lat": -2.57758,
+  "lon": -57.98683,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Tapauá",
+  "localidade": "Comunidade Foz do Tapauá",
+  "lat": -5.76247,
+  "lon": -64.39258,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Tefé",
+  "localidade": "Comunidade Caimbé",
+  "lat": -3.52972,
+  "lon": -64.40981,
+  "status": "Entregue"
+ },
+ {
+  "municipio": "Urucurituba",
+  "localidade": "Comunidade do Tabocal",
+  "lat": -3.122,
+  "lon": -58.15847,
+  "status": "Entregue"
+ }
+]

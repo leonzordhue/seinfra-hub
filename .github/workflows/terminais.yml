@@ -1,0 +1,33 @@
+name: Terminais (diário)
+
+on:
+  schedule:
+    - cron: "15 11 * * 1-5"   # 07h15 Manaus, dias úteis
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dados-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  coletar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -I pipelines/terminais/coletar.py --teste
+      - run: python -I pipelines/terminais/coletar.py
+      - name: Commit
+        run: |
+          git config user.name "dmob-bot"
+          git config user.email "dmob-bot@users.noreply.github.com"
+          git add data/terminais.json
+          git diff --cached --quiet && { echo "sem mudança"; exit 0; }
+          git commit -m "dados: terminais $(date +%d/%m/%Y)"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 10; done
