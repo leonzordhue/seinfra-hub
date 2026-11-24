@@ -2116,7 +2116,7 @@ html.embed[data-theme="dark"] #moduleCanvas :is([style*="color:#1A2B5E" i], [sty
         <span class="module-title" id="moduleTitle"></span>
         <div class="module-actions">
           <button class="module-action-btn secondary" id="moduleRefreshBtn" onclick="refreshModule()" title="Atualizar">&#8635;</button>
-          <button class="module-action-btn" id="moduleExportBtn" onclick="exportCurrentPDF()" title="Exportar PDF">&#128196; PDF</button>
+          <button class="module-action-btn" id="moduleExportBtn" onclick="exportCurrentPDF()" title="Exportar PDF">PDF</button>
         </div>
       </div>
 
@@ -2343,6 +2343,30 @@ const _ICON_PATHS = {
   hidrovias: '<path d="M3 8c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2M3 14c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2M3 20c2 0 3-2 5-2s3 2 5 2 3-2 5-2 3 2 3 2"/>',
   icm: '<path d="M4 15a8 8 0 0 1 16 0"/><path d="M12 15l4.5-3.5"/><circle cx="12" cy="15" r="1.3" fill="currentColor"/><path d="M5.5 15h.01M18.5 15h.01M12 7.2v.01"/>',
   sinistros: '<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
+  // v1 sem emoji (11/2026): ícones de apoio no mesmo traço; usados via ic()
+  busca: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
+  local: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  regua: '<path d="M3 15.5 15.5 3 21 8.5 8.5 21z"/><path d="M7 11.5l2 2M10 8.5l2 2M13 5.5l2 2"/>',
+  camera: '<path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/>',
+  alvo: '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/>',
+  caixa: '<path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/>',
+  calendario: '<rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  etiqueta: '<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.3"/>',
+  predio: '<rect x="5" y="3" width="14" height="18" rx="1"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2M10 21v-3h4v3"/>',
+  cidade: '<path d="M3 21h18M5 21V9h5v12M10 21V4h6v17M16 21v-8h3v8"/><path d="M12.5 8h1M12.5 12h1M12.5 16h1"/>',
+  globo: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  lista: '<path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/>',
+  fechar: '<path d="M6 6l12 12M18 6 6 18"/>',
+  check: '<path d="M4.5 12.5l5 5 10-11"/>',
+  estrela: '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+  cheia: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  pessoas: '<circle cx="9" cy="8" r="3.2"/><path d="M3 20a6 6 0 0 1 12 0M16 5.2a3 3 0 0 1 0 5.6M18 14.5a5.5 5.5 0 0 1 3 5.5"/>',
+  nota: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  pasta: '<path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  download: '<path d="M12 4v11M7 10.5l5 5 5-5M4 20h16"/>',
+  parcial: '<circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12h8.5"/>',
+  folha: '<path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z"/><path d="M5 19l8-8"/>',
+  cone: '<path d="M9.5 4h5L19 19H5z"/><path d="M8 11h8M6.5 15.5h11M3 20h18"/>',
 };
 
 function iconSvg(id, opts) {
@@ -2350,6 +2374,10 @@ function iconSvg(id, opts) {
   const size = (opts && opts.size) || 22;
   const stroke = (opts && opts.stroke) || 1.7;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" style="display:block">${path}</svg>`;
+}
+// Ícone em linha (no lugar dos antigos emojis): acompanha o tamanho e a cor do texto.
+function ic(id, size) {
+  return iconSvg(id, { size: size || "1.1em", stroke: 1.8 }).replace('style="display:block"', 'class="ic" aria-hidden="true" focusable="false" style="display:inline-block;vertical-align:-0.18em;flex:none"');
 }
 function $(sel, root) { return (root || document).querySelector(sel); }
 function $$(sel, root) { return Array.from((root || document).querySelectorAll(sel)); }
@@ -3023,19 +3051,19 @@ function getHomeHTML() {
             </div>
           </div>
           <div class="timeline-list" id="homeObrasList">
-            <div class="info-state"><div class="info-state-icon">&#9203;</div>Carregando obras…</div>
+            <div class="info-state"><div class="info-state-icon">${ic("relogio")}</div>Carregando obras…</div>
           </div>
         </div>
         <div class="home-timeline-card">
           <div class="home-activity-head">
-            <span class="home-activity-icon" style="background:#F5A62322;color:#F5A623">⚠</span>
+            <span class="home-activity-icon" style="background:#F5A62322;color:#F5A623">${ic("sinistros")}</span>
             <div>
               <div class="home-activity-title">Sinistros viários</div>
               <div class="home-activity-sub" id="homeSinSub">registros recentes</div>
             </div>
           </div>
           <div class="timeline-list" id="homeSinList">
-            <div class="info-state"><div class="info-state-icon">&#9203;</div>Carregando sinistros…</div>
+            <div class="info-state"><div class="info-state-icon">${ic("relogio")}</div>Carregando sinistros…</div>
           </div>
         </div>
       </div>
@@ -3188,7 +3216,7 @@ function populateTimeline() {
   if (sinEl) {
     sinEl.innerHTML = sin.length ? sin.map(s => `
       <div class="timeline-item" onclick="loadModule('sinistros')" style="cursor:pointer">
-        <div class="timeline-dot" style="background:#F5A62322;color:#B45309">⚠</div>
+        <div class="timeline-dot" style="background:#F5A62322;color:#B45309">${ic("sinistros")}</div>
         <div class="timeline-content">
           <div class="timeline-title">${htmlEscape(s.local || s.trecho || s.descricao || s.titulo || "Sinistro registrado")}</div>
           <div class="timeline-meta">${htmlEscape((s.rodovia || s.br || "") + (s.data || s.mes ? " · " + (s.data || s.mes) : ""))}</div>
@@ -3255,7 +3283,7 @@ async function initHomeMap() {
           lyr.bindPopup(
             `<div style="font-family:Outfit,sans-serif;min-width:180px">
                <div style="font-weight:800;color:#0E8A7D;font-size:.9rem;margin-bottom:.25rem">${htmlEscape(nome)}</div>
-               ${obrasCount ? `<div style="font-size:.72rem;color:#4a5568">🏗 <strong>${obrasCount}</strong> obra${obrasCount!==1?'s':''} no município</div>` : ""}
+               ${obrasCount ? `<div style="font-size:.72rem;color:#4a5568">${ic("obras")} <strong>${obrasCount}</strong> obra${obrasCount!==1?'s':''} no município</div>` : ""}
                ${p.CD_MUN ? `<div style="font-size:.68rem;color:#8896a8;margin-top:.2rem">IBGE ${p.CD_MUN}</div>` : ""}
              </div>`
           );
@@ -3303,12 +3331,12 @@ function searchHub(q) {
   const results = [];
   Object.values(HUB.modules).forEach(m => {
     if (m.label.toLowerCase().includes(query) || m.id.includes(query))
-      results.push({ icon: m.icon, text: m.label, sub: "Módulo", action: () => loadModule(m.id) });
+      results.push({ icon: ic(m.id), text: m.label, sub: "Módulo", action: () => loadModule(m.id) });
   });
   (HUB.state.rodovias || []).slice(0, 200).forEach(r => {
     const nome = (r.rodovia || r.nome || r.codigo || "").toString();
     if (nome.toLowerCase().includes(query))
-      results.push({ icon: "\u{1F6E3}", text: nome, sub: "Rodovia", action: () => loadModule("rodovias") });
+      results.push({ icon: ic("rodovias"), text: nome, sub: "Rodovia", action: () => loadModule("rodovias") });
   });
   (HUB.state.contratos || []).slice(0, 300).forEach(c => {
     const m = (c.municipio || "").toString();
@@ -3316,7 +3344,7 @@ function searchHub(q) {
     const ctn = (c.n_do_ct_cv || c.no_do_ct_cv || c.n_ct_cv || c.contrato || "").toString();
     if (m.toLowerCase().includes(query) || obj.toLowerCase().includes(query) || ctn.toLowerCase().includes(query)) {
       const eo = ctn && eoDe(ctn);
-      results.push({ icon: "\u{1F3D7}", text: obj || m, sub: (ctn ? ctn + " · " : "") + (m || "Contrato"),
+      results.push({ icon: ic("obras"), text: obj || m, sub: (ctn ? ctn + " · " : "") + (m || "Contrato"),
         action: () => eo ? eoAbrir(eo.ct) : loadModule("briefings") });
     }
   });
@@ -3455,7 +3483,7 @@ function getRodoviasHTML() {
         <div style="margin-bottom:0.7rem">
           <input type="text" id="rodSearch" class="filter-select"
                  style="width:100%;padding:0.75rem 1rem;border-radius:12px;font-size:0.92rem"
-                 placeholder="🔍 Filtrar rodovias por código (AM-010, AM-070, AM-151…)"
+                 placeholder="Filtrar rodovias por código (AM-010, AM-070, AM-151…)"
                  oninput="filterRodCarrossel(this.value)" autocomplete="off"/>
         </div>
         <div class="rod-carrossel-wrap" style="margin-bottom:1rem">
@@ -3473,7 +3501,7 @@ function getRodoviasHTML() {
       <div class="tab-content" id="rod-ri">
         <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem;margin-bottom:0.6rem">
           <input type="text" id="invQ" class="filter-select" style="flex:2;min-width:220px;padding:0.65rem 0.8rem;border-radius:10px"
-                 placeholder="🔍 Buscar por objeto, nº de contrato (CT-), empresa ou município…" oninput="renderInvestList()"/>
+                 placeholder="Buscar por objeto, nº de contrato (CT-), empresa ou município…" oninput="renderInvestList()"/>
           <select id="invRodovia" class="filter-select" onchange="renderInvestList()" style="border-radius:10px">
             <option value="">Todas as rodovias</option>
           </select>
@@ -3492,7 +3520,7 @@ function getRodoviasHTML() {
             style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.55em 1.1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15);transition:background .15s,transform .12s"
             onmouseover="this.style.background='var(--azul-hover,#003d9e)';this.style.transform='translateY(-1px)'"
             onmouseout="this.style.background='var(--azul)';this.style.transform='translateY(0)'"
-            title="Gerar PDF com os investimentos filtrados">📊 Gerar PDF de investimentos</button>
+            title="Gerar PDF com os investimentos filtrados">${ic("bi")} Gerar PDF de investimentos</button>
         </div>
         <div class="kpi-grid" id="invKpis" style="margin-bottom:0.8rem"></div>
         <div id="invList"></div>
@@ -3853,13 +3881,13 @@ function _renderObraCard(o) {
       <span style="font-size:0.9rem;font-weight:800;color:var(--azul);white-space:nowrap">${_fmtBRLShort(o.valor)}</span>
     </div>
     <div title="${htmlEscape(obj)}" style="font-size:0.85rem;font-weight:500;line-height:1.45;margin-bottom:0.5rem;color:var(--azul-dk);word-wrap:break-word;overflow-wrap:break-word;hyphens:auto">${htmlEscape(obj)}</div>
-    ${o._parcial ? `<div style="font-size:0.7rem;color:#8B4513;background:#FEF3DC;border:1px solid #F5A62366;border-radius:6px;padding:0.28rem 0.55rem;margin-bottom:0.5rem">◔ Parcela do contrato atribuída a este filtro — valor total do CT: <strong>${_fmtBRLShort(o._valorTotalCT)}</strong></div>` : ""}
-    ${o._naoIsolado ? `<div style="font-size:0.7rem;color:#8B4513;background:#FEF3DC;border:1px solid #F5A62366;border-radius:6px;padding:0.28rem 0.55rem;margin-bottom:0.5rem">⚠ Contrato cobre múltiplas frentes — parcela deste ramal não pôde ser isolada; valores do CT completo.</div>` : ""}
+    ${o._parcial ? `<div style="font-size:0.7rem;color:#8B4513;background:#FEF3DC;border:1px solid #F5A62366;border-radius:6px;padding:0.28rem 0.55rem;margin-bottom:0.5rem">${ic("parcial")} Parcela do contrato atribuída a este filtro — valor total do CT: <strong>${_fmtBRLShort(o._valorTotalCT)}</strong></div>` : ""}
+    ${o._naoIsolado ? `<div style="font-size:0.7rem;color:#8B4513;background:#FEF3DC;border:1px solid #F5A62366;border-radius:6px;padding:0.28rem 0.55rem;margin-bottom:0.5rem">${ic("sinistros")} Contrato cobre múltiplas frentes — parcela deste ramal não pôde ser isolada; valores do CT completo.</div>` : ""}
     <div style="font-size:0.72rem;color:var(--cinza-med);display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;justify-content:space-between">
       <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;flex:1;min-width:0">
         <span style="font-weight:600">${htmlEscape(o.municipio||"—")}</span><span>·</span>
         <span style="word-break:break-word">${htmlEscape(o.empresa||"—")}</span>
-        ${o._extTrabalhada ? `<span>·</span><span style="font-weight:600">🛣 ${fmtNum(o._extTrabalhada, 2)} km</span>` : ""}
+        ${o._extTrabalhada ? `<span>·</span><span style="font-weight:600">${ic("rodovias")} ${fmtNum(o._extTrabalhada, 2)} km</span>` : ""}
         ${o.ano ? `<span>·</span><span>${o.ano}</span>` : ""}
         ${statusChip(o.situacao_eobras||o.situacao_real||"")}
       </div>
@@ -3867,7 +3895,7 @@ function _renderObraCard(o) {
         style="font-family:inherit;font-size:0.68rem;font-weight:700;color:var(--azul);background:#fff;border:1.5px solid var(--azul-borda);padding:0.32em 0.75em;border-radius:6px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;transition:background .15s,color .15s;flex-shrink:0"
         onmouseover="this.style.background='var(--azul)';this.style.color='#fff'"
         onmouseout="this.style.background='#fff';this.style.color='var(--azul)'"
-        title="Gerar briefing PDF desta obra">📄 Briefing</button>
+        title="Gerar briefing PDF desta obra">${ic("briefings")} Briefing</button>
     </div>
     ${eoFaixa(o.contrato)}
   </div>`;
@@ -4104,7 +4132,7 @@ window.selectRodovia = async function(nome) {
         style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.5em 1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15);transition:background .15s,transform .12s"
         onmouseover="this.style.background='var(--azul-hover,#003d9e)';this.style.transform='translateY(-1px)'"
         onmouseout="this.style.background='var(--azul)';this.style.transform='translateY(0)'"
-        title="Gerar briefing PDF desta rodovia">📄 Gerar briefing PDF da ${htmlEscape(nome)}</button>
+        title="Gerar briefing PDF desta rodovia">${ic("briefings")} Gerar briefing PDF da ${htmlEscape(nome)}</button>
     </div>
     <div class="kpi-grid" style="margin-bottom:0.8rem">
       <div class="kpi-card"><div class="kpi-card-label">Trechos</div><div class="kpi-card-value">${r.trechos.length}</div><div class="kpi-card-foot">cadastrados</div></div>
@@ -5065,7 +5093,7 @@ function getRamaisHTML() {
         </div>
         <div style="position:relative;margin-bottom:0.7rem" id="ramSearchWrap">
           <input type="text" id="ramSearch" class="filter-select" style="width:100%;padding:0.75rem 1rem;border-radius:12px;font-size:0.92rem"
-                 placeholder="🔍 Pesquisar ramal por código, número ou descrição…"
+                 placeholder="Pesquisar ramal por código, número ou descrição…"
                  oninput="filterRamList(this.value)"
                  onfocus="document.getElementById('ramSearchWrap').classList.add('open')"
                  onblur="setTimeout(()=>document.getElementById('ramSearchWrap').classList.remove('open'),200)"
@@ -5089,7 +5117,7 @@ function getRamaisHTML() {
       <div class="tab-content" id="ram-rmi">
         <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem;margin-bottom:0.6rem">
           <input type="text" id="invRamQ" class="filter-select" style="flex:2;min-width:220px;padding:0.65rem 0.8rem;border-radius:10px"
-                 placeholder="🔍 Buscar por objeto, nº contrato, empresa ou município…" oninput="renderInvestRamList()"/>
+                 placeholder="Buscar por objeto, nº contrato, empresa ou município…" oninput="renderInvestRamList()"/>
           <select id="invRamMun" class="filter-select" onchange="renderInvestRamList()" style="border-radius:10px">
             <option value="">Todos os municípios</option>
           </select>
@@ -5164,10 +5192,10 @@ function _acervoSecaoHtml(pastas, kmls, shps, titulo) {
   const btn = bg => `font-size:0.75rem;font-weight:700;color:#fff;background:${bg};padding:0.45em 0.95em;border-radius:8px;text-decoration:none;display:inline-block`;
   // Fotos: link para a pasta do Google Drive (quando ja subida); senao mostra a contagem.
   const fotoBtns = comDrive.length
-    ? comDrive.map(p => `<a href="${htmlEscape(p.drive_url)}" target="_blank" rel="noopener" style="${btn('var(--verde,#2D8540)')}">📷 Fotos${pastas.length > 1 ? " · " + htmlEscape((p.ramal || p.chave.split(" / ").pop() || "").slice(0, 22)) : ""} (${p.n_fotos})</a>`).join("")
-    : (totFotos ? `<span style="font-size:0.72rem;color:var(--cinza-aux);border:1px dashed var(--borda);padding:0.4em 0.8em;border-radius:8px">📷 ${totFotos} foto${totFotos !== 1 ? 's' : ''} (envio ao Drive pendente)</span>` : "");
-  const kmlBtns = kmls.map(k => `<a href="${ACERVO_BASE}${htmlEscape(k.url)}" download style="${btn('var(--azul)')}" title="${htmlEscape(k.arquivo)}">⬇ Traçado ${htmlEscape((k.url.split(".").pop() || "kmz").toUpperCase())}${kmls.length > 1 ? " · " + htmlEscape((k.ramal || k.arquivo).slice(0, 22)) : ""}</a>`).join("");
-  const shpBtns = shps.map(s => `<a href="${ACERVO_BASE}${htmlEscape(s.url)}" download style="${btn('#5B6472')}" title="Shapefile da camada (.shp/.shx/.dbf/.prj)">⬇ Shapefile</a>`).join("");
+    ? comDrive.map(p => `<a href="${htmlEscape(p.drive_url)}" target="_blank" rel="noopener" style="${btn('var(--verde,#2D8540)')}">${ic("camera")} Fotos${pastas.length > 1 ? " · " + htmlEscape((p.ramal || p.chave.split(" / ").pop() || "").slice(0, 22)) : ""} (${p.n_fotos})</a>`).join("")
+    : (totFotos ? `<span style="font-size:0.72rem;color:var(--cinza-aux);border:1px dashed var(--borda);padding:0.4em 0.8em;border-radius:8px">${ic("camera")} ${totFotos} foto${totFotos !== 1 ? 's' : ''} (envio ao Drive pendente)</span>` : "");
+  const kmlBtns = kmls.map(k => `<a href="${ACERVO_BASE}${htmlEscape(k.url)}" download style="${btn('var(--azul)')}" title="${htmlEscape(k.arquivo)}">${ic("download")} Traçado ${htmlEscape((k.url.split(".").pop() || "kmz").toUpperCase())}${kmls.length > 1 ? " · " + htmlEscape((k.ramal || k.arquivo).slice(0, 22)) : ""}</a>`).join("");
+  const shpBtns = shps.map(s => `<a href="${ACERVO_BASE}${htmlEscape(s.url)}" download style="${btn('#5B6472')}" title="Shapefile da camada (.shp/.shx/.dbf/.prj)">${ic("download")} Shapefile</a>`).join("");
   return `
     <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.85rem 1rem;margin-bottom:1rem">
       <div style="font-size:0.62rem;color:var(--azul);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.55rem">${htmlEscape(titulo)}</div>
@@ -5406,7 +5434,7 @@ function _buildRamGeral() {
   document.getElementById("ramInsightBox").innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem">
       <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.95rem 1.1rem">
-        <div style="font-size:0.78rem;color:var(--azul);font-weight:700;margin-bottom:0.5rem">🎯 Maior gap cobertura × obras</div>
+        <div style="font-size:0.78rem;color:var(--azul);font-weight:700;margin-bottom:0.5rem">${ic("alvo")} Maior gap cobertura × obras</div>
         <p style="font-size:0.72rem;color:var(--cinza-med);margin-bottom:0.6rem">Municípios com muitos ramais e poucas obras — alta densidade de demanda potencial.</p>
         <div style="display:flex;flex-direction:column;gap:0.4rem">
           ${gapArr.map(x => `
@@ -5417,7 +5445,7 @@ function _buildRamGeral() {
         </div>
       </div>
       <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.95rem 1.1rem">
-        <div style="font-size:0.78rem;color:#C0392B;font-weight:700;margin-bottom:0.5rem">⚠ Oportunidades sem investimento</div>
+        <div style="font-size:0.78rem;color:#C0392B;font-weight:700;margin-bottom:0.5rem">${ic("sinistros")} Oportunidades sem investimento</div>
         <p style="font-size:0.72rem;color:var(--cinza-med);margin-bottom:0.6rem">Municípios com 10+ ramais e ZERO obras contratadas — descobertos.</p>
         ${oportunidade.length ? `<div style="display:flex;flex-direction:column;gap:0.4rem">
           ${oportunidade.map(x => `
@@ -5478,7 +5506,7 @@ function _renderRamList(arr) {
              style="padding:0.6rem 0.9rem;cursor:pointer;border-radius:10px;margin:2px 0;font-size:0.85rem">
           <div style="font-weight:600;color:var(--azul)">${htmlEscape(r.codigo)} <span style="color:var(--cinza-aux);font-weight:400">#${htmlEscape(r.numero)}</span> — ${htmlEscape((r.descricao || "").slice(0,55))}</div>
           <div style="font-size:0.71rem;color:var(--cinza-aux);margin-top:0.18rem;display:flex;gap:0.55rem;flex-wrap:wrap">
-            <span>📍 ${htmlEscape(r.municipio || "—")}</span>
+            <span>${ic("local")} ${htmlEscape(r.municipio || "—")}</span>
             <span>·</span><span>${fmtNum(r.extensao, 2)} km</span>
             ${r.situacao ? `<span>·</span><span>${htmlEscape(r.situacao)}</span>` : ""}
           </div>
@@ -5540,7 +5568,7 @@ window.selectRamal = async function(key) {
   const totInv = obras.reduce((s, o) => s + o.valor, 0);
   // Chip do contrato registrado (quando concluído tem CT executor)
   const chipContrato = ctRamalRegistrado
-    ? `<span style="background:var(--verde,#2D8540);color:#fff;padding:0.18em 0.6em;border-radius:99px;font-size:0.7rem;font-weight:700;letter-spacing:0.04em">📄 ${htmlEscape(r.contrato)}</span>`
+    ? `<span style="background:var(--verde,#2D8540);color:#fff;padding:0.18em 0.6em;border-radius:99px;font-size:0.7rem;font-weight:700;letter-spacing:0.04em">${ic("briefings")} ${htmlEscape(r.contrato)}</span>`
     : "";
 
   document.getElementById("ramQuadroOut").innerHTML = `
@@ -5561,12 +5589,12 @@ window.selectRamal = async function(key) {
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:1rem">
       <div style="background:var(--cinza-bg);border:1px solid var(--borda);padding:0.75rem 1rem;border-radius:10px">
-        <div style="font-size:0.62rem;color:var(--verde);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.25rem">▶ Início</div>
+        <div style="font-size:0.62rem;color:var(--verde);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.25rem">Início</div>
         <div style="font-size:0.85rem;font-weight:500">${htmlEscape(r.local_inicio || "—")}</div>
         ${r.latitude_ini ? `<div style="font-size:0.7rem;color:var(--cinza-aux);margin-top:0.25rem">lat ${r.latitude_ini.toFixed(4)}, lon ${r.longitude_ini.toFixed(4)}</div>` : ""}
       </div>
       <div style="background:var(--cinza-bg);border:1px solid var(--borda);padding:0.75rem 1rem;border-radius:10px">
-        <div style="font-size:0.62rem;color:#C0392B;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.25rem">■ Fim</div>
+        <div style="font-size:0.62rem;color:#C0392B;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.25rem">Fim</div>
         <div style="font-size:0.85rem;font-weight:500">${htmlEscape(r.local_termino || "—")}</div>
         ${r.latitude_fim ? `<div style="font-size:0.7rem;color:var(--cinza-aux);margin-top:0.25rem">lat ${r.latitude_fim.toFixed(4)}, lon ${r.longitude_fim.toFixed(4)}</div>` : ""}
       </div>
@@ -5656,13 +5684,13 @@ async function _renderRamQuadroMap(r) {
   if (_pontoNoTrecho(r.latitude_ini, r.longitude_ini)) {
     L.circleMarker([r.latitude_ini, r.longitude_ini], {
       radius: 9, color: "#fff", fillColor: "#2D8540", fillOpacity: 1, weight: 2.5
-    }).bindPopup(`<div class="pop-title">▶ Início</div><div class="pop-row">${htmlEscape(r.local_inicio||"—")}</div>`).addTo(map);
+    }).bindPopup(`<div class="pop-title">Início</div><div class="pop-row">${htmlEscape(r.local_inicio||"—")}</div>`).addTo(map);
     markersBounds = L.latLngBounds([[r.latitude_ini, r.longitude_ini]]);
   }
   if (_pontoNoTrecho(r.latitude_fim, r.longitude_fim)) {
     L.circleMarker([r.latitude_fim, r.longitude_fim], {
       radius: 9, color: "#fff", fillColor: "#C0392B", fillOpacity: 1, weight: 2.5
-    }).bindPopup(`<div class="pop-title">■ Fim</div><div class="pop-row">${htmlEscape(r.local_termino||"—")}</div>`).addTo(map);
+    }).bindPopup(`<div class="pop-title">Fim</div><div class="pop-row">${htmlEscape(r.local_termino||"—")}</div>`).addTo(map);
     if (markersBounds) markersBounds.extend([r.latitude_fim, r.longitude_fim]);
     else markersBounds = L.latLngBounds([[r.latitude_fim, r.longitude_fim]]);
   }
@@ -5846,7 +5874,7 @@ function getViarioHTML() {
       <div class="tab-content" id="via-vai">
         <div class="filter-row" style="flex-wrap:wrap;gap:0.5rem;margin-bottom:0.6rem">
           <input type="text" id="invViaQ" class="filter-select" style="flex:2;min-width:220px;padding:0.65rem 0.8rem;border-radius:10px"
-                 placeholder="🔍 Buscar por objeto, nº contrato, empresa ou município…" oninput="renderInvestViaList()"/>
+                 placeholder="Buscar por objeto, nº contrato, empresa ou município…" oninput="renderInvestViaList()"/>
           <select id="invViaMun" class="filter-select" onchange="renderInvestViaList()" style="border-radius:10px">
             <option value="">Todos os municípios</option>
           </select>
@@ -5865,7 +5893,7 @@ function getViarioHTML() {
             style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.55em 1.1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15);transition:background .15s,transform .12s"
             onmouseover="this.style.background='var(--azul-hover,#003d9e)';this.style.transform='translateY(-1px)'"
             onmouseout="this.style.background='var(--azul)';this.style.transform='translateY(0)'"
-            title="Gerar PDF com os investimentos viários filtrados">📊 Gerar PDF de investimentos</button>
+            title="Gerar PDF com os investimentos viários filtrados">${ic("bi")} Gerar PDF de investimentos</button>
         </div>
         <div class="kpi-grid" id="invViaKpis" style="margin-bottom:0.8rem"></div>
         <div id="invViaList"></div>
@@ -6056,7 +6084,7 @@ function _buildViarioGeral() {
   document.getElementById("viaInsightBox").innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem">
       <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.95rem 1.1rem">
-        <div style="font-size:0.78rem;color:#B45309;font-weight:700;margin-bottom:0.5rem">🎯 Concentração de contratos</div>
+        <div style="font-size:0.78rem;color:#B45309;font-weight:700;margin-bottom:0.5rem">${ic("alvo")} Concentração de contratos</div>
         <p style="font-size:0.72rem;color:var(--cinza-med);margin-bottom:0.6rem">Municípios com 3+ contratos — alta priorização SEINFRA. Avaliar saturação x necessidade.</p>
         <div style="display:flex;flex-direction:column;gap:0.4rem">
           ${concentrados.map(x => `
@@ -6067,7 +6095,7 @@ function _buildViarioGeral() {
         </div>
       </div>
       <div style="background:var(--cinza-bg);border:1px solid var(--borda);border-radius:10px;padding:0.95rem 1.1rem">
-        <div style="font-size:0.78rem;color:#C0392B;font-weight:700;margin-bottom:0.5rem">⚠ Municípios com baixo investimento</div>
+        <div style="font-size:0.78rem;color:#C0392B;font-weight:700;margin-bottom:0.5rem">${ic("sinistros")} Municípios com baixo investimento</div>
         <p style="font-size:0.72rem;color:var(--cinza-med);margin-bottom:0.6rem">Atendidos com menos de R$ 5 mi — candidatos a reforço de investimento.</p>
         ${baixoInv.length ? `<div style="display:flex;flex-direction:column;gap:0.4rem">
           ${baixoInv.map(x => `
@@ -6147,7 +6175,7 @@ window.filterViaMun = function() {
 
   document.getElementById("viaQuadroOut").innerHTML = `
     <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.8rem;background:${ehCapital?"#B45309":"var(--azul-claro)"};color:${ehCapital?"#fff":"var(--azul)"};padding:0.7rem 1rem;border-radius:10px">
-      <span style="font-size:1.3rem">${ehCapital?"🏙️":"🌆"}</span>
+      <span style="display:inline-flex">${ic("cidade", 22)}</span>
       <div style="flex:1">
         <div style="font-size:0.85rem;font-weight:700;letter-spacing:0.03em">${htmlEscape(m)}</div>
         <div style="font-size:0.7rem;opacity:0.85;margin-top:0.1rem">${ehCapital ? "Capital" : "Interior do Estado"}</div>
@@ -6165,7 +6193,7 @@ window.filterViaMun = function() {
       <button onclick="gerarBriefingMunicipioViario('${m.replace(/'/g,"\\'")}')"
         style="font-family:inherit;font-size:0.75rem;font-weight:700;color:#fff;background:var(--azul);border:none;padding:0.5em 1em;border-radius:8px;cursor:pointer;letter-spacing:0.04em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,45,114,.15)"
         onmouseover="this.style.background='var(--azul-hover,#003d9e)'" onmouseout="this.style.background='var(--azul)'"
-        title="Briefing PDF do município">📄 Briefing PDF — ${htmlEscape(m)}</button>
+        title="Briefing PDF do município">${ic("briefings")} Briefing PDF — ${htmlEscape(m)}</button>
     </div>
 
     <div class="panel-title" style="margin:0.4rem 0 0.4rem;display:flex;align-items:center;justify-content:space-between;gap:0.6rem">
@@ -6181,7 +6209,7 @@ window.filterViaMun = function() {
       ${ruas.length ? `
         <div style="position:relative;margin-bottom:0.6rem">
           <input type="text" id="viaRuaSearch" class="filter-select" style="width:100%;padding:0.65rem 0.9rem;border-radius:10px"
-                 placeholder="🔍 Pesquisar rua (nome ou tipo)..." oninput="filterViaRuas()"/>
+                 placeholder="Pesquisar rua (nome ou tipo)..." oninput="filterViaRuas()"/>
         </div>
         <div class="table-wrap" style="max-height:360px;overflow-y:auto">
           <table class="data-table" id="viaRuasTable">
@@ -6193,7 +6221,7 @@ window.filterViaMun = function() {
                 <td style="text-align:right">${fmtNum(r.extensao_km, 2)}</td>
               </tr>`).join("")}</tbody>
           </table>
-        </div>` : `<div class="info-state" id="viaSemRuasMsg" style="padding:1rem 0">⏳ Buscando ruas no traçado geográfico...</div>`
+        </div>` : `<div class="info-state" id="viaSemRuasMsg" style="padding:1rem 0">${ic("relogio")} Buscando ruas no traçado geográfico...</div>`
       }
     </div>
 
@@ -6422,12 +6450,12 @@ async function _renderViaQuadroMap(mun) {
       const sorted = [...ruas].sort((a, b) => (b.properties?.extensao_km || 0) - (a.properties?.extensao_km || 0));
       container.innerHTML = `
         <div style="font-size:0.7rem;color:#7A4F00;background:#FEF3C7;border:1px solid #F5C878;padding:0.45rem 0.7rem;border-radius:8px;margin-bottom:0.6rem;display:flex;align-items:center;gap:0.5rem">
-          <span style="font-size:0.95rem">📍</span>
+          <span style="font-size:0.95rem">${ic("local")}</span>
           <span><strong>${ruas.length} ruas</strong> detectadas via traçado geográfico — a planilha viário não cataloga este município, mas o atlas tem o desenho das vias.</span>
         </div>
         <div style="position:relative;margin-bottom:0.6rem">
           <input type="text" id="viaRuaSearch" class="filter-select" style="width:100%;padding:0.65rem 0.9rem;border-radius:10px"
-                 placeholder="🔍 Pesquisar rua..." oninput="filterViaRuas()"/>
+                 placeholder="Pesquisar rua..." oninput="filterViaRuas()"/>
         </div>
         <div class="table-wrap" style="max-height:360px;overflow-y:auto">
           <table class="data-table" id="viaRuasTable">
@@ -6738,13 +6766,13 @@ function initAerodromos() {
     const cor = aeCorIcon(a);
     const icon = L.divIcon({
       className: "",
-      html: `<div style="width:32px;height:32px;border-radius:50%;background:${cor};border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;cursor:pointer">✈</div>`,
+      html: `<div style="width:32px;height:32px;border-radius:50%;background:${cor};border:3px solid #fff;box-shadow:0 3px 12px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;font-size:15px;color:#fff;cursor:pointer">${ic("aerodromos", 16)}</div>`,
       iconSize: [32,32], iconAnchor: [16,16], popupAnchor: [0,-16]
     });
     const popupHtml = `
       <div style="font-family:Outfit,sans-serif;min-width:180px">
         <div style="font-weight:800;color:${cor};font-size:.9rem;margin-bottom:.25rem">${htmlEscape(a.nome)}</div>
-        <div style="font-size:.72rem;color:#4a5568;margin-bottom:.3rem">📍 ${htmlEscape(a.municipio)}</div>
+        <div style="font-size:.72rem;color:#4a5568;margin-bottom:.3rem">${ic("local")} ${htmlEscape(a.municipio)}</div>
         <div style="font-size:.72rem;font-family:monospace;color:#1A2540">
           Pista ${htmlEscape(a.pista_desig || '—')} · ${htmlEscape(a.comprimento || '—')}
         </div>
@@ -6860,15 +6888,15 @@ function abrirModalAero(i) {
   div.innerHTML = `
     <div class="modal-rich" role="dialog" aria-label="${htmlEscape(a.nome)}">
       <div class="mr-hdr ${isEstado ? 'gov-estado' : 'gov-publico'}">
-        <button class="mr-close" aria-label="Fechar">✕</button>
-        <div class="mr-hdr-icon">✈</div>
+        <button class="mr-close" aria-label="Fechar">${ic("fechar", 16)}</button>
+        <div class="mr-hdr-icon">${ic("aerodromos", 30)}</div>
         ${(a.icao || a.ciad) ? `<div class="mr-icao-row">
           ${a.icao ? `<span>${htmlEscape(a.icao)}</span>` : ''}
           ${a.icao && a.ciad ? `<span class="mr-icao-sep">|</span>` : ''}
           ${a.ciad ? `<span>${htmlEscape(a.ciad)}</span>` : ''}
         </div>` : ''}
         <div class="mr-title">${htmlEscape(a.nome)}</div>
-        <div class="mr-mun">📍 ${htmlEscape(a.municipio)}</div>
+        <div class="mr-mun">${ic("local")} ${htmlEscape(a.municipio)}</div>
         <div class="mr-badges">
           <span class="mr-badge">${isEstado ? 'SEINFRA' : 'PÚBLICO FEDERAL'}</span>
           ${isIFR ? `<span class="mr-badge ifr">IFR</span>` : `<span class="mr-badge">VFR</span>`}
@@ -6928,14 +6956,14 @@ function abrirModalAero(i) {
         <div class="mr-section">
           <div class="mr-section-title">Ato Normativo</div>
           <a class="mr-portaria" href="${htmlEscape(a.portaria_link || '#')}" target="_blank" rel="noopener">
-            📄 Portaria ${htmlEscape(a.portaria)} — Consultar na ANAC
+            ${ic("briefings")} Portaria ${htmlEscape(a.portaria)} — Consultar na ANAC
           </a>
         </div>` : ''}
 
         ${a.observacoes ? `<!-- Seção 5: Observações / medidas administrativas -->
         <div class="mr-section">
           <div class="mr-section-title">Observações / Medidas Administrativas</div>
-          <div class="mr-obs">⚠️ <strong>Medida administrativa:</strong> ${htmlEscape(a.observacoes)}</div>
+          <div class="mr-obs">${ic("sinistros")} <strong>Medida administrativa:</strong> ${htmlEscape(a.observacoes)}</div>
         </div>` : ''}
 
         <!-- Seção 6: Context box -->
@@ -7254,7 +7282,7 @@ function getTerminaisHTML() {
     <!-- MAPA -->
     <div class="tmx-mapsec">
       <div class="tmx-maphdr">
-        <div class="tmx-maptitle">⚓ Localização dos Terminais Flutuantes — Estado do Amazonas</div>
+        <div class="tmx-maptitle">${ic("terminais")} Localização dos Terminais Flutuantes — Estado do Amazonas</div>
       </div>
       <div id="tmMap"></div>
     </div>
@@ -7262,7 +7290,7 @@ function getTerminaisHTML() {
     <div class="tm-filters">
       <span class="tm-filter-label">Terminais:</span>
       <div class="tm-search">
-        <span class="tm-search-icon">🔍</span>
+        <span class="tm-search-icon">${ic("busca")}</span>
         <input type="text" id="tmBusca" placeholder="Buscar município ou destino..." oninput="filterTerminais()"/>
       </div>
       <div class="tm-count"><b id="tmCount">${TM_DATA.length}</b> terminais encontrados</div>
@@ -7282,13 +7310,13 @@ function initTerminais() {
   TM_DATA.forEach((t, i) => {
     const icon = L.divIcon({
       className: "",
-      html: `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#023e8a);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,119,182,.5);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer">⚓</div>`,
+      html: `<div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#023e8a);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,119,182,.5);display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer">${ic("terminais", 16)}</div>`,
       iconSize: [32,32], iconAnchor: [16,16], popupAnchor: [0,-16]
     });
     const popupHtml = `
       <div style="font-family:'Lexend Deca',sans-serif;min-width:190px">
         <div style="font-weight:800;font-size:.88rem;color:#1A2B5E;margin-bottom:.25rem">${htmlEscape(t.destino)}</div>
-        <div style="font-size:.73rem;color:#666;margin-bottom:.5rem">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+        <div style="font-size:.73rem;color:#666;margin-bottom:.5rem">${ic("local")} ${htmlEscape(_capWords(t.localidade))}</div>
         <div style="font-size:.7rem;font-family:monospace;color:#8896A8">${Math.abs(t.lat).toFixed(4)}°S · ${Math.abs(t.lon).toFixed(4)}°W</div>
       </div>`;
     L.marker([t.lat, t.lon], { icon })
@@ -7312,10 +7340,10 @@ function abrirModalTerminal(i) {
   div.innerHTML = `
     <div class="tmx-modal" role="dialog" aria-label="${htmlEscape(t.destino)}">
       <div class="tmx-mhead">
-        <button class="tmx-mclose" aria-label="Fechar">✕</button>
-        <div class="tmx-micon">⚓</div>
+        <button class="tmx-mclose" aria-label="Fechar">${ic("fechar", 16)}</button>
+        <div class="tmx-micon">${ic("terminais", 34)}</div>
         <div class="tmx-mtitle">${htmlEscape(t.destino)}</div>
-        <div class="tmx-mmun">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+        <div class="tmx-mmun">${ic("local")} ${htmlEscape(_capWords(t.localidade))}</div>
       </div>
 
       <div class="tmx-mbody">
@@ -7335,7 +7363,7 @@ function abrirModalTerminal(i) {
         </div>
 
         <div class="tmx-minfo">
-          ℹ️ <strong>Sobre os Terminais Flutuantes:</strong> Os terminais hidroviários flutuantes da SEINFRA/AM são estruturas de embarque e desembarque instaladas às margens dos rios do Amazonas, garantindo conectividade entre municípios-sede e suas comunidades e distritos no interior do Estado.
+          <strong>Sobre os Terminais Flutuantes:</strong> Os terminais hidroviários flutuantes da SEINFRA/AM são estruturas de embarque e desembarque instaladas às margens dos rios do Amazonas, garantindo conectividade entre municípios-sede e suas comunidades e distritos no interior do Estado.
         </div>
       </div>
     </div>`;
@@ -7364,7 +7392,7 @@ function abrirModalTerminal(i) {
         L.marker([t.lat, t.lon], {
           icon: L.divIcon({
             className: "",
-            html: `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#023e8a);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,119,182,.5);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff">⚓</div>`,
+            html: `<div style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#0077b6,#023e8a);border:3px solid #fff;box-shadow:0 3px 10px rgba(0,119,182,.5);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff">${ic("terminais")}</div>`,
             iconSize: [30,30], iconAnchor: [15,15]
           })
         }).addTo(_tmMinimap);
@@ -7391,10 +7419,10 @@ function renderTerminaisList(list) {
     const globalIdx = TM_DATA.indexOf(t);
     return `<div class="tm-card anim-up" style="animation-delay:${(idx*0.02).toFixed(2)}s" onclick="_tmRowClick(${globalIdx})">
       <div class="tm-num">${String(idx+1).padStart(2,"0")}</div>
-      <div class="tm-ic">⚓</div>
+      <div class="tm-ic">${ic("terminais", 22)}</div>
       <div class="tm-body">
         <div class="tm-dest">${htmlEscape(t.destino)}</div>
-        <div class="tm-mun">📍 ${htmlEscape(_capWords(t.localidade))}</div>
+        <div class="tm-mun">${ic("local")} ${htmlEscape(_capWords(t.localidade))}</div>
         <div><span class="tm-badge">Terminal Flutuante</span></div>
       </div>
       <div class="tm-coords">${Math.abs(t.lat).toFixed(4)}°S<br>${Math.abs(t.lon).toFixed(4)}°W</div>
@@ -7514,7 +7542,7 @@ function _atlasMunPopup(p) {
 
       <!-- Bloco RAMAIS destacado (estilo placa SEDECTI) — total + extensão sempre visíveis -->
       <div style="margin-top:.55rem;padding:.55rem .7rem;background:linear-gradient(135deg,#E6F4ED,#F0F9F2);border:1px solid #bfe1cb;border-left:4px solid #2D8540;border-radius:8px">
-        <div style="font-size:.55rem;font-weight:800;color:#2D8540;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.25rem">🌿 Ramais SEINFRA</div>
+        <div style="font-size:.55rem;font-weight:800;color:#2D8540;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.25rem">${ic("ramais")} Ramais SEINFRA</div>
         <div style="display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap">
           <div>
             <div style="font-family:Outfit,sans-serif;font-size:1.45rem;font-weight:900;color:#1B5E20;line-height:1">${ramaisNDisplay}</div>
@@ -7532,16 +7560,16 @@ function _atlasMunPopup(p) {
       </div>
 
       <div style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.55rem">
-        ${stat("🏗", obrasCt.length, "Obras", "#C0392B")}
-        ${aeroCt.length ? stat("✈", aeroCt.length, "Aeroporto", "#0E7490") : ""}
+        ${stat(ic("obras"), obrasCt.length, "Obras", "#C0392B")}
+        ${aeroCt.length ? stat(ic("aerodromos"), aeroCt.length, "Aeroporto", "#0E7490") : ""}
       </div>
       ${aeroNomes ? `<div style="margin-top:.45rem;font-size:.7rem;color:#0E7490">
-        ✈ <strong>${htmlEscape(aeroNomes)}</strong>${aeroCt.length > 2 ? ` <span style="opacity:.7">+${aeroCt.length-2}</span>` : ""}
+        ${ic("aerodromos")} <strong>${htmlEscape(aeroNomes)}</strong>${aeroCt.length > 2 ? ` <span style="opacity:.7">+${aeroCt.length-2}</span>` : ""}
       </div>` : ""}
       ${invObras ? `<div style="margin-top:.55rem;padding-top:.5rem;border-top:1px dashed #e0e6f0;font-size:.74rem;color:#4a5568">
-        💰 Investimento contratual: <strong style="color:#1A2B5E">${invObras >= 1e9 ? "R$ "+(invObras/1e9).toFixed(2).replace(".", ",")+" bi" : "R$ "+(invObras/1e6).toFixed(1).replace(".", ",")+" mi"}</strong>
+        ${ic("dinheiro")} Investimento contratual: <strong style="color:#1A2B5E">${invObras >= 1e9 ? "R$ "+(invObras/1e9).toFixed(2).replace(".", ",")+" bi" : "R$ "+(invObras/1e6).toFixed(1).replace(".", ",")+" mi"}</strong>
       </div>` : ""}
-      ${!ramaisLoaded ? `<div style="margin-top:.45rem;font-size:.65rem;color:#8896a8;font-style:italic">⏳ Aguardando planilha de ramais...</div>` : ""}
+      ${!ramaisLoaded ? `<div style="margin-top:.45rem;font-size:.65rem;color:#8896a8;font-style:italic">${ic("relogio")} Aguardando planilha de ramais...</div>` : ""}
       ${ramaisLoaded && ramaisCt.length === 0 && HUB.state.ramaisSheet.length > 0 ? `<details style="margin-top:.45rem;font-size:.6rem;color:#8896a8"><summary style="cursor:pointer">diagnóstico match</summary><div style="font-family:monospace;background:#fdedec;border:1px solid #f5b5ae;padding:.3rem;border-radius:6px;margin-top:.25rem;font-size:.55rem;color:#7A1B41">key=&quot;${htmlEscape(nomeKey)}&quot; · sheet=${HUB.state.ramaisSheet.length} ramais · exemplos: ${HUB.state.ramaisSheet.slice(0,3).map(r => "&quot;"+htmlEscape(_normMun(r.municipio||""))+"&quot;").join(", ")}</div></details>` : ""}
     </div>`;
 }
@@ -7604,7 +7632,7 @@ function _atlasBairroPopup(p) {
   const munSlug = _normMun(mun).toLowerCase().replace(/\s+/g, "-");
   return `<div style="font-family:Outfit,sans-serif;min-width:260px;max-width:320px">
     <div style="font-weight:800;color:#6C3483;font-size:1.05rem;line-height:1.15">${htmlEscape(nome)}</div>
-    <div style="font-size:.68rem;color:#8896a8;margin-top:.2rem">📍 ${htmlEscape(mun)}${dist && dist !== nome ? " · " + htmlEscape(dist) : ""}</div>
+    <div style="font-size:.68rem;color:#8896a8;margin-top:.2rem">${ic("local")} ${htmlEscape(mun)}${dist && dist !== nome ? " · " + htmlEscape(dist) : ""}</div>
     ${z ? `<div style="margin-top:.5rem;display:inline-block;background:${z.fill};color:${z.txt};padding:.28em .7em;border-radius:999px;font-size:.62rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase">${z.label}</div>` : ""}
 
     ${munInd ? `
@@ -7619,8 +7647,8 @@ function _atlasBairroPopup(p) {
       </div>` : ""}
 
     <div style="margin-top:.5rem;font-size:.65rem;color:#4a5568;line-height:1.4">
-      ${rgi ? `<div>🗺️ Região Imediata: <strong>${htmlEscape(rgi)}</strong></div>` : ""}
-      ${rgint ? `<div>🌐 Região Intermediária: <strong>${htmlEscape(rgint)}</strong></div>` : ""}
+      ${rgi ? `<div>${ic("atlas")} Região Imediata: <strong>${htmlEscape(rgi)}</strong></div>` : ""}
+      ${rgint ? `<div>${ic("globo")} Região Intermediária: <strong>${htmlEscape(rgint)}</strong></div>` : ""}
     </div>
 
     <div style="margin-top:.45rem;font-size:.55rem;color:#8896a8;font-family:monospace">
@@ -7642,7 +7670,7 @@ function _atlasZonaPopup(p) {
   return `<div style="font-family:Outfit,sans-serif;min-width:240px">
     <div style="display:inline-block;background:${z.fill};color:${z.txt};padding:.32em .8em;border-radius:999px;font-size:.7rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase">${z.label}</div>
     <div style="margin-top:.5rem;font-weight:700;color:#1A2540;font-size:.84rem">Bairro: ${htmlEscape(nome)}</div>
-    ${bairrosNaZona ? `<div style="font-size:.7rem;color:#4a5568;margin-top:.3rem">📦 <strong>${bairrosNaZona}</strong> bairros nesta zona administrativa</div>` : ""}
+    ${bairrosNaZona ? `<div style="font-size:.7rem;color:#4a5568;margin-top:.3rem">${ic("caixa")} <strong>${bairrosNaZona}</strong> bairros nesta zona administrativa</div>` : ""}
     <div style="font-size:.62rem;color:#8896a8;margin-top:.35rem;font-style:italic">Lei Municipal 1.401/2010 (Manaus)</div>
   </div>`;
 }
@@ -7655,10 +7683,10 @@ function _atlasUcPopup(p) {
   return `<div style="font-family:Outfit,sans-serif;min-width:230px;max-width:320px">
     <div style="font-weight:800;color:#2D8540;font-size:.92rem;line-height:1.15">${htmlEscape(nomeCap)}</div>
     <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
-      ${p.categoria ? `<div>🏞 ${htmlEscape(p.categoria)}</div>` : ""}
-      ${p.grupo ? `<div>📋 Grupo: <strong>${htmlEscape(grupoFull)}</strong></div>` : ""}
-      ${p.esfera ? `<div>🏛 Esfera: ${htmlEscape(p.esfera)}</div>` : ""}
-      ${p.ano_cria ? `<div>📅 Criação: ${htmlEscape(String(p.ano_cria))}</div>` : ""}
+      ${p.categoria ? `<div>${ic("folha")} ${htmlEscape(p.categoria)}</div>` : ""}
+      ${p.grupo ? `<div>${ic("lista")} Grupo: <strong>${htmlEscape(grupoFull)}</strong></div>` : ""}
+      ${p.esfera ? `<div>${ic("predio")} Esfera: ${htmlEscape(p.esfera)}</div>` : ""}
+      ${p.ano_cria ? `<div>${ic("calendario")} Criação: ${htmlEscape(String(p.ano_cria))}</div>` : ""}
     </div>
   </div>`;
 }
@@ -7668,11 +7696,11 @@ function _atlasSitioPopup(p) {
   return `<div style="font-family:Outfit,sans-serif;min-width:230px;max-width:320px">
     <div style="font-weight:800;color:#C2185B;font-size:.92rem;line-height:1.15">${htmlEscape(nome)}</div>
     <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
-      ${p.ds_naturez ? `<div>🏺 Natureza: ${htmlEscape(p.ds_naturez)}</div>` : ""}
-      ${p.ds_classif ? `<div>🏷 Classificação: <strong>${htmlEscape(p.ds_classif)}</strong></div>` : ""}
-      ${p.ds_tipo_be ? `<div>📦 Tipo: ${htmlEscape(p.ds_tipo_be)}</div>` : ""}
+      ${p.ds_naturez ? `<div>${ic("etiqueta")} Natureza: ${htmlEscape(p.ds_naturez)}</div>` : ""}
+      ${p.ds_classif ? `<div>${ic("etiqueta")} Classificação: <strong>${htmlEscape(p.ds_classif)}</strong></div>` : ""}
+      ${p.ds_tipo_be ? `<div>${ic("caixa")} Tipo: ${htmlEscape(p.ds_tipo_be)}</div>` : ""}
       ${p.co_iphan ? `<div style="font-family:monospace;color:#8896a8">IPHAN ${htmlEscape(p.co_iphan)}</div>` : ""}
-      ${p.dt_cadastr ? `<div>📅 Cadastro: ${htmlEscape(String(p.dt_cadastr))}</div>` : ""}
+      ${p.dt_cadastr ? `<div>${ic("calendario")} Cadastro: ${htmlEscape(String(p.dt_cadastr))}</div>` : ""}
     </div>
   </div>`;
 }
@@ -7680,7 +7708,7 @@ function _atlasSitioPopup(p) {
 function _atlasMarcoPopup(p) {
   // Marco municipal — ponto de centro/sede do município (do viario.geojson)
   return `<div style="font-family:Outfit,sans-serif;min-width:180px">
-    <div style="font-weight:800;color:#1A2B5E;font-size:.88rem">📍 Sede municipal</div>
+    <div style="font-weight:800;color:#1A2B5E;font-size:.88rem">${ic("local")} Sede municipal</div>
     ${p.municipio ? `<div style="font-size:.78rem;color:#1A2B5E;margin-top:.25rem;font-weight:700">${htmlEscape(p.municipio)}</div>` : ""}
     <div style="font-size:.6rem;color:#8896a8;margin-top:.35rem;font-style:italic">Marco de referência geográfico</div>
   </div>`;
@@ -7688,8 +7716,8 @@ function _atlasMarcoPopup(p) {
 
 function _atlasPerimUrbPopup(p) {
   return `<div style="font-family:Outfit,sans-serif;min-width:180px">
-    <div style="font-weight:800;color:#B45309;font-size:.88rem">🏘 Perímetro urbano</div>
-    ${p.municipio ? `<div style="font-size:.74rem;color:#4a5568;margin-top:.25rem">📍 ${htmlEscape(p.municipio)}</div>` : ""}
+    <div style="font-weight:800;color:#B45309;font-size:.88rem">${ic("cidade")} Perímetro urbano</div>
+    ${p.municipio ? `<div style="font-size:.74rem;color:#4a5568;margin-top:.25rem">${ic("local")} ${htmlEscape(p.municipio)}</div>` : ""}
     <div style="font-size:.6rem;color:#8896a8;margin-top:.35rem;font-style:italic">Limite oficial da área urbana</div>
   </div>`;
 }
@@ -7705,8 +7733,8 @@ function _atlasRuaPopup(p) {
       <div style="font-weight:800;color:#7A4F00;font-size:.95rem;line-height:1.15">${htmlEscape(nome)}</div>
     </div>
     <div style="font-size:.72rem;color:#4a5568;margin-top:.4rem;display:flex;gap:.7rem;flex-wrap:wrap">
-      ${ext > 0 ? `<span>📏 <strong>${ext.toFixed(2)} km</strong>${extM ? ` <span style="color:#8896a8">(${Math.round(extM)} m)</span>` : ""}</span>` : ""}
-      ${p.municipio ? `<span>📍 ${htmlEscape(p.municipio)}</span>` : ""}
+      ${ext > 0 ? `<span>${ic("regua")} <strong>${ext.toFixed(2)} km</strong>${extM ? ` <span style="color:#8896a8">(${Math.round(extM)} m)</span>` : ""}</span>` : ""}
+      ${p.municipio ? `<span>${ic("local")} ${htmlEscape(p.municipio)}</span>` : ""}
     </div>
   </div>`;
 }
@@ -7717,10 +7745,10 @@ function _atlasRodEstPopup(p) {
     <div style="font-weight:800;color:#1A2B5E;font-size:.95rem">${htmlEscape(p.RODOVIA || p.Nome || p.NOME || "Rodovia estadual")}</div>
     ${p["CÓDIGO S."] || p.CODIGO ? `<div style="font-size:.7rem;font-family:monospace;color:#8896a8;margin-top:.15rem">${htmlEscape(p["CÓDIGO S."] || p.CODIGO)}</div>` : ""}
     <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
-      ${p["INÍCIO"] || p.INICIO ? `<div>▶ ${htmlEscape(p["INÍCIO"] || p.INICIO)}</div>` : ""}
-      ${p.FIM ? `<div>■ ${htmlEscape(p.FIM)}</div>` : ""}
-      ${p["EXTENSÃO"] || p.EXTENSAO ? `<div>📏 <strong>${Number(p["EXTENSÃO"]||p.EXTENSAO).toFixed(2)} km</strong></div>` : ""}
-      ${p["SITUAÇÃO"] || p.SITUACAO ? `<div>🚧 ${htmlEscape(p["SITUAÇÃO"] || p.SITUACAO)}</div>` : ""}
+      ${p["INÍCIO"] || p.INICIO ? `<div>Início: ${htmlEscape(p["INÍCIO"] || p.INICIO)}</div>` : ""}
+      ${p.FIM ? `<div>Fim: ${htmlEscape(p.FIM)}</div>` : ""}
+      ${p["EXTENSÃO"] || p.EXTENSAO ? `<div>${ic("regua")} <strong>${Number(p["EXTENSÃO"]||p.EXTENSAO).toFixed(2)} km</strong></div>` : ""}
+      ${p["SITUAÇÃO"] || p.SITUACAO ? `<div>${ic("cone")} ${htmlEscape(p["SITUAÇÃO"] || p.SITUACAO)}</div>` : ""}
     </div>
   </div>`;
 }
@@ -7730,10 +7758,10 @@ function _atlasRodFedPopup(p) {
     <div style="font-weight:800;color:#C0392B;font-size:.95rem">BR-${htmlEscape(p.Codigo_BR || p.CODIGO_BR || "?")}</div>
     <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
       ${p.Nome_Tipo_ ? `<div>${htmlEscape(p.Nome_Tipo_)}</div>` : ""}
-      ${p.Local_Inic ? `<div>▶ ${htmlEscape(p.Local_Inic)}</div>` : ""}
-      ${p.Local_Fim ? `<div>■ ${htmlEscape(p.Local_Fim)}</div>` : ""}
-      ${p.Extensao ? `<div>📏 <strong>${Number(p.Extensao).toFixed(2)} km</strong></div>` : ""}
-      ${p.Superficie ? `<div>🛣 ${htmlEscape(p.Superficie)}</div>` : ""}
+      ${p.Local_Inic ? `<div>Início: ${htmlEscape(p.Local_Inic)}</div>` : ""}
+      ${p.Local_Fim ? `<div>Fim: ${htmlEscape(p.Local_Fim)}</div>` : ""}
+      ${p.Extensao ? `<div>${ic("regua")} <strong>${Number(p.Extensao).toFixed(2)} km</strong></div>` : ""}
+      ${p.Superficie ? `<div>${ic("rodovias")} ${htmlEscape(p.Superficie)}</div>` : ""}
     </div>
   </div>`;
 }
@@ -7745,13 +7773,13 @@ function _atlasRamalPopup(p) {
     <div style="font-weight:800;color:#2D8540;font-size:.92rem">${htmlEscape(p.nome || "Ramal")}</div>
     ${p.codigo ? `<div style="font-size:.68rem;font-family:monospace;color:#8896a8;margin-top:.15rem">${htmlEscape(p.codigo)}${p.numero ? ` #${htmlEscape(p.numero)}` : ""}</div>` : ""}
     <div style="font-size:.72rem;color:#4a5568;margin-top:.35rem">
-      ${p.municipio ? `<div>📍 ${htmlEscape(p.municipio)}</div>` : ""}
-      ${ext > 0 ? `<div>📏 <strong>${ext.toFixed(2).replace(".", ",")} km</strong></div>` : ""}
-      ${p.situacao ? `<div>🚧 ${htmlEscape(p.situacao)}</div>` : ""}
-      ${p.local_inicio ? `<div>▶ ${htmlEscape(p.local_inicio)}</div>` : ""}
-      ${p.local_termino ? `<div>■ ${htmlEscape(p.local_termino)}</div>` : ""}
-      ${p.classificacao ? `<div>🏷 ${htmlEscape(p.classificacao)}</div>` : ""}
-      ${p.revestimento ? `<div>🛣 ${htmlEscape(p.revestimento)}</div>` : ""}
+      ${p.municipio ? `<div>${ic("local")} ${htmlEscape(p.municipio)}</div>` : ""}
+      ${ext > 0 ? `<div>${ic("regua")} <strong>${ext.toFixed(2).replace(".", ",")} km</strong></div>` : ""}
+      ${p.situacao ? `<div>${ic("cone")} ${htmlEscape(p.situacao)}</div>` : ""}
+      ${p.local_inicio ? `<div>Início: ${htmlEscape(p.local_inicio)}</div>` : ""}
+      ${p.local_termino ? `<div>Fim: ${htmlEscape(p.local_termino)}</div>` : ""}
+      ${p.classificacao ? `<div>${ic("etiqueta")} ${htmlEscape(p.classificacao)}</div>` : ""}
+      ${p.revestimento ? `<div>${ic("rodovias")} ${htmlEscape(p.revestimento)}</div>` : ""}
     </div>
   </div>`;
 }
@@ -7759,7 +7787,7 @@ function _atlasRamalPopup(p) {
 function _atlasHidroPopup(p) {
   return `<div style="font-family:Outfit,sans-serif;min-width:200px">
     <div style="font-weight:800;color:#0077b6;font-size:.95rem">${htmlEscape(p.NOME || p.name || p.RIO || "Hidrovia")}</div>
-    ${p.EXTENSAO || p.extensao ? `<div style="font-size:.72rem;color:#4a5568;margin-top:.3rem">📏 <strong>${Number(p.EXTENSAO||p.extensao).toFixed(0)} km</strong></div>` : ""}
+    ${p.EXTENSAO || p.extensao ? `<div style="font-size:.72rem;color:#4a5568;margin-top:.3rem">${ic("regua")} <strong>${Number(p.EXTENSAO||p.extensao).toFixed(0)} km</strong></div>` : ""}
     ${p.BACIA || p.bacia ? `<div style="font-size:.7rem;color:#8896a8">Bacia: ${htmlEscape(p.BACIA||p.bacia)}</div>` : ""}
   </div>`;
 }
@@ -7767,7 +7795,7 @@ function _atlasHidroPopup(p) {
 function _atlasTermPopup(p) {
   return `<div style="font-family:Outfit,sans-serif;min-width:200px">
     <div style="font-weight:800;color:#0077b6;font-size:.95rem">${htmlEscape(p.Destino || p.NOME || "Terminal")}</div>
-    <div style="font-size:.72rem;color:#4a5568;margin-top:.3rem">📍 ${htmlEscape(p.Localidade || p.MUNICIPIO || "—")}</div>
+    <div style="font-size:.72rem;color:#4a5568;margin-top:.3rem">${ic("local")} ${htmlEscape(p.Localidade || p.MUNICIPIO || "—")}</div>
   </div>`;
 }
 
@@ -7776,8 +7804,8 @@ function _atlasAeroPopup(p) {
     <div style="font-weight:800;color:#0E7490;font-size:.95rem">${htmlEscape(p.Nome || p.NOME || "Aeródromo")}</div>
     <div style="font-size:.72rem;color:#4a5568;margin-top:.3rem">
       ${p.CIAD ? `<div style="font-family:monospace">CIAD: ${htmlEscape(p.CIAD)}</div>` : ""}
-      ${p.Compriment ? `<div>📏 Pista: <strong>${htmlEscape(p.Compriment)} m</strong></div>` : ""}
-      ${p.Largura || p["Largura 1"] ? `<div>↔ Largura: ${htmlEscape(p.Largura || p["Largura 1"])} m</div>` : ""}
+      ${p.Compriment ? `<div>${ic("regua")} Pista: <strong>${htmlEscape(p.Compriment)} m</strong></div>` : ""}
+      ${p.Largura || p["Largura 1"] ? `<div>Largura: ${htmlEscape(p.Largura || p["Largura 1"])} m</div>` : ""}
     </div>
   </div>`;
 }
@@ -7786,8 +7814,8 @@ function _atlasViarioPopup(p) {
   const nome = p.nome || p.NAME || "Via";
   return `<div style="font-family:Outfit,sans-serif;min-width:180px">
     <div style="font-weight:800;color:#B45309;font-size:.9rem">${htmlEscape(nome)}</div>
-    ${p.extensao_km ? `<div style="font-size:.72rem;color:#4a5568;margin-top:.3rem">📏 <strong>${Number(p.extensao_km).toFixed(2)} km</strong>${p.extensao_m ? ` (${Math.round(p.extensao_m)} m)` : ""}</div>` : ""}
-    ${p.municipio ? `<div style="font-size:.7rem;color:#8896a8">📍 ${htmlEscape(p.municipio)}</div>` : ""}
+    ${p.extensao_km ? `<div style="font-size:.72rem;color:#4a5568;margin-top:.3rem">${ic("regua")} <strong>${Number(p.extensao_km).toFixed(2)} km</strong>${p.extensao_m ? ` (${Math.round(p.extensao_m)} m)` : ""}</div>` : ""}
+    ${p.municipio ? `<div style="font-size:.7rem;color:#8896a8">${ic("local")} ${htmlEscape(p.municipio)}</div>` : ""}
   </div>`;
 }
 
@@ -7823,8 +7851,8 @@ function _atlasPontePopup(p) {
     <div style="font-size:.72rem;margin-top:.3rem">
       <span style="display:inline-block;padding:.1rem .5rem;border-radius:99px;background:${cor}1a;color:${cor};font-weight:700">${htmlEscape(p.situacao || "—")}</span>
     </div>
-    <div style="font-size:.7rem;color:#8896a8;margin-top:.35rem">📍 Manaus</div>
-    ${p.link ? `<div style="font-size:.72rem;margin-top:.35rem"><a href="${htmlEscape(p.link)}" target="_blank" rel="noopener" style="color:#1A2B5E;font-weight:700">Abrir no Google Maps ↗</a></div>` : ""}
+    <div style="font-size:.7rem;color:#8896a8;margin-top:.35rem">${ic("local")} Manaus</div>
+    ${p.link ? `<div style="font-size:.72rem;margin-top:.35rem"><a href="${htmlEscape(p.link)}" target="_blank" rel="noopener" style="color:#1A2B5E;font-weight:700">Abrir no Google Maps</a></div>` : ""}
   </div>`;
 }
 
@@ -7852,7 +7880,7 @@ const ATLAS_GROUPS = [
       { key: "perim_urb", label: "Perímetros urbanos", color: "#B45309", sw: "ld", type: "line",
         file: "viario_local", popup: _atlasPerimUrbPopup,
         filter: f => (f.properties || {}).tipo === "perimetro_urbano" },
-      { key: "marcos_mun", label: "Sedes municipais", color: "#1A2B5E", sw: "pt", type: "pointIcon", icon: "★",
+      { key: "marcos_mun", label: "Sedes municipais", color: "#1A2B5E", sw: "pt", type: "pointIcon", icon: "estrela",
         file: "viario_local", popup: _atlasMarcoPopup,
         filter: f => (f.properties || {}).tipo === "marco_municipio" },
     ]
@@ -7890,7 +7918,7 @@ const ATLAS_GROUPS = [
     layers: [
       { key: "hidrovias", label: "Hidrovias (14)", color: "#0077b6", sw: "ln", type: "line",
         file: "hidrovias", popup: _atlasHidroPopup },
-      { key: "terminais", label: "Terminais Flutuantes (31)", color: "#023e8a", sw: "pt", type: "pointIcon", icon: "⚓",
+      { key: "terminais", label: "Terminais Flutuantes (31)", color: "#023e8a", sw: "pt", type: "pointIcon", icon: "terminais",
         file: "terminais", popup: _atlasTermPopup },
     ]
   },
@@ -7898,7 +7926,7 @@ const ATLAS_GROUPS = [
   {
     id: "aeroportuario", label: "Aeroportuário", color: "#0E7490",
     layers: [
-      { key: "aerodromos", label: "Aeródromos SEINFRA (23)", color: "#0E7490", sw: "pt", type: "pointIcon", icon: "✈",
+      { key: "aerodromos", label: "Aeródromos SEINFRA (23)", color: "#0E7490", sw: "pt", type: "pointIcon", icon: "aerodromos",
         file: "aerodromos", popup: _atlasAeroPopup },
     ]
   },
@@ -7977,7 +8005,7 @@ function getAtlasHTML() {
             <button class="atlas-panel-toggle" onclick="atlasCollapsePanel()" aria-label="Recolher painel" title="Recolher painel">‹</button>
           </div>
           <div class="atlas-panel-srch">
-            <input type="text" placeholder="🔍 Filtrar camadas..." oninput="atlasSearchLayer(this.value)" />
+            <input type="text" placeholder="Filtrar camadas..." oninput="atlasSearchLayer(this.value)" />
           </div>
           <div class="atlas-panel-body" id="atlasGroupsBody">${gruposHTML}</div>
           <div class="atlas-panel-foot">
@@ -8007,7 +8035,7 @@ function getAtlasHTML() {
         <!-- Busca de ramal — digite e voe até o ramal no mapa -->
         <div class="atlas-ramal-srch">
           <input id="atlasRamalInput" type="text" autocomplete="off"
-                 placeholder="🔍 Buscar ramal (nome, código ou município)…"
+                 placeholder="Buscar ramal (nome, código ou município)…"
                  oninput="atlasRamalSearch(this.value)" />
           <div class="atlas-ramal-results" id="atlasRamalResults"></div>
         </div>
@@ -8026,16 +8054,16 @@ function getAtlasHTML() {
         <!-- Ferramentas (canto superior central-esquerdo) -->
         <div class="atlas-tools">
           <button class="atlas-tool-btn" onclick="atlasFitToAM()" title="Enquadrar Amazonas inteiro">
-            <span style="font-size:.85rem">🌎</span><span class="atlas-tool-lbl">AM</span>
+            <span style="font-size:.85rem">${ic("globo")}</span><span class="atlas-tool-lbl">AM</span>
           </button>
           <button class="atlas-tool-btn" onclick="atlasFitToManaus()" title="Voar para Manaus urbana">
-            <span style="font-size:.85rem">🏙</span><span class="atlas-tool-lbl">Manaus</span>
+            <span style="font-size:.85rem">${ic("cidade")}</span><span class="atlas-tool-lbl">Manaus</span>
           </button>
           <button class="atlas-tool-btn" id="atlasMeasureBtn" onclick="atlasToggleMeasure()" title="Medir distância (clique a clique)">
-            <span style="font-size:.85rem">📏</span><span class="atlas-tool-lbl">Medir</span>
+            <span style="font-size:.85rem">${ic("regua")}</span><span class="atlas-tool-lbl">Medir</span>
           </button>
           <button class="atlas-tool-btn" onclick="atlasToggleFullscreen()" title="Tela cheia">
-            <span style="font-size:.85rem">⛶</span><span class="atlas-tool-lbl">Cheia</span>
+            <span style="font-size:.85rem">${ic("cheia")}</span><span class="atlas-tool-lbl">Cheia</span>
           </button>
         </div>
 
@@ -8188,7 +8216,6 @@ window.atlasToggleAll = async function(on) {
 async function atlasItemClick(el, key) {
   const on = !el.classList.contains("on");
   el.classList.toggle("on", on);
-  el.querySelector(".atlas-layer-ck").textContent = on ? "✓" : "";
   const map = HUB.state.atlasMap; if (!map) return;
   if (on) {
     await atlasLoadLayer(map, key);
@@ -8250,7 +8277,7 @@ async function atlasLoadLayer(map, key) {
     // existiam no momento do load do mapa (geralmente zero, pois os dados
     // chegam em background depois).
     if (def.type === "pointIcon") {
-      const ico = def.icon || "●";
+      const ico = def.icon ? ic(def.icon, 14) : "●";
       const col = def.color || "#1A2B5E";
       layer = L.geoJSON(gj, {
         filter: def.filter,
@@ -8350,7 +8377,7 @@ window.atlasRamalSearch = async function(q) {
     box.innerHTML = _atlasRamalHits.map((r, i) => `
       <div class="atlas-ramal-item" onclick="atlasRamalGo(${i})">
         <div class="atlas-ramal-item-nome">${htmlEscape(r.nome)}</div>
-        <div class="atlas-ramal-item-sub">📍 ${htmlEscape(r.mun)}${r.cod ? " · " + htmlEscape(r.cod) : ""}</div>
+        <div class="atlas-ramal-item-sub">${ic("local")} ${htmlEscape(r.mun)}${r.cod ? " · " + htmlEscape(r.cod) : ""}</div>
       </div>`).join("");
   }
   box.classList.add("open");
@@ -8723,7 +8750,7 @@ async function eoAbrir(ct) {
   div.id = "eoModal"; div.className = "modal-ov";
   div.innerHTML = `<div class="modal-rich" role="dialog" aria-label="${htmlEscape(o.ct)}" style="max-width:860px">
     <div class="mr-hdr" style="background:linear-gradient(135deg,#0c1733,#1a2b5e 60%,#2c4a8f)">
-      <button class="mr-close" aria-label="Fechar">✕</button>
+      <button class="mr-close" aria-label="Fechar">${ic("fechar", 16)}</button>
       <div class="mr-title" style="font-size:1.05rem;margin-top:1.4rem">${htmlEscape(o.ct)}</div>
       <div class="mr-mun" style="opacity:.92;line-height:1.45">${htmlEscape(o.obj || "")}</div>
       <div class="mr-badges"><span class="mr-badge">${htmlEscape(o.sit || "—")}</span>${o.cat ? `<span class="mr-badge">${htmlEscape(o.cat)}</span>` : ""}${o.rod ? `<span class="mr-badge">${htmlEscape(o.rod)}</span>` : ""}</div>
@@ -8956,7 +8983,7 @@ function getBriefingsHTML() {
         <!-- Semáforo estratégico -->
         <div class="panel-header" style="margin-bottom:0.6rem">
           <div class="panel-title">Semáforo do portfólio</div>
-          <button class="module-action-btn" onclick="exportBriefingExecutivoPDF()">&#128196; Relatório executivo PDF</button>
+          <button class="module-action-btn" onclick="exportBriefingExecutivoPDF()">${ic("briefings")} Relatório executivo PDF</button>
         </div>
         <div class="alert-grid" id="brAlertGrid" style="margin-bottom:1rem"></div>
 
@@ -8966,7 +8993,7 @@ function getBriefingsHTML() {
         <!-- 4 gráficos analíticos -->
         <div class="chart-grid-2" style="margin-bottom:1rem">
           <div>
-            <div class="panel-title" style="margin-bottom:0.5rem;font-size:0.8rem">Distribuição por status</div>
+            <div class="panel-title" style="margin-bottom:0.5rem;font-size:0.8rem">Contratos por situação</div>
             <div class="chart-wrap"><canvas id="chBrStatus"></canvas></div>
           </div>
           <div>
@@ -8976,7 +9003,7 @@ function getBriefingsHTML() {
         </div>
         <div class="chart-grid-2">
           <div>
-            <div class="panel-title" style="margin-bottom:0.5rem;font-size:0.8rem">Investimento por faixa de valor</div>
+            <div class="panel-title" style="margin-bottom:0.5rem;font-size:0.8rem">Contratos por faixa de valor</div>
             <div class="chart-wrap"><canvas id="chBrFaixa"></canvas></div>
           </div>
           <div>
@@ -9058,7 +9085,7 @@ async function initBriefings() {
     setTimeout(() => {
       _diagEl.insertAdjacentHTML("afterbegin",
         `<div style="background:#FEF3DC;border:1.5px solid #F5A623;border-radius:8px;padding:.5rem .75rem;margin-bottom:.6rem;font-size:.74rem;color:#8B4513">
-          ⚠ <strong>Diagnóstico:</strong> ${ct.length} contratos carregados, mas <strong>0 com valor numérico</strong>.
+          ${ic("sinistros")} <strong>Diagnóstico:</strong> ${ct.length} contratos carregados, mas <strong>0 com valor numérico</strong>.
           Sample do raw[0].valor_global_..._da_obra = <code style="background:#fff;padding:0 4px;border-radius:3px">${htmlEscape(String(_sampleValorRaw))}</code>.
           Veja F12 → Console para diagnóstico completo.
         </div>`);
@@ -9124,9 +9151,9 @@ function _buildBrSemaforo(ct) {
   el.innerHTML = alerts.length
     ? alerts.map(a => `
         <div class="alert-chip alert-${a.level}" onclick="loadModule('${a.mod}')" style="cursor:pointer">
-          ${a.level==="danger"?"🔴":a.level==="warning"?"🟡":"🟢"} ${htmlEscape(a.msg)}
+          ${ic(a.level==="danger"?"sinistros":a.level==="warning"?"relogio":"check")} <strong>${a.level==="danger"?"Crítico":a.level==="warning"?"Atenção":"OK"}:</strong> ${htmlEscape(a.msg)}
         </div>`).join("")
-    : `<div class="alert-chip alert-ok">🟢 Portfólio sem alertas críticos no momento</div>`;
+    : `<div class="alert-chip alert-ok">${ic("check")} <strong>OK:</strong> Portfólio sem alertas críticos no momento</div>`;
 }
 
 function _buildResumoExecutivo(ct) {
@@ -9187,12 +9214,17 @@ function _buildBrCharts(ct) {
                 _isAtras(c)  ? "Atrasada" : "Outros";
     stMap[key] = (stMap[key]||0)+1;
   });
+  // Ranking de situação: barra horizontal ordenada (rosca com muitas fatias não se compara).
+  // Cor fixa por situação (antes a cor seguia a ordem das chaves e podia trocar de status).
+  const stCor = { "Em execução":"#2D8540", "Concluída":"#475569", "Paralisada":"#C0392B", "Atrasada":"#F5A623", "Outros":"#8896A8" };
+  const stOrd = Object.entries(stMap).sort((a,b)=>b[1]-a[1]);
   mkChart("chBrStatus", {
-    type: "doughnut",
-    data: { labels: Object.keys(stMap), datasets: [{ data: Object.values(stMap),
-      backgroundColor: ["#2D8540","#475569","#C0392B","#F5A623","#8896A8"], borderWidth: 2, borderColor: "#fff" }] },
-    options: { responsive: true, maintainAspectRatio: false, cutout: "58%",
-      plugins: { legend: { position: "bottom", labels: { font: { family:"Lexend Deca", size:11 } } } } }
+    type: "bar",
+    data: { labels: stOrd.map(x => x[0]), datasets: [{ label: "Contratos", data: stOrd.map(x => x[1]),
+      backgroundColor: stOrd.map(x => stCor[x[0]] || "#8896A8"), borderRadius: 4, maxBarThickness: 26 }] },
+    options: { indexAxis: "y", responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${fmtNum(ctx.parsed.x)} contratos` } } },
+      scales: { x: { beginAtZero: true, ticks: { precision: 0 } }, y: { grid: { display: false } } } }
   });
 
   // ─── Chart 2: Top 10 municípios por investimento ──────────
@@ -9225,7 +9257,7 @@ function _buildBrCharts(ct) {
   mkChart("chBrFaixa", {
     type: "bar",
     data: { labels: faixas.map(f=>f.label), datasets: [{ label: "Contratos", data: faixaCount,
-      backgroundColor: ["#8896A8","#0E7490","#1A2B5E","#2D8540","#F5A623"], borderRadius: 4 }] },
+      backgroundColor: "#1A2B5E", borderRadius: 4 }] },
     options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} },
       scales:{ y:{ beginAtZero:true } } }
   });
@@ -9306,14 +9338,14 @@ function renderBriefings() {
           </div>
           <div style="font-size:0.88rem;font-weight:700;color:var(--cinza-txt);line-height:1.35;margin-bottom:0.25rem;word-break:break-word">${htmlEscape(c.objeto || c.resumo || "Obra")}</div>
           <div style="font-size:0.75rem;color:var(--cinza-med)">
-            📍 ${htmlEscape(c.municipio || "—")} &nbsp;·&nbsp; 🏢 ${htmlEscape(c.empresa || "—")}
+            ${htmlEscape(c.municipio || "—")} &nbsp;·&nbsp; ${htmlEscape(c.empresa || "—")}
           </div>
         </div>
         <div style="text-align:right;flex-shrink:0">
           <div style="font-size:1rem;font-weight:800;color:var(--azul);font-family:var(--font-head)">${fmtBRL(inv)}</div>
-          ${c.pct_fisico ? `<div style="font-size:0.7rem;color:var(--verde);margin-top:2px">⚙ ${Number(c.pct_fisico).toFixed(1)}% físico</div>` : ""}
-          ${c.pct_financeiro ? `<div style="font-size:0.7rem;color:var(--azul);margin-top:1px">💰 ${Number(c.pct_financeiro).toFixed(1)}% financeiro</div>` : ""}
-          <button class="module-action-btn" style="margin-top:0.4rem;font-size:0.72rem" onclick="event.stopPropagation();gerarBriefingObra('${ctSafe}')">📄 Briefing PDF</button>
+          ${c.pct_fisico ? `<div style="font-size:0.7rem;color:var(--verde);margin-top:2px">${Number(c.pct_fisico).toFixed(1)}% físico</div>` : ""}
+          ${c.pct_financeiro ? `<div style="font-size:0.7rem;color:var(--azul);margin-top:1px">${Number(c.pct_financeiro).toFixed(1)}% financeiro</div>` : ""}
+          <button class="module-action-btn" style="margin-top:0.4rem;font-size:0.72rem" onclick="event.stopPropagation();gerarBriefingObra('${ctSafe}')">${ic("briefings")} Briefing PDF</button>
         </div>
       </div>
       ${(c.fiscal || c.empenhado || c.pago || c.termino) ? `
@@ -9363,10 +9395,10 @@ function renderBriefingMunicipal() {
       </div>
       ${(pagoM > 0 || empregos > 0 || ramais.length || aerodromos.length) ? `
         <div style="margin-top:.6rem;display:flex;gap:.5rem;flex-wrap:wrap;font-size:.78rem">
-          ${pagoM > 0 ? `<div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:.45rem .8rem;color:var(--azul)">💰 <strong>${pagoM>=1e6?(pagoM/1e6).toFixed(1).replace(".", ",")+" mi":fmtBRL(pagoM)}</strong> pago</div>` : ""}
-          ${empregos > 0 ? `<div style="background:var(--verde-cl);border:1px solid var(--verde-brd);border-radius:8px;padding:.45rem .8rem;color:var(--verde)">👷 <strong>${fmtNum(empregos)}</strong> empregos diretos</div>` : ""}
-          ${ramais.length ? `<div style="background:#e7f5e9;border:1px solid #9ee8b0;border-radius:8px;padding:.45rem .8rem;color:#1f5b30">🌿 <strong>${ramais.length}</strong> ramais</div>` : ""}
-          ${aerodromos.length ? `<div style="background:#dff5fb;border:1px solid #90e0ef;border-radius:8px;padding:.45rem .8rem;color:#0E7490">✈ <strong>${aerodromos.length}</strong> aeródromo${aerodromos.length>1?'s':''}: ${aerodromos.map(a=>htmlEscape(a.nome)).join(", ")}</div>` : ""}
+          ${pagoM > 0 ? `<div style="background:var(--azul-claro);border:1px solid var(--azul-borda);border-radius:8px;padding:.45rem .8rem;color:var(--azul)"><strong>${pagoM>=1e6?(pagoM/1e6).toFixed(1).replace(".", ",")+" mi":fmtBRL(pagoM)}</strong> pago</div>` : ""}
+          ${empregos > 0 ? `<div style="background:var(--verde-cl);border:1px solid var(--verde-brd);border-radius:8px;padding:.45rem .8rem;color:var(--verde)"><strong>${fmtNum(empregos)}</strong> empregos diretos</div>` : ""}
+          ${ramais.length ? `<div style="background:#e7f5e9;border:1px solid #9ee8b0;border-radius:8px;padding:.45rem .8rem;color:#1f5b30"><strong>${ramais.length}</strong> ramais</div>` : ""}
+          ${aerodromos.length ? `<div style="background:#dff5fb;border:1px solid #90e0ef;border-radius:8px;padding:.45rem .8rem;color:#0E7490"><strong>${aerodromos.length}</strong> aeródromo${aerodromos.length>1?'s':''}: ${aerodromos.map(a=>htmlEscape(a.nome)).join(", ")}</div>` : ""}
         </div>` : ""}
     </div>
     <div style="margin-bottom:0.5rem">
@@ -9379,12 +9411,12 @@ function renderBriefingMunicipal() {
             <div style="flex:1;min-width:200px">
               <div style="font-size:0.7rem;color:var(--cinza-aux);font-family:var(--font-cond);font-weight:700">${htmlEscape(c.contrato || "—")}${c.ano?' · '+c.ano:''}</div>
               <div style="font-size:0.83rem;font-weight:600;color:var(--cinza-txt);line-height:1.35">${htmlEscape(c.objeto || c.resumo || "—")}</div>
-              ${c.empresa ? `<div style="font-size:.7rem;color:var(--cinza-aux);margin-top:.15rem">🏢 ${htmlEscape(c.empresa)}</div>` : ""}
+              ${c.empresa ? `<div style="font-size:.7rem;color:var(--cinza-aux);margin-top:.15rem">${htmlEscape(c.empresa)}</div>` : ""}
             </div>
             <div style="text-align:right;flex-shrink:0">
               ${statusChip(c.situacao_eobras||c.situacao_real||"")}
               <div style="font-size:0.85rem;font-weight:800;color:var(--azul);margin-top:.2rem;font-family:var(--font-head)">${fmtBRL(c.valor || 0)}</div>
-              <button class="module-action-btn" style="margin-top:.3rem;font-size:.7rem" onclick="event.stopPropagation();gerarBriefingObra('${ctSafe}')">📄 Briefing</button>
+              <button class="module-action-btn" style="margin-top:.3rem;font-size:.7rem" onclick="event.stopPropagation();gerarBriefingObra('${ctSafe}')">${ic("briefings")} Briefing</button>
             </div>
           </div>`;
         }).join("") : `<div class="info-state">Sem contratos cadastrados para ${htmlEscape(mun)}.</div>`}
@@ -9406,11 +9438,11 @@ function renderBriefingMunicipal() {
 
     <!-- Bloco de Licitações em Planejamento (populado async) -->
     <div id="brLicitacoes" style="margin-top:1.2rem">
-      <div style="font-size:.78rem;color:var(--cinza-aux);font-style:italic">⏳ Carregando licitações em planejamento…</div>
+      <div style="font-size:.78rem;color:var(--cinza-aux);font-style:italic">Carregando licitações em planejamento…</div>
     </div>
 
     <div style="margin-top:1rem;text-align:right">
-      <button class="module-action-btn" style="font-size:0.78rem" onclick="exportBriefingMunicipalPDF('${htmlEscape(mun)}')">&#128196; Briefing municipal PDF</button>
+      <button class="module-action-btn" style="font-size:0.78rem" onclick="exportBriefingMunicipalPDF('${htmlEscape(mun)}')">${ic("briefings")} Briefing municipal PDF</button>
     </div>`;
 
   // Popula o bloco de licitações assim que a planilha carregar (background fetch).
@@ -9491,8 +9523,8 @@ async function _renderLicitacoesMunUI(mun) {
             </div>` : ""}
           </div>
           ${(memo || proc) ? `<div style="font-size:.7rem;color:var(--cinza-aux);font-family:var(--font-cond);margin-top:.3rem;padding-top:.3rem;border-top:1px dashed var(--borda);display:flex;flex-wrap:wrap;gap:.8rem">
-            ${memo ? `<span>📝 ${htmlEscape(memo)}</span>` : ""}
-            ${proc ? `<span>📂 Processo ${htmlEscape(proc)}</span>` : ""}
+            ${memo ? `<span>${htmlEscape(memo)}</span>` : ""}
+            ${proc ? `<span>Processo ${htmlEscape(proc)}</span>` : ""}
           </div>` : ""}
         </div>`;
       }).join("")}
@@ -10407,7 +10439,7 @@ function _buildBriefingObraContent(o, opts) {
   }
   if (o.sinalizador) {
     content.push({ type: "spacer", value: 2 });
-    content.push({ type: "text", value: "⚠ Sinalizador: " + o.sinalizador });
+    content.push({ type: "text", value: "Sinalizador: " + o.sinalizador });
   }
 
   return content;
