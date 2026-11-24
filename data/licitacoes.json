@@ -1,7 +1,7 @@
 {
 "_meta": {
 "fonte": "PNCP api/consulta/v1 (CNPJ 05533935000157) e www.csc.am.gov.br/site/licitacao",
-"gerado": "2026-11-23T18:18",
+"gerado": "2026-11-24T21:27",
 "gerador": "pipelines/licitacoes/coletar.py",
 "regras": "desconto = 1 - homologado/estimado (só com os dois > 0); rodoviario = objeto cita rodovia AM, ramal, estrada, pavimentação, ponte, drenagem ou viário (regex RX_ROD)",
 "modalidades": [
@@ -10,10 +10,29 @@
 "Pregão eletrônico",
 "Pregão presencial"
 ],
-"total_pncp": 37,
+"total_pncp": 38,
 "total_csc": 25
 },
 "pncp": [
+{
+"id": "05533935000157-1-000026/2026",
+"edital": "CE 035",
+"processo": "025101.003198/2026",
+"modalidade": "Concorrência - Eletrônica",
+"objeto": "Descargas Atmosféricas",
+"situacao": "Divulgada no PNCP",
+"publicacao": "2026-11-23",
+"abertura": "2026-11-23",
+"encerramento": "2026-12-18",
+"estimado": 1072321300.0,
+"homologado": null,
+"desconto": null,
+"srp": false,
+"rodoviario": false,
+"link": "https://pncp.gov.br/app/editais/05533935000157/2026/26",
+"origem": "https://www.e-compras.am.gov.br/publico/licitacoes_detalhes.asp?ident=257289",
+"descricao": "SPDA, Contratacao de empresa especializada em servico de recuperacao do Sistema de Protecao contra Descargas Atmosfericas (SPDA), contemplando sistema captor, malha de captacao da cobertura e condutores de descida, com fornecimento e instalacao de materiais e demais servicos necessarios, utilizando barra chata de aluminio, conforme Termo de Referencia."
+},
 {
 "id": "05533935000157-1-000024/2026",
 "edital": "PE 461",
