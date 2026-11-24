@@ -1463,11 +1463,13 @@
       /* Padrão decorativo sutil — linhas diagonais */
       content: ''; position: absolute; inset: 0;
       background:
-        radial-gradient(circle at 100% 0%, rgba(255,255,255,.12), transparent 60%),
-        repeating-linear-gradient(60deg, transparent 0 28px, rgba(255,255,255,.04) 28px 30px);
+        none;  /* v3: sem degradê nem textura no cabeçalho */
       pointer-events: none; z-index: 0;
     }
     .modal-rich .mr-hdr > * { position: relative; z-index: 1; }
+    /* fechar e ícone são absolutos: a regra acima (mesma especificidade, depois) os empurrava para o fluxo e o X caía sobre o código ICAO */
+    .modal-rich .mr-hdr > .mr-close, .modal-rich .mr-hdr > .mr-hdr-icon { position: absolute; }
+    .modal-rich .mr-hdr > .mr-close { z-index: 2; }
     /* Ícone-avatar grande, decorativo, no canto superior-direito */
     .modal-rich .mr-hdr-icon {
       position: absolute; top: 1.1rem; right: 3.2rem;
@@ -1475,13 +1477,13 @@
       background: rgba(255,255,255,.16); border: 2px solid rgba(255,255,255,.25);
       display: flex; align-items: center; justify-content: center;
       font-size: 26px; color: #fff; z-index: 1;
-      box-shadow: 0 4px 16px rgba(0,0,0,.25);
+      box-shadow: none;
     }
-    .modal-rich .mr-hdr.gov-estado  { background: linear-gradient(135deg, #1a0a33, #3b0764); }
-    .modal-rich .mr-hdr.gov-publico { background: linear-gradient(135deg, #002D72, #003d9e); }
-    .modal-rich .mr-hdr.gov-hidro   { background: linear-gradient(135deg, #012a4a, #023e8a); }
-    .modal-rich .mr-hdr.gov-rodovia { background: linear-gradient(135deg, #1A2B5E, #2c4a8f); }
-    .modal-rich .mr-hdr.gov-ramal   { background: linear-gradient(135deg, #1f5b30, #2D8540); }
+    .modal-rich .mr-hdr.gov-estado  { background: #002D72; border-bottom: 3px solid #F5A623; }  /* v3: cor sólida da identidade (era roxo com degradê) */
+    .modal-rich .mr-hdr.gov-publico { background: #1A4A96; border-bottom: 3px solid #F5A623; }
+    .modal-rich .mr-hdr.gov-hidro   { background: #00173D; border-bottom: 3px solid #F5A623; }
+    .modal-rich .mr-hdr.gov-rodovia { background: #002D72; border-bottom: 3px solid #F5A623; }
+    .modal-rich .mr-hdr.gov-ramal   { background: #0B5A36; border-bottom: 3px solid #F5A623; }
     .modal-rich .mr-icao-row {
       display: flex; align-items: center; gap: .55rem;
       font-family: 'JetBrains Mono', Consolas, monospace;
@@ -1574,7 +1576,7 @@
       padding: .7rem .9rem; border-radius: 8px; font-size: .78rem;
       color: var(--cinza-med); line-height: 1.55;
     }
-    .modal-rich .mr-context.gov-estado { background: #f3e8ff; border-color: #d6bcfa; color: #4c1d6f; }
+    .modal-rich .mr-context.gov-estado { background: #E8EEF8; border-color: #C4CDD9; color: #002D72; }
     .modal-rich .mr-context.gov-hidro  { background: #e0f2fe; border: 1px solid #90e0ef; color: #01497c; }
 
     /* ─────────────────────────────────────────────────────
