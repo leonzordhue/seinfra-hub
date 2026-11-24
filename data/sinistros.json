@@ -2,11 +2,75 @@
  "_meta": {
   "fonte": "Google News (busca pt-BR) -> link real da matéria; texto da matéria conferido pelas regras de coletor/coletar.py",
   "escopo": "somente rodovias estaduais do Amazonas (AM-xxx); BR fica de fora",
-  "atualizado": "2026-11-23 11:52",
-  "noticias": 317,
-  "ocorrencias": 226
+  "atualizado": "2026-11-24 20:37",
+  "noticias": 328,
+  "ocorrencias": 230,
+  "arquivadas_wayback": 220
  },
  "ocorrencias": [
+  {
+   "rodovia": "AM-352",
+   "data": "2026-11-24",
+   "tipo": "Tombamento",
+   "fatal": false,
+   "mortos": null,
+   "feridos": null,
+   "km": null,
+   "municipio": "Novo Airão",
+   "noticias": [
+    1
+   ],
+   "id": "OC-2026-0001"
+  },
+  {
+   "rodovia": "AM-010",
+   "data": "2026-11-22",
+   "tipo": "Colisão",
+   "fatal": true,
+   "mortos": 3,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manaus",
+   "noticias": [
+    4
+   ],
+   "id": "OC-2026-0002"
+  },
+  {
+   "rodovia": "AM-070",
+   "data": "2026-11-22",
+   "tipo": "Colisão",
+   "fatal": true,
+   "mortos": 1,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manacapuru",
+   "noticias": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    3
+   ],
+   "id": "OC-2026-0003"
+  },
+  {
+   "rodovia": "AM-070",
+   "data": "2026-11-21",
+   "tipo": "Capotamento",
+   "fatal": true,
+   "mortos": 1,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manaus",
+   "noticias": [
+    11,
+    5,
+    2
+   ],
+   "id": "OC-2026-0004"
+  },
   {
    "rodovia": "AM-010",
    "data": "2026-11-12",
@@ -17,9 +81,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    1
+    12
    ],
-   "id": "OC-2026-0001"
+   "id": "OC-2026-0005"
   },
   {
    "rodovia": "AM-010",
@@ -31,9 +95,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    2
+    13
    ],
-   "id": "OC-2026-0002"
+   "id": "OC-2026-0006"
   },
   {
    "rodovia": "AM-010",
@@ -45,9 +109,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    3
+    14
    ],
-   "id": "OC-2026-0003"
+   "id": "OC-2026-0007"
   },
   {
    "rodovia": "AM-352",
@@ -59,9 +123,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    4
+    15
    ],
-   "id": "OC-2026-0004"
+   "id": "OC-2026-0008"
   },
   {
    "rodovia": "AM-070",
@@ -73,9 +137,9 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    5
+    16
    ],
-   "id": "OC-2026-0005"
+   "id": "OC-2026-0009"
   },
   {
    "rodovia": "AM-010",
@@ -87,9 +151,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    6
+    17
    ],
-   "id": "OC-2026-0006"
+   "id": "OC-2026-0010"
   },
   {
    "rodovia": "AM-070",
@@ -101,9 +165,9 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    7
+    18
    ],
-   "id": "OC-2026-0007"
+   "id": "OC-2026-0011"
   },
   {
    "rodovia": "AM-010",
@@ -115,9 +179,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    8
+    19
    ],
-   "id": "OC-2026-0008"
+   "id": "OC-2026-0012"
   },
   {
    "rodovia": "AM-352",
@@ -129,9 +193,9 @@
    "km": "4",
    "municipio": "Manacapuru",
    "noticias": [
-    9
+    20
    ],
-   "id": "OC-2026-0009"
+   "id": "OC-2026-0013"
   },
   {
    "rodovia": "AM-363",
@@ -143,9 +207,9 @@
    "km": null,
    "municipio": "Silves",
    "noticias": [
-    10
+    21
    ],
-   "id": "OC-2026-0010"
+   "id": "OC-2026-0014"
   },
   {
    "rodovia": "AM-070",
@@ -157,9 +221,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    11
+    22
    ],
-   "id": "OC-2026-0011"
+   "id": "OC-2026-0015"
   },
   {
    "rodovia": "AM-070",
@@ -171,9 +235,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    12
+    23
    ],
-   "id": "OC-2026-0012"
+   "id": "OC-2026-0016"
   },
   {
    "rodovia": "AM-363",
@@ -185,9 +249,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    13
+    24
    ],
-   "id": "OC-2026-0013"
+   "id": "OC-2026-0017"
   },
   {
    "rodovia": "AM-010",
@@ -199,9 +263,9 @@
    "km": null,
    "municipio": "Silves",
    "noticias": [
-    14
+    25
    ],
-   "id": "OC-2026-0014"
+   "id": "OC-2026-0018"
   },
   {
    "rodovia": "AM-010",
@@ -213,9 +277,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    15
+    26
    ],
-   "id": "OC-2026-0015"
+   "id": "OC-2026-0019"
   },
   {
    "rodovia": "AM-010",
@@ -227,9 +291,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    16
+    27
    ],
-   "id": "OC-2025-0016"
+   "id": "OC-2025-0020"
   },
   {
    "rodovia": "AM-010",
@@ -241,9 +305,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    17
+    28
    ],
-   "id": "OC-2025-0017"
+   "id": "OC-2025-0021"
   },
   {
    "rodovia": "AM-010",
@@ -255,9 +319,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    18
+    29
    ],
-   "id": "OC-2025-0018"
+   "id": "OC-2025-0022"
   },
   {
    "rodovia": "AM-010",
@@ -269,11 +333,11 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    19,
-    20,
-    21
+    30,
+    31,
+    32
    ],
-   "id": "OC-2025-0019"
+   "id": "OC-2025-0023"
   },
   {
    "rodovia": "AM-010",
@@ -285,11 +349,11 @@
    "km": "6",
    "municipio": "Itacoatiara",
    "noticias": [
-    22,
-    23,
-    24
+    33,
+    34,
+    35
    ],
-   "id": "OC-2025-0020"
+   "id": "OC-2025-0024"
   },
   {
    "rodovia": "AM-010",
@@ -301,9 +365,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    25
+    36
    ],
-   "id": "OC-2025-0021"
+   "id": "OC-2025-0025"
   },
   {
    "rodovia": "AM-010",
@@ -315,9 +379,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    26
+    37
    ],
-   "id": "OC-2025-0022"
+   "id": "OC-2025-0026"
   },
   {
    "rodovia": "AM-010",
@@ -329,9 +393,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    27
+    38
    ],
-   "id": "OC-2025-0023"
+   "id": "OC-2025-0027"
   },
   {
    "rodovia": "AM-070",
@@ -343,9 +407,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    28
+    39
    ],
-   "id": "OC-2025-0024"
+   "id": "OC-2025-0028"
   },
   {
    "rodovia": "AM-010",
@@ -357,9 +421,9 @@
    "km": "86",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    29
+    40
    ],
-   "id": "OC-2025-0025"
+   "id": "OC-2025-0029"
   },
   {
    "rodovia": "AM-010",
@@ -371,9 +435,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    30
+    41
    ],
-   "id": "OC-2025-0026"
+   "id": "OC-2025-0030"
   },
   {
    "rodovia": "AM-070",
@@ -385,9 +449,9 @@
    "km": "8",
    "municipio": "Manaus",
    "noticias": [
-    31
+    42
    ],
-   "id": "OC-2025-0027"
+   "id": "OC-2025-0031"
   },
   {
    "rodovia": "AM-240",
@@ -399,9 +463,9 @@
    "km": "9",
    "municipio": "Presidente Figueiredo",
    "noticias": [
-    32
+    43
    ],
-   "id": "OC-2025-0028"
+   "id": "OC-2025-0032"
   },
   {
    "rodovia": "AM-240",
@@ -413,9 +477,9 @@
    "km": "9",
    "municipio": "Presidente Figueiredo",
    "noticias": [
-    33
+    44
    ],
-   "id": "OC-2025-0029"
+   "id": "OC-2025-0033"
   },
   {
    "rodovia": "AM-010",
@@ -427,9 +491,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    34
+    45
    ],
-   "id": "OC-2025-0030"
+   "id": "OC-2025-0034"
   },
   {
    "rodovia": "AM-010",
@@ -441,9 +505,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    35
+    46
    ],
-   "id": "OC-2025-0031"
+   "id": "OC-2025-0035"
   },
   {
    "rodovia": "AM-010",
@@ -455,9 +519,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    36
+    47
    ],
-   "id": "OC-2025-0032"
+   "id": "OC-2025-0036"
   },
   {
    "rodovia": "AM-070",
@@ -469,10 +533,10 @@
    "km": "33",
    "municipio": "Manacapuru",
    "noticias": [
-    38,
-    37
+    49,
+    48
    ],
-   "id": "OC-2025-0033"
+   "id": "OC-2025-0037"
   },
   {
    "rodovia": "AM-010",
@@ -484,9 +548,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    39
+    50
    ],
-   "id": "OC-2025-0034"
+   "id": "OC-2025-0038"
   },
   {
    "rodovia": "AM-010",
@@ -498,10 +562,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    41,
-    40
+    52,
+    51
    ],
-   "id": "OC-2025-0035"
+   "id": "OC-2025-0039"
   },
   {
    "rodovia": "AM-010",
@@ -513,9 +577,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    42
+    53
    ],
-   "id": "OC-2025-0036"
+   "id": "OC-2025-0040"
   },
   {
    "rodovia": "AM-010",
@@ -527,10 +591,10 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    44,
-    45
+    55,
+    56
    ],
-   "id": "OC-2025-0037"
+   "id": "OC-2025-0041"
   },
   {
    "rodovia": "AM-010",
@@ -542,15 +606,15 @@
    "km": "30",
    "municipio": "Manaus",
    "noticias": [
-    46,
-    47,
-    48,
-    49,
-    50,
-    51,
-    43
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    54
    ],
-   "id": "OC-2025-0038"
+   "id": "OC-2025-0042"
   },
   {
    "rodovia": "AM-070",
@@ -562,9 +626,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    52
+    63
    ],
-   "id": "OC-2025-0039"
+   "id": "OC-2025-0043"
   },
   {
    "rodovia": "AM-070",
@@ -576,9 +640,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    53
+    64
    ],
-   "id": "OC-2025-0040"
+   "id": "OC-2025-0044"
   },
   {
    "rodovia": "AM-010",
@@ -590,9 +654,9 @@
    "km": "5",
    "municipio": "Itacoatiara",
    "noticias": [
-    54
+    65
    ],
-   "id": "OC-2025-0041"
+   "id": "OC-2025-0045"
   },
   {
    "rodovia": "AM-070",
@@ -604,9 +668,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    55
+    66
    ],
-   "id": "OC-2025-0042"
+   "id": "OC-2025-0046"
   },
   {
    "rodovia": "AM-070",
@@ -618,9 +682,9 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    56
+    67
    ],
-   "id": "OC-2025-0043"
+   "id": "OC-2025-0047"
   },
   {
    "rodovia": "AM-010",
@@ -632,9 +696,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    57
+    68
    ],
-   "id": "OC-2025-0044"
+   "id": "OC-2025-0048"
   },
   {
    "rodovia": "AM-010",
@@ -646,12 +710,12 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    58,
-    59,
-    60,
-    61
+    69,
+    70,
+    71,
+    72
    ],
-   "id": "OC-2025-0045"
+   "id": "OC-2025-0049"
   },
   {
    "rodovia": "AM-010",
@@ -663,9 +727,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    62
+    73
    ],
-   "id": "OC-2025-0046"
+   "id": "OC-2025-0050"
   },
   {
    "rodovia": "AM-010",
@@ -677,9 +741,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    63
+    74
    ],
-   "id": "OC-2025-0047"
+   "id": "OC-2025-0051"
   },
   {
    "rodovia": "AM-010",
@@ -691,9 +755,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    64
+    75
    ],
-   "id": "OC-2025-0048"
+   "id": "OC-2025-0052"
   },
   {
    "rodovia": "AM-010",
@@ -705,9 +769,9 @@
    "km": "93",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    65
+    76
    ],
-   "id": "OC-2025-0049"
+   "id": "OC-2025-0053"
   },
   {
    "rodovia": "AM-363",
@@ -719,9 +783,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    66
+    77
    ],
-   "id": "OC-2025-0050"
+   "id": "OC-2025-0054"
   },
   {
    "rodovia": "AM-010",
@@ -733,9 +797,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    67
+    78
    ],
-   "id": "OC-2025-0051"
+   "id": "OC-2025-0055"
   },
   {
    "rodovia": "AM-010",
@@ -747,9 +811,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    68
+    79
    ],
-   "id": "OC-2025-0052"
+   "id": "OC-2025-0056"
   },
   {
    "rodovia": "AM-010",
@@ -761,9 +825,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    69
+    80
    ],
-   "id": "OC-2024-0053"
+   "id": "OC-2024-0057"
   },
   {
    "rodovia": "AM-010",
@@ -775,9 +839,9 @@
    "km": "138",
    "municipio": "Itacoatiara",
    "noticias": [
-    70
+    81
    ],
-   "id": "OC-2024-0054"
+   "id": "OC-2024-0058"
   },
   {
    "rodovia": "AM-010",
@@ -789,9 +853,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    71
+    82
    ],
-   "id": "OC-2024-0055"
+   "id": "OC-2024-0059"
   },
   {
    "rodovia": "AM-010",
@@ -803,17 +867,17 @@
    "km": "135",
    "municipio": "Manaus",
    "noticias": [
-    82,
-    83,
-    84,
-    85,
-    86,
-    88,
-    89,
-    90,
-    93
+    93,
+    94,
+    95,
+    96,
+    97,
+    99,
+    100,
+    101,
+    104
    ],
-   "id": "OC-2024-0056"
+   "id": "OC-2024-0060"
   },
   {
    "rodovia": "AM-010",
@@ -825,10 +889,10 @@
    "km": "135",
    "municipio": "Itacoatiara",
    "noticias": [
-    87,
-    96
+    98,
+    107
    ],
-   "id": "OC-2024-0057"
+   "id": "OC-2024-0061"
   },
   {
    "rodovia": "AM-010",
@@ -840,11 +904,11 @@
    "km": "138",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    91,
-    92,
-    94
+    102,
+    103,
+    105
    ],
-   "id": "OC-2024-0058"
+   "id": "OC-2024-0062"
   },
   {
    "rodovia": "AM-010",
@@ -856,18 +920,18 @@
    "km": "127",
    "municipio": "Manaus",
    "noticias": [
-    95,
-    97,
-    98,
-    99,
-    101,
-    73,
-    74,
-    75,
-    76,
-    72
+    106,
+    108,
+    109,
+    110,
+    112,
+    84,
+    85,
+    86,
+    87,
+    83
    ],
-   "id": "OC-2024-0059"
+   "id": "OC-2024-0063"
   },
   {
    "rodovia": "AM-010",
@@ -879,15 +943,15 @@
    "km": "62",
    "municipio": "Manaus",
    "noticias": [
-    102,
-    77,
-    78,
-    79,
-    80,
-    81,
-    100
+    113,
+    88,
+    89,
+    90,
+    91,
+    92,
+    111
    ],
-   "id": "OC-2024-0060"
+   "id": "OC-2024-0064"
   },
   {
    "rodovia": "AM-070",
@@ -899,9 +963,9 @@
    "km": null,
    "municipio": "Manacapuru",
    "noticias": [
-    103
+    114
    ],
-   "id": "OC-2024-0061"
+   "id": "OC-2024-0065"
   },
   {
    "rodovia": "AM-010",
@@ -913,10 +977,10 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    104,
-    105
+    115,
+    116
    ],
-   "id": "OC-2024-0062"
+   "id": "OC-2024-0066"
   },
   {
    "rodovia": "AM-010",
@@ -928,9 +992,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    106
+    117
    ],
-   "id": "OC-2024-0063"
+   "id": "OC-2024-0067"
   },
   {
    "rodovia": "AM-010",
@@ -942,9 +1006,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    107
+    118
    ],
-   "id": "OC-2024-0064"
+   "id": "OC-2024-0068"
   },
   {
    "rodovia": "AM-010",
@@ -956,9 +1020,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    108
+    119
    ],
-   "id": "OC-2024-0065"
+   "id": "OC-2024-0069"
   },
   {
    "rodovia": "AM-070",
@@ -970,9 +1034,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    109
+    120
    ],
-   "id": "OC-2024-0066"
+   "id": "OC-2024-0070"
   },
   {
    "rodovia": "AM-010",
@@ -984,9 +1048,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    110
+    121
    ],
-   "id": "OC-2024-0067"
+   "id": "OC-2024-0071"
   },
   {
    "rodovia": "AM-070",
@@ -998,9 +1062,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    111
+    122
    ],
-   "id": "OC-2024-0068"
+   "id": "OC-2024-0072"
   },
   {
    "rodovia": "AM-070",
@@ -1012,9 +1076,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    112
+    123
    ],
-   "id": "OC-2024-0069"
+   "id": "OC-2024-0073"
   },
   {
    "rodovia": "AM-070",
@@ -1026,9 +1090,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    113
+    124
    ],
-   "id": "OC-2024-0070"
+   "id": "OC-2024-0074"
   },
   {
    "rodovia": "AM-070",
@@ -1040,10 +1104,10 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    114,
-    115
+    125,
+    126
    ],
-   "id": "OC-2024-0071"
+   "id": "OC-2024-0075"
   },
   {
    "rodovia": "AM-010",
@@ -1055,11 +1119,11 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    116,
-    117,
-    118
+    127,
+    128,
+    129
    ],
-   "id": "OC-2024-0072"
+   "id": "OC-2024-0076"
   },
   {
    "rodovia": "AM-070",
@@ -1071,9 +1135,9 @@
    "km": "12",
    "municipio": "Manaus",
    "noticias": [
-    119
+    130
    ],
-   "id": "OC-2024-0073"
+   "id": "OC-2024-0077"
   },
   {
    "rodovia": "AM-010",
@@ -1085,9 +1149,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    120
+    131
    ],
-   "id": "OC-2024-0074"
+   "id": "OC-2024-0078"
   },
   {
    "rodovia": "AM-010",
@@ -1099,9 +1163,9 @@
    "km": "37",
    "municipio": "Itacoatiara",
    "noticias": [
-    122
+    133
    ],
-   "id": "OC-2024-0075"
+   "id": "OC-2024-0079"
   },
   {
    "rodovia": "AM-070",
@@ -1113,9 +1177,9 @@
    "km": null,
    "municipio": "Manacapuru",
    "noticias": [
-    121
+    132
    ],
-   "id": "OC-2024-0076"
+   "id": "OC-2024-0080"
   },
   {
    "rodovia": "AM-010",
@@ -1127,9 +1191,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    123
+    134
    ],
-   "id": "OC-2024-0077"
+   "id": "OC-2024-0081"
   },
   {
    "rodovia": "AM-070",
@@ -1141,9 +1205,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    125
+    136
    ],
-   "id": "OC-2024-0078"
+   "id": "OC-2024-0082"
   },
   {
    "rodovia": "AM-070",
@@ -1155,10 +1219,10 @@
    "km": "21",
    "municipio": "Iranduba",
    "noticias": [
-    126,
-    124
+    137,
+    135
    ],
-   "id": "OC-2024-0079"
+   "id": "OC-2024-0083"
   },
   {
    "rodovia": "AM-010",
@@ -1170,9 +1234,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    127
+    138
    ],
-   "id": "OC-2023-0080"
+   "id": "OC-2023-0084"
   },
   {
    "rodovia": "AM-070",
@@ -1184,9 +1248,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    128
+    139
    ],
-   "id": "OC-2023-0081"
+   "id": "OC-2023-0085"
   },
   {
    "rodovia": "AM-010",
@@ -1198,9 +1262,9 @@
    "km": "37",
    "municipio": "Manaus",
    "noticias": [
-    129
+    140
    ],
-   "id": "OC-2023-0082"
+   "id": "OC-2023-0086"
   },
   {
    "rodovia": "AM-070",
@@ -1212,9 +1276,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    130
+    141
    ],
-   "id": "OC-2023-0083"
+   "id": "OC-2023-0087"
   },
   {
    "rodovia": "AM-010",
@@ -1226,10 +1290,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    132,
-    131
+    143,
+    142
    ],
-   "id": "OC-2023-0084"
+   "id": "OC-2023-0088"
   },
   {
    "rodovia": "AM-010",
@@ -1241,10 +1305,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    133,
-    134
+    144,
+    145
    ],
-   "id": "OC-2023-0085"
+   "id": "OC-2023-0089"
   },
   {
    "rodovia": "AM-010",
@@ -1256,9 +1320,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    135
+    146
    ],
-   "id": "OC-2023-0086"
+   "id": "OC-2023-0090"
   },
   {
    "rodovia": "AM-010",
@@ -1270,9 +1334,9 @@
    "km": "34",
    "municipio": "Itacoatiara",
    "noticias": [
-    136
+    147
    ],
-   "id": "OC-2023-0087"
+   "id": "OC-2023-0091"
   },
   {
    "rodovia": "AM-363",
@@ -1284,9 +1348,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    137
+    148
    ],
-   "id": "OC-2023-0088"
+   "id": "OC-2023-0092"
   },
   {
    "rodovia": "AM-010",
@@ -1298,9 +1362,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    140
+    151
    ],
-   "id": "OC-2023-0089"
+   "id": "OC-2023-0093"
   },
   {
    "rodovia": "AM-070",
@@ -1312,10 +1376,10 @@
    "km": "9",
    "municipio": "Manaus",
    "noticias": [
-    138,
-    139
+    149,
+    150
    ],
-   "id": "OC-2023-0090"
+   "id": "OC-2023-0094"
   },
   {
    "rodovia": "AM-010",
@@ -1327,9 +1391,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    141
+    152
    ],
-   "id": "OC-2023-0091"
+   "id": "OC-2023-0095"
   },
   {
    "rodovia": "AM-070",
@@ -1341,9 +1405,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    142
+    153
    ],
-   "id": "OC-2023-0092"
+   "id": "OC-2023-0096"
   },
   {
    "rodovia": "AM-070",
@@ -1355,9 +1419,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    143
+    154
    ],
-   "id": "OC-2023-0093"
+   "id": "OC-2023-0097"
   },
   {
    "rodovia": "AM-010",
@@ -1369,10 +1433,10 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    144,
-    145
+    155,
+    156
    ],
-   "id": "OC-2023-0094"
+   "id": "OC-2023-0098"
   },
   {
    "rodovia": "AM-070",
@@ -1384,9 +1448,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    146
+    157
    ],
-   "id": "OC-2022-0095"
+   "id": "OC-2022-0099"
   },
   {
    "rodovia": "AM-070",
@@ -1398,9 +1462,9 @@
    "km": "05",
    "municipio": "Manaus",
    "noticias": [
-    147
+    158
    ],
-   "id": "OC-2022-0096"
+   "id": "OC-2022-0100"
   },
   {
    "rodovia": "AM-010",
@@ -1412,12 +1476,12 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    151,
-    148,
-    149,
-    150
+    162,
+    159,
+    160,
+    161
    ],
-   "id": "OC-2022-0097"
+   "id": "OC-2022-0101"
   },
   {
    "rodovia": "AM-010",
@@ -1429,10 +1493,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    152,
-    153
+    163,
+    164
    ],
-   "id": "OC-2022-0098"
+   "id": "OC-2022-0102"
   },
   {
    "rodovia": "AM-010",
@@ -1444,10 +1508,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    155,
-    154
+    166,
+    165
    ],
-   "id": "OC-2022-0099"
+   "id": "OC-2022-0103"
   },
   {
    "rodovia": "AM-010",
@@ -1459,9 +1523,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    156
+    167
    ],
-   "id": "OC-2022-0100"
+   "id": "OC-2022-0104"
   },
   {
    "rodovia": "AM-070",
@@ -1473,9 +1537,9 @@
    "km": "53",
    "municipio": "Manaus",
    "noticias": [
-    157
+    168
    ],
-   "id": "OC-2022-0101"
+   "id": "OC-2022-0105"
   },
   {
    "rodovia": "AM-010",
@@ -1487,9 +1551,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    158
+    169
    ],
-   "id": "OC-2022-0102"
+   "id": "OC-2022-0106"
   },
   {
    "rodovia": "AM-070",
@@ -1501,9 +1565,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    159
+    170
    ],
-   "id": "OC-2022-0103"
+   "id": "OC-2022-0107"
   },
   {
    "rodovia": "AM-010",
@@ -1515,9 +1579,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    160
+    171
    ],
-   "id": "OC-2022-0104"
+   "id": "OC-2022-0108"
   },
   {
    "rodovia": "AM-010",
@@ -1529,9 +1593,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    161
+    172
    ],
-   "id": "OC-2022-0105"
+   "id": "OC-2022-0109"
   },
   {
    "rodovia": "AM-070",
@@ -1543,9 +1607,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    162
+    173
    ],
-   "id": "OC-2022-0106"
+   "id": "OC-2022-0110"
   },
   {
    "rodovia": "AM-070",
@@ -1557,9 +1621,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    163
+    174
    ],
-   "id": "OC-2022-0107"
+   "id": "OC-2022-0111"
   },
   {
    "rodovia": "AM-010",
@@ -1571,9 +1635,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    164
+    175
    ],
-   "id": "OC-2022-0108"
+   "id": "OC-2022-0112"
   },
   {
    "rodovia": "AM-010",
@@ -1585,12 +1649,12 @@
    "km": "28",
    "municipio": "Manaus",
    "noticias": [
-    165,
-    166,
-    167,
-    168
+    176,
+    177,
+    178,
+    179
    ],
-   "id": "OC-2022-0109"
+   "id": "OC-2022-0113"
   },
   {
    "rodovia": "AM-070",
@@ -1602,9 +1666,9 @@
    "km": "22",
    "municipio": "Manaus",
    "noticias": [
-    169
+    180
    ],
-   "id": "OC-2022-0110"
+   "id": "OC-2022-0114"
   },
   {
    "rodovia": "AM-070",
@@ -1616,9 +1680,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    170
+    181
    ],
-   "id": "OC-2022-0111"
+   "id": "OC-2022-0115"
   },
   {
    "rodovia": "AM-010",
@@ -1630,9 +1694,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    171
+    182
    ],
-   "id": "OC-2022-0112"
+   "id": "OC-2022-0116"
   },
   {
    "rodovia": "AM-070",
@@ -1644,9 +1708,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    172
+    183
    ],
-   "id": "OC-2022-0113"
+   "id": "OC-2022-0117"
   },
   {
    "rodovia": "AM-010",
@@ -1658,9 +1722,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    173
+    184
    ],
-   "id": "OC-2022-0114"
+   "id": "OC-2022-0118"
   },
   {
    "rodovia": "AM-010",
@@ -1672,12 +1736,12 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    174,
-    175,
-    176,
-    177
+    185,
+    186,
+    187,
+    188
    ],
-   "id": "OC-2022-0115"
+   "id": "OC-2022-0119"
   },
   {
    "rodovia": "AM-070",
@@ -1689,10 +1753,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    179,
-    180
+    190,
+    191
    ],
-   "id": "OC-2021-0116"
+   "id": "OC-2021-0120"
   },
   {
    "rodovia": "AM-352",
@@ -1704,9 +1768,9 @@
    "km": null,
    "municipio": "Novo Airão",
    "noticias": [
-    178
+    189
    ],
-   "id": "OC-2021-0117"
+   "id": "OC-2021-0121"
   },
   {
    "rodovia": "AM-070",
@@ -1718,9 +1782,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    181
+    192
    ],
-   "id": "OC-2021-0118"
+   "id": "OC-2021-0122"
   },
   {
    "rodovia": "AM-010",
@@ -1732,9 +1796,9 @@
    "km": "26",
    "municipio": "Manaus",
    "noticias": [
-    182
+    193
    ],
-   "id": "OC-2021-0119"
+   "id": "OC-2021-0123"
   },
   {
    "rodovia": "AM-010",
@@ -1746,9 +1810,9 @@
    "km": "35",
    "municipio": "Manaus",
    "noticias": [
-    183
+    194
    ],
-   "id": "OC-2021-0120"
+   "id": "OC-2021-0124"
   },
   {
    "rodovia": "AM-010",
@@ -1760,10 +1824,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    184,
-    186
+    195,
+    197
    ],
-   "id": "OC-2021-0121"
+   "id": "OC-2021-0125"
   },
   {
    "rodovia": "AM-070",
@@ -1775,9 +1839,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    185
+    196
    ],
-   "id": "OC-2021-0122"
+   "id": "OC-2021-0126"
   },
   {
    "rodovia": "AM-010",
@@ -1789,9 +1853,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    187
+    198
    ],
-   "id": "OC-2021-0123"
+   "id": "OC-2021-0127"
   },
   {
    "rodovia": "AM-010",
@@ -1803,12 +1867,12 @@
    "km": "84",
    "municipio": "Manaus",
    "noticias": [
-    189,
-    190,
-    191,
-    188
+    200,
+    201,
+    202,
+    199
    ],
-   "id": "OC-2021-0124"
+   "id": "OC-2021-0128"
   },
   {
    "rodovia": "AM-070",
@@ -1820,9 +1884,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    192
+    203
    ],
-   "id": "OC-2021-0125"
+   "id": "OC-2021-0129"
   },
   {
    "rodovia": "AM-070",
@@ -1834,10 +1898,10 @@
    "km": "3",
    "municipio": "Manaus",
    "noticias": [
-    193,
-    194
+    204,
+    205
    ],
-   "id": "OC-2021-0126"
+   "id": "OC-2021-0130"
   },
   {
    "rodovia": "AM-010",
@@ -1849,9 +1913,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    195
+    206
    ],
-   "id": "OC-2021-0127"
+   "id": "OC-2021-0131"
   },
   {
    "rodovia": "AM-010",
@@ -1863,9 +1927,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    196
+    207
    ],
-   "id": "OC-2021-0128"
+   "id": "OC-2021-0132"
   },
   {
    "rodovia": "AM-010",
@@ -1877,9 +1941,9 @@
    "km": "102",
    "municipio": "Manaus",
    "noticias": [
-    197
+    208
    ],
-   "id": "OC-2021-0129"
+   "id": "OC-2021-0133"
   },
   {
    "rodovia": "AM-010",
@@ -1891,9 +1955,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    198
+    209
    ],
-   "id": "OC-2021-0130"
+   "id": "OC-2021-0134"
   },
   {
    "rodovia": "AM-010",
@@ -1905,11 +1969,11 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    199,
-    200,
-    201
+    210,
+    211,
+    212
    ],
-   "id": "OC-2021-0131"
+   "id": "OC-2021-0135"
   },
   {
    "rodovia": "AM-070",
@@ -1921,10 +1985,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    202,
-    203
+    213,
+    214
    ],
-   "id": "OC-2021-0132"
+   "id": "OC-2021-0136"
   },
   {
    "rodovia": "AM-070",
@@ -1936,9 +2000,9 @@
    "km": "8",
    "municipio": "Manaus",
    "noticias": [
-    204
+    215
    ],
-   "id": "OC-2021-0133"
+   "id": "OC-2021-0137"
   },
   {
    "rodovia": "AM-010",
@@ -1950,9 +2014,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    205
+    216
    ],
-   "id": "OC-2021-0134"
+   "id": "OC-2021-0138"
   },
   {
    "rodovia": "AM-070",
@@ -1964,9 +2028,9 @@
    "km": "37",
    "municipio": "Manaus",
    "noticias": [
-    206
+    217
    ],
-   "id": "OC-2021-0135"
+   "id": "OC-2021-0139"
   },
   {
    "rodovia": "AM-010",
@@ -1978,9 +2042,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    207
+    218
    ],
-   "id": "OC-2021-0136"
+   "id": "OC-2021-0140"
   },
   {
    "rodovia": "AM-070",
@@ -1992,9 +2056,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    208
+    219
    ],
-   "id": "OC-2021-0137"
+   "id": "OC-2021-0141"
   },
   {
    "rodovia": "AM-010",
@@ -2006,9 +2070,9 @@
    "km": "83",
    "municipio": "Manaus",
    "noticias": [
-    209
+    220
    ],
-   "id": "OC-2021-0138"
+   "id": "OC-2021-0142"
   },
   {
    "rodovia": "AM-070",
@@ -2020,9 +2084,9 @@
    "km": "03",
    "municipio": "Manaus",
    "noticias": [
-    210
+    221
    ],
-   "id": "OC-2021-0139"
+   "id": "OC-2021-0143"
   },
   {
    "rodovia": "AM-070",
@@ -2034,10 +2098,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    211,
-    212
+    222,
+    223
    ],
-   "id": "OC-2021-0140"
+   "id": "OC-2021-0144"
   },
   {
    "rodovia": "AM-070",
@@ -2049,9 +2113,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    213
+    224
    ],
-   "id": "OC-2021-0141"
+   "id": "OC-2021-0145"
   },
   {
    "rodovia": "AM-010",
@@ -2063,9 +2127,9 @@
    "km": "19",
    "municipio": "Manaus",
    "noticias": [
-    214
+    225
    ],
-   "id": "OC-2021-0142"
+   "id": "OC-2021-0146"
   },
   {
    "rodovia": "AM-070",
@@ -2077,9 +2141,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    215
+    226
    ],
-   "id": "OC-2021-0143"
+   "id": "OC-2021-0147"
   },
   {
    "rodovia": "AM-070",
@@ -2091,9 +2155,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    216
+    227
    ],
-   "id": "OC-2021-0144"
+   "id": "OC-2021-0148"
   },
   {
    "rodovia": "AM-010",
@@ -2105,9 +2169,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    217
+    228
    ],
-   "id": "OC-2020-0145"
+   "id": "OC-2020-0149"
   },
   {
    "rodovia": "AM-010",
@@ -2119,9 +2183,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    218
+    229
    ],
-   "id": "OC-2020-0146"
+   "id": "OC-2020-0150"
   },
   {
    "rodovia": "AM-010",
@@ -2133,9 +2197,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    219
+    230
    ],
-   "id": "OC-2020-0147"
+   "id": "OC-2020-0151"
   },
   {
    "rodovia": "AM-010",
@@ -2147,10 +2211,10 @@
    "km": "49",
    "municipio": "Manaus",
    "noticias": [
-    221,
-    220
+    232,
+    231
    ],
-   "id": "OC-2020-0148"
+   "id": "OC-2020-0152"
   },
   {
    "rodovia": "AM-010",
@@ -2162,9 +2226,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    222
+    233
    ],
-   "id": "OC-2020-0149"
+   "id": "OC-2020-0153"
   },
   {
    "rodovia": "AM-070",
@@ -2176,10 +2240,10 @@
    "km": "8",
    "municipio": "Novo Airão",
    "noticias": [
-    223,
-    224
+    234,
+    235
    ],
-   "id": "OC-2020-0150"
+   "id": "OC-2020-0154"
   },
   {
    "rodovia": "AM-010",
@@ -2191,9 +2255,9 @@
    "km": "83",
    "municipio": "Manaus",
    "noticias": [
-    225
+    236
    ],
-   "id": "OC-2020-0151"
+   "id": "OC-2020-0155"
   },
   {
    "rodovia": "AM-070",
@@ -2205,9 +2269,9 @@
    "km": "19",
    "municipio": "Manaus",
    "noticias": [
-    226
+    237
    ],
-   "id": "OC-2020-0152"
+   "id": "OC-2020-0156"
   },
   {
    "rodovia": "AM-363",
@@ -2219,9 +2283,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    227
+    238
    ],
-   "id": "OC-2020-0153"
+   "id": "OC-2020-0157"
   },
   {
    "rodovia": "AM-070",
@@ -2233,9 +2297,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    228
+    239
    ],
-   "id": "OC-2020-0154"
+   "id": "OC-2020-0158"
   },
   {
    "rodovia": "AM-070",
@@ -2247,9 +2311,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    229
+    240
    ],
-   "id": "OC-2020-0155"
+   "id": "OC-2020-0159"
   },
   {
    "rodovia": "AM-363",
@@ -2261,9 +2325,9 @@
    "km": "76",
    "municipio": "Itapiranga",
    "noticias": [
-    230
+    241
    ],
-   "id": "OC-2020-0156"
+   "id": "OC-2020-0160"
   },
   {
    "rodovia": "AM-010",
@@ -2275,9 +2339,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    231
+    242
    ],
-   "id": "OC-2020-0157"
+   "id": "OC-2020-0161"
   },
   {
    "rodovia": "AM-010",
@@ -2289,9 +2353,9 @@
    "km": "60",
    "municipio": "Manaus",
    "noticias": [
-    232
+    243
    ],
-   "id": "OC-2020-0158"
+   "id": "OC-2020-0162"
   },
   {
    "rodovia": "AM-070",
@@ -2303,9 +2367,9 @@
    "km": "17",
    "municipio": "Manaus",
    "noticias": [
-    233
+    244
    ],
-   "id": "OC-2020-0159"
+   "id": "OC-2020-0163"
   },
   {
    "rodovia": "AM-010",
@@ -2317,9 +2381,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    234
+    245
    ],
-   "id": "OC-2020-0160"
+   "id": "OC-2020-0164"
   },
   {
    "rodovia": "AM-010",
@@ -2331,9 +2395,9 @@
    "km": "59",
    "municipio": "Manaus",
    "noticias": [
-    235
+    246
    ],
-   "id": "OC-2020-0161"
+   "id": "OC-2020-0165"
   },
   {
    "rodovia": "AM-070",
@@ -2345,9 +2409,9 @@
    "km": "4",
    "municipio": "Manaus",
    "noticias": [
-    236
+    247
    ],
-   "id": "OC-2020-0162"
+   "id": "OC-2020-0166"
   },
   {
    "rodovia": "AM-070",
@@ -2359,11 +2423,11 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    239,
-    237,
-    238
+    250,
+    248,
+    249
    ],
-   "id": "OC-2020-0163"
+   "id": "OC-2020-0167"
   },
   {
    "rodovia": "AM-070",
@@ -2375,9 +2439,9 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    240
+    251
    ],
-   "id": "OC-2020-0164"
+   "id": "OC-2020-0168"
   },
   {
    "rodovia": "AM-010",
@@ -2389,10 +2453,10 @@
    "km": "61",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    241,
-    242
+    252,
+    253
    ],
-   "id": "OC-2020-0165"
+   "id": "OC-2020-0169"
   },
   {
    "rodovia": "AM-010",
@@ -2404,10 +2468,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    244,
-    243
+    255,
+    254
    ],
-   "id": "OC-2020-0166"
+   "id": "OC-2020-0170"
   },
   {
    "rodovia": "AM-070",
@@ -2419,9 +2483,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    245
+    256
    ],
-   "id": "OC-2020-0167"
+   "id": "OC-2020-0171"
   },
   {
    "rodovia": "AM-010",
@@ -2433,10 +2497,10 @@
    "km": "41",
    "municipio": "Manaus",
    "noticias": [
-    246,
-    247
+    257,
+    258
    ],
-   "id": "OC-2020-0168"
+   "id": "OC-2020-0172"
   },
   {
    "rodovia": "AM-070",
@@ -2448,9 +2512,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    248
+    259
    ],
-   "id": "OC-2020-0169"
+   "id": "OC-2020-0173"
   },
   {
    "rodovia": "AM-070",
@@ -2462,9 +2526,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    249
+    260
    ],
-   "id": "OC-2020-0170"
+   "id": "OC-2020-0174"
   },
   {
    "rodovia": "AM-010",
@@ -2476,9 +2540,9 @@
    "km": "132",
    "municipio": "Manaus",
    "noticias": [
-    250
+    261
    ],
-   "id": "OC-2020-0171"
+   "id": "OC-2020-0175"
   },
   {
    "rodovia": "AM-070",
@@ -2490,9 +2554,9 @@
    "km": "68",
    "municipio": "Manacapuru",
    "noticias": [
-    251
+    262
    ],
-   "id": "OC-2020-0172"
+   "id": "OC-2020-0176"
   },
   {
    "rodovia": "AM-010",
@@ -2504,9 +2568,9 @@
    "km": "132",
    "municipio": "Manaus",
    "noticias": [
-    252
+    263
    ],
-   "id": "OC-2020-0173"
+   "id": "OC-2020-0177"
   },
   {
    "rodovia": "AM-010",
@@ -2518,9 +2582,9 @@
    "km": "35",
    "municipio": "Itacoatiara",
    "noticias": [
-    253
+    264
    ],
-   "id": "OC-2019-0174"
+   "id": "OC-2019-0178"
   },
   {
    "rodovia": "AM-070",
@@ -2532,9 +2596,9 @@
    "km": null,
    "municipio": "Manacapuru",
    "noticias": [
-    254
+    265
    ],
-   "id": "OC-2019-0175"
+   "id": "OC-2019-0179"
   },
   {
    "rodovia": "AM-010",
@@ -2546,9 +2610,9 @@
    "km": "44",
    "municipio": "Iranduba",
    "noticias": [
-    255
+    266
    ],
-   "id": "OC-2019-0176"
+   "id": "OC-2019-0180"
   },
   {
    "rodovia": "AM-010",
@@ -2560,9 +2624,9 @@
    "km": "52",
    "municipio": "Manaus",
    "noticias": [
-    256
+    267
    ],
-   "id": "OC-2019-0177"
+   "id": "OC-2019-0181"
   },
   {
    "rodovia": "AM-010",
@@ -2574,10 +2638,10 @@
    "km": "105",
    "municipio": "Manaus",
    "noticias": [
-    258,
-    257
+    269,
+    268
    ],
-   "id": "OC-2019-0178"
+   "id": "OC-2019-0182"
   },
   {
    "rodovia": "AM-010",
@@ -2589,9 +2653,9 @@
    "km": "135",
    "municipio": "Manaus",
    "noticias": [
-    260
+    271
    ],
-   "id": "OC-2019-0179"
+   "id": "OC-2019-0183"
   },
   {
    "rodovia": "AM-070",
@@ -2603,10 +2667,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    259,
-    261
+    270,
+    272
    ],
-   "id": "OC-2019-0180"
+   "id": "OC-2019-0184"
   },
   {
    "rodovia": "AM-010",
@@ -2618,9 +2682,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    262
+    273
    ],
-   "id": "OC-2019-0181"
+   "id": "OC-2019-0185"
   },
   {
    "rodovia": "AM-010",
@@ -2632,9 +2696,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    263
+    274
    ],
-   "id": "OC-2019-0182"
+   "id": "OC-2019-0186"
   },
   {
    "rodovia": "AM-070",
@@ -2646,9 +2710,9 @@
    "km": "72",
    "municipio": "Manaus",
    "noticias": [
-    264
+    275
    ],
-   "id": "OC-2019-0183"
+   "id": "OC-2019-0187"
   },
   {
    "rodovia": "AM-010",
@@ -2660,9 +2724,9 @@
    "km": "19",
    "municipio": "Manaus",
    "noticias": [
-    265
+    276
    ],
-   "id": "OC-2019-0184"
+   "id": "OC-2019-0188"
   },
   {
    "rodovia": "AM-070",
@@ -2674,9 +2738,9 @@
    "km": "72",
    "municipio": "Manacapuru",
    "noticias": [
-    266
+    277
    ],
-   "id": "OC-2019-0185"
+   "id": "OC-2019-0189"
   },
   {
    "rodovia": "AM-070",
@@ -2688,9 +2752,9 @@
    "km": "28",
    "municipio": "Manaus",
    "noticias": [
-    267
+    278
    ],
-   "id": "OC-2019-0186"
+   "id": "OC-2019-0190"
   },
   {
    "rodovia": "AM-010",
@@ -2702,9 +2766,9 @@
    "km": "102",
    "municipio": "Manaus",
    "noticias": [
-    268
+    279
    ],
-   "id": "OC-2019-0187"
+   "id": "OC-2019-0191"
   },
   {
    "rodovia": "AM-070",
@@ -2716,9 +2780,9 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    269
+    280
    ],
-   "id": "OC-2019-0188"
+   "id": "OC-2019-0192"
   },
   {
    "rodovia": "AM-070",
@@ -2730,9 +2794,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    270
+    281
    ],
-   "id": "OC-2019-0189"
+   "id": "OC-2019-0193"
   },
   {
    "rodovia": "AM-010",
@@ -2744,9 +2808,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    271
+    282
    ],
-   "id": "OC-2019-0190"
+   "id": "OC-2019-0194"
   },
   {
    "rodovia": "AM-070",
@@ -2758,9 +2822,9 @@
    "km": "4",
    "municipio": "Manaus",
    "noticias": [
-    272
+    283
    ],
-   "id": "OC-2019-0191"
+   "id": "OC-2019-0195"
   },
   {
    "rodovia": "AM-010",
@@ -2772,9 +2836,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    273
+    284
    ],
-   "id": "OC-2019-0192"
+   "id": "OC-2019-0196"
   },
   {
    "rodovia": "AM-254",
@@ -2786,9 +2850,9 @@
    "km": "17",
    "municipio": "Autazes",
    "noticias": [
-    274
+    285
    ],
-   "id": "OC-2019-0193"
+   "id": "OC-2019-0197"
   },
   {
    "rodovia": "AM-010",
@@ -2800,9 +2864,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    275
+    286
    ],
-   "id": "OC-2019-0194"
+   "id": "OC-2019-0198"
   },
   {
    "rodovia": "AM-070",
@@ -2814,9 +2878,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    276
+    287
    ],
-   "id": "OC-2019-0195"
+   "id": "OC-2019-0199"
   },
   {
    "rodovia": "AM-010",
@@ -2828,9 +2892,9 @@
    "km": "104",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    277
+    288
    ],
-   "id": "OC-2019-0196"
+   "id": "OC-2019-0200"
   },
   {
    "rodovia": "AM-010",
@@ -2842,9 +2906,9 @@
    "km": "58",
    "municipio": "Manaus",
    "noticias": [
-    278
+    289
    ],
-   "id": "OC-2019-0197"
+   "id": "OC-2019-0201"
   },
   {
    "rodovia": "AM-254",
@@ -2856,9 +2920,9 @@
    "km": null,
    "municipio": "Autazes",
    "noticias": [
-    279
+    290
    ],
-   "id": "OC-2019-0198"
+   "id": "OC-2019-0202"
   },
   {
    "rodovia": "AM-070",
@@ -2870,9 +2934,9 @@
    "km": "5",
    "municipio": "Manaus",
    "noticias": [
-    280
+    291
    ],
-   "id": "OC-2019-0199"
+   "id": "OC-2019-0203"
   },
   {
    "rodovia": "AM-352",
@@ -2884,9 +2948,9 @@
    "km": null,
    "municipio": "Novo Airão",
    "noticias": [
-    283
+    294
    ],
-   "id": "OC-2019-0200"
+   "id": "OC-2019-0204"
   },
   {
    "rodovia": "AM-010",
@@ -2898,11 +2962,11 @@
    "km": "88",
    "municipio": "Itacoatiara",
    "noticias": [
-    286,
-    282,
-    285
+    297,
+    293,
+    296
    ],
-   "id": "OC-2019-0201"
+   "id": "OC-2019-0205"
   },
   {
    "rodovia": "AM-010",
@@ -2914,12 +2978,12 @@
    "km": "184",
    "municipio": "Manaus",
    "noticias": [
-    288,
-    287,
-    281,
-    284
+    299,
+    298,
+    292,
+    295
    ],
-   "id": "OC-2019-0202"
+   "id": "OC-2019-0206"
   },
   {
    "rodovia": "AM-010",
@@ -2931,9 +2995,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    289
+    300
    ],
-   "id": "OC-2019-0203"
+   "id": "OC-2019-0207"
   },
   {
    "rodovia": "AM-070",
@@ -2945,9 +3009,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    290
+    301
    ],
-   "id": "OC-2019-0204"
+   "id": "OC-2019-0208"
   },
   {
    "rodovia": "AM-010",
@@ -2959,9 +3023,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    291
+    302
    ],
-   "id": "OC-2019-0205"
+   "id": "OC-2019-0209"
   },
   {
    "rodovia": "AM-070",
@@ -2973,10 +3037,10 @@
    "km": "74",
    "municipio": "Manaus",
    "noticias": [
-    292,
-    293
+    303,
+    304
    ],
-   "id": "OC-2019-0206"
+   "id": "OC-2019-0210"
   },
   {
    "rodovia": "AM-010",
@@ -2988,10 +3052,10 @@
    "km": "108",
    "municipio": "Itacoatiara",
    "noticias": [
-    295,
-    296
+    306,
+    307
    ],
-   "id": "OC-2019-0207"
+   "id": "OC-2019-0211"
   },
   {
    "rodovia": "AM-070",
@@ -3003,9 +3067,9 @@
    "km": "18",
    "municipio": "Manaus",
    "noticias": [
-    294
+    305
    ],
-   "id": "OC-2019-0208"
+   "id": "OC-2019-0212"
   },
   {
    "rodovia": "AM-070",
@@ -3017,9 +3081,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    297
+    308
    ],
-   "id": "OC-2019-0209"
+   "id": "OC-2019-0213"
   },
   {
    "rodovia": "AM-010",
@@ -3031,9 +3095,9 @@
    "km": "22",
    "municipio": "Manaus",
    "noticias": [
-    298
+    309
    ],
-   "id": "OC-2019-0210"
+   "id": "OC-2019-0214"
   },
   {
    "rodovia": "AM-010",
@@ -3045,10 +3109,10 @@
    "km": "135",
    "municipio": "Manaus",
    "noticias": [
-    300,
-    299
+    311,
+    310
    ],
-   "id": "OC-2019-0211"
+   "id": "OC-2019-0215"
   },
   {
    "rodovia": "AM-010",
@@ -3060,9 +3124,9 @@
    "km": "7",
    "municipio": "Manaus",
    "noticias": [
-    301
+    312
    ],
-   "id": "OC-2019-0212"
+   "id": "OC-2019-0216"
   },
   {
    "rodovia": "AM-070",
@@ -3074,9 +3138,9 @@
    "km": "77",
    "municipio": "Manaus",
    "noticias": [
-    302
+    313
    ],
-   "id": "OC-2019-0213"
+   "id": "OC-2019-0217"
   },
   {
    "rodovia": "AM-010",
@@ -3088,9 +3152,9 @@
    "km": "47",
    "municipio": "Manaus",
    "noticias": [
-    303
+    314
    ],
-   "id": "OC-2019-0214"
+   "id": "OC-2019-0218"
   },
   {
    "rodovia": "AM-010",
@@ -3102,10 +3166,10 @@
    "km": "175",
    "municipio": "Manaus",
    "noticias": [
-    305,
-    304
+    316,
+    315
    ],
-   "id": "OC-2019-0215"
+   "id": "OC-2019-0219"
   },
   {
    "rodovia": "AM-070",
@@ -3117,9 +3181,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    306
+    317
    ],
-   "id": "OC-2017-0216"
+   "id": "OC-2017-0220"
   },
   {
    "rodovia": "AM-010",
@@ -3131,9 +3195,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    307
+    318
    ],
-   "id": "OC-2017-0217"
+   "id": "OC-2017-0221"
   },
   {
    "rodovia": "AM-254",
@@ -3145,9 +3209,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    308
+    319
    ],
-   "id": "OC-2017-0218"
+   "id": "OC-2017-0222"
   },
   {
    "rodovia": "AM-010",
@@ -3159,9 +3223,9 @@
    "km": "127",
    "municipio": "Manaus",
    "noticias": [
-    309
+    320
    ],
-   "id": "OC-2016-0219"
+   "id": "OC-2016-0223"
   },
   {
    "rodovia": "AM-070",
@@ -3173,9 +3237,9 @@
    "km": "3",
    "municipio": "Manaus",
    "noticias": [
-    310
+    321
    ],
-   "id": "OC-2016-0220"
+   "id": "OC-2016-0224"
   },
   {
    "rodovia": "AM-010",
@@ -3187,9 +3251,9 @@
    "km": "30",
    "municipio": "Itacoatiara",
    "noticias": [
-    311
+    322
    ],
-   "id": "OC-2016-0221"
+   "id": "OC-2016-0225"
   },
   {
    "rodovia": "AM-010",
@@ -3201,10 +3265,10 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    312,
-    313
+    323,
+    324
    ],
-   "id": "OC-2016-0222"
+   "id": "OC-2016-0226"
   },
   {
    "rodovia": "AM-070",
@@ -3216,9 +3280,9 @@
    "km": "2",
    "municipio": "Manacapuru",
    "noticias": [
-    314
+    325
    ],
-   "id": "OC-2016-0223"
+   "id": "OC-2016-0227"
   },
   {
    "rodovia": "AM-010",
@@ -3230,9 +3294,9 @@
    "km": "91",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    315
+    326
    ],
-   "id": "OC-2015-0224"
+   "id": "OC-2015-0228"
   },
   {
    "rodovia": "AM-070",
@@ -3244,9 +3308,9 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    316
+    327
    ],
-   "id": "OC-2014-0225"
+   "id": "OC-2014-0229"
   },
   {
    "rodovia": "AM-070",
@@ -3258,12 +3322,260 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    317
+    328
    ],
-   "id": "OC-2014-0226"
+   "id": "OC-2014-0230"
   }
  ],
  "noticias": [
+  {
+   "url": "https://segundoasegundo.com.br/2026/11/motorista-fica-ferido-apos-kombi/",
+   "titulo": "Motorista fica ferido após Kombi tombar ao atingir cavalo",
+   "fonte": "Segundo a Segundo",
+   "fonte_url": "https://segundoasegundo.com.br",
+   "data": "2026-11-24",
+   "verificacao": "texto da matéria",
+   "termo": "AM-352",
+   "trecho": "Terça-feira, 24 de novembro de 2026 Envie sua notícia Contato Anuncie Aqui Cidades Motorista fica ferido após Kombi tombar ao atingir cavalo na AM-352, em Novo Airão Foto: Divulgação Um acidente de trânsito envolvendo uma Kombi e um cavalo foi registrado na noite de segunda-feira (23), no quilômetro 37 da rodovia AM-352, trecho que liga Novo Airão a Manacapuru, no Amazonas. De acordo com informações da Polícia Milita",
+   "rodovia": "AM-352",
+   "rodovias_citadas": [
+    "AM-352"
+   ],
+   "tipo": "Tombamento",
+   "fatal": false,
+   "mortos": null,
+   "feridos": null,
+   "km": null,
+   "municipio": "Novo Airão",
+   "id": 1,
+   "ocorrencia": "OC-2026-0001",
+   "arquivo": "https://web.archive.org/web/20261124203825/https://segundoasegundo.com.br/2026/11/motorista-fica-ferido-apos-kombi/",
+   "arquivado_em": "2026-11-24"
+  },
+  {
+   "url": "https://www.riosdenoticias.com.br/familia-pede-ajuda-para-consertar-carro-apos-acidente-com-morte-na-am-070/",
+   "titulo": "Família pede ajuda para consertar carro após acidente com morte na AM-070",
+   "fonte": "Portal - Rios de Notícias",
+   "fonte_url": "https://www.riosdenoticias.com.br",
+   "data": "2026-11-23",
+   "verificacao": "texto da matéria",
+   "termo": "AM-070",
+   "trecho": "Família pede ajuda para consertar carro após grave acidente (Foto: Divulgação/Assessoria) Twitter Whatsapp Redação Rios MANAUS (AM) – Uma família de pastores que retornava a Manaus no último fim de semana sofreu um grave acidente de trânsito no quilômetro 43 da rodovia Manoel Urbano (AM-070), em Manacapuru, na Região Metropolitana da capital. A colisão envolveu uma motocicleta e um Chevrolet Onix Sedan prata. O motoc",
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Saída de pista",
+   "fatal": true,
+   "mortos": null,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manaus",
+   "id": 2,
+   "ocorrencia": "OC-2026-0004",
+   "arquivo": "https://web.archive.org/web/20261124203910/https://www.riosdenoticias.com.br/familia-pede-ajuda-para-consertar-carro-apos-acidente-com-morte-na-am-070/",
+   "arquivado_em": "2026-11-24"
+  },
+  {
+   "url": "https://novo2026.portaldoholanda.com.br/amazonas/motociclista-despedacado-em-acidente-na-am-070-voltava-de-torneio-de-futebol",
+   "titulo": "Motociclista despedaçado em acidente na AM-070 voltava de torneio de futebol - Amazonas | Portal do Holanda",
+   "fonte": "Portal do Holanda",
+   "fonte_url": "https://novo2026.portaldoholanda.com.br",
+   "data": "2026-11-23",
+   "verificacao": "texto da matéria",
+   "termo": "AM-070",
+   "trecho": "Ouvir no Spotify 📌 Ler resumo da notícia Resumo da notícia ▾ ▴ Reginaldo Macena Cavalcante, de 39 anos, morreu em acidente na AM-070 após perder o controle da motocicleta e colidir com um carro. O acidente ocorreu no quilômetro 43 da rodovia Manoel Urbano, próximo à comunidade do Maniquara, resultando em morte imediata. Cinco ocupantes do carro, incluindo uma idosa e uma bebê, não sofreram ferimentos; o corpo de Regi",
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Capotamento",
+   "fatal": true,
+   "mortos": null,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manacapuru",
+   "id": 3,
+   "ocorrencia": "OC-2026-0003",
+   "arquivo": "https://web.archive.org/web/20261124204047/https://novo2026.portaldoholanda.com.br/amazonas/motociclista-despedacado-em-acidente-na-am-070-voltava-de-torneio-de-futebol",
+   "arquivado_em": "2026-11-24"
+  },
+  {
+   "url": "https://ochefaodanoticia.com.br/policia/corpo-de-motociclista-fica-dilacerado-apos-batida-violenta-com-carro-no-am/",
+   "titulo": "Corpo de motociclista fica dilacerado após batida violenta com carro no AM - O Chefão da Notícia",
+   "fonte": "O Chefão da Notícia",
+   "fonte_url": "https://ochefaodanoticia.com.br",
+   "data": "2026-11-22",
+   "verificacao": "texto da matéria",
+   "termo": "AM-010",
+   "trecho": "Vítima conhecida como Barcelona morreu após tentar atravessar a pista na rodovia que liga Manaus a Manacapuru; capacete também ficou destruído. A violência da colisão deixou uma cena devastadora na rodovia que liga Manaus a Manacapuru, no Amazonas. Um motociclista conhecido como Barcelona morreu na noite de sábado (21), após ser atingido por um carro enquanto tentava atravessar a pista. O impacto foi tão forte que a",
+   "rodovia": "AM-010",
+   "rodovias_citadas": [
+    "AM-010"
+   ],
+   "tipo": "Colisão",
+   "fatal": true,
+   "mortos": 3,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manaus",
+   "id": 4,
+   "ocorrencia": "OC-2026-0002"
+  },
+  {
+   "url": "https://www.acritica.com/geral/homem-morre-em-grave-acidente-na-am-070-2/",
+   "titulo": "Homem morre em grave acidente na AM-070 - A Crítica",
+   "fonte": "A Crítica",
+   "fonte_url": "https://www.acritica.com",
+   "data": "2026-11-22",
+   "verificacao": "texto da matéria",
+   "termo": "AM-070",
+   "trecho": "Podcast no YouTube A Crítica Play Impressa acidente Foto: Divulgação Um homem morreu em um grave acidente na noite deste sábado (21), na rodovia Manoel Urbano (AM-070), que liga Manaus ao município de Manacapuru, no interior do Amazonas. Ele foi identificado como Reginaldo Macena Cavalcante, 39 anos. Ainda não há informações de como ocorreu o acidente, que aconteceu na estrada da comunidade do Maniquara, quilômetro 4",
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Acidente (geral)",
+   "fatal": true,
+   "mortos": 1,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manaus",
+   "id": 5,
+   "ocorrencia": "OC-2026-0004"
+  },
+  {
+   "url": "https://radaramazonico.com.br/motociclista-morre-em-colisao-violenta-na-am-070/",
+   "titulo": "Motociclista morre em colisão violenta na AM-070 (vídeo)",
+   "fonte": "Radar Amazônico",
+   "fonte_url": "https://radaramazonico.com.br",
+   "data": "2026-11-22",
+   "verificacao": "só título (página não abriu)",
+   "termo": "AM-070",
+   "trecho": null,
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Colisão",
+   "fatal": true,
+   "mortos": 1,
+   "feridos": null,
+   "km": null,
+   "municipio": null,
+   "id": 6,
+   "ocorrencia": "OC-2026-0003"
+  },
+  {
+   "url": "https://www.riosdenoticias.com.br/homem-morre-apos-ter-corpo-partido-ao-meio-em-grave-acidente-na-am-070-em-manacapuru/",
+   "titulo": "Homem morre após ter corpo partido ao meio em grave acidente na AM-070, em Manacapuru",
+   "fonte": "Portal - Rios de Notícias",
+   "fonte_url": "https://www.riosdenoticias.com.br",
+   "data": "2026-11-22",
+   "verificacao": "texto da matéria",
+   "termo": "AM-070",
+   "trecho": "\"Barcelona\" morreu em acidente entre moto e carro em Manacapuru (Foto: (Reprodução/Rede Social) Twitter Whatsapp Lauris Rocha – Rios de Notícias MANAUS (AM) – Reginaldo Macena Cavalcante , de 39 anos, morreu na noite de sábado, 21/11, após um grave acidente de trânsito na rodovia Manoel Urbano (AM-070), em Manacapuru, na Região Metropolitana de Manaus. Com a violência do impacto, a vítima teve o corpo partido ao meio",
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Colisão",
+   "fatal": true,
+   "mortos": 1,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manacapuru",
+   "id": 7,
+   "ocorrencia": "OC-2026-0003"
+  },
+  {
+   "url": "https://marioadolfo.com/video-motociclista-tem-corpo-despedacado-em-grave-acidente-na-am-070/",
+   "titulo": "Vídeo: motociclista tem corpo despedaçado em grave acidente na AM-070",
+   "fonte": "Portal Mário Adolfo",
+   "fonte_url": "https://marioadolfo.com",
+   "data": "2026-11-22",
+   "verificacao": "texto da matéria",
+   "termo": "AM-070",
+   "trecho": "Partes do corpo da vítima ficaram espalhadas na via. Suspeita é de que o motociclista tenha invadido a contramão e batido no carro de uma família Share on BlueSky Compartilhar no Twitter Compartilhar no Facebook Compartilhar no LinkedIn Share on WhatsApp Compartilhar via Email Vítima foi identificada como Reginaldo Macena Cavalcante, de 39 anos - Foto: Reprodução Reginaldo Macena Cavalcante, de 39 anos, conhecido com",
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Colisão",
+   "fatal": true,
+   "mortos": null,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manaus",
+   "id": 8,
+   "ocorrencia": "OC-2026-0003"
+  },
+  {
+   "url": "https://todahora.com/motociclista-morre-apos-violenta-colisao-com-carro-na-rodovia-am-070/",
+   "titulo": "Motociclista morre após violenta colisão com carro na rodovia AM-070",
+   "fonte": "Toda Hora",
+   "fonte_url": "https://todahora.com",
+   "data": "2026-11-22",
+   "verificacao": "texto da matéria",
+   "termo": "AM-070",
+   "trecho": null,
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Colisão",
+   "fatal": true,
+   "mortos": 1,
+   "feridos": null,
+   "km": null,
+   "municipio": null,
+   "id": 9,
+   "ocorrencia": "OC-2026-0003"
+  },
+  {
+   "url": "https://emtempo.com.br/613076/amazonas/motociclista-morre-acidente-am-070-amazonas/",
+   "titulo": "Motociclista tem corpo despedaçado em gravíssimo acidente na AM-070 - Portal Em Tempo",
+   "fonte": "EM TEMPO",
+   "fonte_url": "https://emtempo.com.br",
+   "data": "2026-11-22",
+   "verificacao": "texto da matéria",
+   "termo": "AM-070",
+   "trecho": "Início » Amazonas » Motociclista tem corpo despedaçado em gravíssimo acidente na AM-070 Manaus (AM) – Um grave acidente envolvendo uma motocicleta e outro veículo terminou com a morte de Reginaldo Macena, conhecido como “Barcelona”, na rodovia AM-070, que liga Manaus a Manacapuru. A colisão aconteceu na altura do quilômetro 41, e a violência do impacto deixou testemunhas abaladas. O corpo da vítima ficou despedaçado.",
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Colisão",
+   "fatal": true,
+   "mortos": null,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manaus",
+   "id": 10,
+   "ocorrencia": "OC-2026-0003"
+  },
+  {
+   "url": "https://www.portaldoholanda.com.br/amazonas/motociclista-tem-o-corpo-despedacado-em-grave-acidente-na-am-070",
+   "titulo": "Motociclista tem o corpo despedaçado em grave acidente na AM-070 - Amazonas | Portal do Holanda",
+   "fonte": "Portal do Holanda",
+   "fonte_url": "https://www.portaldoholanda.com.br",
+   "data": "2026-11-21",
+   "verificacao": "texto da matéria",
+   "termo": "AM-070",
+   "trecho": "Ouvir no Spotify 📌 Ler resumo da notícia Resumo da notícia ▾ ▴ Reginaldo Macena, conhecido como \"Barcelona\", morreu em um acidente na AM-070, próximo ao quilômetro 41, entre Manaus e Manacapuru. O motociclista colidiu violentamente com outro veículo, resultando em morte imediata e corpo despedaçado. As circunstâncias do acidente estão sendo investigadas pelas autoridades competentes, que realizam perícia no local. Fo",
+   "rodovia": "AM-070",
+   "rodovias_citadas": [
+    "AM-070"
+   ],
+   "tipo": "Capotamento",
+   "fatal": true,
+   "mortos": null,
+   "feridos": null,
+   "km": null,
+   "municipio": "Manaus",
+   "id": 11,
+   "ocorrencia": "OC-2026-0004"
+  },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/11/12/passageiro-morre-apos-taxi-capotar-e-pegar-fogo-na-am-010-em-manaus.ghtml",
    "titulo": "passageiro morre apos taxi capotar e pegar fogo na am 010 em manaus.ghtml",
@@ -3285,8 +3597,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 1,
-   "ocorrencia": "OC-2026-0001"
+   "id": 12,
+   "ocorrencia": "OC-2026-0005"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/07/26/duas-pessoas-morrem-em-acidente-na-rodovia-am-010-no-interior-do-amazonas.ghtml",
@@ -3309,8 +3621,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 2,
-   "ocorrencia": "OC-2026-0002"
+   "id": 13,
+   "ocorrencia": "OC-2026-0006"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/06/19/acidente-entre-motocicleta-e-carreta-deixa-uma-pessoa-morta-na-rodovia-am-010.ghtml",
@@ -3333,8 +3645,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 3,
-   "ocorrencia": "OC-2026-0003"
+   "id": 14,
+   "ocorrencia": "OC-2026-0007"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/05/22/adolescente-morre-apos-bater-moto-em-caminhao-parado-na-rodovia-am-352-no-amazonas.ghtml",
@@ -3357,8 +3669,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 4,
-   "ocorrencia": "OC-2026-0004"
+   "id": 15,
+   "ocorrencia": "OC-2026-0008"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/05/17/motociclista-morre-apos-bater-em-caminhonete-durante-ultrapassagem-na-am-070.ghtml",
@@ -3381,8 +3693,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 5,
-   "ocorrencia": "OC-2026-0005"
+   "id": 16,
+   "ocorrencia": "OC-2026-0009"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/05/01/dois-adolescentes-morrem-apos-colisao-entre-moto-e-carro-na-am-010-em-manaus.ghtml",
@@ -3405,8 +3717,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 6,
-   "ocorrencia": "OC-2026-0006"
+   "id": 17,
+   "ocorrencia": "OC-2026-0010"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/05/07/motociclista-morre-apos-batida-com-carro-na-am-070-em-iranduba.ghtml",
@@ -3429,8 +3741,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 7,
-   "ocorrencia": "OC-2026-0007"
+   "id": 18,
+   "ocorrencia": "OC-2026-0011"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/05/05/motociclista-morre-em-acidente-com-onibus-na-am-010-em-rio-preto-da-eva.ghtml",
@@ -3453,8 +3765,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 8,
-   "ocorrencia": "OC-2026-0008"
+   "id": 19,
+   "ocorrencia": "OC-2026-0012"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/04/20/colisao-frontal-entre-motos-deixa-dois-mortos-e-dois-feridos-na-rodovia-am-352.ghtml",
@@ -3477,8 +3789,8 @@
    "feridos": 2,
    "km": "4",
    "municipio": "Manacapuru",
-   "id": 9,
-   "ocorrencia": "OC-2026-0009"
+   "id": 20,
+   "ocorrencia": "OC-2026-0013"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/04/13/buracos-e-acidentes-motivam-protesto-de-vereadores-e-motoristas-na-rodovia-am-363.ghtml",
@@ -3502,8 +3814,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Silves",
-   "id": 10,
-   "ocorrencia": "OC-2026-0010"
+   "id": 21,
+   "ocorrencia": "OC-2026-0014"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/04/10/mae-e-filha-de-7-anos-morrem-apos-serem-atropeladas-na-am-070-motorista-fugiu-sem-prestar-socorro.ghtml",
@@ -3526,8 +3838,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 11,
-   "ocorrencia": "OC-2026-0011"
+   "id": 22,
+   "ocorrencia": "OC-2026-0015"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/04/01/mulher-morre-atropelada-apos-descer-do-carro-para-prender-lona-de-carga-na-am-070.ghtml",
@@ -3550,8 +3862,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 12,
-   "ocorrencia": "OC-2026-0012"
+   "id": 23,
+   "ocorrencia": "OC-2026-0016"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/03/20/assessor-do-ministerio-publico-do-amazonas-morre-e-promotor-fica-ferido-em-acidente-na-am-363.ghtml",
@@ -3574,8 +3886,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 13,
-   "ocorrencia": "OC-2026-0013"
+   "id": 24,
+   "ocorrencia": "OC-2026-0017"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/03/19/presidente-da-camara-de-silves-e-vereadores-ficam-feridos-em-acidente-na-am-010.ghtml",
@@ -3598,8 +3910,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Silves",
-   "id": 14,
-   "ocorrencia": "OC-2026-0014"
+   "id": 25,
+   "ocorrencia": "OC-2026-0018"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/03/17/caminhao-com-refrigerantes-tomba-na-am-010.ghtml",
@@ -3622,8 +3934,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 15,
-   "ocorrencia": "OC-2026-0015"
+   "id": 26,
+   "ocorrencia": "OC-2026-0019"
   },
   {
    "url": "https://www.riosdenoticias.com.br/curva-da-morte-acidente-com-carreta-na-am-010-deixa-carga-de-soja-espalhada/",
@@ -3643,8 +3955,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 16,
-   "ocorrencia": "OC-2025-0016"
+   "id": 27,
+   "ocorrencia": "OC-2025-0020"
   },
   {
    "url": "https://d24am.com/amazonas/video-carro-capota-em-curva-da-am-010-e-chama-atencao-de-motoristas/",
@@ -3664,8 +3976,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 17,
-   "ocorrencia": "OC-2025-0017"
+   "id": 28,
+   "ocorrencia": "OC-2025-0021"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/02/17/colisao-entre-dois-carros-deixa-cinco-feridos-na-am-010.ghtml",
@@ -3688,8 +4000,8 @@
    "feridos": 5,
    "km": null,
    "municipio": null,
-   "id": 18,
-   "ocorrencia": "OC-2025-0018"
+   "id": 29,
+   "ocorrencia": "OC-2025-0022"
   },
   {
    "url": "https://www.riosdenoticias.com.br/motorista-fica-ferido-apos-caminhao-pipa-tombar-na-am-010/",
@@ -3709,8 +4021,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 19,
-   "ocorrencia": "OC-2025-0019"
+   "id": 30,
+   "ocorrencia": "OC-2025-0023"
   },
   {
    "url": "https://todahora.com/motorista-e-resgatado-ferragens-apos-caminhao-tombar-na-am-010/",
@@ -3730,8 +4042,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 20,
-   "ocorrencia": "OC-2025-0019"
+   "id": 31,
+   "ocorrencia": "OC-2025-0023"
   },
   {
    "url": "https://www.portaldoholanda.com.br/amazonas/video-mostra-resgate-e-perigo-em-acidente-com-caminhao-pipa-na-am-010",
@@ -3751,8 +4063,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 21,
-   "ocorrencia": "OC-2025-0019"
+   "id": 32,
+   "ocorrencia": "OC-2025-0023"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/11/17/jovem-morre-apos-colisao-entre-moto-e-carro-na-am-010-em-itacoatiara.ghtml",
@@ -3772,8 +4084,8 @@
    "feridos": null,
    "km": "6",
    "municipio": "Itacoatiara",
-   "id": 22,
-   "ocorrencia": "OC-2025-0020"
+   "id": 33,
+   "ocorrencia": "OC-2025-0024"
   },
   {
    "url": "https://d24am.com/amazonas/jovem-de-19-anos-morre-apos-grave-acidente-na-am-010/",
@@ -3793,8 +4105,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 23,
-   "ocorrencia": "OC-2025-0020"
+   "id": 34,
+   "ocorrencia": "OC-2025-0024"
   },
   {
    "url": "https://www.riosdenoticias.com.br/jovem-de-18-anos-morre-apos-colisao-entre-moto-e-carro-na-am-010/",
@@ -3814,8 +4126,8 @@
    "feridos": null,
    "km": "6",
    "municipio": "Manaus",
-   "id": 24,
-   "ocorrencia": "OC-2025-0020"
+   "id": 35,
+   "ocorrencia": "OC-2025-0024"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/11/15/mulher-morre-atropelada-na-am-010.ghtml",
@@ -3838,8 +4150,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 25,
-   "ocorrencia": "OC-2025-0021"
+   "id": 36,
+   "ocorrencia": "OC-2025-0025"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/10/23/ambulancia-com-5-pessoas-capota-em-curva-da-am-010-durante-forte-chuva.ghtml",
@@ -3862,8 +4174,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 26,
-   "ocorrencia": "OC-2025-0022"
+   "id": 37,
+   "ocorrencia": "OC-2025-0026"
   },
   {
    "url": "https://www.riosdenoticias.com.br/carreta-tomba-na-am-010-e-destroi-carga-de-mercadorias-compradas-pela-internet/",
@@ -3883,8 +4195,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 27,
-   "ocorrencia": "OC-2025-0023"
+   "id": 38,
+   "ocorrencia": "OC-2025-0027"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/09/27/motorista-e-arremessada-de-carro-e-morre-apos-capotar-na-rodovia-am-070.ghtml",
@@ -3907,8 +4219,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 28,
-   "ocorrencia": "OC-2025-0024"
+   "id": 39,
+   "ocorrencia": "OC-2025-0028"
   },
   {
    "url": "https://d24am.com/amazonas/video-motorista-passa-mal-e-sofre-acidente-com-feridos-na-am-010/",
@@ -3928,8 +4240,8 @@
    "feridos": null,
    "km": "86",
    "municipio": "Rio Preto da Eva",
-   "id": 29,
-   "ocorrencia": "OC-2025-0025"
+   "id": 40,
+   "ocorrencia": "OC-2025-0029"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/viatura-capota-na-rodovia-am-010-e-policiais-ficam-feridos.ghtml",
@@ -3952,8 +4264,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 30,
-   "ocorrencia": "OC-2025-0026"
+   "id": 41,
+   "ocorrencia": "OC-2025-0030"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/carro-capota-na-am-070-durante-chuva-e-tres-pessoas-ficam-feridas.ghtml",
@@ -3976,8 +4288,8 @@
    "feridos": 3,
    "km": "8",
    "municipio": "Manaus",
-   "id": 31,
-   "ocorrencia": "OC-2025-0027"
+   "id": 42,
+   "ocorrencia": "OC-2025-0031"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/crianca-morre-e-tres-pessoas-ficam-feridas-apos-carro-capotar-na-am-240.ghtml",
@@ -4000,8 +4312,8 @@
    "feridos": 3,
    "km": "9",
    "municipio": "Presidente Figueiredo",
-   "id": 32,
-   "ocorrencia": "OC-2025-0028"
+   "id": 43,
+   "ocorrencia": "OC-2025-0032"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/enfermeira-morre-apos-colisao-entre-motocicleta-e-carro-na-am-240.ghtml",
@@ -4024,8 +4336,8 @@
    "feridos": null,
    "km": "9",
    "municipio": "Presidente Figueiredo",
-   "id": 33,
-   "ocorrencia": "OC-2025-0029"
+   "id": 44,
+   "ocorrencia": "OC-2025-0033"
   },
   {
    "url": "https://www.riosdenoticias.com.br/homem-e-atropelado-por-caminhao-e-escapa-de-ser-atingido-por-onibus-em-manaus/",
@@ -4045,8 +4357,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 34,
-   "ocorrencia": "OC-2025-0030"
+   "id": 45,
+   "ocorrencia": "OC-2025-0034"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/05/06/picape-capota-apos-bater-em-carro-na-am-010-e-deixa-cinco-feridos.ghtml",
@@ -4069,8 +4381,8 @@
    "feridos": 5,
    "km": null,
    "municipio": null,
-   "id": 35,
-   "ocorrencia": "OC-2025-0031"
+   "id": 46,
+   "ocorrencia": "OC-2025-0035"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/07/07/carro-invade-a-contramao-e-atropela-homem-e-crianca-na-zona-oeste-de-manaus-video.ghtml",
@@ -4090,8 +4402,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 36,
-   "ocorrencia": "OC-2025-0032"
+   "id": 47,
+   "ocorrencia": "OC-2025-0036"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/07/05/video-motorista-fica-ferido-carro-totalmente-destruido-apos-colisao-com-caminhao-na-am-070.ghtml",
@@ -4114,8 +4426,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 37,
-   "ocorrencia": "OC-2025-0033"
+   "id": 48,
+   "ocorrencia": "OC-2025-0037"
   },
   {
    "url": "https://d24am.com/amazonas/carro-fica-destruido-e-deixa-feridos-em-colisao-com-caminhao-na-am-070-veja/",
@@ -4138,8 +4450,8 @@
    "feridos": null,
    "km": "33",
    "municipio": "Manacapuru",
-   "id": 38,
-   "ocorrencia": "OC-2025-0033"
+   "id": 49,
+   "ocorrencia": "OC-2025-0037"
   },
   {
    "url": "https://www.portaldoholanda.com.br/amazonas/homem-morre-atropelado-na-am-010-e-corpo-fica-mais-de-10-horas-na-pista",
@@ -4159,8 +4471,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 39,
-   "ocorrencia": "OC-2025-0034"
+   "id": 50,
+   "ocorrencia": "OC-2025-0038"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/06/11/motociclista-morre-apos-colidir-em-alta-velocidade-contra-mureta-na-zona-leste-de-manaus.ghtml",
@@ -4180,8 +4492,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 40,
-   "ocorrencia": "OC-2025-0035"
+   "id": 51,
+   "ocorrencia": "OC-2025-0039"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/idoso-de-68-anos-morre-com-choque-eletrico-ao-tentar-consertar-fiacao-em-comunidade-na-rodovia-am-010--regiao-metropolitana-de-manaus--veja-videos/",
@@ -4201,8 +4513,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 41,
-   "ocorrencia": "OC-2025-0035"
+   "id": 52,
+   "ocorrencia": "OC-2025-0039"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/06/04/sobrevivente-de-acidente-entre-caminhao-e-onibus-na-am-010-recebe-alta-apos-tres-dias-internado-em-manaus.ghtml",
@@ -4225,8 +4537,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 42,
-   "ocorrencia": "OC-2025-0036"
+   "id": 53,
+   "ocorrencia": "OC-2025-0040"
   },
   {
    "url": "https://www.riosdenoticias.com.br/motoristas-morrem-e-tres-ficam-feridos-em-acidente-na-am-010/",
@@ -4246,8 +4558,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 43,
-   "ocorrencia": "OC-2025-0038"
+   "id": 54,
+   "ocorrencia": "OC-2025-0042"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/veja-no-programa--rota-policial-do-portal-do-zacarias--os-destaques-desta-segunda-feira--corpo-e-encontrado-boiando-em-igarape-no-educandos--acidente-entre-onibus-e-caminhao-deixa-dois-mortos-e-tres-feridos-na-am-010--participe/",
@@ -4267,8 +4579,8 @@
    "feridos": 3,
    "km": null,
    "municipio": null,
-   "id": 44,
-   "ocorrencia": "OC-2025-0037"
+   "id": 55,
+   "ocorrencia": "OC-2025-0041"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/06/02/sobrevivente-de-acidente-na-am-010-diz-que-motorista-de-caminhao-pediu-desculpas-antes-de-morrer-estava-sob-efeito-de-bebidas-alcoolicas.ghtml",
@@ -4291,8 +4603,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 45,
-   "ocorrencia": "OC-2025-0037"
+   "id": 56,
+   "ocorrencia": "OC-2025-0041"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/06/01/acidente-entre-cacamba-e-onibus-na-am-010-deixa-um-morto-e-tres-feridos.ghtml",
@@ -4312,8 +4624,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 46,
-   "ocorrencia": "OC-2025-0038"
+   "id": 57,
+   "ocorrencia": "OC-2025-0042"
   },
   {
    "url": "https://revistacenarium.com.br/veja-imagens-da-colisao-entre-onibus-e-caminhao-na-am-010/",
@@ -4333,8 +4645,8 @@
    "feridos": null,
    "km": "30",
    "municipio": "Manaus",
-   "id": 47,
-   "ocorrencia": "OC-2025-0038"
+   "id": 58,
+   "ocorrencia": "OC-2025-0042"
   },
   {
    "url": "https://d24am.com/amazonas/am-010-dois-motoristas-morrem-apos-colisao-identidades-sao-reveladas/",
@@ -4354,8 +4666,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 48,
-   "ocorrencia": "OC-2025-0038"
+   "id": 59,
+   "ocorrencia": "OC-2025-0042"
   },
   {
    "url": "https://amazonasatual.com.br/acidente-entre-cacamba-e-onibus-mata-2-pessoas-na-am-010-neste-domingo/",
@@ -4375,8 +4687,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 49,
-   "ocorrencia": "OC-2025-0038"
+   "id": 60,
+   "ocorrencia": "OC-2025-0042"
   },
   {
    "url": "https://www.riosdenoticias.com.br/colisao-frontal-entre-onibus-e-caminhao-deixa-motoristas-presos-as-ferragens-na-am-010/",
@@ -4396,8 +4708,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 50,
-   "ocorrencia": "OC-2025-0038"
+   "id": 61,
+   "ocorrencia": "OC-2025-0042"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/imagens-fortes--grave-acidente-entre-onibus-e-cacamba-deixa-um-morto-e-tres-feridos-na-am-010--veja-video/",
@@ -4417,8 +4729,8 @@
    "feridos": 3,
    "km": "30",
    "municipio": "Manaus",
-   "id": 51,
-   "ocorrencia": "OC-2025-0038"
+   "id": 62,
+   "ocorrencia": "OC-2025-0042"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/05/13/motociclista-morre-apos-avancar-o-sinal-vermelho-e-colidir-com-carro-no-interior-do-am-video.ghtml",
@@ -4438,8 +4750,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 52,
-   "ocorrencia": "OC-2025-0039"
+   "id": 63,
+   "ocorrencia": "OC-2025-0043"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/05/08/video-gravida-morre-apos-colisao-entre-carros-na-rodovia-am-070.ghtml",
@@ -4462,8 +4774,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 53,
-   "ocorrencia": "OC-2025-0040"
+   "id": 64,
+   "ocorrencia": "OC-2025-0044"
   },
   {
    "url": "https://www.acritica.com/policia/colisao-violenta-entre-hilux-e-corsa-deixa-cinco-feridos-na-am-010-em-itacoatiara/",
@@ -4483,8 +4795,8 @@
    "feridos": 5,
    "km": "5",
    "municipio": "Itacoatiara",
-   "id": 54,
-   "ocorrencia": "OC-2025-0041"
+   "id": 65,
+   "ocorrencia": "OC-2025-0045"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/05/04/acidente-entre-carros-deixa-uma-pessoa-em-estado-grave-e-outras-duas-feridas-na-rodovia-am-070-video.ghtml",
@@ -4507,8 +4819,8 @@
    "feridos": 2,
    "km": null,
    "municipio": null,
-   "id": 55,
-   "ocorrencia": "OC-2025-0042"
+   "id": 66,
+   "ocorrencia": "OC-2025-0046"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/10/14/homem-morre-apos-acidente-entre-carros-na-am-070.ghtml",
@@ -4531,8 +4843,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 56,
-   "ocorrencia": "OC-2025-0043"
+   "id": 67,
+   "ocorrencia": "OC-2025-0047"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/04/11/acidente-entre-carro-e-onibus-deixa-dois-feridos-na-zona-norte-de-manaus.ghtml",
@@ -4552,8 +4864,8 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 57,
-   "ocorrencia": "OC-2025-0044"
+   "id": 68,
+   "ocorrencia": "OC-2025-0048"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/03/29/taxi-bate-na-traseira-de-caminhao-e-deixa-quatro-feridos-na-am-010.ghtml",
@@ -4573,8 +4885,8 @@
    "feridos": 4,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 58,
-   "ocorrencia": "OC-2025-0045"
+   "id": 69,
+   "ocorrencia": "OC-2025-0049"
   },
   {
    "url": "https://d24am.com/amazonas/tres-adultos-e-uma-crianca-ficam-feridos-em-acidente-na-rodovia-am-010/",
@@ -4594,8 +4906,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 59,
-   "ocorrencia": "OC-2025-0045"
+   "id": 70,
+   "ocorrencia": "OC-2025-0049"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/grave-acidente-deixa-quatro-pessoas-feridas-na-rodovia-am-010--que-liga-manaus-ao-municipio-de-itacoatiara--veja-video/",
@@ -4615,8 +4927,8 @@
    "feridos": 4,
    "km": null,
    "municipio": "Manaus",
-   "id": 60,
-   "ocorrencia": "OC-2025-0045"
+   "id": 71,
+   "ocorrencia": "OC-2025-0049"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/imagens-fortes--dois-homens-morrem-em-grave-acidente-de-motocicleta-em-itacoatiara--veja-videos/",
@@ -4636,8 +4948,8 @@
    "feridos": 4,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 61,
-   "ocorrencia": "OC-2025-0045"
+   "id": 72,
+   "ocorrencia": "OC-2025-0049"
   },
   {
    "url": "https://d24am.com/amazonas/video-carreta-tomba-na-am-010-e-deixa-oleo-na-pista-curva-da-morte/",
@@ -4660,8 +4972,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 62,
-   "ocorrencia": "OC-2025-0046"
+   "id": 73,
+   "ocorrencia": "OC-2025-0050"
   },
   {
    "url": "https://d24am.com/amazonas/video-caminhao-colide-com-onibus-e-cai-em-ribanceira-na-rodovia-am-010/",
@@ -4681,8 +4993,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 63,
-   "ocorrencia": "OC-2025-0047"
+   "id": 74,
+   "ocorrencia": "OC-2025-0051"
   },
   {
    "url": "https://www.riosdenoticias.com.br/video-duas-criancas-ficam-feridas-apos-atropelamento-na-am-010/",
@@ -4702,8 +5014,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 64,
-   "ocorrencia": "OC-2025-0048"
+   "id": 75,
+   "ocorrencia": "OC-2025-0052"
   },
   {
    "url": "https://www.acritica.com/geral/acidente-fatal-homem-morre-em-colisao-de-motocicletas-em-rio-preto-da-eva/",
@@ -4723,8 +5035,8 @@
    "feridos": null,
    "km": "93",
    "municipio": "Rio Preto da Eva",
-   "id": 65,
-   "ocorrencia": "OC-2025-0049"
+   "id": 76,
+   "ocorrencia": "OC-2025-0053"
   },
   {
    "url": "https://amazonasatual.com.br/acidente-envolvendo-moto-deixa-duas-pessoas-morta-em-rodovia-no-am/",
@@ -4745,8 +5057,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 66,
-   "ocorrencia": "OC-2025-0050"
+   "id": 77,
+   "ocorrencia": "OC-2025-0054"
   },
   {
    "url": "https://www.acritica.com/geral/familiares-das-vitimas-do-acidente-entre-onibus-e-carreta-na-am-010-protestam-em-rio-preto-da-eva/",
@@ -4766,8 +5078,8 @@
    "feridos": 16,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 67,
-   "ocorrencia": "OC-2025-0051"
+   "id": 78,
+   "ocorrencia": "OC-2025-0055"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/motociclista-fica-gravemente-ferido-apos-ser-atropelado-por-caminhao-em-alta-velocidade-na-rodovia-am-010--veja-video/",
@@ -4787,8 +5099,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 68,
-   "ocorrencia": "OC-2025-0052"
+   "id": 79,
+   "ocorrencia": "OC-2025-0056"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/26/ciclista-e-motorista-ficam-feridos-apos-acidente-na-am-010-em-itacoatiara.ghtml",
@@ -4811,8 +5123,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 69,
-   "ocorrencia": "OC-2024-0053"
+   "id": 80,
+   "ocorrencia": "OC-2024-0057"
   },
   {
    "url": "https://estradas.com.br/caminhoneiro-tem-prisao-decretada-apos-acidente-com-onibus-irregular-na-am-010/",
@@ -4832,8 +5144,8 @@
    "feridos": 18,
    "km": "138",
    "municipio": "Itacoatiara",
-   "id": 70,
-   "ocorrencia": "OC-2024-0054"
+   "id": 81,
+   "ocorrencia": "OC-2024-0058"
   },
   {
    "url": "https://d24am.com/wp-content/uploads/2024/12/acidente-am-010-3-1-150x150.png",
@@ -4856,8 +5168,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 71,
-   "ocorrencia": "OC-2024-0055"
+   "id": 82,
+   "ocorrencia": "OC-2024-0059"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/22/motorista-de-carreta-tem-prisao-mantida-apos-acidente-com-onibus-que-matou-4-pessoas-no-am.ghtml",
@@ -4877,8 +5189,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 72,
-   "ocorrencia": "OC-2024-0059"
+   "id": 83,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/21/acidente-na-am-010-o-que-se-sabe-e-o-que-falta-esclarecer-sobre-a-colisao-entre-um-onibus-e-uma-carreta-no-interior-do-amazonas.ghtml",
@@ -4898,8 +5210,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Manaus",
-   "id": 73,
-   "ocorrencia": "OC-2024-0059"
+   "id": 84,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://www.riosdenoticias.com.br/am-010-e-liberada-apos-sete-horas-de-bloqueio-em-decorrencia-de-grave-acidente-entre-onibus-e-carreta/",
@@ -4919,8 +5231,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Manaus",
-   "id": 74,
-   "ocorrencia": "OC-2024-0059"
+   "id": 85,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/21/motorista-de-onibus-morto-apos-acidente-com-carreta-em-rodovia-do-am-estava-ha-pouco-tempo-na-empresa-diz-familia.ghtml",
@@ -4940,8 +5252,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Itapiranga",
-   "id": 75,
-   "ocorrencia": "OC-2024-0059"
+   "id": 86,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/21/motorista-de-carreta-que-colidiu-com-onibus-e-matou-quatro-pessoas-no-am-vai-responder-por-homicidio-culposo.ghtml",
@@ -4961,8 +5273,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Itapiranga",
-   "id": 76,
-   "ocorrencia": "OC-2024-0059"
+   "id": 87,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/20/grave-acidente-de-transito-e-registrado-na-am-010.ghtml",
@@ -4982,8 +5294,8 @@
    "feridos": 16,
    "km": null,
    "municipio": "Manaus",
-   "id": 77,
-   "ocorrencia": "OC-2024-0060"
+   "id": 88,
+   "ocorrencia": "OC-2024-0064"
   },
   {
    "url": "https://amazonas1.com.br/video-acidente-grave-onibus-carreta-feridos-am-010/",
@@ -5003,8 +5315,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 78,
-   "ocorrencia": "OC-2024-0060"
+   "id": 89,
+   "ocorrencia": "OC-2024-0064"
   },
   {
    "url": "https://radioriomarfm.com.br/acidente-entre-carreta-e-onibus-deixa-mortos-e-feridos-na-am-010/",
@@ -5024,8 +5336,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 79,
-   "ocorrencia": "OC-2024-0060"
+   "id": 90,
+   "ocorrencia": "OC-2024-0064"
   },
   {
    "url": "https://bncamazonas.com.br/municipios/colisao-entre-onibus-e-carreta-deixa-mortos-na-am-010/",
@@ -5045,8 +5357,8 @@
    "feridos": 16,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 80,
-   "ocorrencia": "OC-2024-0060"
+   "id": 91,
+   "ocorrencia": "OC-2024-0064"
   },
   {
    "url": "https://www.riosdenoticias.com.br/governo-confirma-quatro-mortos-e-18-feridos-no-acidente-entre-onibus-e-carreta-na-am-010/",
@@ -5066,8 +5378,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 81,
-   "ocorrencia": "OC-2024-0060"
+   "id": 92,
+   "ocorrencia": "OC-2024-0064"
   },
   {
    "url": "https://revistacenarium.com.br/acidente-entre-onibus-e-carreta-na-am-010-deixa-mortos-e-feridos/",
@@ -5087,8 +5399,8 @@
    "feridos": null,
    "km": "135",
    "municipio": "Manaus",
-   "id": 82,
-   "ocorrencia": "OC-2024-0056"
+   "id": 93,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://www.estadopolitico.com.br/estado-confirma-quatro-mortes-e-resgate-de-18-sobreviventes-em-acidente-na-am-010/",
@@ -5108,8 +5420,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 83,
-   "ocorrencia": "OC-2024-0056"
+   "id": 94,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://portalmazemourao.com.br/amazonas/acidente-entre-onibus-e-carreta-na-am-010-deixa-ao-menos-quatro-mortos/",
@@ -5129,8 +5441,8 @@
    "feridos": 16,
    "km": null,
    "municipio": "Manaus",
-   "id": 84,
-   "ocorrencia": "OC-2024-0056"
+   "id": 95,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://www.acritica.com/geral/grave-acidente-deixa-mortos-e-feridos-na-am-010/",
@@ -5150,8 +5462,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itapiranga",
-   "id": 85,
-   "ocorrencia": "OC-2024-0056"
+   "id": 96,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://agenciacenarium.com.br/governo-do-am-confirma-quatro-mortos-e-18-feridos-em-acidente-na-am-010/",
@@ -5171,8 +5483,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Manaus",
-   "id": 86,
-   "ocorrencia": "OC-2024-0056"
+   "id": 97,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://diariodacapital.com/materias/grave-acidente-deixa-quatro-mortos-e-pelo-menos-16-feridos-na-am-010/",
@@ -5192,8 +5504,8 @@
    "feridos": 16,
    "km": null,
    "municipio": null,
-   "id": 87,
-   "ocorrencia": "OC-2024-0057"
+   "id": 98,
+   "ocorrencia": "OC-2024-0061"
   },
   {
    "url": "https://portalunico.com/grave-acidente-entre-onibus-e-caminhao-deixa-mortos-na-am-010/",
@@ -5213,8 +5525,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 88,
-   "ocorrencia": "OC-2024-0056"
+   "id": 99,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://d24am.com/amazonas/video-testemunha-descreve-acidente-na-am-010-a-carreta-rodou-na-curva/",
@@ -5234,8 +5546,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 89,
-   "ocorrencia": "OC-2024-0056"
+   "id": 100,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/20/am-010-e-liberada-sete-horas-apos-ser-interditada-por-conta-de-acidente-entre-onibus-e-carreta.ghtml",
@@ -5255,8 +5567,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Itapiranga",
-   "id": 90,
-   "ocorrencia": "OC-2024-0056"
+   "id": 101,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://www.riosdenoticias.com.br/grave-acidente-entre-onibus-e-carreta-deixa-mortos-na-am-010/",
@@ -5276,8 +5588,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 91,
-   "ocorrencia": "OC-2024-0058"
+   "id": 102,
+   "ocorrencia": "OC-2024-0062"
   },
   {
    "url": "https://www.acritica.com/manaus/sobe-para-quatro-o-numero-de-mortes-confirmadas-em-acidente-na-am-010/",
@@ -5297,8 +5609,8 @@
    "feridos": 16,
    "km": "138",
    "municipio": "Rio Preto da Eva",
-   "id": 92,
-   "ocorrencia": "OC-2024-0058"
+   "id": 103,
+   "ocorrencia": "OC-2024-0062"
   },
   {
    "url": "https://d24am.com/amazonas/video-vitimas-sao-resgatadas-apos-acidente-na-am-010-4-morreram/",
@@ -5318,8 +5630,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 93,
-   "ocorrencia": "OC-2024-0056"
+   "id": 104,
+   "ocorrencia": "OC-2024-0060"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/20/carreta-estava-a-mais-de-100-kmh-quando-colidiu-contra-onibus-em-rodovia-no-am-aponta-pericia.ghtml",
@@ -5339,8 +5651,8 @@
    "feridos": 18,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 94,
-   "ocorrencia": "OC-2024-0058"
+   "id": 105,
+   "ocorrencia": "OC-2024-0062"
   },
   {
    "url": "https://diariodotransporte.com.br/2024/12/20/video-colisao-entre-onibus-da-transamazonica-e-caminhao-deixa-mortos-na-rodovia-am-010-nesta-sexta-feira-20/",
@@ -5360,8 +5672,8 @@
    "feridos": null,
    "km": "127",
    "municipio": "Manaus",
-   "id": 95,
-   "ocorrencia": "OC-2024-0059"
+   "id": 106,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://estradas.com.br/grave-acidente-na-am-010-entre-onibus-irregular-e-carreta-deixa-ao-menos-7-mortos/",
@@ -5381,8 +5693,8 @@
    "feridos": null,
    "km": "135",
    "municipio": "Itacoatiara",
-   "id": 96,
-   "ocorrencia": "OC-2024-0057"
+   "id": 107,
+   "ocorrencia": "OC-2024-0061"
   },
   {
    "url": "https://emtempo.com.br/357981/amazonas/video-mostra-resgate-de-vitimas-de-acidente-na-am-010/",
@@ -5402,8 +5714,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 97,
-   "ocorrencia": "OC-2024-0059"
+   "id": 108,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://www.portaldoholanda.com.br/amazonas/transamazonica-divulga-nota-de-pesar-apos-acidente-de-onibus-com-mortes-na-am-010",
@@ -5423,8 +5735,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 98,
-   "ocorrencia": "OC-2024-0059"
+   "id": 109,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://ochefaodanoticia.com.br/policia/am-010-tres-m0rtes-confirmadas-e-varios-feridos-em-colisao-entre-carreta-e-onibus/",
@@ -5444,8 +5756,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 99,
-   "ocorrencia": "OC-2024-0059"
+   "id": 110,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://www.riosdenoticias.com.br/acidente-entre-carreta-e-onibus-na-rodovia-am-010-escancara-a-realidade-da-pior-estrada-do-pais/",
@@ -5465,8 +5777,8 @@
    "feridos": 18,
    "km": "62",
    "municipio": "Manaus",
-   "id": 100,
-   "ocorrencia": "OC-2024-0060"
+   "id": 111,
+   "ocorrencia": "OC-2024-0064"
   },
   {
    "url": "https://d24am.com/amazonas/videos-bombeiros-confirmam-tres-mortes-fatais-em-acidente-na-am-010/",
@@ -5489,8 +5801,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 101,
-   "ocorrencia": "OC-2024-0059"
+   "id": 112,
+   "ocorrencia": "OC-2024-0063"
   },
   {
    "url": "https://www.riosdenoticias.com.br/motorista-de-caminhao-fica-preso-nas-ferragens-do-veiculo-apos-colisao-com-onibus-na-am-010/",
@@ -5510,8 +5822,8 @@
    "feridos": null,
    "km": "62",
    "municipio": "Manaus",
-   "id": 102,
-   "ocorrencia": "OC-2024-0060"
+   "id": 113,
+   "ocorrencia": "OC-2024-0064"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/01/aposentado-morre-em-grave-acidente-de-transito-na-rodovia-am-070.ghtml",
@@ -5534,8 +5846,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 103,
-   "ocorrencia": "OC-2024-0061"
+   "id": 114,
+   "ocorrencia": "OC-2024-0065"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/11/28/motorista-de-picape-morre-apos-colisao-frontal-com-caminhao-na-am-010.ghtml",
@@ -5555,8 +5867,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 104,
-   "ocorrencia": "OC-2024-0062"
+   "id": 115,
+   "ocorrencia": "OC-2024-0066"
   },
   {
    "url": "https://www.riosdenoticias.com.br/video-motorista-morre-na-am-010-apos-colisao-contra-caminhao-de-gelo/",
@@ -5576,8 +5888,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 105,
-   "ocorrencia": "OC-2024-0062"
+   "id": 116,
+   "ocorrencia": "OC-2024-0066"
   },
   {
    "url": "https://www.portaldoholanda.com.br/amazonas/motorista-morre-em-acidente-entre-hilux-e-caminhao-de-gelo-na-am-010",
@@ -5597,8 +5909,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 106,
-   "ocorrencia": "OC-2024-0063"
+   "id": 117,
+   "ocorrencia": "OC-2024-0067"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/10/31/acidente-envolvendo-caminhao-caminhonete-e-moto-deixa-ao-menos-3-feridos-na-am-010.ghtml",
@@ -5618,8 +5930,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 107,
-   "ocorrencia": "OC-2024-0064"
+   "id": 118,
+   "ocorrencia": "OC-2024-0068"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/10/10/caminhao-tomba-em-barranco-e-motorista-morre-na-rodovia-am-010.ghtml",
@@ -5639,8 +5951,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 108,
-   "ocorrencia": "OC-2024-0065"
+   "id": 119,
+   "ocorrencia": "OC-2024-0069"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/09/21/motociclista-colide-contra-traseira-de-caminhao-e-morre-na-rodovia-am-070-video.ghtml",
@@ -5663,8 +5975,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 109,
-   "ocorrencia": "OC-2024-0066"
+   "id": 120,
+   "ocorrencia": "OC-2024-0070"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/capotamento-deixa-feridos-na-rodovia-am-010.ghtml",
@@ -5687,8 +5999,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 110,
-   "ocorrencia": "OC-2024-0067"
+   "id": 121,
+   "ocorrencia": "OC-2024-0071"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/06/23/mulher-morre-atropelada-enquanto-praticava-esporte-na-rodovia-am-070.ghtml",
@@ -5711,8 +6023,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 111,
-   "ocorrencia": "OC-2024-0068"
+   "id": 122,
+   "ocorrencia": "OC-2024-0072"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/05/16/egua-morre-apos-ser-atropelada-por-carro-na-rodovia-am-070.ghtml",
@@ -5735,8 +6047,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 112,
-   "ocorrencia": "OC-2024-0069"
+   "id": 123,
+   "ocorrencia": "OC-2024-0073"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/04/27/motociclista-morre-apos-moto-colidir-com-carro-na-rodovia-am-070-video.ghtml",
@@ -5759,8 +6071,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 113,
-   "ocorrencia": "OC-2024-0070"
+   "id": 124,
+   "ocorrencia": "OC-2024-0074"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/04/17/acidente-entre-motocicleta-e-carro-deixa-dois-mortos-na-am-070.ghtml",
@@ -5783,8 +6095,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 114,
-   "ocorrencia": "OC-2024-0071"
+   "id": 125,
+   "ocorrencia": "OC-2024-0075"
   },
   {
    "url": "https://d24am.com/amazonas/video-acidente-entre-motocicleta-e-carro-deixa-mortos-na-rodovia-am-070/",
@@ -5807,8 +6119,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 115,
-   "ocorrencia": "OC-2024-0071"
+   "id": 126,
+   "ocorrencia": "OC-2024-0075"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/04/16/caminhao-bau-e-carreta-batem-na-am-010-video.ghtml",
@@ -5828,8 +6140,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 116,
-   "ocorrencia": "OC-2024-0072"
+   "id": 127,
+   "ocorrencia": "OC-2024-0076"
   },
   {
    "url": "https://amazonasatual.com.br/acidente-entre-caminhoes-causa-vazamento-de-gas-na-am-010/",
@@ -5849,8 +6161,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 117,
-   "ocorrencia": "OC-2024-0072"
+   "id": 128,
+   "ocorrencia": "OC-2024-0076"
   },
   {
    "url": "https://d24am.com/amazonas/video-acidente-grave-entre-caminhoes-deixa-via-interditada-na-am-010/",
@@ -5873,8 +6185,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 118,
-   "ocorrencia": "OC-2024-0072"
+   "id": 129,
+   "ocorrencia": "OC-2024-0076"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-grave-motociclistas-morrem-ao-colidirem-veiculos-na-am-070/",
@@ -5897,8 +6209,8 @@
    "feridos": null,
    "km": "12",
    "municipio": "Manaus",
-   "id": 119,
-   "ocorrencia": "OC-2024-0073"
+   "id": 130,
+   "ocorrencia": "OC-2024-0077"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/03/17/ex-secretaria-de-saude-de-itacoatiara-sofre-acidente-na-rodovia-am-010.ghtml",
@@ -5921,8 +6233,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 120,
-   "ocorrencia": "OC-2024-0074"
+   "id": 131,
+   "ocorrencia": "OC-2024-0078"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/2024/imagem-forte--borracheiro-morre-apos-violento-acidente-com-motocicleta-na-rodovia-am-070-em-manacapuru--regiao-metropolitana-de-manaus/",
@@ -5943,8 +6255,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 121,
-   "ocorrencia": "OC-2024-0076"
+   "id": 132,
+   "ocorrencia": "OC-2024-0080"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/02/19/ambulancia-capota-com-paciente-a-bordo-na-rodovia-am-010-no-interior-do-amazonas.ghtml",
@@ -5967,8 +6279,8 @@
    "feridos": null,
    "km": "37",
    "municipio": "Itacoatiara",
-   "id": 122,
-   "ocorrencia": "OC-2024-0075"
+   "id": 133,
+   "ocorrencia": "OC-2024-0079"
   },
   {
    "url": "https://www.acritica.com/geral/acidente-entre-motos-na-am-010-deixa-um-homem-morto-e-outro-ferido/",
@@ -5988,8 +6300,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 123,
-   "ocorrencia": "OC-2024-0077"
+   "id": 134,
+   "ocorrencia": "OC-2024-0081"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/01/06/motoqueiro-morre-apos-colisao-com-carro-na-am-070.ghtml",
@@ -6012,8 +6324,8 @@
    "feridos": 3,
    "km": "21",
    "municipio": "Manacapuru",
-   "id": 124,
-   "ocorrencia": "OC-2024-0079"
+   "id": 135,
+   "ocorrencia": "OC-2024-0083"
   },
   {
    "url": "https://d24am.com/amazonas/videos-motoqueiro-morre-e-outros-ficam-feridos-em-acidente-na-am-070/",
@@ -6036,8 +6348,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 125,
-   "ocorrencia": "OC-2024-0078"
+   "id": 136,
+   "ocorrencia": "OC-2024-0082"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/01/05/motociclista-morre-apos-colidir-contra-traseira-de-caminhao-na-rodovia-am-070-no-amazonas.ghtml",
@@ -6060,8 +6372,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 126,
-   "ocorrencia": "OC-2024-0079"
+   "id": 137,
+   "ocorrencia": "OC-2024-0083"
   },
   {
    "url": "https://www.acritica.com/policia/motociclista-envolvido-em-acidente-na-am-010-morre-no-hospital-joao-lucio/",
@@ -6081,8 +6393,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 127,
-   "ocorrencia": "OC-2023-0080"
+   "id": 138,
+   "ocorrencia": "OC-2023-0084"
   },
   {
    "url": "https://d24am.com/amazonas/dois-homens-ficam-gravemente-feridos-em-tombamento-de-caminhao-na-am-070/",
@@ -6105,8 +6417,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 128,
-   "ocorrencia": "OC-2023-0081"
+   "id": 139,
+   "ocorrencia": "OC-2023-0085"
   },
   {
    "url": "https://www.riosdenoticias.com.br/motociclista-morre-em-colisao-com-ambulancia-a-caminho-de-manaus/",
@@ -6126,8 +6438,8 @@
    "feridos": null,
    "km": "37",
    "municipio": "Manaus",
-   "id": 129,
-   "ocorrencia": "OC-2023-0082"
+   "id": 140,
+   "ocorrencia": "OC-2023-0086"
   },
   {
    "url": "https://d24am.com/amazonas/video-integrante-de-clube-de-motos-morre-em-acidente-na-rodovia-am-070/",
@@ -6150,8 +6462,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 130,
-   "ocorrencia": "OC-2023-0083"
+   "id": 141,
+   "ocorrencia": "OC-2023-0087"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/2024/video-mostra-crianca-caindo-em-bueiro-apos-motocicleta-em-que-estava-com-os-pais-ser-atropelada-por-picape-hilux-no-bairro-da-alvorada--zona-oeste-de-manaus--veja-as-imagens/",
@@ -6171,8 +6483,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 131,
-   "ocorrencia": "OC-2023-0084"
+   "id": 142,
+   "ocorrencia": "OC-2023-0088"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/2023/imagens-fortes--carro-em-alta-velocidade-capota-e-casal-fica-gravemente-ferido-no-quilometro-22-da-rodovia-am-010/",
@@ -6192,8 +6504,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 132,
-   "ocorrencia": "OC-2023-0084"
+   "id": 143,
+   "ocorrencia": "OC-2023-0088"
   },
   {
    "url": "https://www.manaus.am.gov.br/noticia/sensibilizacao/prefeitura-de-manaus-realizou-blitz-manaus-sem-fumaca-2023-para-combater-queimadas-urbanas/",
@@ -6213,8 +6525,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 133,
-   "ocorrencia": "OC-2023-0085"
+   "id": 144,
+   "ocorrencia": "OC-2023-0089"
   },
   {
    "url": "https://www.portaldoholanda.com.br/manaus/acao-manaus-sem-fumaca-incentiva-o-combate-a-queimadas-em-areas-urbanas",
@@ -6234,8 +6546,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 134,
-   "ocorrencia": "OC-2023-0085"
+   "id": 145,
+   "ocorrencia": "OC-2023-0089"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2023/07/24/casal-fica-ferido-apos-carro-capotar-e-cair-em-ribanceira-na-rodovia-am-010.ghtml",
@@ -6258,8 +6570,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 135,
-   "ocorrencia": "OC-2023-0086"
+   "id": 146,
+   "ocorrencia": "OC-2023-0090"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2023/07/09/carro-com-familia-capota-na-am-010-e-deixa-um-ferido.ghtml",
@@ -6283,8 +6595,8 @@
    "feridos": 1,
    "km": "34",
    "municipio": "Itacoatiara",
-   "id": 136,
-   "ocorrencia": "OC-2023-0087"
+   "id": 147,
+   "ocorrencia": "OC-2023-0091"
   },
   {
    "url": "https://amazonasatual.com.br/carreta-tomba-gas-vaza-e-rodovia-e-interditada-no-amazonas/",
@@ -6305,8 +6617,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 137,
-   "ocorrencia": "OC-2023-0088"
+   "id": 148,
+   "ocorrencia": "OC-2023-0092"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2023/02/09/homem-fica-ferido-em-acidente-entre-caminhao-e-carreta-na-am-070.ghtml",
@@ -6329,8 +6641,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 138,
-   "ocorrencia": "OC-2023-0090"
+   "id": 149,
+   "ocorrencia": "OC-2023-0094"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2023/02/09/morre-motorista-de-caminhao-que-bateu-na-traseira-de-carreta-na-am-070.ghtml",
@@ -6353,8 +6665,8 @@
    "feridos": null,
    "km": "9",
    "municipio": "Manaus",
-   "id": 139,
-   "ocorrencia": "OC-2023-0090"
+   "id": 150,
+   "ocorrencia": "OC-2023-0094"
   },
   {
    "url": "https://d24am.com/amazonas/videos-acidente-na-am-010-deixa-homem-preso-as-ferragens-de-caminhao/",
@@ -6377,8 +6689,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 140,
-   "ocorrencia": "OC-2023-0089"
+   "id": 151,
+   "ocorrencia": "OC-2023-0093"
   },
   {
    "url": "https://quatrorodas.abril.com.br/especial/regiao-nordeste-tem-as-piores-estradas-e-concentra-acidentes-de-transito/",
@@ -6398,8 +6710,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 141,
-   "ocorrencia": "OC-2023-0091"
+   "id": 152,
+   "ocorrencia": "OC-2023-0095"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/12/09/acidente-na-am-070-deixa-feridos-no-am.ghtml",
@@ -6422,8 +6734,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 142,
-   "ocorrencia": "OC-2023-0092"
+   "id": 153,
+   "ocorrencia": "OC-2023-0096"
   },
   {
    "url": "https://d24am.com/amazonas/capotamento-na-am-070-deixa-mae-e-filha-feridas-no-am/",
@@ -6446,8 +6758,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 143,
-   "ocorrencia": "OC-2023-0093"
+   "id": 154,
+   "ocorrencia": "OC-2023-0097"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/2023/imagens-fortes--duas-motocicletas-sao-atropeladas-por-caminhonete-s10-e-quatro-pessoas-ficam-gravemente-feridas-na-rodovia-am-010--veja-video/",
@@ -6467,8 +6779,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 144,
-   "ocorrencia": "OC-2023-0094"
+   "id": 155,
+   "ocorrencia": "OC-2023-0098"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/2024/imagens-fortes--duas-motocicletas-sao-atropeladas-por-caminhonete-s10-e-quatro-pessoas-ficam-gravemente-feridas-na-rodovia-am-010--veja-video/",
@@ -6488,8 +6800,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 145,
-   "ocorrencia": "OC-2023-0094"
+   "id": 156,
+   "ocorrencia": "OC-2023-0098"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/12/17/tres-pessoas-ficam-feridas-apos-colisao-entre-carros-na-rodovia-am-070.ghtml",
@@ -6513,8 +6825,8 @@
    "feridos": 3,
    "km": null,
    "municipio": null,
-   "id": 146,
-   "ocorrencia": "OC-2022-0095"
+   "id": 157,
+   "ocorrencia": "OC-2022-0099"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/12/11/acidente-grave-na-am-070-deixa-sete-pessoas-feridas-no-amazonas.ghtml",
@@ -6537,8 +6849,8 @@
    "feridos": 7,
    "km": "05",
    "municipio": "Manaus",
-   "id": 147,
-   "ocorrencia": "OC-2022-0096"
+   "id": 158,
+   "ocorrencia": "OC-2022-0100"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/11/29/video-mostra-colisao-entre-veiculos-que-matou-jovem-na-am-010.ghtml",
@@ -6561,8 +6873,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 148,
-   "ocorrencia": "OC-2022-0097"
+   "id": 159,
+   "ocorrencia": "OC-2022-0101"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-envolvendo-carros-deixa-uma-pessoa-morta-na-am-010-veja-videos/",
@@ -6585,8 +6897,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 149,
-   "ocorrencia": "OC-2022-0097"
+   "id": 160,
+   "ocorrencia": "OC-2022-0101"
   },
   {
    "url": "https://d24am.com/d24am-play/colisao-entre-veiculos-causa-morte-na-am-010/",
@@ -6609,8 +6921,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 150,
-   "ocorrencia": "OC-2022-0097"
+   "id": 161,
+   "ocorrencia": "OC-2022-0101"
   },
   {
    "url": "https://emtempo.com.br/117138/sem-categoria/jovem-de-17-anos-morre-em-grave-colisao-de-veiculos-no-am/",
@@ -6630,8 +6942,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 151,
-   "ocorrencia": "OC-2022-0097"
+   "id": 162,
+   "ocorrencia": "OC-2022-0101"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/11/15/policiais-ficam-feridos-apos-viatura-da-pm-capotar-na-am-010-em-manaus.ghtml",
@@ -6654,8 +6966,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 152,
-   "ocorrencia": "OC-2022-0098"
+   "id": 163,
+   "ocorrencia": "OC-2022-0102"
   },
   {
    "url": "https://emtempo.com.br/113052/amazonas/policiais-ficam-feridos-apos-acidente-na-am-010/",
@@ -6678,8 +6990,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 153,
-   "ocorrencia": "OC-2022-0098"
+   "id": 164,
+   "ocorrencia": "OC-2022-0102"
   },
   {
    "url": "https://www.acritica.com/policia/idosa-e-morta-em-acidente-de-transito-na-rodovia-am-010-1.284402",
@@ -6702,8 +7014,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 154,
-   "ocorrencia": "OC-2022-0099"
+   "id": 165,
+   "ocorrencia": "OC-2022-0103"
   },
   {
    "url": "https://emtempo.com.br/wp-json/oembed/1.0/embed?url=https%3A%2F%2Femtempo.com.br%2F103683%2Famazonas%2Fgrave-colisao-de-veiculos-deixa-vitima-fatal-na-am-010%2F&format=xml",
@@ -6726,8 +7038,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 155,
-   "ocorrencia": "OC-2022-0099"
+   "id": 166,
+   "ocorrencia": "OC-2022-0103"
   },
   {
    "url": "https://emtempo.com.br/103683/amazonas/grave-colisao-de-veiculos-deixa-vitima-fatal-na-am-010/",
@@ -6750,8 +7062,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 156,
-   "ocorrencia": "OC-2022-0100"
+   "id": 167,
+   "ocorrencia": "OC-2022-0104"
   },
   {
    "url": "https://d24am.com/amazonas/video-homem-e-arremessado-ao-ser-atropelado-por-carro-na-am-070/",
@@ -6774,8 +7086,8 @@
    "feridos": null,
    "km": "53",
    "municipio": "Manaus",
-   "id": 157,
-   "ocorrencia": "OC-2022-0101"
+   "id": 168,
+   "ocorrencia": "OC-2022-0105"
   },
   {
    "url": "https://www.manaus.am.gov.br/noticia/saude/prefeitura-reforca-acoes-de-educacao-em-saude-e-testagem-rapida-para-o-combate-a-sifilis-em-manaus/",
@@ -6795,8 +7107,8 @@
    "feridos": 1,
    "km": null,
    "municipio": "Manaus",
-   "id": 158,
-   "ocorrencia": "OC-2022-0102"
+   "id": 169,
+   "ocorrencia": "OC-2022-0106"
   },
   {
    "url": "https://agenciacenarium.com.br/eleicoes-2022-veja-os-principais-pontos-abordados-pelos-candidatos-ao-governo-do-am-no-debate-da-rede-amazonica/",
@@ -6817,8 +7129,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 159,
-   "ocorrencia": "OC-2022-0103"
+   "id": 170,
+   "ocorrencia": "OC-2022-0107"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2021/04/23/motociclista-morre-apos-ser-atropelado-por-picape-na-rodovia-am-010-em-manaus.ghtml",
@@ -6841,8 +7153,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 160,
-   "ocorrencia": "OC-2022-0104"
+   "id": 171,
+   "ocorrencia": "OC-2022-0108"
   },
   {
    "url": "https://d24am.com/amazonas/carro-capota-na-estrada-am-010-em-itacoatiara/",
@@ -6865,8 +7177,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 161,
-   "ocorrencia": "OC-2022-0105"
+   "id": 172,
+   "ocorrencia": "OC-2022-0109"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/07/26/medico-cardiologista-fica-ferido-apos-sofrer-acidente-de-carro-na-rodovia-am-070.ghtml",
@@ -6889,8 +7201,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 162,
-   "ocorrencia": "OC-2022-0106"
+   "id": 173,
+   "ocorrencia": "OC-2022-0110"
   },
   {
    "url": "https://emtempo.com.br/74504/amazonas/medico-cardiologista-sofre-grave-acidente-de-carro-na-am-070/",
@@ -6913,8 +7225,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 163,
-   "ocorrencia": "OC-2022-0107"
+   "id": 174,
+   "ocorrencia": "OC-2022-0111"
   },
   {
    "url": "https://amazonas1.com.br/acidente-na-estrada-am-010-deixa-tres-pessoas-feridas/",
@@ -6934,8 +7246,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 164,
-   "ocorrencia": "OC-2022-0108"
+   "id": 175,
+   "ocorrencia": "OC-2022-0112"
   },
   {
    "url": "https://www.acritica.com/manaus/grave-acidente-na-rodovia-am-010-deixa-duas-pessoas-feridas/",
@@ -6955,8 +7267,8 @@
    "feridos": 2,
    "km": "28",
    "municipio": "Manaus",
-   "id": 165,
-   "ocorrencia": "OC-2022-0109"
+   "id": 176,
+   "ocorrencia": "OC-2022-0113"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/07/22/colisao-entre-carros-deixa-tres-pessoas-feridas-na-am-10.ghtml",
@@ -6979,8 +7291,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 166,
-   "ocorrencia": "OC-2022-0109"
+   "id": 177,
+   "ocorrencia": "OC-2022-0113"
   },
   {
    "url": "https://www.acritica.com/manaus/grave-acidente-na-rodovia-am-010-deixa-duas-pessoas-feridas-1.276650",
@@ -7003,8 +7315,8 @@
    "feridos": 2,
    "km": "28",
    "municipio": "Manaus",
-   "id": 167,
-   "ocorrencia": "OC-2022-0109"
+   "id": 178,
+   "ocorrencia": "OC-2022-0113"
   },
   {
    "url": "https://emtempo.com.br/73265/amazonas/acidente-de-transito-deixa-tres-pessoas-presas-as-ferragens-na-am-010/",
@@ -7028,8 +7340,8 @@
    "feridos": 3,
    "km": "28",
    "municipio": "Manaus",
-   "id": 168,
-   "ocorrencia": "OC-2022-0109"
+   "id": 179,
+   "ocorrencia": "OC-2022-0113"
   },
   {
    "url": "https://www.acritica.com/manaus/jovem-soldado-de-19-anos-morre-em-acidente-de-transito-na-am-070-1.276575",
@@ -7052,8 +7364,8 @@
    "feridos": null,
    "km": "22",
    "municipio": "Manaus",
-   "id": 169,
-   "ocorrencia": "OC-2022-0110"
+   "id": 180,
+   "ocorrencia": "OC-2022-0114"
   },
   {
    "url": "https://emtempo.com.br/61802/amazonas/homem-morre-apos-ser-atropelado-por-dois-veiculos-na-am-070/",
@@ -7076,8 +7388,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 170,
-   "ocorrencia": "OC-2022-0111"
+   "id": 181,
+   "ocorrencia": "OC-2022-0115"
   },
   {
    "url": "https://emtempo.com.br/29840/amazonas/vereador-do-amazonas-sofre-acidente-de-transito-na-rodovia-am-010/",
@@ -7100,8 +7412,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 171,
-   "ocorrencia": "OC-2022-0112"
+   "id": 182,
+   "ocorrencia": "OC-2022-0116"
   },
   {
    "url": "https://d24am.com/amazonas/video-motociclista-morre-ao-colidir-com-um-cavalete-na-am-070/",
@@ -7124,8 +7436,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 172,
-   "ocorrencia": "OC-2022-0113"
+   "id": 183,
+   "ocorrencia": "OC-2022-0117"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/03/05/casal-morre-atropelado-na-am-010.ghtml",
@@ -7148,8 +7460,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 173,
-   "ocorrencia": "OC-2022-0114"
+   "id": 184,
+   "ocorrencia": "OC-2022-0118"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2022/02/07/jovem-morre-carbonizada-em-acidente-de-carro-na-am-010.ghtml",
@@ -7169,8 +7481,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 174,
-   "ocorrencia": "OC-2022-0115"
+   "id": 185,
+   "ocorrencia": "OC-2022-0119"
   },
   {
    "url": "https://amazonas1.com.br/video-jovem-morre-carbonizada-apos-carro-capotar-e-pegar-fogo-na-am-010/",
@@ -7190,8 +7502,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 175,
-   "ocorrencia": "OC-2022-0115"
+   "id": 186,
+   "ocorrencia": "OC-2022-0119"
   },
   {
    "url": "https://d24am.com/amazonas/jovem-morre-carbonizada-apos-carro-capotar-e-pegar-fogo-na-am-010-veja-video/",
@@ -7214,8 +7526,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 176,
-   "ocorrencia": "OC-2022-0115"
+   "id": 187,
+   "ocorrencia": "OC-2022-0119"
   },
   {
    "url": "https://d24am.com/amazonas/tragedia-jovem-morre-carbonizada-apos-carro-capotar-e-pegar-fogo-na-am-010-veja-video/",
@@ -7238,8 +7550,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 177,
-   "ocorrencia": "OC-2022-0115"
+   "id": 188,
+   "ocorrencia": "OC-2022-0119"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2021/12/20/duas-pessoas-morrem-e-36-ficam-feridas-apos-onibus-capotar-em-estrada-de-novo-airao.ghtml",
@@ -7263,8 +7575,8 @@
    "feridos": 36,
    "km": null,
    "municipio": "Novo Airão",
-   "id": 178,
-   "ocorrencia": "OC-2021-0117"
+   "id": 189,
+   "ocorrencia": "OC-2021-0121"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-deixa-pessoas-mortas-e-feridas-na-am-070-veja-videos/",
@@ -7287,8 +7599,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 179,
-   "ocorrencia": "OC-2021-0116"
+   "id": 190,
+   "ocorrencia": "OC-2021-0120"
   },
   {
    "url": "https://d24am.com/amazonas/tres-pessoas-morrem-e-varias-ficam-feridas-em-acidente-na-am-070-veja-videos/",
@@ -7311,8 +7623,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 180,
-   "ocorrencia": "OC-2021-0116"
+   "id": 191,
+   "ocorrencia": "OC-2021-0120"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/motociclista-morre-carbonizado-apos-colidir-na-traseira-de-micro-onibus-em-pane-na-am-070",
@@ -7335,8 +7647,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 181,
-   "ocorrencia": "OC-2021-0118"
+   "id": 192,
+   "ocorrencia": "OC-2021-0122"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/acidente-de-transito-deixa-quatro-pessoas-mortas-e-11-feridas-na-am-010",
@@ -7359,8 +7671,8 @@
    "feridos": 11,
    "km": "26",
    "municipio": "Manaus",
-   "id": 182,
-   "ocorrencia": "OC-2021-0119"
+   "id": 193,
+   "ocorrencia": "OC-2021-0123"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/nove-pessoas-ficam-feridas-em-acidente-de-carro-na-rodovia-am-010",
@@ -7383,8 +7695,8 @@
    "feridos": 9,
    "km": "35",
    "municipio": "Manaus",
-   "id": 183,
-   "ocorrencia": "OC-2021-0120"
+   "id": 194,
+   "ocorrencia": "OC-2021-0124"
   },
   {
    "url": "https://amazonasatual.com.br/onibus-capota-na-am-010-durante-forte-chuva-em-manaus/",
@@ -7405,8 +7717,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 184,
-   "ocorrencia": "OC-2021-0121"
+   "id": 195,
+   "ocorrencia": "OC-2021-0125"
   },
   {
    "url": "https://d24am.com/amazonas/onibus-com-destino-a-manaus-capota-na-am-010-veja-videos/",
@@ -7429,8 +7741,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 185,
-   "ocorrencia": "OC-2021-0122"
+   "id": 196,
+   "ocorrencia": "OC-2021-0126"
   },
   {
    "url": "https://d24am.com/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fd24am.com%2Famazonas%2Fonibus-com-destino-a-manaus-capota-na-am-010-veja-videos%2F&format=xml",
@@ -7453,8 +7765,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 186,
-   "ocorrencia": "OC-2021-0121"
+   "id": 197,
+   "ocorrencia": "OC-2021-0125"
   },
   {
    "url": "https://www.manaus.am.gov.br/noticia/saude/prefeitura-promove-acao-educativa-de-combate-a-malaria-do-porto-de-manaus/",
@@ -7474,8 +7786,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 187,
-   "ocorrencia": "OC-2021-0123"
+   "id": 198,
+   "ocorrencia": "OC-2021-0127"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2021/10/21/motorista-de-caminhao-pipa-morre-apos-veiculo-tombar-na-am-010.ghtml",
@@ -7498,8 +7810,8 @@
    "feridos": null,
    "km": "84",
    "municipio": "Rio Preto da Eva",
-   "id": 188,
-   "ocorrencia": "OC-2021-0124"
+   "id": 199,
+   "ocorrencia": "OC-2021-0128"
   },
   {
    "url": "https://amazonas1.com.br/carreta-de-combustivel-tomba-na-am-010-e-motorista-morre/",
@@ -7519,8 +7831,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 189,
-   "ocorrencia": "OC-2021-0124"
+   "id": 200,
+   "ocorrencia": "OC-2021-0128"
   },
   {
    "url": "https://www.acritica.com/channels/hoje/news/motorista-de-65-anos-morre-em-acidente-de-transito-na-am-010",
@@ -7543,8 +7855,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 190,
-   "ocorrencia": "OC-2021-0124"
+   "id": 201,
+   "ocorrencia": "OC-2021-0128"
   },
   {
    "url": "https://d24am.com/amazonas/motorista-de-caminhao-morre-esmagado-em-acidente-na-am-010-veja-video/",
@@ -7567,8 +7879,8 @@
    "feridos": null,
    "km": "84",
    "municipio": "Manaus",
-   "id": 191,
-   "ocorrencia": "OC-2021-0124"
+   "id": 202,
+   "ocorrencia": "OC-2021-0128"
   },
   {
    "url": "https://d24am.com/amazonas/onibus-escolar-tomba-na-am-070-e-estudantes-ficam-feridos/",
@@ -7592,8 +7904,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 192,
-   "ocorrencia": "OC-2021-0125"
+   "id": 203,
+   "ocorrencia": "OC-2021-0129"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/acidente-em-ramal-da-am-070-deixa-agricultor-morto-as-vesperas-de-completar-1-mes-de-casado",
@@ -7616,8 +7928,8 @@
    "feridos": 1,
    "km": null,
    "municipio": "Manaus",
-   "id": 193,
-   "ocorrencia": "OC-2021-0126"
+   "id": 204,
+   "ocorrencia": "OC-2021-0130"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/homem-fica-preso-nas-ferragens-apos-carro-colidir-com-onibus-na-rodovia-am-070",
@@ -7640,8 +7952,8 @@
    "feridos": null,
    "km": "3",
    "municipio": "Manaus",
-   "id": 194,
-   "ocorrencia": "OC-2021-0126"
+   "id": 205,
+   "ocorrencia": "OC-2021-0130"
   },
   {
    "url": "https://revistacenarium.com.br/crescente-numero-de-acidentes-de-transito-com-vitimas-fatais-preocupa-motoristas-em-manaus/",
@@ -7661,8 +7973,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 195,
-   "ocorrencia": "OC-2021-0127"
+   "id": 206,
+   "ocorrencia": "OC-2021-0131"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-grave-entre-caminhao-e-carreta-deixa-duas-pessoas-feridas-na-am-010/",
@@ -7685,8 +7997,8 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 196,
-   "ocorrencia": "OC-2021-0128"
+   "id": 207,
+   "ocorrencia": "OC-2021-0132"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/taxi-se-choca-com-micro-onibus-na-am-010-motorista-tia-e-avo-dele-morrem-no-acidente",
@@ -7709,8 +8021,8 @@
    "feridos": null,
    "km": "102",
    "municipio": "Manaus",
-   "id": 197,
-   "ocorrencia": "OC-2021-0129"
+   "id": 208,
+   "ocorrencia": "OC-2021-0133"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-de-transito-deixa-quatro-feridos-na-rodovia-am-010-veja-video/",
@@ -7733,8 +8045,8 @@
    "feridos": 4,
    "km": null,
    "municipio": "Manaus",
-   "id": 198,
-   "ocorrencia": "OC-2021-0130"
+   "id": 209,
+   "ocorrencia": "OC-2021-0134"
   },
   {
    "url": "https://www.acritica.com/manaus/capitao-e-cabo-da-pm-morrem-durante-colisao-entre-carro-e-carreta/",
@@ -7754,8 +8066,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 199,
-   "ocorrencia": "OC-2021-0131"
+   "id": 210,
+   "ocorrencia": "OC-2021-0135"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2021/07/11/policiais-militares-morrem-em-acidente-de-transito-na-am-010.ghtml",
@@ -7778,8 +8090,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 200,
-   "ocorrencia": "OC-2021-0131"
+   "id": 211,
+   "ocorrencia": "OC-2021-0135"
   },
   {
    "url": "https://d24am.com/amazonas/pms-morrem-em-acidente-de-transito-na-am-010/",
@@ -7802,8 +8114,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 201,
-   "ocorrencia": "OC-2021-0131"
+   "id": 212,
+   "ocorrencia": "OC-2021-0135"
   },
   {
    "url": "https://d24am.com/amazonas/mulher-morre-atropelada-ao-atravessar-a-rodovia-am-070/",
@@ -7826,8 +8138,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 202,
-   "ocorrencia": "OC-2021-0132"
+   "id": 213,
+   "ocorrencia": "OC-2021-0136"
   },
   {
    "url": "https://emtempo.com.br/amazonas/311039/mulher-morre-ao-ser-atropelada-por-carro-em-alta-velocidade-na-am-070",
@@ -7850,8 +8162,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 203,
-   "ocorrencia": "OC-2021-0132"
+   "id": 214,
+   "ocorrencia": "OC-2021-0136"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/idoso-de-60-anos-morre-apos-carro-capotar-na-rodovia-manoel-urbano-am-070",
@@ -7874,8 +8186,8 @@
    "feridos": null,
    "km": "8",
    "municipio": "Manaus",
-   "id": 204,
-   "ocorrencia": "OC-2021-0133"
+   "id": 215,
+   "ocorrencia": "OC-2021-0137"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/na-am-010-condutor-morre-ao-colidir-contra-caminhonete-e-cair-em-ribanceira",
@@ -7898,8 +8210,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 205,
-   "ocorrencia": "OC-2021-0134"
+   "id": 216,
+   "ocorrencia": "OC-2021-0138"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/acidentes-sao-favorecidos-pelas-pessimas-condicoes-da-rodovia-am-070",
@@ -7922,8 +8234,8 @@
    "feridos": null,
    "km": "37",
    "municipio": "Manaus",
-   "id": 206,
-   "ocorrencia": "OC-2021-0135"
+   "id": 217,
+   "ocorrencia": "OC-2021-0139"
   },
   {
    "url": "https://d24am.com/amazonas/jovem-morre-em-grave-acidente-de-transito-na-am-010-veja-video/",
@@ -7946,8 +8258,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 207,
-   "ocorrencia": "OC-2021-0136"
+   "id": 218,
+   "ocorrencia": "OC-2021-0140"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/tres-pessoas-morrem-em-acidentes-na-avenida-das-torres-e-am-070-neste-fim-de-semana",
@@ -7970,8 +8282,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 208,
-   "ocorrencia": "OC-2021-0137"
+   "id": 219,
+   "ocorrencia": "OC-2021-0141"
   },
   {
    "url": "https://d24am.com/amazonas/homem-morre-em-acidente-de-transito-na-am-010/",
@@ -7994,8 +8306,8 @@
    "feridos": null,
    "km": "83",
    "municipio": "Manaus",
-   "id": 209,
-   "ocorrencia": "OC-2021-0138"
+   "id": 220,
+   "ocorrencia": "OC-2021-0142"
   },
   {
    "url": "https://d24am.com/amazonas/motociclista-morre-em-acidente-de-transito-na-am-070/",
@@ -8018,8 +8330,8 @@
    "feridos": null,
    "km": "03",
    "municipio": "Manaus",
-   "id": 210,
-   "ocorrencia": "OC-2021-0139"
+   "id": 221,
+   "ocorrencia": "OC-2021-0143"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/amigos-e-familiares-prestam-ultimas-homenagens-ao-triatleta-atropelado-na-am-070",
@@ -8042,8 +8354,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 211,
-   "ocorrencia": "OC-2021-0140"
+   "id": 222,
+   "ocorrencia": "OC-2021-0144"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/motorista-que-atropelou-e-matou-triatleta-que-treinava-na-am-070-e-liberado-apos-pagar-fianca",
@@ -8066,8 +8378,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 212,
-   "ocorrencia": "OC-2021-0140"
+   "id": 223,
+   "ocorrencia": "OC-2021-0144"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/grave-acidente-entre-caminhoes-deixa-cinco-feridos-na-manoel-urbano",
@@ -8090,8 +8402,8 @@
    "feridos": 5,
    "km": null,
    "municipio": "Manaus",
-   "id": 213,
-   "ocorrencia": "OC-2021-0141"
+   "id": 224,
+   "ocorrencia": "OC-2021-0145"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/acidente-na-am-010-causa-interrupcao-de-energia-eletrica-a-3-6-mil-casas-em-manaus",
@@ -8114,8 +8426,8 @@
    "feridos": null,
    "km": "19",
    "municipio": "Manaus",
-   "id": 214,
-   "ocorrencia": "OC-2021-0142"
+   "id": 225,
+   "ocorrencia": "OC-2021-0146"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/morre-vitima-de-acidente-com-tres-carros-e-caminhao-bau-na-am-070",
@@ -8138,8 +8450,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 215,
-   "ocorrencia": "OC-2021-0143"
+   "id": 226,
+   "ocorrencia": "OC-2021-0147"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2018/08/02/duas-pessoas-ficam-feridas-apos-colisao-entre-carros-na-manoel-urbano-no-am.ghtml",
@@ -8162,8 +8474,8 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 216,
-   "ocorrencia": "OC-2021-0144"
+   "id": 227,
+   "ocorrencia": "OC-2021-0148"
   },
   {
    "url": "https://emtempo.com.br/amazonas/284368/micro-onibus-cai-de-barranco-de-10-metros-em-acidente-na-am-010",
@@ -8186,8 +8498,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 217,
-   "ocorrencia": "OC-2020-0145"
+   "id": 228,
+   "ocorrencia": "OC-2020-0149"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-entre-carro-e-caminhao-deixa-cinco-feridos-na-am-010-veja-video/",
@@ -8210,8 +8522,8 @@
    "feridos": 5,
    "km": null,
    "municipio": "Manaus",
-   "id": 218,
-   "ocorrencia": "OC-2020-0146"
+   "id": 229,
+   "ocorrencia": "OC-2020-0150"
   },
   {
    "url": "https://www.acritica.com/channels/hoje/news/motociclistas-colidem-contra-carreta-e-morrem-na-am-010",
@@ -8234,8 +8546,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 219,
-   "ocorrencia": "OC-2020-0147"
+   "id": 230,
+   "ocorrencia": "OC-2020-0151"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2020/12/05/duas-pessoas-morrem-em-acidente-de-transito-na-am-010.ghtml",
@@ -8258,8 +8570,8 @@
    "feridos": null,
    "km": "49",
    "municipio": "Manaus",
-   "id": 220,
-   "ocorrencia": "OC-2020-0148"
+   "id": 231,
+   "ocorrencia": "OC-2020-0152"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-deixa-dois-motociclistas-mortos-na-am-010/",
@@ -8282,8 +8594,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 221,
-   "ocorrencia": "OC-2020-0148"
+   "id": 232,
+   "ocorrencia": "OC-2020-0152"
   },
   {
    "url": "https://www.acritica.com/search?q=acidente+na+am-010&query_type=tag",
@@ -8306,8 +8618,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 222,
-   "ocorrencia": "OC-2020-0149"
+   "id": 233,
+   "ocorrencia": "OC-2020-0153"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/tres-morrem-e-tres-ficam-feridos-apos-acidente-na-am-070",
@@ -8330,8 +8642,8 @@
    "feridos": 3,
    "km": "8",
    "municipio": "Novo Airão",
-   "id": 223,
-   "ocorrencia": "OC-2020-0150"
+   "id": 234,
+   "ocorrencia": "OC-2020-0154"
   },
   {
    "url": "https://www.acritica.com/channels/hoje/news/colisao-de-carros-deixa-dois-feridos-na-am-010",
@@ -8354,8 +8666,8 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 224,
-   "ocorrencia": "OC-2020-0150"
+   "id": 235,
+   "ocorrencia": "OC-2020-0154"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/carro-colide-com-moto-e-provoca-duas-mortes-na-rodovia-am-010",
@@ -8378,8 +8690,8 @@
    "feridos": null,
    "km": "83",
    "municipio": "Manaus",
-   "id": 225,
-   "ocorrencia": "OC-2020-0151"
+   "id": 236,
+   "ocorrencia": "OC-2020-0155"
   },
   {
    "url": "https://d24am.com/amazonas/colisao-entre-picapes-deixa-dois-homens-feridos-na-am-070/",
@@ -8402,8 +8714,8 @@
    "feridos": 2,
    "km": "19",
    "municipio": "Manaus",
-   "id": 226,
-   "ocorrencia": "OC-2020-0152"
+   "id": 237,
+   "ocorrencia": "OC-2020-0156"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2020/11/13/idosa-morre-e-quatro-pessoas-ficam-feridas-em-acidente-na-am-363.ghtml",
@@ -8426,8 +8738,8 @@
    "feridos": 4,
    "km": null,
    "municipio": "Manaus",
-   "id": 227,
-   "ocorrencia": "OC-2020-0153"
+   "id": 238,
+   "ocorrencia": "OC-2020-0157"
   },
   {
    "url": "https://www.acritica.com/channels/hoje/news/homem-morre-atropelado-enquanto-caminhava-na-am-070",
@@ -8450,8 +8762,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 228,
-   "ocorrencia": "OC-2020-0154"
+   "id": 239,
+   "ocorrencia": "OC-2020-0158"
   },
   {
    "url": "https://d24am.com/amazonas/policia/homem-sem-identificacao-morre-apos-ser-atropelado-por-veiculo-na-am-070/",
@@ -8474,8 +8786,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 229,
-   "ocorrencia": "OC-2020-0155"
+   "id": 240,
+   "ocorrencia": "OC-2020-0159"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2020/10/31/mais-de-20-pessoas-ficam-feridas-apos-onibus-capotar-e-cair-em-ribanceira-na-am-363.ghtml",
@@ -8498,8 +8810,8 @@
    "feridos": 20,
    "km": "76",
    "municipio": "Itapiranga",
-   "id": 230,
-   "ocorrencia": "OC-2020-0156"
+   "id": 241,
+   "ocorrencia": "OC-2020-0160"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/dois-morrem-e-dez-ficam-feridos-em-acidente-de-transito-na-rodovia-am-010",
@@ -8522,8 +8834,8 @@
    "feridos": 10,
    "km": null,
    "municipio": "Manaus",
-   "id": 231,
-   "ocorrencia": "OC-2020-0157"
+   "id": 242,
+   "ocorrencia": "OC-2020-0161"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/mulher-e-adolescente-de-15-anos-ficam-feridos-apos-colisao-na-am-010",
@@ -8546,8 +8858,8 @@
    "feridos": 2,
    "km": "60",
    "municipio": "Manaus",
-   "id": 232,
-   "ocorrencia": "OC-2020-0158"
+   "id": 243,
+   "ocorrencia": "OC-2020-0162"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-de-carro-deixa-tres-pessoas-feridas-na-am-070/",
@@ -8570,8 +8882,8 @@
    "feridos": 3,
    "km": "17",
    "municipio": "Manaus",
-   "id": 233,
-   "ocorrencia": "OC-2020-0159"
+   "id": 244,
+   "ocorrencia": "OC-2020-0163"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/homem-fica-ferido-apos-capotamento-de-carro-na-am-010",
@@ -8594,8 +8906,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 234,
-   "ocorrencia": "OC-2020-0160"
+   "id": 245,
+   "ocorrencia": "OC-2020-0164"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/vitima-fatal-de-acidente-na-am-010-era-profissional-do-programa-mais-medicos",
@@ -8618,8 +8930,8 @@
    "feridos": null,
    "km": "59",
    "municipio": "Manaus",
-   "id": 235,
-   "ocorrencia": "OC-2020-0161"
+   "id": 246,
+   "ocorrencia": "OC-2020-0165"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2020/08/01/carro-capota-na-rodovia-am-070-e-passageiros-abandonam-veiculo-apos-acidente.ghtml",
@@ -8642,8 +8954,8 @@
    "feridos": null,
    "km": "4",
    "municipio": "Manaus",
-   "id": 236,
-   "ocorrencia": "OC-2020-0162"
+   "id": 247,
+   "ocorrencia": "OC-2020-0166"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2020/07/19/veiculo-capota-na-estrada-manoel-urbano-no-am-e-deixa-passageiros-feridos.ghtml",
@@ -8666,8 +8978,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 237,
-   "ocorrencia": "OC-2020-0163"
+   "id": 248,
+   "ocorrencia": "OC-2020-0167"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/tres-pessoas-ficam-feridas-na-am-070-apos-carro-capotar",
@@ -8690,8 +9002,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 238,
-   "ocorrencia": "OC-2020-0163"
+   "id": 249,
+   "ocorrencia": "OC-2020-0167"
   },
   {
    "url": "https://d24am.com/amazonas/tres-pessoas-ficam-feridas-apos-carro-capotar-na-am-070/",
@@ -8714,8 +9026,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 239,
-   "ocorrencia": "OC-2020-0163"
+   "id": 250,
+   "ocorrencia": "OC-2020-0167"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2020/07/06/industriario-morre-apos-colidir-carro-em-arvore-na-rodovia-manoel-urbano-em-iranduba.ghtml",
@@ -8738,8 +9050,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 240,
-   "ocorrencia": "OC-2020-0164"
+   "id": 251,
+   "ocorrencia": "OC-2020-0168"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2020/06/26/colisao-entre-taxi-e-carro-de-passeio-deixa-feridos-na-rodovia-am-010.ghtml",
@@ -8762,8 +9074,8 @@
    "feridos": 3,
    "km": "61",
    "municipio": "Rio Preto da Eva",
-   "id": 241,
-   "ocorrencia": "OC-2020-0165"
+   "id": 252,
+   "ocorrencia": "OC-2020-0169"
   },
   {
    "url": "https://www.acritica.com/channels/hoje/news/acidente-entre-taxi-e-carro-deixa-feridos-no-km-61-da-rodovia-am-010",
@@ -8786,8 +9098,8 @@
    "feridos": 3,
    "km": "61",
    "municipio": "Manaus",
-   "id": 242,
-   "ocorrencia": "OC-2020-0165"
+   "id": 253,
+   "ocorrencia": "OC-2020-0169"
   },
   {
    "url": "https://www.acritica.com/channels/hoje/news/testemunha-contesta-versao-dada-por-amigos-de-empresario-morto-em-acidente-na-am-010",
@@ -8810,8 +9122,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 243,
-   "ocorrencia": "OC-2020-0166"
+   "id": 254,
+   "ocorrencia": "OC-2020-0170"
   },
   {
    "url": "https://www.acritica.com/channels/hoje/news/empresario-morre-em-colisao-entre-carro-e-motocicleta-na-estrada-manuel-urbano",
@@ -8834,8 +9146,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 244,
-   "ocorrencia": "OC-2020-0166"
+   "id": 255,
+   "ocorrencia": "OC-2020-0170"
   },
   {
    "url": "https://www.acritica.com/channels/hoje/news/enfermeiro-morre-apos-sua-motocicleta-colidir-contra-placa-de-sinalizacao-na-am-070",
@@ -8858,8 +9170,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 245,
-   "ocorrencia": "OC-2020-0167"
+   "id": 256,
+   "ocorrencia": "OC-2020-0171"
   },
   {
    "url": "https://www.portalmarcossantos.com.br/2020/05/31/empresario-fabio-mania-morre-em-acidente-com-moto-na-am-010/",
@@ -8879,8 +9191,8 @@
    "feridos": null,
    "km": "41",
    "municipio": "Manaus",
-   "id": 246,
-   "ocorrencia": "OC-2020-0168"
+   "id": 257,
+   "ocorrencia": "OC-2020-0172"
   },
   {
    "url": "https://diariomanauara.com.br/cidades/dono-da-moto-mania-morre-apos-grave-acidente-na-am-010/",
@@ -8900,8 +9212,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 247,
-   "ocorrencia": "OC-2020-0168"
+   "id": 258,
+   "ocorrencia": "OC-2020-0172"
   },
   {
    "url": "https://d24am.com/amazonas/enfermeiro-morre-apos-colidir-motocicleta-com-placa-de-ferro-na-rodovia-manoel-urbano/",
@@ -8924,8 +9236,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 248,
-   "ocorrencia": "OC-2020-0169"
+   "id": 259,
+   "ocorrencia": "OC-2020-0173"
   },
   {
    "url": "https://d24am.com/amazonas/motociclista-morre-apos-colidir-com-alambrado-na-rodovia-am-070/",
@@ -8948,8 +9260,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 249,
-   "ocorrencia": "OC-2020-0170"
+   "id": 260,
+   "ocorrencia": "OC-2020-0174"
   },
   {
    "url": "https://d24am.com/amazonas/colisao-entre-carros-deixa-tres-pessoas-feridas-na-am-010/",
@@ -8972,8 +9284,8 @@
    "feridos": 3,
    "km": "132",
    "municipio": "Manaus",
-   "id": 250,
-   "ocorrencia": "OC-2020-0171"
+   "id": 261,
+   "ocorrencia": "OC-2020-0175"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2020/02/25/grave-acidente-entre-caminhoes-deixa-cinco-feridos-na-am-070.ghtml",
@@ -8996,8 +9308,8 @@
    "feridos": 5,
    "km": "68",
    "municipio": "Manacapuru",
-   "id": 251,
-   "ocorrencia": "OC-2020-0172"
+   "id": 262,
+   "ocorrencia": "OC-2020-0176"
   },
   {
    "url": "https://d24am.com/amazonas/mulher-e-atropelada-na-estrada-am-010/",
@@ -9020,8 +9332,8 @@
    "feridos": null,
    "km": "132",
    "municipio": "Manaus",
-   "id": 252,
-   "ocorrencia": "OC-2020-0173"
+   "id": 263,
+   "ocorrencia": "OC-2020-0177"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/vigilante-fica-ferido-apos-acidente-envolvendo-carro-forte-na-am-010",
@@ -9044,8 +9356,8 @@
    "feridos": null,
    "km": "35",
    "municipio": "Itacoatiara",
-   "id": 253,
-   "ocorrencia": "OC-2019-0174"
+   "id": 264,
+   "ocorrencia": "OC-2019-0178"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/dono-de-sitio-persegue-bandidos-e-carro-capota-na-estrada-manoel-urbano-am",
@@ -9068,8 +9380,8 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 254,
-   "ocorrencia": "OC-2019-0175"
+   "id": 265,
+   "ocorrencia": "OC-2019-0179"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/cacamba-perde-controle-e-colide-contra-veiculo-na-am-010-dois-ficam-feridos",
@@ -9093,8 +9405,8 @@
    "feridos": 2,
    "km": "44",
    "municipio": "Iranduba",
-   "id": 255,
-   "ocorrencia": "OC-2019-0176"
+   "id": 266,
+   "ocorrencia": "OC-2019-0180"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/ambulancia-trazendo-dois-pacientes-capota-na-am-010",
@@ -9117,8 +9429,8 @@
    "feridos": null,
    "km": "52",
    "municipio": "Manaus",
-   "id": 256,
-   "ocorrencia": "OC-2019-0177"
+   "id": 267,
+   "ocorrencia": "OC-2019-0181"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/acidente-na-rodovia-am-10-deixa-um-morto-neste-sabado-19",
@@ -9141,8 +9453,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 257,
-   "ocorrencia": "OC-2019-0178"
+   "id": 268,
+   "ocorrencia": "OC-2019-0182"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/colisao-frontal-entre-caminhonetes-mata-duas-pessoas-e-deixa-tres-feridos-na-am-010",
@@ -9165,8 +9477,8 @@
    "feridos": 3,
    "km": "105",
    "municipio": "Manaus",
-   "id": 258,
-   "ocorrencia": "OC-2019-0178"
+   "id": 269,
+   "ocorrencia": "OC-2019-0182"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/caminhao-que-transportava-carne-tomba-na-rodovia-manoel-urbano-e-deixa-um-homem-ferido",
@@ -9189,8 +9501,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 259,
-   "ocorrencia": "OC-2019-0180"
+   "id": 270,
+   "ocorrencia": "OC-2019-0184"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/um-morre-e-dois-ficam-feridos-em-acidente-na-am-010",
@@ -9213,8 +9525,8 @@
    "feridos": 3,
    "km": "135",
    "municipio": "Manaus",
-   "id": 260,
-   "ocorrencia": "OC-2019-0179"
+   "id": 271,
+   "ocorrencia": "OC-2019-0183"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/acidente-na-avenida-manoel-urbano-deixa-dois-feridos",
@@ -9237,8 +9549,8 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 261,
-   "ocorrencia": "OC-2019-0180"
+   "id": 272,
+   "ocorrencia": "OC-2019-0184"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/apos-roubo-em-estabelecimento-comercial-assaltantes-capotam-veiculo-na-rodovia-am-010",
@@ -9261,8 +9573,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 262,
-   "ocorrencia": "OC-2019-0181"
+   "id": 273,
+   "ocorrencia": "OC-2019-0185"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/homem-morre-apos-capotar-veiculo-em-ramal-da-am-010-no-municipio-de-rio-preto-da-eva",
@@ -9285,8 +9597,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 263,
-   "ocorrencia": "OC-2019-0182"
+   "id": 274,
+   "ocorrencia": "OC-2019-0186"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/tres-pessoas-morrem-e-uma-fica-ferida-apos-colisao-entre-dois-carros-na-rodovia-manoel-urbano",
@@ -9309,8 +9621,8 @@
    "feridos": null,
    "km": "72",
    "municipio": "Manaus",
-   "id": 264,
-   "ocorrencia": "OC-2019-0183"
+   "id": 275,
+   "ocorrencia": "OC-2019-0187"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/medico-morre-em-acidente-com-carro-e-cacamba-na-am-010",
@@ -9333,8 +9645,8 @@
    "feridos": null,
    "km": "19",
    "municipio": "Manaus",
-   "id": 265,
-   "ocorrencia": "OC-2019-0184"
+   "id": 276,
+   "ocorrencia": "OC-2019-0188"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/morre-quarta-vitima-de-colisao-entre-veiculos-na-rodovia-am-070-manoel-urbano-em-manacapuru",
@@ -9357,8 +9669,8 @@
    "feridos": null,
    "km": "72",
    "municipio": "Manacapuru",
-   "id": 266,
-   "ocorrencia": "OC-2019-0185"
+   "id": 277,
+   "ocorrencia": "OC-2019-0189"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/colisao-na-am-070-deixa-uma-pessoa-morta-e-seis-feridas",
@@ -9381,8 +9693,8 @@
    "feridos": 6,
    "km": "28",
    "municipio": "Manaus",
-   "id": 267,
-   "ocorrencia": "OC-2019-0186"
+   "id": 278,
+   "ocorrencia": "OC-2019-0190"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/homem-morre-apos-ser-atropelado-na-am-010",
@@ -9405,8 +9717,8 @@
    "feridos": null,
    "km": "102",
    "municipio": "Manaus",
-   "id": 268,
-   "ocorrencia": "OC-2019-0187"
+   "id": 279,
+   "ocorrencia": "OC-2019-0191"
   },
   {
    "url": "https://d24am.com/d24am-play/motociclista-morre-em-acidente-na-am-070-2/",
@@ -9429,8 +9741,8 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 269,
-   "ocorrencia": "OC-2019-0188"
+   "id": 280,
+   "ocorrencia": "OC-2019-0192"
   },
   {
    "url": "https://d24am.com/amazonas/motociclista-morre-em-acidente-na-am-070/",
@@ -9453,8 +9765,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 270,
-   "ocorrencia": "OC-2019-0189"
+   "id": 281,
+   "ocorrencia": "OC-2019-0193"
   },
   {
    "url": "https://d24am.com/amazonas/acidente-entre-carros-na-am-010-deixa-seis-pessoas-gravemente-feridas/",
@@ -9477,8 +9789,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 271,
-   "ocorrencia": "OC-2019-0190"
+   "id": 282,
+   "ocorrencia": "OC-2019-0194"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/apos-capotar-na-rodovia-am-070-medico-promete-uma-acao-judicial",
@@ -9501,8 +9813,8 @@
    "feridos": null,
    "km": "4",
    "municipio": "Manaus",
-   "id": 272,
-   "ocorrencia": "OC-2019-0191"
+   "id": 283,
+   "ocorrencia": "OC-2019-0195"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/acidente-com-policiais-militares-na-am-010-resulta-na-morte-do-advogado-waldir-tavares",
@@ -9525,8 +9837,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 273,
-   "ocorrencia": "OC-2019-0192"
+   "id": 284,
+   "ocorrencia": "OC-2019-0196"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/acidente-de-transito-mata-uma-pessoa-e-deixa-mais-de-10-feridos-na-estrada-de-autazes-am",
@@ -9549,8 +9861,8 @@
    "feridos": 10,
    "km": "17",
    "municipio": "Autazes",
-   "id": 274,
-   "ocorrencia": "OC-2019-0193"
+   "id": 285,
+   "ocorrencia": "OC-2019-0197"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/acidente-na-rodovia-am-010-deixa-um-morto-e-um-ferido",
@@ -9573,8 +9885,8 @@
    "feridos": 1,
    "km": null,
    "municipio": "Manaus",
-   "id": 275,
-   "ocorrencia": "OC-2019-0194"
+   "id": 286,
+   "ocorrencia": "OC-2019-0198"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/acidente-na-rodovia-manoel-urbano-deixa-tres-pessoas-feridas",
@@ -9597,8 +9909,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 276,
-   "ocorrencia": "OC-2019-0195"
+   "id": 287,
+   "ocorrencia": "OC-2019-0199"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/homem-morre-vitima-de-acidente-de-carro-no-km-104-da-am-010",
@@ -9621,8 +9933,8 @@
    "feridos": null,
    "km": "104",
    "municipio": "Rio Preto da Eva",
-   "id": 277,
-   "ocorrencia": "OC-2019-0196"
+   "id": 288,
+   "ocorrencia": "OC-2019-0200"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/colisao-frontal-entre-carro-e-caminhao-na-am-010-mata-homem-e-deixa-mulher-ferida",
@@ -9645,8 +9957,8 @@
    "feridos": null,
    "km": "58",
    "municipio": "Manaus",
-   "id": 278,
-   "ocorrencia": "OC-2019-0197"
+   "id": 289,
+   "ocorrencia": "OC-2019-0201"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/policial-militar-morre-em-acidente-na-estrada-de-autazes-am",
@@ -9669,8 +9981,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Autazes",
-   "id": 279,
-   "ocorrencia": "OC-2019-0198"
+   "id": 290,
+   "ocorrencia": "OC-2019-0202"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/08/06/mulher-morre-apos-ser-atropelada-na-am-070-motorista-fugiu-segundo-testemunhas.ghtml",
@@ -9693,8 +10005,8 @@
    "feridos": null,
    "km": "5",
    "municipio": "Manaus",
-   "id": 280,
-   "ocorrencia": "OC-2019-0199"
+   "id": 291,
+   "ocorrencia": "OC-2019-0203"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/07/21/sobe-para-dois-o-numero-de-mortos-em-grave-acidente-envolvendo-15-pessoas-na-am-010-colisao-foi-entre-dois-carros.ghtml",
@@ -9717,8 +10029,8 @@
    "feridos": 12,
    "km": "184",
    "municipio": "Manaus",
-   "id": 281,
-   "ocorrencia": "OC-2019-0202"
+   "id": 292,
+   "ocorrencia": "OC-2019-0206"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/07/22/seis-vitimas-de-grave-acidente-na-am-010-recebem-alta-em-itacoatiara.ghtml",
@@ -9741,8 +10053,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 282,
-   "ocorrencia": "OC-2019-0201"
+   "id": 293,
+   "ocorrencia": "OC-2019-0205"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/menina-de-cinco-anos-morre-atropelada-por-picape-na-estrada-de-novo-airao",
@@ -9765,8 +10077,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Novo Airão",
-   "id": 283,
-   "ocorrencia": "OC-2019-0200"
+   "id": 294,
+   "ocorrencia": "OC-2019-0204"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/vitimas-de-acidente-na-am-010-recebem-alta-em-itacoatiara",
@@ -9789,8 +10101,8 @@
    "feridos": 10,
    "km": "184",
    "municipio": "Itacoatiara",
-   "id": 284,
-   "ocorrencia": "OC-2019-0202"
+   "id": 295,
+   "ocorrencia": "OC-2019-0206"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/crianca-vitima-do-acidente-na-am-010-e-transferida-de-helicoptero-para-manaus",
@@ -9813,8 +10125,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 285,
-   "ocorrencia": "OC-2019-0201"
+   "id": 296,
+   "ocorrencia": "OC-2019-0205"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/07/21/homem-morre-e-12-pessoas-ficam-feridas-em-grave-acidente-de-transito-na-am-010-diz-corpo-de-bombeiros.ghtml",
@@ -9837,8 +10149,8 @@
    "feridos": 12,
    "km": "88",
    "municipio": "Itacoatiara",
-   "id": 286,
-   "ocorrencia": "OC-2019-0201"
+   "id": 297,
+   "ocorrencia": "OC-2019-0205"
   },
   {
    "url": "https://d24am.com/amazonas/duas-pessoas-morrem-e-11-ficam-feridas-em-acidente-de-transito-na-am-010/",
@@ -9861,8 +10173,8 @@
    "feridos": 11,
    "km": "184",
    "municipio": "Manaus",
-   "id": 287,
-   "ocorrencia": "OC-2019-0202"
+   "id": 298,
+   "ocorrencia": "OC-2019-0206"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/laudo-sobre-acidente-fatal-na-am-010-deve-ficar-pronto-em-ate-dez-dias",
@@ -9885,8 +10197,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 288,
-   "ocorrencia": "OC-2019-0202"
+   "id": 299,
+   "ocorrencia": "OC-2019-0206"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/ambulancia-de-itacoatiara-capota-na-am-010-apos-deixar-paciente-em-manaus",
@@ -9909,8 +10221,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 289,
-   "ocorrencia": "OC-2019-0203"
+   "id": 300,
+   "ocorrencia": "OC-2019-0207"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/sobreviventes-de-acidente-com-tres-mortos-na-am-070-sao-trazidos-para-manaus",
@@ -9933,8 +10245,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 290,
-   "ocorrencia": "OC-2019-0204"
+   "id": 301,
+   "ocorrencia": "OC-2019-0208"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/05/09/acidentes-de-trabalho-mataram-24-pessoas-no-amazonas-em-2018.ghtml",
@@ -9957,8 +10269,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 291,
-   "ocorrencia": "OC-2019-0205"
+   "id": 302,
+   "ocorrencia": "OC-2019-0209"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/acidente-na-rodovia-am-070-deixa-tres-pessoas-mortas-e-tres-feridas",
@@ -9981,8 +10293,8 @@
    "feridos": 3,
    "km": "74",
    "municipio": "Manaus",
-   "id": 292,
-   "ocorrencia": "OC-2019-0206"
+   "id": 303,
+   "ocorrencia": "OC-2019-0210"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/auditor-fiscal-da-sefaz-e-uma-das-tres-vitimas-fatais-de-acidente-na-am-070",
@@ -10005,8 +10317,8 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 293,
-   "ocorrencia": "OC-2019-0206"
+   "id": 304,
+   "ocorrencia": "OC-2019-0210"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/05/01/duas-pessoas-ficam-feridas-apos-colisao-de-moto-e-caminhao-na-am-070.ghtml",
@@ -10029,8 +10341,8 @@
    "feridos": 2,
    "km": "18",
    "municipio": "Manaus",
-   "id": 294,
-   "ocorrencia": "OC-2019-0208"
+   "id": 305,
+   "ocorrencia": "OC-2019-0212"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/05/01/onibus-cai-em-buraco-apos-colidir-contra-carro-na-am-010.ghtml",
@@ -10053,8 +10365,8 @@
    "feridos": null,
    "km": "108",
    "municipio": "Itacoatiara",
-   "id": 295,
-   "ocorrencia": "OC-2019-0207"
+   "id": 306,
+   "ocorrencia": "OC-2019-0211"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/onibus-com-20-passageiros-e-caminhonete-se-envolvem-em-acidente-na-am-010",
@@ -10077,8 +10389,8 @@
    "feridos": null,
    "km": "105",
    "municipio": "Manaus",
-   "id": 296,
-   "ocorrencia": "OC-2019-0207"
+   "id": 307,
+   "ocorrencia": "OC-2019-0211"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/04/19/transito-na-am-070-e-interditado-apos-carro-aquaplanar-atingir-caminhonete-e-colidir-contra-poste-diz-pm.ghtml",
@@ -10101,8 +10413,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 297,
-   "ocorrencia": "OC-2019-0209"
+   "id": 308,
+   "ocorrencia": "OC-2019-0213"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/03/24/sargento-da-pm-morre-apos-colisao-com-micro-onibus-na-am-010.ghtml",
@@ -10125,8 +10437,8 @@
    "feridos": null,
    "km": "22",
    "municipio": "Manaus",
-   "id": 298,
-   "ocorrencia": "OC-2019-0210"
+   "id": 309,
+   "ocorrencia": "OC-2019-0214"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/03/01/medica-morta-em-acidente-na-am-010-trabalhava-em-rio-preto-da-eva-pelo-mais-medicos.ghtml",
@@ -10149,8 +10461,8 @@
    "feridos": null,
    "km": "135",
    "municipio": "Rio Preto da Eva",
-   "id": 299,
-   "ocorrencia": "OC-2019-0211"
+   "id": 310,
+   "ocorrencia": "OC-2019-0215"
   },
   {
    "url": "https://www.acritica.com/channels/cotidiano/news/acidente-envolvendo-picape-deixa-dois-mortos-e-um-ferido-na-rodovia-am-010",
@@ -10173,8 +10485,8 @@
    "feridos": 1,
    "km": null,
    "municipio": "Manaus",
-   "id": 300,
-   "ocorrencia": "OC-2019-0211"
+   "id": 311,
+   "ocorrencia": "OC-2019-0215"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2019/02/03/membro-de-grupo-de-motociclistas-morre-apos-colidir-com-carro-na-am-010.ghtml",
@@ -10197,8 +10509,8 @@
    "feridos": null,
    "km": "7",
    "municipio": "Manaus",
-   "id": 301,
-   "ocorrencia": "OC-2019-0212"
+   "id": 312,
+   "ocorrencia": "OC-2019-0216"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/capotamento-na-rodovia-manoel-urbano-deixa-duas-pessoas-feridas",
@@ -10221,8 +10533,8 @@
    "feridos": 2,
    "km": "77",
    "municipio": "Manaus",
-   "id": 302,
-   "ocorrencia": "OC-2019-0213"
+   "id": 313,
+   "ocorrencia": "OC-2019-0217"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/carro-colide-com-poste-e-duas-pessoas-ficam-feridas-na-am-010",
@@ -10245,8 +10557,8 @@
    "feridos": 2,
    "km": "47",
    "municipio": "Manaus",
-   "id": 303,
-   "ocorrencia": "OC-2019-0214"
+   "id": 314,
+   "ocorrencia": "OC-2019-0218"
   },
   {
    "url": "https://www.acritica.com/channels/manaus/news/acidente-na-am-010-deixa-cinco-mortos-motorista-de-onibus-fica-ferido",
@@ -10269,8 +10581,8 @@
    "feridos": 1,
    "km": "175",
    "municipio": "Manaus",
-   "id": 304,
-   "ocorrencia": "OC-2019-0215"
+   "id": 315,
+   "ocorrencia": "OC-2019-0219"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2018/09/29/acidente-entre-onibus-e-taxi-deixa-pelo-menos-5-mortos-na-rodovia-am-010.ghtml",
@@ -10293,8 +10605,8 @@
    "feridos": null,
    "km": "175",
    "municipio": "Manaus",
-   "id": 305,
-   "ocorrencia": "OC-2019-0215"
+   "id": 316,
+   "ocorrencia": "OC-2019-0219"
   },
   {
    "url": "https://d24am.com/amazonas/motociclista-morre-carbonizado-apos-colidir-com-micro-onibus-na-am-070/",
@@ -10317,8 +10629,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 306,
-   "ocorrencia": "OC-2017-0216"
+   "id": 317,
+   "ocorrencia": "OC-2017-0220"
   },
   {
    "url": "https://d24am.com/amazonas/duas-pessoas-ficam-feridas-apos-carro-colidir-contra-poste-na-am-010/",
@@ -10341,8 +10653,8 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 307,
-   "ocorrencia": "OC-2017-0217"
+   "id": 318,
+   "ocorrencia": "OC-2017-0221"
   },
   {
    "url": "http://g1.globo.com/am/amazonas/noticia/2017/03/acidente-deixa-mortos-e-feridos-na-am-254-ha-criancas-entre-vitimas.html",
@@ -10365,8 +10677,8 @@
    "feridos": 4,
    "km": null,
    "municipio": "Manaus",
-   "id": 308,
-   "ocorrencia": "OC-2017-0218"
+   "id": 319,
+   "ocorrencia": "OC-2017-0222"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2016/12/mulher-fica-gravemente-ferida-apos-acidente-de-carro-na-am-010.html",
@@ -10389,8 +10701,8 @@
    "feridos": null,
    "km": "127",
    "municipio": "Manaus",
-   "id": 309,
-   "ocorrencia": "OC-2016-0219"
+   "id": 320,
+   "ocorrencia": "OC-2016-0223"
   },
   {
    "url": "http://g1.globo.com/am/amazonas/noticia/2016/11/microempresario-morre-apos-carro-capotar-na-rodovia-am-070.html",
@@ -10413,8 +10725,8 @@
    "feridos": 4,
    "km": "3",
    "municipio": "Manaus",
-   "id": 310,
-   "ocorrencia": "OC-2016-0220"
+   "id": 321,
+   "ocorrencia": "OC-2016-0224"
   },
   {
    "url": "http://g1.globo.com/am/amazonas/noticia/2016/11/tres-pessoas-ficam-feridas-apos-colisao-na-rodovia-am-010.html",
@@ -10437,8 +10749,8 @@
    "feridos": 3,
    "km": "30",
    "municipio": "Itacoatiara",
-   "id": 311,
-   "ocorrencia": "OC-2016-0221"
+   "id": 322,
+   "ocorrencia": "OC-2016-0225"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2016/10/homem-morre-em-acidente-de-transito-na-rodovia-am-010-em-itacoatiara.html",
@@ -10461,8 +10773,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 312,
-   "ocorrencia": "OC-2016-0222"
+   "id": 323,
+   "ocorrencia": "OC-2016-0226"
   },
   {
    "url": "http://g1.globo.com/am/amazonas/noticia/2016/10/homem-morre-em-acidente-de-transito-na-rodovia-am-010-em-itacoatiara.amp",
@@ -10485,8 +10797,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 313,
-   "ocorrencia": "OC-2016-0222"
+   "id": 324,
+   "ocorrencia": "OC-2016-0226"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2016/10/idoso-morre-apos-carro-capotar-na-am-070-rodovia-manoel-urbano.html",
@@ -10509,8 +10821,8 @@
    "feridos": null,
    "km": "2",
    "municipio": "Manacapuru",
-   "id": 314,
-   "ocorrencia": "OC-2016-0223"
+   "id": 325,
+   "ocorrencia": "OC-2016-0227"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2015/10/irmaos-morrem-apos-colisao-entre-caminhao-e-moto-na-am-010.html",
@@ -10533,8 +10845,8 @@
    "feridos": null,
    "km": "91",
    "municipio": "Rio Preto da Eva",
-   "id": 315,
-   "ocorrencia": "OC-2015-0224"
+   "id": 326,
+   "ocorrencia": "OC-2015-0228"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2014/12/homem-morre-preso-em-ferragens-de-picape-em-acidente-na-am-070.html",
@@ -10557,8 +10869,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 316,
-   "ocorrencia": "OC-2014-0225"
+   "id": 327,
+   "ocorrencia": "OC-2014-0229"
   },
   {
    "url": "http://g1.globo.com/am/amazonas/noticia/2014/12/jovem-de-19-anos-morre-apos-colidir-veiculo-e-capotar-na-estrada-am-070.html",
@@ -10581,8 +10893,8 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 317,
-   "ocorrencia": "OC-2014-0226"
+   "id": 328,
+   "ocorrencia": "OC-2014-0230"
   }
  ]
 }
