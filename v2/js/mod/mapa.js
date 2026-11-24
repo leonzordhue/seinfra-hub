@@ -4,7 +4,7 @@
 // Números: data/mapa_municipios.json, data/mapa_trechos.json, data/sinistros_analise.json, data/eobras.json.
 // Os números entram por expressão "match" no navegador, então o .pmtiles só muda quando muda a geometria.
 // v3 (acabamento): painel de camadas e legenda flutuantes sobre o mapa, escala em rampa rotulada, ficha diagramada.
-import { talvez, contratos, municipios } from "../dados.js";
+import { talvez, contratos, municipios, historico } from "../dados.js";
 import { esc, num, brlCurto, semAcento } from "../fmt.js";
 import { $, $$, gaveta, fonte, chipSit, kpi } from "../ui.js";
 
@@ -131,9 +131,9 @@ export async function render(el, params) {
   mapa?.remove(); mapa = null;
   if (!document.getElementById("mapa-css")) document.head.append(Object.assign(document.createElement("style"), { id: "mapa-css", textContent: CSS }));
   el.innerHTML = `<div class="carregando">Carregando o mapa…</div>`;
-  const [_, mun, tr, an, ct, temTiles] = await Promise.all([
+  const [_, mun, tr, an, ct, temTiles, hist] = await Promise.all([
     carregarLibs(), talvez("mapa_municipios"), talvez("mapa_trechos"), talvez("sinistros_analise"), contratos(),
-    fetch("../data/mapa.pmtiles", { method: "HEAD" }).then(r => r.ok).catch(() => false)]);
+    fetch("../data/mapa.pmtiles", { method: "HEAD" }).then(r => r.ok).catch(() => false), historico().catch(() => null)]);
   if (params?.get("camada") && CAMADAS.some(c => c[0] === params.get("camada"))) estado.camada = params.get("camada");
 
   const M = mun?.municipios || {};
@@ -354,6 +354,8 @@ export async function render(el, params) {
     nome = x.nome || nome;
     const nomeEo = munsEo.find(n => semAcento(n) === semAcento(nome)) || nome;
     const cs = ct.lista.filter(c => municipios(c).includes(nomeEo)).sort((a, b) => (b.v_atual || 0) - (a.v_atual || 0));
+    const hs = (hist?.lista || []).filter(c => municipios(c).some(m => semAcento(m) === semAcento(nome))).sort((a, b) => String(b.ass || b.ano).localeCompare(String(a.ass || a.ano)));
+    const hAnos = hs.map(c => c.ano).filter(Boolean).sort();
     m.setFilter("mun-sel", ["==", ["get", "cod"], cod]);
     gaveta(`<div class="mp-ficha"><span class="mp-sobre">Município</span><h2>${esc(nome)}</h2>
       <p class="mp-intro">${num(x.pop)} habitantes (IBGE, estimativa ${esc(mun?._meta?.ano_populacao || "")}) · ${num(x.sinistros)} sinistros em rodovias estaduais</p>
@@ -362,7 +364,10 @@ export async function render(el, params) {
         ${kpi("Valor contratado", brlCurto(x.v_contratado), x.r_hab == null ? "—" : `${brlCurto(x.r_hab)} por habitante`)}
         ${kpi("Valor medido", brlCurto(x.v_medido), x.v_contratado ? `${num(x.v_medido / x.v_contratado * 100)}% do contratado` : "")}
       </div>
-      ${cs.length ? `<h3>Contratos <span>${num(cs.length)}, por valor</span></h3><ul class="mp-lista">${cs.slice(0, 12).map(c => itemCt(c, true)).join("")}</ul>${cs.length > 12 ? `<p class="mp-vazio">e mais ${num(cs.length - 12)} no briefing.</p>` : ""}` : `<p class="mp-vazio">Nenhum contrato do município no e-Obras.</p>`}
+      ${cs.length ? `<h3>Contratos no e-Obras <span>${num(cs.length)}, por valor</span></h3><ul class="mp-lista">${cs.slice(0, 12).map(c => itemCt(c, true)).join("")}</ul>${cs.length > 12 ? `<p class="mp-vazio">e mais ${num(cs.length - 12)} no briefing.</p>` : ""}` : `<p class="mp-vazio">Nenhum contrato do município no e-Obras.</p>`}
+      ${hs.length ? `<h3>Histórico anterior ao e-Obras <span>${num(hs.length)} contratos${hAnos.length ? `, ${hAnos[0]} a ${hAnos[hAnos.length - 1]}` : ""} · ${brlCurto(hs.reduce((t, c) => t + (c.v_atual || 0), 0))}</span></h3>
+        <ul class="mp-lista">${hs.slice(0, 8).map(c => `<li><div class="l1"><b>${esc(c.id)}</b><span class="peq">${esc(c.ano || "")}</span>${c.v_atual ? `<span class="v">${brlCurto(c.v_atual)}</span>` : ""}</div><p title="${esc(c.obj)}">${esc(c.obj)}</p></li>`).join("")}</ul>
+        ${hs.length > 8 ? `<p class="mp-vazio">e mais ${num(hs.length - 8)} no briefing (Planilha Geral, contratos removidos).</p>` : ""}` : ""}
       ${linkBrief("municipio", nomeEo, "Abrir briefing do município")}</div>`);
   }
 

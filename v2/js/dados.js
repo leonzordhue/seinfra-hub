@@ -171,6 +171,24 @@ export async function contratos() {
   return { meta: d._meta, lista };
 }
 
+// Histórico: contratos antigos da Planilha Geral (aba REMOVIDAS, 2003 em diante) que não estão no e-Obras.
+// Gerado por projetos/dmob/planilha-geral-dmob/exportar_historico.py (rotina semanal). Mesmo formato dos contratos do e-Obras,
+// com hist: true; medido estimado = valor global × % financeiro da planilha.
+export async function historico() {
+  const d = await talvez("eobras_historico");
+  if (!d) return null;
+  const lista = d.ct.map(h => {
+    const v = h.v_global ?? h.v_orig ?? null;
+    const c = { id: h.id, sit: h.sit || "—", obj: h.obj || h.res || "", mun: h.mun || "", emp: h.emp || "", ass: h.ini_vig || null,
+      fim_vig: h.fim_vig || null, fim_exec: h.fim_exec || h.fim_vig || null, v_atual: v, v_orig: h.v_orig ?? null,
+      medido: v != null && h.fin != null ? Math.round(v * h.fin) / 100 : null, fis: h.fis ?? null, fin: h.fin ?? null,
+      ano: h.ano, origem: h.origem, hist: true, grupo: "encerrado", alertas: [] };
+    c.modal = modal(c);
+    return c;
+  });
+  return { meta: d._meta, lista };
+}
+
 // CLAUDE.md: contrato que cita a rodovia só como LOCALIZAÇÃO não é da rodovia
 // ("ramal Santo Antônio localizado no KM 41 da AM-010", "Estrada Novo Remanso, no km 170 da AM-010").
 // Mesma regra em pipelines/sinistros/analisar.py (obra_da_rodovia).

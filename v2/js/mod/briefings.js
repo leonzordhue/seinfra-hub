@@ -1,7 +1,7 @@
 // Briefings de uma página, por município, rodovia ou contrato, montados dos dados do Hub e prontos para imprimir/PDF.
 // [Nexus] 23/11/2026. Fontes: eobras.json, sinistros.json, sinistros_analise.json, licitacoes.json, icm.json.
 // A IA não escreve nada aqui: toda frase sai de uma conta sobre os dados, com a fonte no rodapé.
-import { contratos, talvez, municipios, obraDaRodovia, CURVA_S } from "../dados.js";
+import { contratos, talvez, municipios, obraDaRodovia, CURVA_S, historico } from "../dados.js";
 import { esc, num, pct, data, brlCurto, semAcento, plural } from "../fmt.js";
 import { $, chip, chipSit, opcoes, grafico, serie, css } from "../ui.js";
 
@@ -60,12 +60,12 @@ const T = h => `<div class="tab-rolo" tabindex="0">${h}</div>`;
 const rxRod = cod => new RegExp(`\\bAM[\\s-]?0*${parseInt(cod.slice(3), 10)}\\b`, "i");
 
 export async function render(el, params) {
-  const [{ meta: eMeta, lista }, sin, an, lic, icm, rodj] = await Promise.all([
+  const [{ meta: eMeta, lista }, sin, an, lic, icm, rodj, hist] = await Promise.all([
     contratos(), talvez("sinistros"), talvez("sinistros_analise"), talvez("licitacoes"), talvez("icm"),
-    fetch("../pipelines/sinistros/rodovias.json").then(r => r.ok ? r.json() : null).catch(() => null)]);
+    fetch("../pipelines/sinistros/rodovias.json").then(r => r.ok ? r.json() : null).catch(() => null), historico().catch(() => null)]);
   const icmPor = new Map((icm?.rodovias || []).map(r => [r.codigo, r]));
   const nomes = rodj ? Object.fromEntries(Object.entries(rodj.rodovias || rodj).filter(([k]) => /^AM-/.test(k)).map(([k, v]) => [k, v.nomes_fortes || []])) : {};
-  const muns = [...new Set(lista.flatMap(municipios))].sort((a, b) => a.localeCompare(b, "pt-BR"));
+  const muns = [...new Set([...lista, ...(hist?.lista || [])].flatMap(municipios))].sort((a, b) => a.localeCompare(b, "pt-BR"));
   const rods = [...new Set([...icmPor.keys(), ...Object.keys(an?.rodovias || {}), ...Object.keys(nomes)])].sort();
   if (params?.get("municipio")) Object.assign(estado, { tipo: "municipio", alvo: params.get("municipio") });
   if (params?.get("rodovia")) Object.assign(estado, { tipo: "rodovia", alvo: params.get("rodovia") });
@@ -95,7 +95,7 @@ export async function render(el, params) {
     sel.innerHTML = opcoes(estado.tipo === "municipio" ? muns : rods, estado.alvo, estado.tipo === "municipio" ? "Escolha o município" : "Escolha a rodovia");
   };
   const pinta = () => {
-    const ctx = { lista, sin, an, lic, icmPor, nomes, eMeta };
+    const ctx = { lista, sin, an, lic, icmPor, nomes, eMeta, hist };
     const nome = { municipio: "um município", rodovia: "uma rodovia", contrato: "um contrato" }[estado.tipo];
     const doc = $("#doc", el);
     if (!estado.alvo) { doc.innerHTML = `<p class="vazio">Escolha ${nome} para montar o briefing.</p>`; return; }
@@ -145,7 +145,7 @@ function tabelaObras(cs, modo = "andamento") {
   const ini = c => `<td><b>${esc(c.id)}</b><div class="peq">${esc(c.emp)}</div></td><td><div class="obj" title="${esc(c.obj)}">${esc(c.obj || "")}</div><div class="peq">${esc(c.modal || c.cat || "")}</div></td>`;
   if (modo === "encerrada") {
     return T(`<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th>Assinatura</th><th>Término</th><th class="n">Valor final</th><th class="n">Medido</th><th class="n">Físico</th></tr></thead><tbody>
-    ${[...cs].sort((a, b) => String(b.ass).localeCompare(String(a.ass))).map(c => `<tr>${ini(c)}<td>${chipSit(c.sit)}</td><td>${data(c.ass)}</td><td>${data(c.fim_exec || c.ult_med || c.desde)}</td>
+    ${[...cs].sort((a, b) => String(b.ass || b.ano || "").localeCompare(String(a.ass || a.ano || ""))).map(c => `<tr>${ini(c)}<td>${chipSit(c.sit)}</td><td>${c.ass ? data(c.ass) : esc(c.ano || "—")}</td><td>${data(c.fim_exec || c.ult_med || c.desde)}</td>
       <td class="n">${brlCurto(c.v_atual)}</td><td class="n">${brlCurto(c.medido)}<div class="peq">${pct(c.fin)}</div></td><td class="n">${pct(c.fis)}</td></tr>`).join("")}</tbody></table>`);
   }
   return T(`<table class="t"><thead><tr><th>Contrato</th><th>Objeto</th><th>Situação</th><th class="n">Valor atual</th><th class="n">Físico</th><th class="n">Financeiro</th><th class="n">Saldo</th><th>Vigência até</th></tr></thead><tbody>
@@ -172,12 +172,17 @@ function docMunicipio(mun, ctx) {
     .map(([k, v]) => ({ k, n: v.length, valor: soma(v, "v_atual"), medido: soma(v, "medido") })).sort((a, b) => b.valor - a.valor);
   const rodsMun = [...ctx.icmPor.values()].filter(r => (r.municipios || []).some(m => semAcento(m) === semAcento(mun)));
   const ocs = (ctx.sin?.ocorrencias || []).filter(o => semAcento(o.municipio) === semAcento(mun));
+  // histórico (Planilha Geral, REMOVIDAS): contratos antigos do município que não estão no e-Obras
+  const hcs = (ctx.hist?.lista || []).filter(c => municipios(c).some(m => semAcento(m) === semAcento(mun)))
+    .sort((a, b) => String(b.ass || b.ano).localeCompare(String(a.ass || a.ano)));
+  const hAnos = hcs.map(c => c.ano).filter(Boolean).sort();
   const sintese = [
     cs.length ? `A SEINFRA tem ${plural(cs.length, "contrato", "contratos")} em ${mun} no e-Obras${anos.length ? ` (assinados de ${anos[0]} a ${anos[anos.length - 1]})` : ""}, somando ${brlCurto(soma(cs, "v_atual"))} contratados e ${brlCurto(soma(cs, "medido"))} medidos.` : `Nenhum contrato da SEINFRA em ${mun} no e-Obras.`,
     at.length ? `${plural(at.length, "contrato está", "contratos estão")} em andamento (${brlCurto(soma(at, "v_atual"))}, com ${brlCurto(soma(at, "saldo"))} ainda a medir).` : "",
     atn.length ? `${plural(atn.length, "contrato está", "contratos estão")} paralisado(s), expirado(s) ou em tomada de contas (${brlCurto(soma(atn, "v_atual"))}).` : "",
     comAl.length ? `${plural(comAl.length, "contrato ativo tem", "contratos ativos têm")} alerta de gestão (vigência, medição ou descompasso físico-financeiro).` : "",
     conc.length ? `${plural(conc.length, "contrato foi concluído ou encerrado", "contratos foram concluídos ou encerrados")} (${brlCurto(soma(conc, "v_atual"))}).` : "",
+    hcs.length ? `Antes disso, a Planilha Geral registra ${plural(hcs.length, "contrato", "contratos")} no município${hAnos.length ? ` (${hAnos[0]} a ${hAnos[hAnos.length - 1]})` : ""}, somando ${brlCurto(soma(hcs, "v_atual"))}: estão no histórico, ao fim do documento.` : "",
     ocs.length ? `${plural(ocs.length, "acidente em rodovia estadual foi noticiado", "acidentes em rodovias estaduais foram noticiados")} no município desde 2019 (${num(ocs.filter(o => o.fatal).length)} com morte).` : "",
   ].filter(Boolean);
   const nome = semAcento(mun);
@@ -193,7 +198,10 @@ function docMunicipio(mun, ctx) {
       ${rodsMun.map(r => `<tr><td><b>${esc(r.codigo)}</b></td><td>${esc(r.inicio)} → ${esc(r.fim)}</td><td class="n">${num(r.extensao_total_km, 1)} km</td><td>${esc(r.nivel_geral)} (${num(r.iri_medio, 2)})</td><td class="n">${num(r.n_buracos)}</td></tr>`).join("")}</tbody></table>`)}` : ""}
     ${ocs.length ? `<h2>Sinistros noticiados (desde 2019)</h2><ul class="lista">${ocs.sort((a, b) => b.data.localeCompare(a.data)).slice(0, 6).map(o => `<li><div><div class="q">${data(o.data)} · ${esc(o.rodovia)} · ${esc(o.tipo)}${o.fatal ? " · com morte" : ""}</div></div></li>`).join("")}</ul>` : ""}
     ${blocoLic(ctx.lic, o => semAcento(o).includes(nome))}
-    ${rodape(ctx, rodsMun.length ? "; condição: levantamento RoadLab (data/icm.json)" : "")}</article>`;
+    ${hcs.length ? `<h2>Histórico: contratos anteriores ao e-Obras (${num(hcs.length)})</h2>
+      <p class="nota">Planilha Geral da SEINFRA (aba de contratos removidos), ${esc(hAnos[0] || "")} a ${esc(hAnos[hAnos.length - 1] || "")}. Situação e valores como registrados na planilha; medido estimado pelo % financeiro.</p>
+      ${tabelaObras(hcs, "encerrada")}` : ""}
+    ${rodape(ctx, (rodsMun.length ? "; condição: levantamento RoadLab (data/icm.json)" : "") + (hcs.length ? `; histórico: Planilha Geral SEINFRA (${esc(ctx.hist.meta.gerado)})` : ""))}</article>`;
 }
 
 function docRodovia(cod, ctx) {
