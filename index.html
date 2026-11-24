@@ -1454,6 +1454,12 @@
       transition: background .15s;
     }
     .modal-rich .mr-close:hover { background: rgba(255,255,255,.32); }
+    /* traçado animado da rodovia (_desenharTrajeto) */
+    .rod-seta { background: none; border: 0; }
+    .rod-seta svg { display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,.3)); transform-origin: 50% 50%; }
+    .rod-refazer { display: inline-flex; align-items: center; gap: 6px; background: #fff; color: #002D72; border: 1px solid #7D8A9C; border-radius: 6px; padding: 6px 10px; font: 600 12.5px "Outfit", system-ui, sans-serif; cursor: pointer; min-height: 32px; }
+    .rod-refazer:hover { border-color: #002D72; }
+    .rod-refazer:focus-visible { outline: 2px solid #002D72; outline-offset: 2px; }
     .modal-rich .mr-hdr {
       padding: 1.4rem 1.5rem 1.2rem; color: #fff;
       border-radius: 20px 20px 0 0;
@@ -4211,6 +4217,8 @@ async function _renderRodQuadroMap(nome) {
     return variants.some(v => vals.some(pv => pv && (pv === v.replace(/[\s-]/g,"") || pv.includes(v.replace(/[\s-]/g,"")))));
   });
   if (!feats.length) { try { map.setView([-4.5,-63.5], 6); } catch(e){} return; }
+  // ordem do km: o traçado é desenhado do km 0 ao fim, com seta na ponta indicando o sentido [Nexus 24/11/2026]
+  feats.sort((a, b) => parseFloat((a.properties || {})["KM INICIAL"] || 0) - parseFloat((b.properties || {})["KM INICIAL"] || 0));
   const lyr = L.geoJSON({ type: "FeatureCollection", features: feats }, {
     style: f => {
       const sit = _sitFromFeature(f.properties || {}).toUpperCase();
@@ -4225,9 +4233,86 @@ async function _renderRodQuadroMap(nome) {
                    <div class="pop-row">${htmlEscape(p["CÓDIGO S."] || p.CODIGO || "")}</div>
                    <div class="pop-row">Situação: ${htmlEscape(_labSit(k) || sitEfetiva || "—")}</div>`);
     }
-  }).addTo(map);
+  });
   try { map.fitBounds(lyr.getBounds(), { padding: [30,30] }); } catch (e) {}
   setTimeout(() => map.invalidateSize(), 200);
+  _desenharTrajeto(map, feats, lyr, nome);
+}
+
+/* Desenha o traçado progressivamente do km 0 ao fim, com uma seta na ponta no sentido da rodovia.
+   No fim entram as cores por situação (camada lyr, com popups) e a seta fica no ponto final.
+   prefers-reduced-motion: desenha de uma vez. Botão "Refazer trajeto" repete. [Nexus 24/11/2026] */
+function _desenharTrajeto(map, feats, lyr, nome) {
+  // sequência única de pontos na ordem do km (cada parte orientada para continuar da anterior)
+  const partes = [];
+  feats.forEach(f => {
+    const g = f.geometry || {};
+    const ls = g.type === "LineString" ? [g.coordinates] : g.type === "MultiLineString" ? g.coordinates : [];
+    ls.forEach(c => partes.push(c.map(p => L.latLng(p[1], p[0]))));
+  });
+  const pts = [];
+  partes.forEach(pp => {
+    if (pts.length && pp.length > 1) {
+      const fim = pts[pts.length - 1];
+      if (fim.distanceTo(pp[pp.length - 1]) < fim.distanceTo(pp[0])) pp = pp.slice().reverse();
+    }
+    pp.forEach(p => pts.push(p));
+  });
+  if (pts.length < 2) { lyr.addTo(map); return; }
+  const acum = [0];
+  for (let i = 1; i < pts.length; i++) acum.push(acum[i - 1] + pts[i - 1].distanceTo(pts[i]));
+  const total = acum[acum.length - 1];
+
+  const seta = L.marker(pts[0], { interactive: false, keyboard: false, zIndexOffset: 1000, icon: L.divIcon({ className: "rod-seta", iconSize: [30, 30], iconAnchor: [15, 15],
+    html: '<svg viewBox="0 0 30 30" width="30" height="30" aria-hidden="true"><circle cx="15" cy="15" r="13" fill="#002D72" stroke="#fff" stroke-width="2"/><path d="M9 15h11M15.5 9.5 21 15l-5.5 5.5" fill="none" stroke="#F5A623" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' }) });
+  const inicio = L.circleMarker(pts[0], { radius: 6, color: "#fff", weight: 2, fillColor: "#002D72", fillOpacity: 1, interactive: true })
+    .bindTooltip(`${htmlEscape(nome)} · km 0`, { direction: "top" });
+  const casca = L.polyline([], { color: "#fff", weight: 9, opacity: .9, lineCap: "round", lineJoin: "round", interactive: false });
+  const traco = L.polyline([], { color: "#002D72", weight: 5, opacity: 1, lineCap: "round", lineJoin: "round", interactive: false });
+
+  // ângulo na tela (graus) entre dois pontos, para girar a seta
+  const angulo = (a, b) => { const pa = map.latLngToLayerPoint(a), pb = map.latLngToLayerPoint(b); return Math.atan2(pb.y - pa.y, pb.x - pa.x) * 180 / Math.PI; };
+  const girar = (a, b) => { const el = seta.getElement && seta.getElement(); const s = el && el.querySelector("svg"); if (s) s.style.transform = `rotate(${angulo(a, b)}deg)`; };
+
+  let quadro = null;
+  function terminar() {
+    if (quadro) cancelAnimationFrame(quadro);
+    quadro = null;
+    map.removeLayer(casca); map.removeLayer(traco);
+    lyr.addTo(map);
+    seta.setLatLng(pts[pts.length - 1]); girar(pts[pts.length - 2], pts[pts.length - 1]); seta.addTo(map); inicio.addTo(map);
+    inicio.bringToFront && inicio.bringToFront();
+  }
+  function animar() {
+    if (quadro) cancelAnimationFrame(quadro);
+    [lyr, seta, inicio].forEach(l => map.hasLayer(l) && map.removeLayer(l));
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) { terminar(); return; }
+    casca.setLatLngs([]); traco.setLatLngs([]); casca.addTo(map); traco.addTo(map); seta.setLatLng(pts[0]).addTo(map); inicio.addTo(map);
+    const dur = Math.min(4200, Math.max(1800, total / 60));  // ~1,8 a 4,2 s conforme a extensão
+    const t0 = performance.now(); let i = 1;
+    const passo = agora => {
+      const k = Math.min(1, (agora - t0) / dur), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;  // suaviza início e fim
+      const alvo = e * total;
+      while (i < pts.length - 1 && acum[i] < alvo) i++;
+      const a = pts[i - 1], b = pts[i], seg = acum[i] - acum[i - 1] || 1, f = Math.max(0, Math.min(1, (alvo - acum[i - 1]) / seg));
+      const ponta = L.latLng(a.lat + (b.lat - a.lat) * f, a.lng + (b.lng - a.lng) * f);
+      const feitos = pts.slice(0, i).concat([ponta]);
+      casca.setLatLngs(feitos); traco.setLatLngs(feitos);
+      seta.setLatLng(ponta); girar(a, b);
+      if (k < 1) quadro = requestAnimationFrame(passo); else terminar();
+    };
+    quadro = requestAnimationFrame(passo);
+  }
+  // controle "Refazer trajeto"
+  const Ctl = L.Control.extend({ options: { position: "topright" }, onAdd() {
+    const b = L.DomUtil.create("button", "rod-refazer");
+    b.type = "button"; b.title = "Refazer o trajeto do km 0 ao fim"; b.setAttribute("aria-label", "Refazer o trajeto do km 0 ao fim");
+    b.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Refazer trajeto</span>';
+    L.DomEvent.disableClickPropagation(b); L.DomEvent.on(b, "click", animar);
+    return b;
+  } });
+  new Ctl().addTo(map);
+  map.whenReady(() => setTimeout(animar, 350));  // espera o enquadramento terminar
 }
 
 /* Extrai todos os códigos AM-XXX mencionados no tema da obra (objeto+resumo+segmento+localização) */
