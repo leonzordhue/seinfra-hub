@@ -90,9 +90,23 @@ def abrir_zip(url, amostra):
         return zipfile.ZipFile(io.BufferedReader(Faixa(url), buffer_size=1 << 20))
     arq = tempfile.NamedTemporaryFile(suffix=".zip", delete=False)
     print(f"  baixando {url}", flush=True)
-    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=600) as r:
-        while bloco := r.read(1 << 22):
-            arq.write(bloco)
+    # ~540 MB: a conexão do servidor cai no meio (Broken pipe, 23/11/2026). Retoma com HTTP Range de onde parou.
+    pos, tentativa = 0, 0
+    while True:
+        try:
+            h = {**UA, **({"Range": f"bytes={pos}-"} if pos else {})}
+            with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=600) as r:
+                if pos and r.status != 206:  # servidor ignorou o Range: recomeça do zero
+                    arq.seek(0); arq.truncate(); pos = 0
+                while bloco := r.read(1 << 22):
+                    arq.write(bloco); pos += len(bloco)
+            break
+        except Exception as e:
+            tentativa += 1
+            if tentativa > 8:
+                raise
+            print(f"  rede: {str(e)[:80]}; retomando em {pos // (1 << 20)} MB (tentativa {tentativa})", flush=True)
+            time.sleep(15 * tentativa)
     arq.close()
     return zipfile.ZipFile(arq.name)
 
