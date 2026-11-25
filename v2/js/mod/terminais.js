@@ -128,16 +128,19 @@ export async function render(el) {
       <p style="font-size:12.5px;color:var(--tinta-3)">Fonte: planilha de acompanhamento do DMOB.</p>`);
   }
 
-  // mapa (Leaflet; fundo Esri cinza sem chave, claro ou escuro conforme o tema)
+  // mapa (Leaflet; fundo satélite Esri sem chave, igual à v1)
   try {
     folha("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css");
     await script("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js");
     const L = window.L, box = $("#mapaTerm");
     if (!box) return;
-    const escuro = getComputedStyle(document.documentElement).colorScheme === "dark";
     const m = L.map(box, { scrollWheelZoom: false, preferCanvas: true }).setView([-3.4653, -62.2159], 6);
-    L.tileLayer(`https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${escuro ? "Dark" : "Light"}_Gray_Base/MapServer/tile/{z}/{y}/{x}`,
-      { maxZoom: 16, attribution: "Esri" }).addTo(m);
+    // fundo da v1 (Paulo, 25/11/2026): satélite clareado + estradas + limites/nomes; o cinza escondia rios e lagos
+    const esri = (s, o) => L.tileLayer(`https://{s}.arcgisonline.com/ArcGIS/rest/services/${s}/MapServer/tile/{z}/{y}/{x}`,
+      Object.assign({ subdomains: ["server", "services"], maxZoom: 18, keepBuffer: 3, updateWhenZooming: false }, o)).addTo(m);
+    esri("World_Imagery", { className: "tile-sat-clara", attribution: "© Esri World Imagery" });
+    esri("Reference/World_Transportation", { opacity: 0.85, minZoom: 8 });
+    esri("Reference/World_Boundaries_and_Places", {});
     const cor = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
     const sup = cor("--sup");
     ent.forEach(t => L.circleMarker([t.lat, t.lon], { radius: 6, color: sup, weight: 2, fillColor: cor("--azul"), fillOpacity: 1 })
