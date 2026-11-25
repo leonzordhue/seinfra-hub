@@ -16,9 +16,63 @@ const DESCR = {
   "#/campo-iri": "Estimativa de IRI com o acelerômetro", "#/campo-buracos": "Detecção de buracos em fotos",
 };
 
+// Estado das fontes e "o que mudou" (data/painel.json, gerado no deploy por scripts/painel.py). [Claude] 25/11/2026
+const ESTILO_PAINEL = `<style>
+  .fontes-faixa { margin: 0 0 16px; border: 1px solid var(--borda); border-radius: 8px; background: var(--sup); }
+  .fontes-faixa > summary { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 10px 14px; cursor: pointer; font-size: 13.5px; color: var(--tinta-2); list-style: none; min-height: 44px; }
+  .fontes-faixa > summary::-webkit-details-marker { display: none; }
+  .fontes-faixa > summary::after { content: "ver fontes"; margin-left: auto; color: var(--tinta-3); font-size: 12.5px; text-decoration: underline; }
+  .fontes-faixa[open] > summary::after { content: "ocultar"; }
+  .fontes-faixa table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .fontes-faixa th, .fontes-faixa td { text-align: left; padding: 7px 14px; border-top: 1px solid var(--borda); }
+  .fontes-faixa th { font-weight: 600; color: var(--tinta-3); font-size: 12px; }
+  .fontes-faixa td a { color: var(--tinta); }
+  .mudou .t2 { white-space: normal; }
+  @media (max-width: 640px) { .fontes-faixa th:nth-child(2), .fontes-faixa td:nth-child(2) { display: none; } }
+</style>`;
+const TIPO = { oficial: "dado oficial", monitoramento: "monitoramento (notícias)", estimativa: "estimativa calculada", derivado: "dado derivado", levantamento: "levantamento pontual" };
+const idade = d => d ? Math.floor((Date.now() - new Date(`${d}T12:00:00`)) / 864e5) : null;
+function estadoFonte(f) {
+  if (!f.data) return { txt: "sem dado", nivel: "critico" };
+  if (f.cadencia_dias == null) return { txt: "sem rotina", nivel: "" };
+  return idade(f.data) <= f.cadencia_dias ? { txt: "em dia", nivel: "ok" } : { txt: `atrasada (${idade(f.data)} dias)`, nivel: "alerta" };
+}
+function faixaFontes(P) {
+  if (!P?.fontes?.length) return "";
+  const est = P.fontes.map(f => ({ ...f, e: estadoFonte(f) }));
+  const ok = est.filter(f => f.e.nivel === "ok").length, atr = est.filter(f => f.e.nivel === "alerta" || f.e.nivel === "critico");
+  return `<details class="fontes-faixa"><summary><b style="color:var(--tinta)">Fontes de dados</b>
+      ${chip(`${num(ok)} em dia`, "ok")}${atr.length ? chip(`${num(atr.length)} ${atr.length > 1 ? "atrasadas" : "atrasada"}: ${atr.map(f => f.rotulo.replace(/ \(.*/, "")).join(", ")}`, "alerta") : ""}
+      <span class="peq" style="color:var(--tinta-3)">conferido na publicação de ${data(P._meta.gerado_em.slice(0, 10))}</span></summary>
+    <table><thead><tr><th>Fonte</th><th>Tipo</th><th>Atualizada em</th><th>Estado</th></tr></thead><tbody>
+      ${est.map(f => `<tr><td><a href="${esc(f.modulo)}">${esc(f.rotulo)}</a></td><td>${esc(TIPO[f.tipo] || f.tipo)}</td><td>${f.data ? data(f.data) : "—"}</td>
+        <td>${chip(f.e.txt, f.e.nivel, f.cadencia_dias ? `Rotina esperada a cada ${f.cadencia_dias} dias, no máximo` : "Base sem rotina automática")}</td></tr>`).join("")}
+    </tbody></table></details>`;
+}
+function secaoMudou(P) {
+  const M = P?.mudancas;
+  if (!M) return "";
+  const desde = data(M.desde), base = n => M.base?.[n] && M.base[n] > M.desde ? ` (comparado com ${data(M.base[n])})` : "";
+  const cartao = (titulo, sub, link, itens, vazio) => `<div class="cartao mudou"><header><div><h2>${titulo}</h2><p>${sub}</p></div>${link ? `<a href="${link}" class="mais">Abrir →</a>` : ""}</header>
+    <div class="corpo">${itens.length ? `<ul class="linhas">${itens.slice(0, 5).join("")}</ul>${itens.length > 5 ? `<p class="peq" style="margin:6px 0 0">e mais ${num(itens.length - 5)}</p>` : ""}` : `<p class="vazio">${vazio}</p>`}</div></div>`;
+  const li = (t1, t2, v = "") => `<li><div><div class="t1">${t1}</div>${t2 ? `<div class="t2">${t2}</div>` : ""}</div>${v ? `<div class="v">${v}</div>` : ""}</li>`;
+  const ct = M.contratos_novos.map(c => li(`<a href="#/briefings?contrato=${encodeURIComponent(c.id)}">${esc(c.id.replace(/-SEINFRA$/, ""))}</a> · novo`, esc(`${c.mun || ""} · ${c.obj || ""}`), c.valor ? brlCurto(c.valor) : ""))
+    .concat(M.contratos_situacao.map(c => li(`<a href="#/briefings?contrato=${encodeURIComponent(c.id)}">${esc(c.id.replace(/-SEINFRA$/, ""))}</a> · ${esc(c.mun || "")}`, `${esc(c.de || "—")} → <b>${esc(c.para || "—")}</b>`)));
+  const lc = M.licitacoes_novas.map(l => li(l.link ? `<a href="${esc(l.link)}" target="_blank" rel="noopener">${esc(l.edital || "Edital")}</a>` : esc(l.edital || "Edital"), esc(l.objeto), l.encerramento ? `<small>até ${data(l.encerramento)}</small>` : ""));
+  const sn = M.sinistros.map(o => li(`<a href="#/briefings?rodovia=${encodeURIComponent(o.rodovia)}">${esc(o.rodovia)}</a> · ${esc(o.tipo || "Acidente")}${o.fatal ? ` ${chip("com morte", "critico")}` : ""}`, esc(o.municipio || ""), `<small>${data(o.data)}</small>`));
+  const tm = M.terminais_entregues.map(t => li(esc(t.municipio), esc(t.localidade)));
+  return `<section class="secao"><h2>O que mudou desde ${desde}</h2>
+    <div class="grade g-agir" style="margin-top:12px">
+      ${cartao("Contratos", `Novos no e-Obras e mudanças de situação${base("contratos")}`, "#/obras", ct, "Nenhum contrato novo nem mudança de situação.")}
+      ${cartao("Sinistros noticiados", "Ocorrências em rodovias estaduais, pela data da notícia", "#/sinistros", sn, "Nenhuma ocorrência noticiada no período.")}
+      ${cartao("Licitações rodoviárias novas", `Publicadas no PNCP${base("licitacoes")}`, "#/licitacoes", lc, "Nenhuma licitação rodoviária nova.")}
+      ${tm.length ? cartao("Terminais entregues", `Planilha do DMOB${base("terminais")}`, "#/terminais", tm, "") : ""}
+    </div></section>`;
+}
+
 export async function render(el) {
-  const [{ meta, lista }, an, lic, svg] = await Promise.all([contratos(), talvez("sinistros_analise"), talvez("licitacoes"),
-    fetch("img/malha-am.svg").then(r => r.ok ? r.text() : "").catch(() => "")]);
+  const [{ meta, lista }, an, lic, svg, P] = await Promise.all([contratos(), talvez("sinistros_analise"), talvez("licitacoes"),
+    fetch("img/malha-am.svg").then(r => r.ok ? r.text() : "").catch(() => ""), talvez("painel")]);
   const rod = lista.filter(c => c.modal);
   const at = rod.filter(c => c.grupo === "ativo");
   const soma = (cs, k) => cs.reduce((s, c) => s + (c[k] || 0), 0);
@@ -47,11 +101,12 @@ export async function render(el) {
     else if (n.tagName === "A" && grupos.length && n.getAttribute("href") !== "#/inicio") grupos.at(-1).links.push(n);
   });
 
-  el.innerHTML = `
+  el.innerHTML = `${ESTILO_PAINEL}
     <div class="cab"><div><span class="sobre">${esc(dia)}</span><h1>Painel do dia</h1>
       <p>Situação dos contratos, da segurança viária e das licitações do modal rodoviário do Amazonas, calculada a partir das rotinas automáticas do DMOB.</p></div>
       <div class="fontes">${fonte("e-Obras", meta.posicao)}${an ? fonte("Sinistros", an._meta.gerado.slice(0, 10).split("-").reverse().join("/")) : ""}${lic ? fonte("Licitações", data(lic._meta.gerado)) : ""}</div></div>
 
+    ${faixaFontes(P)}
     <div class="painel">
       <div class="resumo"><span class="eyebrow">Situação hoje</span>
         <p>${frase}</p>
@@ -73,6 +128,7 @@ export async function render(el) {
       ${an ? kpi("Sinistros em 12 meses", num(an.totais.ultimos_12m), `${num(an.totais.fatais_ultimos_12m)} com morte`) : ""}
     </div>
 
+    ${secaoMudou(P)}
     <section class="secao"><h2>Onde agir primeiro</h2>
       <div class="grade g-agir" style="margin-top:12px">
         <div class="cartao"><header><div><h2>Contratos de maior risco</h2><p>Nota de risco de gestão, 0 a 100</p></div><a href="#/obras" class="mais">Ver todos →</a></header>
