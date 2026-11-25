@@ -1,7 +1,7 @@
 {
 "_meta": {
 "fonte": "PNCP api/consulta/v1 (CNPJ 05533935000157) e www.csc.am.gov.br/site/licitacao",
-"gerado": "2026-11-24T21:27",
+"gerado": "2026-11-25T20:37",
 "gerador": "pipelines/licitacoes/coletar.py",
 "regras": "desconto = 1 - homologado/estimado (só com os dois > 0); rodoviario = objeto cita rodovia AM, ramal, estrada, pavimentação, ponte, drenagem ou viário (regex RX_ROD)",
 "modalidades": [
