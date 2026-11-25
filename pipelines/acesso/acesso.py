@@ -441,7 +441,7 @@ def voos_regulares(linhas, oacis):
         a["dec"] += dec; a["horas"] += num_br(l.get("HORAS_VOADAS")); a["pax"] += int(num_br(l.get("PASSAGEIROS_PAGOS")))
         if d == OACI_MANAUS:
             a["dec_ida"] += dec
-    out = {k: {"voos_semana": round(a["dec_ida"] / 52, 1), "tempo_voo_min": round(a["horas"] / a["dec"] * 60) if a["dec"] and a["horas"] else None,
+    out = {k: {"voos_semana": round(a["dec"] / 2 / 52, 1), "tempo_voo_min": round(a["horas"] / a["dec"] * 60) if a["dec"] and a["horas"] else None,
                "passageiros_12m": a["pax"]} for k, a in agg.items() if a["dec"]}
     return out, f"{ini[1] % 12 + 1:02d}/{ini[0] + (ini[1] == 12)} a {ult[1]:02d}/{ult[0]}"
 
