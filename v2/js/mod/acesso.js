@@ -56,7 +56,7 @@ const ESTILO = `<style>
   .ac-painel label { display: flex; align-items: center; gap: 6px; cursor: pointer; min-height: 28px; }
   .ac-painel .seg button { padding: 4px 10px; font-size: 12.5px; }
   .ac-card { position: absolute; left: 10px; bottom: 10px; z-index: 500; width: min(340px, calc(100% - 20px)); padding: 12px 14px 10px;
-    background: var(--sup); border: 1px solid var(--borda); border-top: 3px solid var(--ouro); border-radius: var(--raio); box-shadow: var(--sombra); font-size: 13px; }
+    background: var(--sup); border: 1px solid var(--borda); border-radius: var(--raio); box-shadow: var(--sombra); font-size: 13px; }
   .ac-card h3 { margin: 0 28px 2px 0; font-size: 1.05rem; color: var(--tinta); }
   .ac-card .sub { margin: 0 0 8px; color: var(--tinta-3); font-size: 12.5px; }
   .ac-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
