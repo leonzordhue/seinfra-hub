@@ -3468,6 +3468,7 @@ function getRodoviasHTML() {
         <button class="tab-item active" data-tab="rg">Visão Geral</button>
         <button class="tab-item" data-tab="rq">Quadro de Rodovias</button>
         <button class="tab-item" data-tab="ri">Investimentos</button>
+        <button class="tab-item" data-tab="rb">Briefing</button>
       </div>
 
       <!-- ABA 1: VISÃO GERAL — gráficos -->
@@ -3503,6 +3504,14 @@ function getRodoviasHTML() {
         <div id="rodQuadroOut">
           <div class="info-state" style="padding:1.6rem 0">Selecione uma rodovia acima para ver trechos, faixa de domínio, mapa e obras vinculadas.</div>
         </div>
+      </div>
+
+      <!-- ABA 4: BRIEFING DA RODOVIA ([Proton] 25/11/2026) -->
+      <div class="tab-content" id="rod-rb">
+        <div class="filter-row" style="gap:0.5rem;margin-bottom:0.8rem;flex-wrap:wrap">
+          <select id="rodBriefSel" class="filter-select" onchange="montarBriefingRodovia(this.value)" style="flex:1;min-width:240px;border-radius:10px;padding:0.65rem 0.8rem"></select>
+        </div>
+        <div id="rodBriefOut"><div class="info-state" style="padding:1.6rem 0">Selecione a rodovia para montar o briefing: extensão, faixa de domínio, localização, nome alternativo, contratos por situação e acervo de fotos e traçado.</div></div>
       </div>
 
       <!-- ABA 3: INVESTIMENTOS — pesquisa obras rodoviárias -->
@@ -3950,6 +3959,7 @@ async function initRodovias() {
   _bindRodTabs();
   _buildRodGeral();
   _buildRodQuadro();
+  _buildRodBriefing();
   _buildRodInvest();
 }
 
@@ -5134,6 +5144,7 @@ function getRamaisHTML() {
         <button class="tab-item active" data-tab="rmg">Visão Geral</button>
         <button class="tab-item" data-tab="rmq">Quadro de Ramais</button>
         <button class="tab-item" data-tab="rmi">Investimentos</button>
+        <button class="tab-item" data-tab="rmb">Briefing</button>
       </div>
 
       <!-- ABA 1: VISÃO GERAL - KPIs estratégicos e gráficos -->
@@ -5180,7 +5191,7 @@ function getRamaisHTML() {
         </div>
         <div style="position:relative;margin-bottom:0.7rem" id="ramSearchWrap">
           <input type="text" id="ramSearch" class="filter-select" style="width:100%;padding:0.75rem 1rem;border-radius:12px;font-size:0.92rem"
-                 placeholder="Pesquisar ramal por código, número ou descrição…"
+                 placeholder="Pesquisar ramal pelo nome, código ou número…"
                  oninput="filterRamList(this.value)"
                  onfocus="document.getElementById('ramSearchWrap').classList.add('open')"
                  onblur="setTimeout(()=>document.getElementById('ramSearchWrap').classList.remove('open'),200)"
@@ -5189,6 +5200,7 @@ function getRamaisHTML() {
         </div>
         <style>
           #ramSearchWrap.open #ramList{display:block !important}
+          #ramSearchWrap.fixo #ramList{display:block !important;position:static !important;min-width:0 !important;max-height:420px !important;box-shadow:none !important}
           #ramList > div{transition:background .12s,transform .12s}
           #ramList > div:hover{background:var(--azul-claro)!important;transform:translateX(2px)}
           #ramList::-webkit-scrollbar{width:8px}
@@ -5196,8 +5208,19 @@ function getRamaisHTML() {
           #ramSearch:focus,#ramMunSel:focus{outline:none;border-color:var(--azul);box-shadow:0 0 0 4px rgba(0,45,114,0.10)}
         </style>
         <div id="ramQuadroOut">
-          <div class="info-state" style="padding:1.6rem 0">Selecione um município no dropdown acima ou pesquise pelo nome para ver detalhes do ramal, traçado no mapa e obras vinculadas.</div>
+          <div class="info-state" style="padding:1.6rem 0">Escolha o município para ver todos os ramais dele, ou pesquise pelo nome. Clique no ramal para ver o mapa, os dados, as obras e o acervo de fotos e traçado.</div>
         </div>
+      </div>
+
+      <!-- ABA 4: BRIEFING DE RAMAIS, por município ou por ramal ([Proton] 25/11/2026) -->
+      <div class="tab-content" id="ram-rmb">
+        <div class="filter-row" style="gap:0.5rem;margin-bottom:0.6rem;flex-wrap:wrap">
+          <select id="ramBriefMun" class="filter-select" onchange="ramBriefFiltrar()" style="flex:1;min-width:220px;border-radius:10px;padding:0.65rem 0.8rem"></select>
+          <input type="text" id="ramBriefQ" class="filter-select" oninput="ramBriefFiltrar()" placeholder="Nome do ramal…" style="flex:2;min-width:220px;border-radius:10px;padding:0.65rem 0.8rem" autocomplete="off"/>
+          <button class="filter-select" style="cursor:pointer;font-weight:700" onclick="montarBriefingRamaisMunicipio()">Briefing do município</button>
+        </div>
+        <div id="ramBriefLista"></div>
+        <div id="ramBriefOut" style="margin-top:0.8rem"><div class="info-state" style="padding:1.6rem 0">Escolha o município e clique em "Briefing do município", ou pesquise o ramal pelo nome e clique nele para o briefing do ramal.</div></div>
       </div>
 
       <!-- ABA 3: INVESTIMENTOS - obras de ramais/vicinais/estradas -->
@@ -5313,6 +5336,240 @@ async function _renderAcervoRodovia(nome) {
   } catch (e) { /* acervo indisponível: seção fica vazia */ }
 }
 
+/* ── BRIEFING DA RODOVIA E DO RAMAL (aba "Briefing") ───────────────────────────
+   [Proton] 25/11/2026. Pedido do Paulo: selecionar a rodovia (ou o ramal / município) e
+   montar na tela um briefing com identificação, extensão, faixa de domínio, localização,
+   nome alternativo, contratos por situação (e-Obras + histórico da Planilha Geral) e os
+   links do acervo (fotos no Drive, traçado KMZ, shapefile).
+   Fontes: data/rodovias_info.json (pipelines/rodovias/gerar_info.py), data/eobras.json,
+   data/eobras_historico.json, planilhas de rodovias e ramais (gviz), acervo-dmob. */
+async function _acervoRodHtml(nome) {
+  const ac = await _loadAcervo();
+  return _acervoSecaoHtml(
+    ac.fotos.filter(p => p.rodovia === nome),
+    ac.kml.filter(k => k.tipo === "rodovia" && k.rodovia === nome && k.principal),
+    ac.shp.filter(s => s.tipo === "rodovia" && s.rodovia === nome),
+    "Acervo da rodovia — traçado e fotos");
+}
+async function _acervoRamHtml(r, titulo) {
+  const ac = await _loadAcervo();
+  return _acervoSecaoHtml(
+    ac.fotos.filter(p => p.ramal_key === r.key),
+    ac.kml.filter(k => k.ramal_key === r.key),
+    ac.shp.filter(s => s.tipo === "ramal" && s.ramal_key === r.key),
+    titulo || "Acervo do ramal — fotos, traçado e shapefile");
+}
+function _loadJsonUma(chave, url) {
+  if (!HUB.state[chave]) HUB.state[chave] = fetch(url).then(r => r.ok ? r.json() : null).catch(() => null);
+  return HUB.state[chave];
+}
+// Todos os contratos conhecidos: e-Obras (posição atual) + histórico 2003-2022 da Planilha Geral.
+async function _todosContratos() {
+  if (HUB.state._todosCt) return HUB.state._todosCt;
+  const [eo, hist] = await Promise.all([loadEObras(), _loadJsonUma("_histPromise", "data/eobras_historico.json")]);
+  const lista = Object.entries((eo && eo.ct) || {}).map(([id, c]) => ({
+    id, sit: c.sit || "", obj: c.obj || "", bem: c.bem || "", emp: c.emp || "", mun: c.mun || "",
+    ano: (c.ass || "").slice(0, 4), valor: c.v_atual || c.v_global || 0, fis: c.fis, fonte: "e-Obras" }));
+  const vistos = new Set(lista.map(c => c.id));
+  for (const c of ((hist && hist.ct) || [])) {
+    if (vistos.has(c.id)) continue;
+    lista.push({ id: c.id, sit: c.sit || c.sit_real || "", obj: c.obj || c.res || "", bem: c.res || "", emp: c.emp || "",
+      mun: c.mun || "", ano: c.ano || "", valor: c.v_global || c.v_orig || 0, fis: c.fis, fonte: "Planilha Geral (histórico)" });
+  }
+  return (HUB.state._todosCt = lista);
+}
+const _GRUPOS_SIT = [
+  ["andamento", "Em andamento / vigentes", /andam|vigen|inici|execu|aditad/i],
+  ["paralisado", "Paralisados", /parali|suspen|atras/i],
+  ["rescindido", "Rescindidos / distratados", /rescin|distrat|anulad|cancel/i],
+  ["concluido", "Concluídos / encerrados", /conclu|encerr|inaugur|entreg|expir|finaliz|receb|extint|decurso/i],
+];
+function _grupoSit(sit) { for (const [k, , rx] of _GRUPOS_SIT) if (rx.test(sit || "")) return k; return "outros"; }
+function _tabelaContratosPorSit(lista, vazio) {
+  if (!lista.length) return `<div class="info-state" style="padding:0.8rem 0">${vazio}</div>`;
+  const grupos = [..._GRUPOS_SIT.map(([k, t]) => [k, t]), ["outros", "Outras situações"]];
+  return grupos.map(([k, t]) => {
+    const g = lista.filter(c => _grupoSit(c.sit) === k).sort((a, b) => (b.ano || "").localeCompare(a.ano || ""));
+    if (!g.length) return "";
+    const tot = g.reduce((s, c) => s + (c.valor || 0), 0);
+    return `<div style="margin:0.9rem 0 0.3rem;font-weight:700;color:var(--azul)">${t} (${g.length})${tot ? ` · ${_fmtBRLShort(tot)}` : ""}</div>
+      <div class="table-wrap"><table class="data-table"><thead><tr><th>Contrato</th><th>Objeto</th><th>Empresa</th><th>Município</th><th>Ano</th><th>Valor</th><th>Situação</th></tr></thead><tbody>
+      ${g.map(c => `<tr><td style="white-space:nowrap">${htmlEscape(c.id)}</td><td class="obj">${htmlEscape(c.obj)}</td><td>${htmlEscape(c.emp || "—")}</td><td>${htmlEscape(c.mun || "—")}</td><td>${htmlEscape(c.ano || "—")}</td><td style="white-space:nowrap">${c.valor ? _fmtBRLShort(c.valor) : "—"}</td><td>${htmlEscape(c.sit || "—")}${c.fis != null && k === "andamento" ? ` · ${fmtNum(c.fis, 1)}% físico` : ""}<div style="font-size:0.7rem;color:var(--cinza-aux)">${c.fonte}</div></td></tr>`).join("")}
+      </tbody></table></div>`;
+  }).join("");
+}
+function _briefCaixa(titulo, corpo) {
+  return `<section style="margin-bottom:1.2rem"><h3 style="font-size:1rem;color:var(--azul);border-bottom:2px solid var(--dourado,#F5A623);padding-bottom:0.3rem;margin:0 0 0.6rem">${titulo}</h3>${corpo}</section>`;
+}
+function _briefLinhas(pares) {
+  return `<dl style="display:grid;grid-template-columns:minmax(150px,max-content) 1fr;gap:0.35rem 1rem;margin:0">${pares.filter(p => p[1] != null && p[1] !== "").map(([k, v]) => `<dt style="color:var(--cinza-aux);font-weight:600">${k}</dt><dd style="margin:0">${v}</dd>`).join("")}</dl>`;
+}
+function _briefImprimir(id, titulo) {
+  const el = document.getElementById(id); if (!el) return;
+  const w = window.open("", "_blank"); if (!w) return;
+  const css = [...document.querySelectorAll("style")].map(s => s.outerHTML).join("");
+  w.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${htmlEscape(titulo)}</title>${css}<style>body{background:#fff;padding:24px;font-family:Outfit,system-ui,sans-serif}.brief-acoes{display:none!important}</style></head><body>${el.innerHTML}</body></html>`);
+  w.document.close(); setTimeout(() => w.print(), 400);
+}
+const _rxRod = nome => { const n = parseInt(String(nome).replace(/\D/g, ""), 10); return new RegExp(`\\bAM\\s*[-–]?\\s*0*${n}(?!\\d)`, "i"); };
+// Rodovia citada só como endereço de outra obra (ramal, escola, orla...) não é obra da rodovia.
+const _RX_LOCALIZACAO = /\b(RAMAL|RAMAIS|VICINAL|ESCOLA|HOSPITAL|UNIDADE|CONJUNTO|ORLA|SISTEMA VI[AÁ]RIO|RUAS?|BAIRRO|DELEGACIA|PRA[CÇ]A|TERMINAL|AERO|LOCALIZAD|POSTO|BATALH|PASSAREL|IGARAP|CORREDOR|SEDE)/i;
+// "Estrada X" só é a própria rodovia quando o objeto diz "Rodovia AM-xxx".
+const _citaComoLocal = (obj, nome) => _RX_LOCALIZACAO.test(obj) ||
+  (/\bESTRADA\b/i.test(obj) && !new RegExp(`RODOVIA\\s*[-–]?\\s*AM\\s*[-–]?\\s*0*${parseInt(String(nome).replace(/\D/g, ""), 10)}(?!\\d)`, "i").test(obj));
+
+function _buildRodBriefing() {
+  const sel = document.getElementById("rodBriefSel"); if (!sel) return;
+  const list = HUB.state.rodAgrupadas || [];
+  sel.innerHTML = `<option value="">Selecione a rodovia…</option>` + list.map(r => `<option value="${htmlEscape(r.rodovia)}">${htmlEscape(r.rodovia)}</option>`).join("");
+}
+window.montarBriefingRodovia = async function(nome) {
+  const out = document.getElementById("rodBriefOut"); if (!out) return;
+  const r = (HUB.state.rodAgrupadas || []).find(x => x.rodovia === nome);
+  if (!r) { out.innerHTML = `<div class="info-state">Selecione uma rodovia para montar o briefing.</div>`; return; }
+  out.innerHTML = `<div class="info-state">Montando o briefing da ${htmlEscape(nome)}…</div>`;
+  const [infoDoc, todos, acervo] = await Promise.all([
+    _loadJsonUma("_rodInfoPromise", "data/rodovias_info.json"), _todosContratos(), _acervoRodHtml(nome).catch(() => "")]);
+  const info = (infoDoc && infoDoc.rodovias && infoDoc.rodovias[nome]) || {};
+  const ext = r.trechos.reduce((s, t) => s + (t.extensao || 0), 0);
+  const faixas = [...new Set(r.trechos.map(t => (t.faixaDominio || "").trim()).filter(Boolean))];
+  const sits = [...new Set(r.trechos.map(t => _labSit(_normSit(t.pavimentacao))).filter(Boolean))];
+  const revs = [...new Set(r.trechos.map(t => (t.revestimento || "").trim()).filter(Boolean))];
+  const rx = _rxRod(nome);
+  const cita = todos.filter(c => rx.test(`${c.obj} ${c.bem}`));
+  const naRodovia = cita.filter(c => !_citaComoLocal(c.obj, nome));
+  const comoLocal = cita.filter(c => _citaComoLocal(c.obj, nome));
+  const nomeSafe = nome.replace(/'/g, "\\'");
+  out.innerHTML = `<div id="rodBriefDoc" style="background:#fff;border:1px solid var(--borda);border-radius:10px;padding:1.4rem 1.6rem">
+    <div style="display:flex;justify-content:space-between;gap:1rem;align-items:flex-start;flex-wrap:wrap;margin-bottom:1rem">
+      <div><div style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--cinza-aux);font-weight:700">Briefing · SEINFRA-AM / DMOB · ${new Date().toLocaleDateString("pt-BR")}</div>
+      <h2 style="margin:0.2rem 0 0;color:var(--azul);font-size:1.5rem">${htmlEscape(nome)}${info.nome_alt ? ` <span style="font-weight:500;color:var(--cinza-aux);font-size:1rem">· ${htmlEscape(info.nome_alt)}</span>` : ""}</h2></div>
+      <div class="brief-acoes" style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button class="filter-select" style="cursor:pointer" onclick="_briefImprimir('rodBriefDoc','Briefing ${nomeSafe}')">Imprimir / salvar PDF</button>
+        <button class="filter-select" style="cursor:pointer" onclick="document.querySelector('#rodTabs [data-tab=rq]').click();selectRodovia('${nomeSafe}')">Abrir no quadro (mapa)</button>
+      </div>
+    </div>
+    ${_briefCaixa("1. Identificação", _briefLinhas([
+      ["Rodovia", htmlEscape(nome)],
+      ["Nome alternativo", htmlEscape(info.nome_alt || "—")],
+      ["Extensão cadastrada", `${fmtNum(ext, 2)} km em ${r.trechos.length} trecho${r.trechos.length > 1 ? "s" : ""}`],
+      ["Início", htmlEscape(String(r.trechos[0]?.inicio || "—"))],
+      // "final" na planilha é o km final do trecho
+      ["Fim", (v => /^\s*[\d.,]+\s*$/.test(String(v ?? "")) ? `km ${fmtNum(parseFloat(String(v).replace(",", ".")), 2)}` : htmlEscape(String(v || "—")))(r.trechos[r.trechos.length - 1]?.final)],
+      ["Localização (municípios)", info.municipios && info.municipios.length ? info.municipios.map(m => `${htmlEscape(m.nome)} (${fmtNum(m.km, 1)} km)`).join(", ") + `<div style="font-size:0.72rem;color:var(--cinza-aux)">km dentro de cada município, medidos no traçado do SER sobre a malha do IBGE</div>` : "—"],
+      ["Região", htmlEscape((info.regiao || []).join(", ") || "—")],
+      ["Coincidente com", htmlEscape((info.coincidente || []).join(", ") || "—")],
+      ["Situação", htmlEscape(sits.join(", ") || "—")],
+      ["Revestimento", htmlEscape(revs.join(", ") || "—")],
+    ]))}
+    ${_briefCaixa("2. Faixa de domínio", faixas.length ? `<ul style="margin:0;padding-left:1.1rem">${faixas.map(f => `<li>${htmlEscape(f)}</li>`).join("")}</ul>` : "Não cadastrada.")}
+    ${_briefCaixa("3. Trechos (SER)", `<div class="table-wrap"><table class="data-table"><thead><tr><th>Código</th><th>Início</th><th>Fim (km)</th><th>Ext. (km)</th><th>Revest.</th><th>Situação</th><th>Faixa de domínio</th></tr></thead><tbody>${r.trechos.map(t => `<tr><td>${htmlEscape(t.codigo || "—")}</td><td>${htmlEscape(String(t.inicio || "—"))}</td><td>${htmlEscape(String(t.final || "—"))}</td><td>${fmtNum(t.extensao || 0, 2)}</td><td>${htmlEscape(t.revestimento || "—")}</td><td>${htmlEscape(_labSit(_normSit(t.pavimentacao)) || t.pavimentacao || "—")}</td><td>${htmlEscape(t.faixaDominio || "—")}</td></tr>`).join("")}</tbody></table></div>`)}
+    ${_briefCaixa(`4. Contratos na rodovia (${naRodovia.length})`, _tabelaContratosPorSit(naRodovia, "Nenhum contrato com a rodovia no objeto."))}
+    ${comoLocal.length ? _briefCaixa(`5. Outras obras que citam a ${htmlEscape(nome)} como localização (${comoLocal.length})`, `<div style="font-size:0.78rem;color:var(--cinza-aux);margin-bottom:0.3rem">Ramais, escolas, orlas etc. com acesso pela rodovia. Não são obras da rodovia e não somam no investimento dela.</div>` + _tabelaContratosPorSit(comoLocal, "")) : ""}
+    ${_briefCaixa("Acervo: fotos e traçado", acervo || "Sem fotos ou traçado no acervo para esta rodovia.")}
+    <div style="font-size:0.7rem;color:var(--cinza-aux);margin-top:0.8rem">Fontes: cadastro de rodovias SER/DMOB; e-Obras (posição ${htmlEscape((HUB.state.eobras && HUB.state.eobras._meta && HUB.state.eobras._meta.posicao) || "—")}); Planilha Geral SEINFRA (histórico 2003-2022); acervo-dmob; traçado SER × malha IBGE.</div>
+  </div>`;
+};
+
+function _buildRamBriefing() {
+  const sel = document.getElementById("ramBriefMun"); if (!sel) return;
+  const muns = [...new Set((HUB.state.ramaisSheet || []).map(r => r.municipio).filter(Boolean))].sort();
+  sel.innerHTML = `<option value="">Selecione o município…</option>` + muns.map(m => `<option value="${htmlEscape(m)}">${htmlEscape(m)}</option>`).join("");
+}
+window.ramBriefFiltrar = function() {
+  const mun = document.getElementById("ramBriefMun").value;
+  const q = _normMun(document.getElementById("ramBriefQ").value || "");
+  const box = document.getElementById("ramBriefLista");
+  const base = (HUB.state.ramaisSheet || []).filter(r => (!mun || r.municipio === mun) && (!q || _normMun(`${r.descricao} ${r.codigo} ${r.numero}`).includes(q)));
+  if (!mun && !q) { box.innerHTML = ""; return; }
+  box.innerHTML = `<div style="font-size:0.78rem;color:var(--cinza-aux);margin:0.4rem 0">${base.length} ramal${base.length !== 1 ? "is" : ""}${mun ? " em " + htmlEscape(mun) : ""} · clique para o briefing do ramal</div>
+    <div style="max-height:300px;overflow:auto;border:1px solid var(--borda);border-radius:10px">${base.slice(0, 300).map(r => `<div onclick="montarBriefingRamal('${r.key.replace(/'/g, "\\'")}')" style="padding:0.5rem 0.8rem;border-bottom:1px solid var(--borda);cursor:pointer"><b style="color:var(--azul)">${htmlEscape(r.descricao || r.codigo)}</b> <span style="color:var(--cinza-aux);font-size:0.78rem">${htmlEscape(r.codigo)} #${htmlEscape(r.numero)} · ${htmlEscape(r.municipio)} · ${fmtNum(r.extensao, 2)} km · ${htmlEscape(r.revestimento || "—")}</span></div>`).join("")}</div>`;
+};
+const _STOP_RAM = new Set(["RAMAL", "ESTRADA", "VICINAL", "SUB", "DO", "DA", "DE", "DOS", "DAS", "KM", "AM", "BR", "COMUNIDADE", "VILA"]);
+function _ctDoRamal(r, todos) {
+  const pal = _normMun(r.descricao || "").split(/[^A-Z0-9]+/).filter(p => p.length >= 3 && !_STOP_RAM.has(p));
+  if (!pal.length) return [];
+  const munN = _normMun(r.municipio || "");
+  return todos.filter(c => {
+    if (!_normMun(c.mun).includes(munN)) return false;
+    const t = _normMun(`${c.obj} ${c.bem}`);
+    if (!/RAMA|VICINAL|ESTRADA/.test(t)) return false;
+    return pal.filter(p => t.includes(p)).length >= Math.min(2, pal.length);
+  });
+}
+window.montarBriefingRamal = async function(key) {
+  const out = document.getElementById("ramBriefOut");
+  const r = (HUB.state.ramaisSheet || []).find(x => x.key === key); if (!r || !out) return;
+  out.innerHTML = `<div class="info-state">Montando o briefing…</div>`;
+  const [todos, acervo] = await Promise.all([_todosContratos(), _acervoRamHtml(r).catch(() => "")]);
+  const cts = _ctDoRamal(r, todos);
+  if (r.contrato && !cts.some(c => c.id.replace(/\s/g, "") === r.contrato.replace(/\s/g, ""))) {
+    const reg = todos.find(c => c.id.replace(/\s/g, "") === r.contrato.replace(/\s/g, "")); if (reg) cts.push(reg);
+  }
+  const keySafe = key.replace(/'/g, "\\'");
+  // AM: longitude sempre oeste; coordenada positiva ou redonda na planilha é erro de digitação
+  const coord = (a, b) => a != null && b != null && b < 0 && Math.abs(a) < 10 && !(Number.isInteger(a) && Number.isInteger(b)) ?`<a href="https://www.google.com/maps?q=${a},${b}" target="_blank" rel="noopener">${fmtNum(a, 5)}, ${fmtNum(b, 5)}</a>` : "";
+  out.innerHTML = `<div id="ramBriefDoc" style="background:#fff;border:1px solid var(--borda);border-radius:10px;padding:1.4rem 1.6rem">
+    <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+      <div><div style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--cinza-aux);font-weight:700">Briefing do ramal · SEINFRA-AM / DMOB · ${new Date().toLocaleDateString("pt-BR")}</div>
+      <h2 style="margin:0.2rem 0 0;color:var(--azul);font-size:1.4rem">${htmlEscape(r.descricao || r.codigo)}</h2>
+      <div style="color:var(--cinza-aux)">${htmlEscape(r.municipio)} · ${htmlEscape(r.codigo)} #${htmlEscape(r.numero)}</div></div>
+      <div class="brief-acoes" style="display:flex;gap:0.5rem;flex-wrap:wrap">
+        <button class="filter-select" style="cursor:pointer" onclick="_briefImprimir('ramBriefDoc','Briefing ${htmlEscape((r.descricao || "").replace(/'/g, ""))}')">Imprimir / salvar PDF</button>
+        <button class="filter-select" style="cursor:pointer" onclick="document.querySelector('#ramTabs [data-tab=rmq]').click();selectRamal('${keySafe}')">Abrir no quadro (mapa)</button>
+      </div>
+    </div>
+    ${_briefCaixa("1. Identificação", _briefLinhas([
+      ["Município", htmlEscape(r.municipio)], ["Código / nº", `${htmlEscape(r.codigo)} #${htmlEscape(r.numero)}`],
+      ["Extensão", `${fmtNum(r.extensao, 2)} km`], ["Revestimento", htmlEscape(r.revestimento || "—")],
+      ["Classificação", htmlEscape([r.classificacao, r.segmentacao].filter(Boolean).join(" · ") || "—")],
+      ["Situação no cadastro", htmlEscape(r.situacao || "—")], ["Rodovia / estrada de acesso", htmlEscape(r.rodovia_acesso || "—")],
+      ["Ponto de referência", htmlEscape(r.ponto_referencia || "—")], ["Início", htmlEscape(r.local_inicio || "—")], ["Término", htmlEscape(r.local_termino || "—")],
+      ["Coordenada inicial", coord(r.latitude_ini, r.longitude_ini) || "—"], ["Coordenada final", coord(r.latitude_fim, r.longitude_fim) || "—"],
+      ["Custo estimado (cadastro)", r.custo_estimado ? _fmtBRLShort(r.custo_estimado) : "—"],
+      ["Contrato registrado no cadastro", htmlEscape(r.contrato || "—")],
+      ["Mapa", r.link_maps ? `<a href="${htmlEscape(r.link_maps)}" target="_blank" rel="noopener">abrir no Google Maps</a>` : "—"],
+    ]))}
+    ${_briefCaixa(`2. Obras e contratos (${cts.length})`, _tabelaContratosPorSit(cts, "Nenhum contrato encontrado para este ramal (e-Obras e histórico da Planilha Geral)."))}
+    ${_briefCaixa("3. Acervo: fotos e traçado", acervo || "Sem fotos ou traçado no acervo para este ramal.")}
+    <div style="font-size:0.7rem;color:var(--cinza-aux);margin-top:0.8rem">Fontes: cadastro de ramais DMOB; e-Obras; Planilha Geral SEINFRA (histórico 2003-2022); acervo-dmob. Contratos casados pelo nome do ramal no objeto, no mesmo município.</div>
+  </div>`;
+  out.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+window.montarBriefingRamaisMunicipio = async function() {
+  const mun = document.getElementById("ramBriefMun").value;
+  const out = document.getElementById("ramBriefOut");
+  if (!mun) { out.innerHTML = `<div class="info-state">Selecione o município.</div>`; return; }
+  out.innerHTML = `<div class="info-state">Montando o briefing de ${htmlEscape(mun)}…</div>`;
+  const ramais = (HUB.state.ramaisSheet || []).filter(r => r.municipio === mun).sort((a, b) => (b.extensao || 0) - (a.extensao || 0));
+  const todos = await _todosContratos();
+  const ac = await _loadAcervo().catch(() => ({ fotos: [], kml: [], shp: [] }));
+  const munN = _normMun(mun);
+  const cts = todos.filter(c => _normMun(c.mun).includes(munN) && /RAMA|VICINAL|ESTRADA/.test(_normMun(`${c.obj} ${c.bem}`)));
+  const km = ramais.reduce((s, r) => s + (r.extensao || 0), 0);
+  const soma = campo => Object.entries(ramais.reduce((o, r) => { const k = r[campo] || "—"; o[k] = (o[k] || 0) + (r.extensao || 0); return o; }, {})).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${htmlEscape(k)}: ${fmtNum(v, 1)} km`).join(" · ");
+  const links = r => {
+    const f = ac.fotos.filter(p => p.ramal_key === r.key && p.drive_url).map(p => `<a href="${htmlEscape(p.drive_url)}" target="_blank" rel="noopener">fotos (${p.n_fotos})</a>`);
+    const k = ac.kml.filter(x => x.ramal_key === r.key).map(x => `<a href="${ACERVO_BASE}${htmlEscape(x.url)}" download>traçado</a>`);
+    return [...f, ...k].join(" · ") || "—";
+  };
+  const munSafe = mun.replace(/'/g, "\\'");
+  out.innerHTML = `<div id="ramBriefDoc" style="background:#fff;border:1px solid var(--borda);border-radius:10px;padding:1.4rem 1.6rem">
+    <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
+      <div><div style="font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--cinza-aux);font-weight:700">Briefing de ramais por município · SEINFRA-AM / DMOB · ${new Date().toLocaleDateString("pt-BR")}</div>
+      <h2 style="margin:0.2rem 0 0;color:var(--azul);font-size:1.4rem">Ramais de ${htmlEscape(mun)}</h2></div>
+      <div class="brief-acoes"><button class="filter-select" style="cursor:pointer" onclick="_briefImprimir('ramBriefDoc','Ramais de ${munSafe}')">Imprimir / salvar PDF</button></div>
+    </div>
+    ${_briefCaixa("1. Resumo", _briefLinhas([
+      ["Ramais cadastrados", String(ramais.length)], ["Extensão total", `${fmtNum(km, 2)} km`],
+      ["Por revestimento", soma("revestimento")], ["Por situação", soma("situacao")],
+    ]))}
+    ${_briefCaixa(`2. Ramais (${ramais.length})`, `<div class="table-wrap"><table class="data-table"><thead><tr><th>Ramal</th><th>Código</th><th>Ext. (km)</th><th>Revest.</th><th>Situação</th><th>Acesso</th><th>Acervo</th></tr></thead><tbody>${ramais.map(r => `<tr><td><a href="javascript:void 0" onclick="montarBriefingRamal('${r.key.replace(/'/g, "\\'")}')">${htmlEscape(r.descricao || "—")}</a></td><td>${htmlEscape(r.codigo)} #${htmlEscape(r.numero)}</td><td>${fmtNum(r.extensao, 2)}</td><td>${htmlEscape(r.revestimento || "—")}</td><td>${htmlEscape(r.situacao || "—")}</td><td>${htmlEscape(r.rodovia_acesso || "—")}</td><td>${links(r)}</td></tr>`).join("")}</tbody></table></div>`)}
+    ${_briefCaixa(`3. Contratos de ramais e estradas no município (${cts.length})`, _tabelaContratosPorSit(cts, "Nenhum contrato de ramal no município (e-Obras e histórico)."))}
+    <div style="font-size:0.7rem;color:var(--cinza-aux);margin-top:0.8rem">Fontes: cadastro de ramais DMOB; e-Obras; Planilha Geral SEINFRA (histórico 2003-2022); acervo-dmob. Contratos: objeto com "ramal", "vicinal" ou "estrada" no município.</div>
+  </div>`;
+};
+
 async function _loadRamaisSheet() {
   if (HUB.state.ramaisSheet && HUB.state.ramaisSheet.length) return;
   try {
@@ -5390,6 +5647,7 @@ async function initRamais() {
   _bindRamTabs();
   _buildRamGeral();
   _buildRamQuadro();
+  _buildRamBriefing();
   _buildRamInvest();
 }
 
@@ -5571,6 +5829,7 @@ window.filterRamMun = function() {
   const filtered = m ? (HUB.state.ramaisSheet || []).filter(r => r.municipio === m) : (HUB.state.ramaisSheet || []);
   HUB.state.ramaisAtuais = filtered;
   const inp = document.getElementById("ramSearch"); if (inp) inp.value = "";
+  document.getElementById("ramSearchWrap")?.classList.toggle("fixo", !!m);
   _renderRamList(filtered);
 };
 
@@ -5580,15 +5839,15 @@ window.filterRamList = function(q) {
   const arr = Q ? base.filter(r =>
     (r.codigo || "").toUpperCase().includes(Q) ||
     String(r.numero).includes(Q) ||
-    (r.descricao || "").toUpperCase().includes(Q)
+    _normMun(r.descricao || "").includes(_normMun(Q))
   ) : base;
-  _renderRamList(arr.slice(0, 100));
+  _renderRamList(arr);
 };
 
 function _renderRamList(arr) {
   const el = document.getElementById("ramList"); if (!el) return;
   el.innerHTML = arr.length
-    ? arr.slice(0, 100).map(r => `
+    ? arr.slice(0, document.getElementById("ramSearchWrap")?.classList.contains("fixo") ? 1000 : 100).map(r => `
         <div onmousedown="selectRamal('${r.key.replace(/'/g,"\\'")}')"
              style="padding:0.6rem 0.9rem;cursor:pointer;border-radius:10px;margin:2px 0;font-size:0.85rem">
           <div style="font-weight:600;color:var(--azul)">${htmlEscape(r.codigo)} <span style="color:var(--cinza-aux);font-weight:400">#${htmlEscape(r.numero)}</span> — ${htmlEscape((r.descricao || "").slice(0,55))}</div>
