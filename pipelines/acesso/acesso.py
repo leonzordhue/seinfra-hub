@@ -42,6 +42,7 @@ FAIXAS = (60, 120, 240)             # minutos
 BALSA_MAX_KM = 25                   # route=ferry acima disso é linha fluvial, não travessia de balsa
 SNAP_MAX_M = 3000                   # sede/hospital a mais de 3 km da via mais próxima: sem acesso por estrada no OSM
 VEL_URBANA = 20                     # km/h, só para o fallback em linha reta dentro da cidade (ver hosp_mais_proximo)
+ROTA_TOL = 0.0015                   # graus (~165 m): simplificação do traçado das rotas no mapa
 # Classes de via do car.lua (OSRM v5.27.1) + track, que o perfil ajustado aceita (ramais no OSM)
 VIAS = {"motorway", "motorway_link", "trunk", "trunk_link", "primary", "primary_link", "secondary", "secondary_link",
         "tertiary", "tertiary_link", "unclassified", "residential", "living_street", "service", "track"}
@@ -193,12 +194,30 @@ def tabela(osrm, orig, dest, lote=150, pausa=0.0):
     return dur, km, so, sd
 
 
-def usa_balsa(osrm, a, b):
-    """A rota sede→Manaus tem trecho de balsa (step com mode=ferry no OSRM)?"""
-    r = json.loads(get(f"{osrm}/route/v1/driving/{a[1]:.6f},{a[0]:.6f};{b[1]:.6f},{b[0]:.6f}?overview=false&steps=true"))
+def simplificar(coords, tol=ROTA_TOL):
+    """Linha [lon, lat] simplificada (Douglas-Peucker, shapely) e arredondada a 4 casas (~11 m), para o mapa."""
+    if len(coords) < 3:
+        return [[round(x, 4), round(y, 4)] for x, y in coords]
+    from shapely.geometry import LineString
+    return [[round(x, 4), round(y, 4)] for x, y in LineString(coords).simplify(tol, preserve_topology=False).coords]
+
+
+def rota(osrm, a, b):
+    """Rota a→b do OSRM: (usa balsa?, traçado [lon, lat], trechos de balsa). None se não houver rota.
+    [Claude] 25/11/2026: o traçado vai para data/acesso_rotas.geojson (mapa do painel)."""
+    r = json.loads(get(f"{osrm}/route/v1/driving/{a[1]:.6f},{a[0]:.6f};{b[1]:.6f},{b[0]:.6f}?overview=full&geometries=geojson&steps=true"))
     if r.get("code") != "Ok":
         return None
-    return any(s.get("mode") == "ferry" for leg in r["routes"][0]["legs"] for s in leg["steps"])
+    steps = [s for leg in r["routes"][0]["legs"] for s in leg["steps"]]
+    balsas = [simplificar(s["geometry"]["coordinates"]) for s in steps if s.get("mode") == "ferry" and len(s["geometry"]["coordinates"]) > 1]
+    return bool(balsas), simplificar(r["routes"][0]["geometry"]["coordinates"]), balsas
+
+
+def feicao(m, destino, alvo, tracado, balsas):
+    """Linha da rota para o GeoJSON; os trechos de balsa vão juntos para o mapa desenhá-los tracejados."""
+    return {"type": "Feature", "properties": {"cod": m["cod"], "nome": m["nome"], "destino": destino, "alvo": alvo.get("nome"),
+                                              "min": alvo.get("min"), "km": alvo.get("km"), "balsas": balsas},
+            "geometry": {"type": "LineString", "coordinates": tracado}}
 
 
 def mais_proximo(sede, alvos, dur, km, snap_s, snap_d, i):
@@ -210,16 +229,19 @@ def mais_proximo(sede, alvos, dur, km, snap_s, snap_d, i):
             if dur[i][j] is not None and snap_d[j] <= SNAP_MAX_M:
                 com_rota.add(j)
                 if melhor is None or dur[i][j] < melhor["min"]:
-                    melhor = {"nome": a["nome"], "tipo": a.get("tipo"), "fonte": a.get("fonte"), "min": round(dur[i][j]), "km": round(km[i][j], 1), "estimado": False}
+                    melhor = {"nome": a["nome"], "tipo": a.get("tipo"), "fonte": a.get("fonte"), "min": round(dur[i][j]), "km": round(km[i][j], 1), "estimado": False,
+                              "lat": a["lat"], "lon": a["lon"]}
     for j, a in enumerate(alvos):   # estimativa só para alvo que o OSRM não alcançou
         lr = hav_km(sede["lat"], sede["lon"], a["lat"], a["lon"])
         m = lr * 1.3 / VEL_URBANA * 60   # 1,3 = fator de sinuosidade usual em malha urbana
         if j not in com_rota and lr <= 3 and (melhor is None or m < melhor["min"]):
-            melhor = {"nome": a["nome"], "tipo": a.get("tipo"), "fonte": a.get("fonte"), "min": round(m), "km": round(lr * 1.3, 1), "estimado": True}
+            melhor = {"nome": a["nome"], "tipo": a.get("tipo"), "fonte": a.get("fonte"), "min": round(m), "km": round(lr * 1.3, 1), "estimado": True,
+                      "lat": a["lat"], "lon": a["lon"]}
     if melhor is None:   # sem estrada: guarda o mais perto em linha reta, sem tempo
         j = min(range(len(alvos)), key=lambda j: hav_km(sede["lat"], sede["lon"], alvos[j]["lat"], alvos[j]["lon"]))
         melhor = {"nome": alvos[j]["nome"], "tipo": alvos[j].get("tipo"), "fonte": alvos[j].get("fonte"), "min": None,
-                  "km_linha_reta": round(hav_km(sede["lat"], sede["lon"], alvos[j]["lat"], alvos[j]["lon"]), 1)}
+                  "km_linha_reta": round(hav_km(sede["lat"], sede["lon"], alvos[j]["lat"], alvos[j]["lon"]), 1),
+                  "lat": alvos[j]["lat"], "lon": alvos[j]["lon"]}
     return melhor
 
 
@@ -263,19 +285,32 @@ def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None):
     dt_, kt, _, sd_t = tabela(osrm, P, [(t["lat"], t["lon"]) for t in T], lote, pausa)
     dc, _, _, sd_c = tabela(osrm, P, [(c[2], c[3]) for c in cels], lote, pausa)
 
-    mun = []
+    mun, rotas = [], []
     for i, s in enumerate(S):
         reta = hav_km(s["lat"], s["lon"], *P[iM])
         lig = i == iM or ligado(so_s[i], sd_m[0], km_m[i][0], reta)
-        balsa = usa_balsa(osrm, P[i], P[iM]) if lig and i != iM else False
-        if pausa and lig:
-            time.sleep(pausa)
-        mun.append({"cod": s["cod"], "nome": s["nome"], "lat": s["lat"], "lon": s["lon"], "pop": pop.get(s["cod"]),
-                    "ligacao_rodoviaria": lig, "travessia_balsa": balsa,
-                    "tempo_manaus_min": round(dm[i][0]) if lig else None, "km_manaus": round(km_m[i][0], 1) if lig else None,
-                    "km_linha_reta_manaus": round(reta, 1), "encaixe_via_m": round(so_s[i]) if so_s[i] is not None else None,
-                    "hospital_mais_proximo": mais_proximo(s, H, dh, kh, so_s, sd_h, i),
-                    "terminal_mais_proximo": mais_proximo(s, T, dt_, kt, so_s, sd_t, i)})
+        m = {"cod": s["cod"], "nome": s["nome"], "lat": s["lat"], "lon": s["lon"], "pop": pop.get(s["cod"]),
+             "ligacao_rodoviaria": lig, "travessia_balsa": False,
+             "tempo_manaus_min": round(dm[i][0]) if lig else None, "km_manaus": round(km_m[i][0], 1) if lig else None,
+             "km_linha_reta_manaus": round(reta, 1), "encaixe_via_m": round(so_s[i]) if so_s[i] is not None else None,
+             "hospital_mais_proximo": mais_proximo(s, H, dh, kh, so_s, sd_h, i),
+             "terminal_mais_proximo": mais_proximo(s, T, dt_, kt, so_s, sd_t, i)}
+        if lig and i != iM:
+            r = rota(osrm, P[i], P[iM])
+            if r:
+                m["travessia_balsa"] = r[0]
+                rotas.append(feicao(m, "Manaus", {"nome": "Manaus", "min": m["tempo_manaus_min"], "km": m["km_manaus"]}, r[1], r[2]))
+            if pausa:
+                time.sleep(pausa)
+        # rota até hospital e terminal só quando o tempo veio do OSRM (estimado = linha reta, sem traçado)
+        for destino, alvo in (("Hospital", m["hospital_mais_proximo"]), ("Terminal", m["terminal_mais_proximo"])):
+            if alvo.get("min") is not None and not alvo.get("estimado"):
+                r = rota(osrm, P[i], (alvo["lat"], alvo["lon"]))
+                if r and len(r[1]) > 1:
+                    rotas.append(feicao(m, destino, alvo, r[1], r[2]))
+                if pausa:
+                    time.sleep(pausa)
+        mun.append(m)
 
     # isócronas: célula conta se o nó de via encaixou (sempre, é nó do OSM) e há rota a partir de sede encaixada
     ok_s = [so_s[i] is not None and so_s[i] <= SNAP_MAX_M for i in range(len(S))]
@@ -324,7 +359,12 @@ def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None):
     gs = json.dumps(geo, ensure_ascii=False, separators=(",", ":"))
     assert len(gs) < 2_000_000, f"isócronas com {len(gs)} bytes; aumente a simplificação"
     open(os.path.join(saida, "acesso_isocronas.geojson"), "w", encoding="utf-8").write(gs)
-    print(f"ok: {resumo['com_ligacao']}/{resumo['municipios']} com ligação; isócronas {len(gs) // 1024} KB")
+    rg = {"type": "FeatureCollection", "features": rotas,
+          "_meta": {k: meta[k] for k in ("fonte", "gerado_em")} | {"metodologia": f"Traçado da rota mais rápida do OSRM (overview full), simplificado a {ROTA_TOL}° (~165 m). Trechos com mode=ferry em 'balsas'."}}
+    rs = json.dumps(rg, ensure_ascii=False, separators=(",", ":"))
+    assert len(rs) < 3_000_000, f"rotas com {len(rs)} bytes; aumente ROTA_TOL"
+    open(os.path.join(saida, "acesso_rotas.geojson"), "w", encoding="utf-8").write(rs)
+    print(f"ok: {resumo['com_ligacao']}/{resumo['municipios']} com ligação; isócronas {len(gs) // 1024} KB; {len(rotas)} rotas {len(rs) // 1024} KB")
     return out
 
 
@@ -359,6 +399,11 @@ def teste(demo=False):
     r = mais_proximo({"lat": 0, "lon": -65}, a, [[None, None]], [[None, None]], [9000], [0, 0], 0)
     assert r["min"] is None and r["nome"] == "A"
     assert len(juntar_hospitais([{"nome": "C", "lat": -3.1, "lon": -60}], [{"nome": "o", "lat": -3.1005, "lon": -60}, {"nome": "p", "lat": -3.2, "lon": -60}])) == 2
+    assert r["lat"] == -3.1 and r["lon"] == -60.01   # alvo leva a coordenada (marcador no mapa)
+    assert simplificar([[-60.0, -3.0], [-59.5, -3.00001], [-59.0, -3.0]]) == [[-60.0, -3.0], [-59.0, -3.0]]   # ponto colinear sai
+    assert simplificar([[-60.123456, -3.0], [-59.0, -3.0]]) == [[-60.1235, -3.0], [-59.0, -3.0]]
+    f = feicao({"cod": "1", "nome": "X"}, "Hospital", {"nome": "H", "min": 5, "km": 2.0}, [[0, 0], [1, 1]], [])
+    assert f["properties"]["destino"] == "Hospital" and f["geometry"]["type"] == "LineString"
     try:
         import osmium  # noqa: F401
         with tempfile.TemporaryDirectory() as d:
@@ -379,6 +424,10 @@ def teste(demo=False):
         print({k: (v["ligacao_rodoviaria"], v["tempo_manaus_min"], v["km_manaus"], v["travessia_balsa"], v["hospital_mais_proximo"]["min"]) for k, v in m.items()})
         assert m["Manaus"]["tempo_manaus_min"] == 0 and m["Itacoatiara"]["ligacao_rodoviaria"] and 120 < m["Itacoatiara"]["tempo_manaus_min"] < 400
         assert not m["Tefé"]["ligacao_rodoviaria"], "Tefé não tem estrada até Manaus"
+        rg = json.load(open(os.path.join(tempfile.gettempdir(), "acesso_demo", "acesso_rotas.geojson"), encoding="utf-8"))
+        ita = [f for f in rg["features"] if f["properties"]["nome"] == "Itacoatiara" and f["properties"]["destino"] == "Manaus"]
+        assert ita and len(ita[0]["geometry"]["coordinates"]) > 10, "rota Itacoatiara→Manaus sem traçado"
+        print(len(rg["features"]), "rotas no demo")
         print("demo ok, saída em", os.path.join(tempfile.gettempdir(), "acesso_demo"))
 
 
