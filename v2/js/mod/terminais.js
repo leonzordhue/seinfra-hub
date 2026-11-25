@@ -15,6 +15,7 @@ const ETAPAS = [
 ];
 const ETAPA = Object.fromEntries(ETAPAS.map(e => [e.id, e]));
 const nivel = e => e === "cancelado" ? "critico" : e === "assinado" || e === "pronto" || e === "entregue" ? "ok" : e === "assinatura" ? "alerta" : "";
+const ANCORA = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3zM12 9v12M5 15a7 7 0 0 0 14 0M8 12h8"/></svg>`;
 const hoje = new Date();
 const dias = iso => iso ? Math.round((hoje - new Date(iso)) / 864e5) : null;
 
@@ -34,6 +35,25 @@ const CSS = `
 .leg-term i.q { border-radius: 2px; }
 .t .proc { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .aviso-coord { font-size: 12px; color: var(--alerta); }
+/* pino e ficha dos entregues no estilo da v1 (Paulo, 25/11/2026) */
+.pino-term { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #0077b6, #023e8a); border: 3px solid #fff; box-shadow: 0 3px 10px rgba(0,119,182,.5); display: grid; place-items: center; color: #fff; cursor: pointer; transition: transform .15s; }
+.pino-term svg { width: 15px; height: 15px; }
+.leaflet-marker-icon:hover .pino-term, .leaflet-marker-icon:focus-visible .pino-term { transform: scale(1.15); }
+.leaflet-marker-icon:focus-visible { outline: none; }
+.leaflet-marker-icon:focus-visible .pino-term { box-shadow: 0 0 0 3px var(--ouro), 0 3px 10px rgba(0,119,182,.5); }
+.ft-cab { margin: 6px -22px 0; padding: 22px 22px 20px; background: linear-gradient(135deg, #0077b6, #023e8a); color: #fff; }
+.ft-cab .ft-ic { width: 46px; height: 46px; border-radius: 50%; background: rgba(255,255,255,.16); display: grid; place-items: center; margin-bottom: 10px; }
+.ft-cab .ft-ic svg { width: 24px; height: 24px; }
+.ft-cab .ft-tipo { font-size: 12px; letter-spacing: .04em; opacity: .85; }
+.ft-cab h2 { margin: 2px 0 4px; font: 600 1.45rem/1.2 var(--f-titulo); color: #fff; }
+.ft-cab p { margin: 0; opacity: .9; }
+.ft-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; margin: 18px 0; }
+.ft-grade dt { font-size: 12.5px; color: var(--tinta-3); }
+.ft-grade dd { margin: 2px 0 0; font-weight: 600; color: var(--tinta); }
+.ft-grade dd.n { font-variant-numeric: tabular-nums; }
+.ft-mm { height: 240px; border-radius: var(--raio); border: 1px solid var(--borda); }
+.ft-sobre { margin-top: 16px; padding: 12px 14px; border-radius: var(--raio); background: var(--sup-2, var(--sup-3)); font-size: 13.5px; line-height: 1.5; color: var(--tinta-2); }
+.leg-term .pino-mini { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; background: linear-gradient(135deg, #0077b6, #023e8a); border: 2px solid #fff; box-shadow: 0 0 0 1px var(--borda-2); }
 @media (max-width: 900px) { .funil { grid-template-columns: repeat(2, minmax(0, 1fr)); } .funil > div { border-top: 1px solid var(--borda); } .funil .seta { display: none; } .mapa-term { height: 380px; } }`;
 
 export async function render(el) {
@@ -76,7 +96,7 @@ export async function render(el) {
     <section class="secao"><h2>Onde estão</h2>
       <div class="cartao" style="margin-top:12px"><header><div><h2>${num(ent.length)} entregues e ${num(ativos.filter(p => p.lat != null).length)} pedidos no mapa</h2><p>Clique num ponto para ver a ficha${semCoord.length ? ` · ${num(semCoord.length)} pedido(s) sem coordenada válida` : ""}</p></div></header>
         <div id="mapaTerm" class="mapa-term" role="region" aria-label="Mapa dos terminais fluviais"></div>
-        <div class="leg-term"><span><i class="q" style="background:var(--azul)"></i>Entregue</span>${ETAPAS.slice(1, 4).map(e => `<span><i style="background:${e.cor}"></i>${e.rot}</span>`).join("")}<span><i style="background:var(--critico)"></i>Cancelado</span></div>
+        <div class="leg-term"><span><span class="pino-mini"></span>Entregue</span>${ETAPAS.slice(1, 4).map(e => `<span><i style="background:${e.cor}"></i>${e.rot}</span>`).join("")}<span><i style="background:var(--critico)"></i>Cancelado</span></div>
       </div>
     </section>
 
@@ -115,17 +135,50 @@ export async function render(el) {
     { k: "municipio", rot: "Município", html: t => `<b style="color:var(--tinta)">${esc(t.municipio)}</b>` },
     { k: "localidade", rot: "Localidade" },
     { k: "coord", rot: "Coordenada", n: 1, sem_ord: 1, html: t => `<span class="peq">${num(t.lat, 2)}, ${num(t.lon, 2)}</span>` },
-  ], ent, { ordem: { k: "municipio", dir: 1 } });
+  ], ent, { ordem: { k: "municipio", dir: 1 }, onLinha: t => { mapa?.flyTo([t.lat, t.lon], 9, { duration: .5 }); fichaEnt(t); } });
+
+  let mapa = null, mini = null;
+  // minimapa de satélite na ficha (como o modal da v1); recriado a cada ficha
+  function miniMapa(g, lat, lon) {
+    const box = g.querySelector(".ft-mm");
+    if (!box || !window.L) return;
+    if (mini) { try { mini.remove(); } catch { /* já removido com a gaveta */ } }
+    const L = window.L;
+    mini = L.map(box, { zoomControl: false, attributionControl: false, scrollWheelZoom: false }).setView([lat, lon], 13);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18, className: "tile-sat-clara" }).addTo(mini);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}", { maxZoom: 18 }).addTo(mini);
+    L.marker([lat, lon], { icon: pino(), keyboard: false, interactive: false }).addTo(mini);
+    setTimeout(() => mini?.invalidateSize(), 220);   // a gaveta desliza em .18s
+  }
+  const pino = () => window.L.divIcon({ className: "", html: `<div class="pino-term">${ANCORA}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
+  const coordTxt = (lat, lon) => `${num(Math.abs(lat), 4)}° S · ${num(Math.abs(lon), 4)}° O`;
+
+  function fichaEnt(t) {
+    const g = gaveta(`<div class="ft-cab"><div class="ft-ic">${ANCORA}</div><div class="ft-tipo">Terminal flutuante · entregue</div>
+        <h2>${esc(t.localidade)}</h2><p>${esc(t.municipio)}</p></div>
+      <dl class="ft-grade">
+        <div><dt>Município</dt><dd>${esc(t.municipio)}</dd></div>
+        <div><dt>Destino</dt><dd>${esc(t.localidade)}</dd></div>
+        <div><dt>Latitude</dt><dd class="n">${num(t.lat, 5)}°</dd></div>
+        <div><dt>Longitude</dt><dd class="n">${num(t.lon, 5)}°</dd></div>
+      </dl>
+      <div class="ft-mm" role="img" aria-label="Localização do terminal ${esc(t.localidade)}: ${coordTxt(t.lat, t.lon)}"></div>
+      <p class="ft-sobre"><b>Sobre os terminais flutuantes:</b> estruturas de embarque e desembarque instaladas às margens dos rios, que ligam a sede do município às comunidades e distritos do interior.</p>
+      <p style="font-size:12.5px;color:var(--tinta-3)">Fonte: planilha de acompanhamento do DMOB.</p>`);
+    miniMapa(g, t.lat, t.lon);
+  }
 
   function ficha(p) {
     const etapas = [["Protocolo", p.datas.protocolo], ["SEAPLANC", p.datas.seaplanc], ["SEAENG", p.datas.seaeng], ["AJU", p.datas.aju], ["SEAAF", p.datas.seaaf], ["Assinatura", p.datas.assinatura], ["Entrega", p.datas.entrega]];
-    gaveta(`<span class="sobre" style="display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ouro-2)">Terminal flutuante · pedido 2026</span>
+    const g = gaveta(`<span class="sobre" style="display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ouro-2)">Terminal flutuante · pedido 2026</span>
       <h2 style="font-size:1.3rem;margin:4px 0 2px">${esc(p.localidade || p.municipio)}</h2><p style="margin:0;color:var(--tinta-3)">${esc(p.municipio)}${p.processo ? ` · processo ${esc(p.processo)}` : ""}</p>
       <p style="margin:12px 0">${chip(p.status, nivel(p.etapa))}</p>
       <dl class="ficha">${etapas.map(([r, v]) => `<dt>${r}</dt><dd>${v ? data(v) : "—"}</dd>`).join("")}
         <dt>Coordenada</dt><dd>${p.lat != null ? `${num(p.lat, 5)}, ${num(p.lon, 5)}` : `a conferir${p.coord_aviso ? ` (${esc(p.coord_aviso)})` : ""}`}</dd></dl>
       ${p.perto ? `<p class="aviso">Fica a menos de 2 km do terminal entregue “${esc(p.perto)}”: confirmar se não é o mesmo ponto.</p>` : ""}
+      ${p.lat != null ? `<div class="ft-mm" role="img" aria-label="Localização do pedido ${esc(p.localidade || p.municipio)}: ${coordTxt(p.lat, p.lon)}"></div>` : ""}
       <p style="font-size:12.5px;color:var(--tinta-3)">Fonte: planilha de acompanhamento do DMOB.</p>`);
+    if (p.lat != null) miniMapa(g, p.lat, p.lon);
   }
 
   // mapa (Leaflet; fundo satélite Esri sem chave, igual à v1)
@@ -134,7 +187,7 @@ export async function render(el) {
     await script("https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js");
     const L = window.L, box = $("#mapaTerm");
     if (!box) return;
-    const m = L.map(box, { scrollWheelZoom: false, preferCanvas: true }).setView([-3.4653, -62.2159], 6);
+    const m = mapa = L.map(box, { scrollWheelZoom: false, preferCanvas: true }).setView([-3.4653, -62.2159], 6);
     // fundo da v1 (Paulo, 25/11/2026): satélite clareado + estradas + limites/nomes; o cinza escondia rios e lagos
     const esri = (s, o) => L.tileLayer(`https://{s}.arcgisonline.com/ArcGIS/rest/services/${s}/MapServer/tile/{z}/{y}/{x}`,
       Object.assign({ subdomains: ["server", "services"], maxZoom: 18, keepBuffer: 3, updateWhenZooming: false }, o)).addTo(m);
@@ -143,8 +196,6 @@ export async function render(el) {
     esri("Reference/World_Boundaries_and_Places", {});
     const cor = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
     const sup = cor("--sup");
-    ent.forEach(t => L.circleMarker([t.lat, t.lon], { radius: 6, color: sup, weight: 2, fillColor: cor("--azul"), fillOpacity: 1 })
-      .bindPopup(`<b>${esc(t.localidade)}</b><br>${esc(t.municipio)} · entregue`).addTo(m));
     const corEtapa = { producao: "#6FA0F0", assinatura: cor("--ouro"), assinado: "#1baf7a", pronto: "#0B7343", cancelado: cor("--critico"), a_iniciar: cor("--s6") };
     const pts = [];
     ped.filter(p => p.lat != null).forEach(p => {
@@ -152,6 +203,9 @@ export async function render(el) {
       L.circleMarker([p.lat, p.lon], { radius: 7, color: sup, weight: 2, fillColor: corEtapa[p.etapa] || cor("--s6"), fillOpacity: p.etapa === "cancelado" ? .55 : 1 })
         .on("click", () => ficha(p)).bindTooltip(`${esc(p.localidade || p.municipio)} · ${esc(p.status)}`).addTo(m);
     });
+    // entregues por último, como marcador HTML (pane acima do canvas dos pedidos): Tab + Enter também abrem a ficha
+    ent.forEach(t => L.marker([t.lat, t.lon], { icon: pino(), title: `${t.localidade} (${t.municipio}) · entregue`, alt: `Terminal entregue: ${t.localidade}, ${t.municipio}`, riseOnHover: true })
+      .on("click", () => fichaEnt(t)).addTo(m));
     const tudo = pts.concat(ent.map(t => [t.lat, t.lon]));
     if (tudo.length) m.fitBounds(tudo, { padding: [24, 24], maxZoom: 7 });
   } catch (e) {
