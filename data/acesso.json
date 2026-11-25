@@ -12,7 +12,7 @@
    "aerodromos": "https://sistemas.anac.gov.br/dadosabertos/Aerodromos/Aer%C3%B3dromos%20P%C3%BAblicos/Lista%20de%20aer%C3%B3dromos%20p%C3%BAblicos/AerodromosPublicos.csv",
    "voos": "https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo/Dados_Estatisticos.csv"
   },
-  "gerado_em": "2026-11-25T17:29:41Z",
+  "gerado_em": "2026-11-25T17:46:22Z",
   "servidor_osrm": "OSRM local no GitHub Actions",
   "metodologia": {
    "tempo": "Duração do OSRM (perfil car.lua: velocidade por classe de via, maxspeed e superfície do OSM; track incluído a 15 km/h). É tempo de fluxo livre: sem trânsito, chuva ou atoleiro.",
@@ -109,7 +109,7 @@
     "lon": -64.725278,
     "km_reta": 520,
     "voo_regular": true,
-    "voos_semana": 2.8,
+    "voos_semana": 3.0,
     "tempo_voo_min": 78,
     "passageiros_12m": 21990
    }
@@ -280,7 +280,7 @@
     "lon": -59.838889,
     "km_reta": 460,
     "voo_regular": true,
-    "voos_semana": 0.1,
+    "voos_semana": 0.7,
     "tempo_voo_min": 84,
     "passageiros_12m": 848
    }
@@ -508,7 +508,7 @@
     "lon": -69.937778,
     "km_reta": 1105,
     "voo_regular": true,
-    "voos_semana": 5.7,
+    "voos_semana": 5.5,
     "tempo_voo_min": 129,
     "passageiros_12m": 44516
    }
@@ -691,7 +691,7 @@
     "lon": -59.6025,
     "km_reta": 160,
     "voo_regular": true,
-    "voos_semana": 1.5,
+    "voos_semana": 0.8,
     "tempo_voo_min": 54,
     "passageiros_12m": 236
    }
@@ -957,7 +957,7 @@
     "lon": -63.1325,
     "km_reta": 363,
     "voo_regular": true,
-    "voos_semana": 1.2,
+    "voos_semana": 0.9,
     "tempo_voo_min": 98,
     "passageiros_12m": 290
    }
@@ -1617,7 +1617,7 @@
     "lon": -64.769444,
     "km_reta": 704,
     "voo_regular": true,
-    "voos_semana": 0.0,
+    "voos_semana": 1.0,
     "tempo_voo_min": 162,
     "passageiros_12m": 418
    }
@@ -1788,7 +1788,7 @@
     "lon": -61.278333,
     "km_reta": 337,
     "voo_regular": true,
-    "voos_semana": 3.0,
+    "voos_semana": 2.5,
     "tempo_voo_min": 85,
     "passageiros_12m": 1176
    }
@@ -1880,7 +1880,7 @@
     "lon": -57.724722,
     "km_reta": 261,
     "voo_regular": true,
-    "voos_semana": 0.3,
+    "voos_semana": 1.0,
     "tempo_voo_min": 80,
     "passageiros_12m": 231
    }
@@ -2547,7 +2547,7 @@
     "lon": -69.937778,
     "km_reta": 1105,
     "voo_regular": true,
-    "voos_semana": 5.7,
+    "voos_semana": 5.5,
     "tempo_voo_min": 129,
     "passageiros_12m": 44516
    }
@@ -2639,7 +2639,7 @@
     "lon": -64.725278,
     "km_reta": 520,
     "voo_regular": true,
-    "voos_semana": 2.8,
+    "voos_semana": 3.0,
     "tempo_voo_min": 78,
     "passageiros_12m": 21990
    }
