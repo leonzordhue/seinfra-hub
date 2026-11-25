@@ -69,9 +69,10 @@ function secaoMudou(P) {
   if (!M) return "";
   const ini = new Date(`${M.desde}T12:00:00`), fim = new Date();
   const dm = d => d.toLocaleDateString("pt-BR", { day: "numeric", month: "short" }).replace(".", "");
-  const periodo = `${dm(ini)} a ${dm(fim)}`;
+  const mes = d => d.toLocaleDateString("pt-BR", { month: "long" });
+  const periodo = ini.getMonth() === fim.getMonth() ? `${ini.getDate()} e ${fim.getDate()} de ${mes(fim)}` : `${ini.getDate()} de ${mes(ini)} e ${fim.getDate()} de ${mes(fim)}`;
   // objeto sem o preâmbulo burocrático ("Obras e serviços de engenharia para a ...")
-  const objeto = t => { const s = String(t || "").replace(/^(contratação de (pessoa jurídica|empresa)[^,]*?(para|em) )?(a )?(execução (das|de) )?(obras e serviços de engenharia,? ?)?(para|de)? ?(a |o )?/i, "").trim(); return s ? s[0].toUpperCase() + s.slice(1) : ""; };
+  const objeto = t => { const s = String(t || "").replace(/^(contratação de (pessoa jurídica|empresa)[^,]*?(para|em) )?(a )?(execução (das|de) )?(obras e serviços de engenharia,? ?)?(para|de)? ?(a |o )?/i, "").trim(); return s ? s[0].toUpperCase() + s.slice(1) + (String(t).length >= 140 ? "…" : "") : ""; };
   const ctId = id => id.replace(/-SEINFRA$/, "");
   // o que aconteceu com o contrato, em linguagem de gestão; ordem = o que pede atenção primeiro
   const GRUPOS = [
@@ -103,10 +104,10 @@ function secaoMudou(P) {
     lic.length ? `${plural(lic.length, "licitação rodoviária foi publicada", "licitações rodoviárias foram publicadas")} no PNCP` : "nenhuma licitação rodoviária nova no PNCP",
     term.length ? `${plural(term.length, "terminal flutuante foi entregue", "terminais flutuantes foram entregues")}` : "",
   ].filter(Boolean);
-  const base = Object.entries(M.base || {}).filter(([, d]) => d > M.desde).map(([k, d]) => `${k}: desde ${data(d)}`);
+  const base = Object.entries(M.base || {}).filter(([, d]) => d > M.desde).map(([k, d]) => `${{ contratos: "contratos", licitacoes: "licitações", terminais: "terminais" }[k] || k} desde ${data(d)}`);
 
   return `<section class="secao mudou"><h2>Nos últimos 7 dias</h2>
-    <p class="m-frase">De ${periodo}, ${frase.join("; ")}.</p>
+    <p class="m-frase">Entre ${periodo}, ${frase.join("; ")}.</p>
     <div class="m-cols">
       <div class="m-col"><header><h3 class="m-tit">Contratos</h3><a class="mais" href="#/obras">Abrir contratos →</a></header>
         ${gruposCom.length ? gruposCom.map(blocoGrupo).join("") : `<p class="peq">Sem mudanças no período.</p>`}</div>

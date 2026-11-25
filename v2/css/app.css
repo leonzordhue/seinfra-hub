@@ -302,7 +302,8 @@ main { padding: 28px clamp(16px, 2.4vw, 32px) 40px; min-width: 0; max-width: 148
 /* seções numeradas como capítulos de relatório */
 main { counter-reset: secao; }
 .secao > h2 { counter-increment: secao; display: flex; align-items: baseline; gap: 10px; font-size: 1.15rem; }
-.secao > h2::before { content: counter(secao, decimal-leading-zero); font: 600 12px var(--f-corpo); color: var(--ouro-2); letter-spacing: .04em; }
+/* numeração das seções desligada em 25/11/2026 (fica para documentos longos, como os Briefings); o dourado fica para destaques */
+.secao > h2::before { content: none; }
 
 /* cartões: borda fina, sem sombra; cabeçalho com régua */
 .cartao { box-shadow: none; }
