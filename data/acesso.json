@@ -9,7 +9,7 @@
    "terminais": "https://leonzordhue.github.io/atlas-amazonas/geojson/TERMINAIS_FLUTUANTES_SEINFRA.geojson",
    "osrm": "https://github.com/Project-OSRM/osrm-backend"
   },
-  "gerado_em": "2026-11-23T18:20:36Z",
+  "gerado_em": "2026-11-25T15:53:48Z",
   "servidor_osrm": "OSRM local no GitHub Actions",
   "metodologia": {
    "tempo": "Duração do OSRM (perfil car.lua: velocidade por classe de via, maxspeed e superfície do OSM; track incluído a 15 km/h). É tempo de fluxo livre: sem trânsito, chuva ou atoleiro.",
@@ -64,7 +64,9 @@
     "fonte": "CNES",
     "min": 11,
     "km": 5.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.215122,
+    "lon": -64.815042
    },
    "terminal_mais_proximo": {
     "nome": "Alvarães (Distrito de Nogueira)",
@@ -72,7 +74,9 @@
     "fonte": null,
     "min": 18,
     "km": 10.4,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.303888888888889,
+    "lon": -64.77852777777778
    }
   },
   {
@@ -93,14 +97,18 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.364,
+    "lon": -68.198
    },
    "terminal_mais_proximo": {
     "nome": "Amaturá (Comunidade Nova Italia)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 4.5
+    "km_linha_reta": 4.5,
+    "lat": -3.407938888888889,
+    "lon": -68.2240361111111
    }
   },
   {
@@ -121,14 +129,18 @@
     "fonte": "CNES",
     "min": 2,
     "km": 0.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.576096779084403,
+    "lon": -61.405983567237854
    },
    "terminal_mais_proximo": {
     "nome": "Anamã (Distrito do Arixi)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 16.1
+    "km_linha_reta": 16.1,
+    "lat": -3.476125,
+    "lon": -61.509775
    }
   },
   {
@@ -149,7 +161,9 @@
     "fonte": "CNES",
     "min": 9,
     "km": 3.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.77298365269652,
+    "lon": -61.63984537124634
    },
    "terminal_mais_proximo": {
     "nome": "Anori (Comunidade Vila do Cuianã)",
@@ -157,7 +171,9 @@
     "fonte": null,
     "min": 9,
     "km": 3.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.773333333333333,
+    "lon": -61.644444444444446
    }
   },
   {
@@ -178,7 +194,9 @@
     "fonte": "OSM",
     "min": 4,
     "km": 2.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -7.189914609523809,
+    "lon": -59.88692242857143
    },
    "terminal_mais_proximo": {
     "nome": "Parintins (Comunidade do Bom Socorro do Zé Açú)",
@@ -186,7 +204,9 @@
     "fonte": null,
     "min": 1529,
     "km": 953.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.674016666666667,
+    "lon": -56.627694444444444
    }
   },
   {
@@ -207,7 +227,9 @@
     "fonte": "CNES",
     "min": 2,
     "km": 1.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.365025531591415,
+    "lon": -70.19049167633057
    },
    "terminal_mais_proximo": {
     "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
@@ -215,7 +237,9 @@
     "fonte": null,
     "min": 3,
     "km": 1.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.362933333333333,
+    "lon": -70.1924
    }
   },
   {
@@ -236,7 +260,9 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.5,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.5786988060912392,
+    "lon": -59.13347125053406
    },
    "terminal_mais_proximo": {
     "nome": "Borba (Distrito do Axinim)",
@@ -244,7 +270,9 @@
     "fonte": null,
     "min": 140,
     "km": 69.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.050216666666667,
+    "lon": -59.37213888888889
    }
   },
   {
@@ -265,14 +293,18 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -0.9722862866169285,
+    "lon": -62.924044132232666
    },
    "terminal_mais_proximo": {
     "nome": "Barcelos (Distrito de Moura)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 154.0
+    "km_linha_reta": 154.0,
+    "lat": -1.457222222222222,
+    "lon": -61.62972222222222
    }
   },
   {
@@ -293,14 +325,18 @@
     "fonte": "CNES",
     "min": 1,
     "km": 0.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.8015767985774875,
+    "lon": -57.070841789245605
    },
    "terminal_mais_proximo": {
     "nome": "Barreirinha (Distrito Cametá de Ramos)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 39.0
+    "km_linha_reta": 39.0,
+    "lat": -2.836111111111111,
+    "lon": -57.41722222222222
    }
   },
   {
@@ -321,7 +357,9 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.375942471282346,
+    "lon": -70.01861304044724
    },
    "terminal_mais_proximo": {
     "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
@@ -329,7 +367,9 @@
     "fonte": null,
     "min": 34,
     "km": 30.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.362933333333333,
+    "lon": -70.1924
    }
   },
   {
@@ -350,14 +390,18 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.903123423807061,
+    "lon": -61.37164709310024
    },
    "terminal_mais_proximo": {
     "nome": "Beruri (Comunidade Santa Maria do Pupunhal)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 23.4
+    "km_linha_reta": 23.4,
+    "lat": -3.726,
+    "lon": -61.24186111111111
    }
   },
   {
@@ -378,7 +422,9 @@
     "fonte": "CNES",
     "min": 5,
     "km": 3.4,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.9751912,
+    "lon": -57.560353
    },
    "terminal_mais_proximo": {
     "nome": "Barreirinha (Distrito Cametá de Ramos)",
@@ -386,7 +432,9 @@
     "fonte": null,
     "min": 50,
     "km": 32.5,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.836111111111111,
+    "lon": -57.41722222222222
    }
   },
   {
@@ -407,7 +455,9 @@
     "fonte": "CNES",
     "min": 12,
     "km": 8.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -8.77086446255828,
+    "lon": -67.33897089958191
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -415,7 +465,9 @@
     "fonte": null,
     "min": 1784,
     "km": 1552.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -436,14 +488,18 @@
     "fonte": "CNES",
     "min": 1,
     "km": 0.7,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.395582933796165,
+    "lon": -59.592204093933105
    },
    "terminal_mais_proximo": {
     "nome": "Benjamin Constant (Comunidade Filadélfia)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 5.3
+    "km_linha_reta": 5.3,
+    "lat": -4.378666666666667,
+    "lon": -59.63388888888889
    }
   },
   {
@@ -464,14 +520,18 @@
     "fonte": "CNES",
     "min": 6,
     "km": 2.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.3285178473891257,
+    "lon": -61.21388912200928
    },
    "terminal_mais_proximo": {
     "nome": "Anamã (Distrito do Arixi)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 36.7
+    "km_linha_reta": 36.7,
+    "lat": -3.476125,
+    "lon": -61.509775
    }
   },
   {
@@ -492,14 +552,18 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -6.5373311,
+    "lon": -64.3875848
    },
    "terminal_mais_proximo": {
     "nome": "Tapauá (Comunidade Foz do Tapauá)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 84.9
+    "km_linha_reta": 84.9,
+    "lat": -5.762472222222222,
+    "lon": -64.39258333333333
    }
   },
   {
@@ -520,14 +584,18 @@
     "fonte": "OSM",
     "min": 6,
     "km": 3.7,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.8668667533333325,
+    "lon": -66.89033356
    },
    "terminal_mais_proximo": {
     "nome": "Juruá (Porto de Juruá)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 182.7
+    "km_linha_reta": 182.7,
+    "lat": -3.470583333333333,
+    "lon": -66.06475833333333
    }
   },
   {
@@ -547,14 +615,18 @@
     "tipo": "Hospital geral",
     "fonte": "CNES",
     "min": null,
-    "km_linha_reta": 6.2
+    "km_linha_reta": 6.2,
+    "lat": -3.822791231660862,
+    "lon": -60.35829662133187
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 83.5
+    "km_linha_reta": 83.5,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -575,7 +647,9 @@
     "fonte": "CNES",
     "min": 161,
     "km": 142.5,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.822791231660862,
+    "lon": -60.35829662133187
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -583,7 +657,9 @@
     "fonte": null,
     "min": 49,
     "km": 32.3,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -604,14 +680,18 @@
     "fonte": "OSM",
     "min": 1,
     "km": 0.7,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.0919839,
+    "lon": -63.14060888
    },
    "terminal_mais_proximo": {
     "nome": "Tefé (Comunidade Caimbé)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 153.8
+    "km_linha_reta": 153.8,
+    "lat": -3.529722222222222,
+    "lon": -64.40980555555555
    }
   },
   {
@@ -632,7 +712,9 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.4,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.8430459,
+    "lon": -62.063429
    },
    "terminal_mais_proximo": {
     "nome": "Anori (Comunidade Vila do Cuianã)",
@@ -640,7 +722,9 @@
     "fonte": null,
     "min": 114,
     "km": 73.7,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.773333333333333,
+    "lon": -61.644444444444446
    }
   },
   {
@@ -661,14 +745,18 @@
     "fonte": "CNES",
     "min": 2,
     "km": 0.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -6.662241849815941,
+    "lon": -69.86628770828247
    },
    "terminal_mais_proximo": {
     "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 257.6
+    "km_linha_reta": 257.6,
+    "lat": -4.362933333333333,
+    "lon": -70.1924
    }
   },
   {
@@ -689,14 +777,18 @@
     "fonte": "CNES",
     "min": 2,
     "km": 0.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -7.43564534200707,
+    "lon": -70.02468824386597
    },
    "terminal_mais_proximo": {
     "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 342.4
+    "km_linha_reta": 342.4,
+    "lat": -4.362933333333333,
+    "lon": -70.1924
    }
   },
   {
@@ -717,14 +809,18 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.5,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.5183245888060095,
+    "lon": -66.0978088570068
    },
    "terminal_mais_proximo": {
     "nome": "Japurá (Comunidade Acanauí)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 96.8
+    "km_linha_reta": 96.8,
+    "lat": -1.8214,
+    "lon": -66.60935
    }
   },
   {
@@ -745,7 +841,9 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -7.544931,
+    "lon": -72.582022
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -753,7 +851,9 @@
     "fonte": null,
     "min": 2209,
     "km": 2050.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -774,7 +874,9 @@
     "fonte": "CNES",
     "min": 4,
     "km": 2.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -7.520448162967022,
+    "lon": -63.03676128387451
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -782,7 +884,9 @@
     "fonte": null,
     "min": 958,
     "km": 696.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -803,14 +907,18 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -7.05334274181502,
+    "lon": -71.68744325637817
    },
    "terminal_mais_proximo": {
     "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 341.6
+    "km_linha_reta": 341.6,
+    "lat": -4.362933333333333,
+    "lon": -70.1924
    }
   },
   {
@@ -831,7 +939,9 @@
     "fonte": "CNES",
     "min": 5,
     "km": 2.1,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.2733881502852413,
+    "lon": -60.180702209472656
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -839,7 +949,9 @@
     "fonte": null,
     "min": 275,
     "km": 136.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -860,7 +972,9 @@
     "fonte": "CNES",
     "min": 1,
     "km": 0.4,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.136841633438505,
+    "lon": -58.443628549575806
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -868,7 +982,9 @@
     "fonte": null,
     "min": 489,
     "km": 365.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -889,14 +1005,18 @@
     "fonte": "CNES",
     "min": 3,
     "km": 2.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -6.425,
+    "lon": -68.253
    },
    "terminal_mais_proximo": {
     "nome": "Benjamin Constant (Comunidade Feijoal)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 278.1
+    "km_linha_reta": 278.1,
+    "lat": -4.295138888888889,
+    "lon": -69.53769444444444
    }
   },
   {
@@ -917,7 +1037,9 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.1,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.747716887025489,
+    "lon": -58.03025722503662
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -925,7 +1047,9 @@
     "fonte": null,
     "min": 573,
     "km": 434.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -945,14 +1069,18 @@
     "tipo": "Hospital geral",
     "fonte": "CNES",
     "min": null,
-    "km_linha_reta": 7.7
+    "km_linha_reta": 7.7,
+    "lat": -1.8826040725964166,
+    "lon": -66.99797630310059
    },
    "terminal_mais_proximo": {
     "nome": "Japurá (Comunidade Acanauí)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 36.2
+    "km_linha_reta": 36.2,
+    "lat": -1.8214,
+    "lon": -66.60935
    }
   },
   {
@@ -973,7 +1101,9 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.5,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.473241,
+    "lon": -66.06535
    },
    "terminal_mais_proximo": {
     "nome": "Juruá (Porto de Juruá)",
@@ -981,7 +1111,9 @@
     "fonte": null,
     "min": 5,
     "km": 1.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.470583333333333,
+    "lon": -66.06475833333333
    }
   },
   {
@@ -1002,14 +1134,18 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.746832775358215,
+    "lon": -66.76852136850357
    },
    "terminal_mais_proximo": {
     "nome": "Jutaí (Vila Copatana)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 21.6
+    "km_linha_reta": 21.6,
+    "lat": -2.851944444444444,
+    "lon": -66.93
    }
   },
   {
@@ -1030,7 +1166,9 @@
     "fonte": "CNES",
     "min": 1,
     "km": 0.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -7.269502800935558,
+    "lon": -64.79066848754883
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1038,7 +1176,9 @@
     "fonte": null,
     "min": 1201,
     "km": 850.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1059,7 +1199,9 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.5,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.292052471010196,
+    "lon": -60.63012778759003
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1067,7 +1209,9 @@
     "fonte": null,
     "min": 335,
     "km": 200.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1088,7 +1232,9 @@
     "fonte": "CNES",
     "min": 4,
     "km": 2.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.4287759029877747,
+    "lon": -60.46226978302002
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1096,7 +1242,9 @@
     "fonte": null,
     "min": 162,
     "km": 156.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1117,7 +1265,9 @@
     "fonte": "CNES",
     "min": 0,
     "km": 0.1,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.11854,
+    "lon": -60.02169
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1125,7 +1275,9 @@
     "fonte": null,
     "min": 238,
     "km": 98.4,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1146,7 +1298,9 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.7,
-    "estimado": false
+    "estimado": false,
+    "lat": -5.809341328874326,
+    "lon": -61.29892587661743
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1154,7 +1308,9 @@
     "fonte": null,
     "min": 808,
     "km": 455.3,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1175,14 +1331,18 @@
     "fonte": "CNES",
     "min": 12,
     "km": 4.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -1.859777241645423,
+    "lon": -65.59046298265457
    },
    "terminal_mais_proximo": {
     "nome": "Japurá (Comunidade Acanauí)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 115.2
+    "km_linha_reta": 115.2,
+    "lat": -1.8214,
+    "lon": -66.60935
    }
   },
   {
@@ -1203,14 +1363,18 @@
     "fonte": "CNES",
     "min": 2,
     "km": 0.7,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.3890423514090373,
+    "lon": -57.708842754364014
    },
    "terminal_mais_proximo": {
     "nome": "Boa Vista Do Ramos (Comunidade Menino de Deus)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 31.4
+    "km_linha_reta": 31.4,
+    "lat": -3.159682775,
+    "lon": -57.547835927777776
    }
   },
   {
@@ -1231,7 +1395,9 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.3,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.1904382988613857,
+    "lon": -56.71470827657196
    },
    "terminal_mais_proximo": {
     "nome": "Nhamundá (Rua Tiradentes)",
@@ -1239,7 +1405,9 @@
     "fonte": null,
     "min": 2,
     "km": 1.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.192383333333333,
+    "lon": -56.70921666666667
    }
   },
   {
@@ -1260,14 +1428,18 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.890865445724483,
+    "lon": -59.099836349487305
    },
    "terminal_mais_proximo": {
     "nome": "Borba (Distrito do Axinim)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 35.1
+    "km_linha_reta": 35.1,
+    "lat": -4.050216666666667,
+    "lon": -59.37213888888889
    }
   },
   {
@@ -1288,7 +1460,9 @@
     "fonte": "CNES",
     "min": 3,
     "km": 2.0,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.6218128949043162,
+    "lon": -60.941569805145264
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1296,7 +1470,9 @@
     "fonte": null,
     "min": 433,
     "km": 292.1,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1317,7 +1493,9 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.3,
-    "estimado": false
+    "estimado": false,
+    "lat": -5.1251988746398345,
+    "lon": -60.38157820701599
    },
    "terminal_mais_proximo": {
     "nome": "Parintins (Comunidade do Bom Socorro do Zé Açú)",
@@ -1325,7 +1503,9 @@
     "fonte": null,
     "min": 1936,
     "km": 1210.9,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.674016666666667,
+    "lon": -56.627694444444444
    }
   },
   {
@@ -1346,7 +1526,9 @@
     "fonte": "OSM",
     "min": 4,
     "km": 1.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.6263657,
+    "lon": -56.7286637
    },
    "terminal_mais_proximo": {
     "nome": "Parintins (Comunidade do Bom Socorro do Zé Açú)",
@@ -1354,7 +1536,9 @@
     "fonte": null,
     "min": 174,
     "km": 54.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.674016666666667,
+    "lon": -56.627694444444444
    }
   },
   {
@@ -1375,14 +1559,18 @@
     "fonte": "CNES",
     "min": 2,
     "km": 0.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -7.710009965241161,
+    "lon": -66.9971343
    },
    "terminal_mais_proximo": {
     "nome": "Tapauá (Comunidade Foz do Tapauá)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 359.8
+    "km_linha_reta": 359.8,
+    "lat": -5.762472222222222,
+    "lon": -64.39258333333333
    }
   },
   {
@@ -1403,7 +1591,9 @@
     "fonte": "CNES",
     "min": 2,
     "km": 1.7,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.0447582425986375,
+    "lon": -60.02684533596039
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1411,7 +1601,9 @@
     "fonte": null,
     "min": 361,
     "km": 224.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1432,7 +1624,9 @@
     "fonte": "CNES",
     "min": 6,
     "km": 2.4,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.700075736351767,
+    "lon": -59.70065653324127
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1440,7 +1634,9 @@
     "fonte": null,
     "min": 320,
     "km": 178.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1461,14 +1657,18 @@
     "fonte": "CNES",
     "min": 2,
     "km": 1.6,
-    "estimado": false
+    "estimado": false,
+    "lat": -0.41817413047167645,
+    "lon": -65.01610279083252
    },
    "terminal_mais_proximo": {
     "nome": "Japurá (Comunidade Acanauí)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 237.2
+    "km_linha_reta": 237.2,
+    "lat": -1.8214,
+    "lon": -66.60935
    }
   },
   {
@@ -1489,14 +1689,18 @@
     "fonte": "CNES",
     "min": 0,
     "km": 0.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.0950717478253487,
+    "lon": -67.94402360916138
    },
    "terminal_mais_proximo": {
     "nome": "Santo Antônio Do Içá (Vila da Betânia)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 14.1
+    "km_linha_reta": 14.1,
+    "lat": -3.072452572222222,
+    "lon": -68.07090927777777
    }
   },
   {
@@ -1517,7 +1721,9 @@
     "fonte": "CNES",
     "min": 9,
     "km": 4.3,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.8432774,
+    "lon": -58.2087951
    },
    "terminal_mais_proximo": {
     "nome": "Careiro (Comunidade Purupuru)",
@@ -1525,7 +1731,9 @@
     "fonte": null,
     "min": 587,
     "km": 435.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.382777777777778,
+    "lon": -59.72277777777778
    }
   },
   {
@@ -1546,14 +1754,18 @@
     "fonte": "CNES",
     "min": 1,
     "km": 0.5,
-    "estimado": false
+    "estimado": false,
+    "lat": -0.1193757123123,
+    "lon": -67.084759121123
    },
    "terminal_mais_proximo": {
     "nome": "Japurá (Comunidade Acanauí)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 196.5
+    "km_linha_reta": 196.5,
+    "lat": -1.8214,
+    "lon": -66.60935
    }
   },
   {
@@ -1573,14 +1785,18 @@
     "tipo": "Hospital geral",
     "fonte": "CNES",
     "min": null,
-    "km_linha_reta": 14.7
+    "km_linha_reta": 14.7,
+    "lat": -3.378139435775889,
+    "lon": -68.87281894683838
    },
    "terminal_mais_proximo": {
     "nome": "São Paulo De Olivença (Comunidade  Campo Alegre)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 47.9
+    "km_linha_reta": 47.9,
+    "lat": -3.586211111111111,
+    "lon": -69.38078888888889
    }
   },
   {
@@ -1601,14 +1817,18 @@
     "fonte": "CNES",
     "min": 2,
     "km": 1.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.566882,
+    "lon": -57.872209
    },
    "terminal_mais_proximo": {
     "nome": "São Sebastião Do Uatumã (Distrito de Santana)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 12.8
+    "km_linha_reta": 12.8,
+    "lat": -2.577580555555556,
+    "lon": -57.986825
    }
   },
   {
@@ -1629,14 +1849,18 @@
     "fonte": "CNES",
     "min": 2,
     "km": 1.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -4.25335,
+    "lon": -69.9385
    },
    "terminal_mais_proximo": {
     "nome": "Atalaia Do Norte (Porto de Atalaia do Norte)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 31.2
+    "km_linha_reta": 31.2,
+    "lat": -4.362933333333333,
+    "lon": -70.1924
    }
   },
   {
@@ -1657,14 +1881,18 @@
     "fonte": "CNES",
     "min": 4,
     "km": 1.7,
-    "estimado": false
+    "estimado": false,
+    "lat": -5.62798864916508,
+    "lon": -63.18950993170578
    },
    "terminal_mais_proximo": {
     "nome": "Tapauá (Comunidade Foz do Tapauá)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 135.0
+    "km_linha_reta": 135.0,
+    "lat": -5.762472222222222,
+    "lon": -64.39258333333333
    }
   },
   {
@@ -1685,14 +1913,18 @@
     "fonte": "CNES",
     "min": 4,
     "km": 2.4,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.3499497984170685,
+    "lon": -64.7224760055542
    },
    "terminal_mais_proximo": {
     "nome": "Alvarães (Distrito de Nogueira)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 9.7
+    "km_linha_reta": 9.7,
+    "lat": -3.303888888888889,
+    "lon": -64.77852777777778
    }
   },
   {
@@ -1713,14 +1945,18 @@
     "fonte": "CNES",
     "min": 6,
     "km": 3.2,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.8600793990710733,
+    "lon": -67.7723354101181
    },
    "terminal_mais_proximo": {
     "nome": "Santo Antônio Do Içá (Vila da Betânia)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 38.6
+    "km_linha_reta": 38.6,
+    "lat": -3.072452572222222,
+    "lon": -68.07090927777777
    }
   },
   {
@@ -1740,14 +1976,18 @@
     "tipo": "Hospital geral",
     "fonte": "CNES",
     "min": null,
-    "km_linha_reta": 5.7
+    "km_linha_reta": 5.7,
+    "lat": -2.978698810547399,
+    "lon": -65.16122102737427
    },
    "terminal_mais_proximo": {
     "nome": "Alvarães (Distrito de Nogueira)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 50.5
+    "km_linha_reta": 50.5,
+    "lat": -3.303888888888889,
+    "lon": -64.77852777777778
    }
   },
   {
@@ -1768,14 +2008,18 @@
     "fonte": "CNES",
     "min": 3,
     "km": 1.3,
-    "estimado": false
+    "estimado": false,
+    "lat": -2.536,
+    "lon": -57.76
    },
    "terminal_mais_proximo": {
     "nome": "São Sebastião Do Uatumã (Distrito de Santana)",
     "tipo": null,
     "fonte": null,
     "min": null,
-    "km_linha_reta": 26.4
+    "km_linha_reta": 26.4,
+    "lat": -2.577580555555556,
+    "lon": -57.986825
    }
   },
   {
@@ -1796,7 +2040,9 @@
     "fonte": "CNES",
     "min": 2,
     "km": 1.1,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.1268037282960575,
+    "lon": -58.15604209899902
    },
    "terminal_mais_proximo": {
     "nome": "Urucurituba (Comunidade do Tabocal)",
@@ -1804,7 +2050,9 @@
     "fonte": null,
     "min": 4,
     "km": 1.8,
-    "estimado": false
+    "estimado": false,
+    "lat": -3.122,
+    "lon": -58.15847222222222
    }
   }
  ]
