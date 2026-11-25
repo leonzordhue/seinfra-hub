@@ -60,9 +60,10 @@ const T = h => `<div class="tab-rolo" tabindex="0">${h}</div>`;
 const rxRod = cod => new RegExp(`\\bAM[\\s-]?0*${parseInt(cod.slice(3), 10)}\\b`, "i");
 
 export async function render(el, params) {
-  const [{ meta: eMeta, lista }, sin, an, lic, icm, rodj, hist] = await Promise.all([
+  const [{ meta: eMeta, lista }, sin, an, lic, icm, rodj, hist, rinfo, qmd, ofi, ace] = await Promise.all([
     contratos(), talvez("sinistros"), talvez("sinistros_analise"), talvez("licitacoes"), talvez("icm"),
-    fetch("../pipelines/sinistros/rodovias.json").then(r => r.ok ? r.json() : null).catch(() => null), historico().catch(() => null)]);
+    fetch("../pipelines/sinistros/rodovias.json").then(r => r.ok ? r.json() : null).catch(() => null), historico().catch(() => null),
+    talvez("rodovias_info"), talvez("queimadas"), talvez("sinistros_oficiais"), talvez("acesso")]);
   const icmPor = new Map((icm?.rodovias || []).map(r => [r.codigo, r]));
   const nomes = rodj ? Object.fromEntries(Object.entries(rodj.rodovias || rodj).filter(([k]) => /^AM-/.test(k)).map(([k, v]) => [k, v.nomes_fortes || []])) : {};
   const muns = [...new Set([...lista, ...(hist?.lista || [])].flatMap(municipios))].sort((a, b) => a.localeCompare(b, "pt-BR"));
@@ -95,7 +96,7 @@ export async function render(el, params) {
     sel.innerHTML = opcoes(estado.tipo === "municipio" ? muns : rods, estado.alvo, estado.tipo === "municipio" ? "Escolha o município" : "Escolha a rodovia");
   };
   const pinta = () => {
-    const ctx = { lista, sin, an, lic, icmPor, nomes, eMeta, hist };
+    const ctx = { lista, sin, an, lic, icmPor, nomes, eMeta, hist, rinfo, qmd, ofi, ace };
     const nome = { municipio: "um município", rodovia: "uma rodovia", contrato: "um contrato" }[estado.tipo];
     const doc = $("#doc", el);
     if (!estado.alvo) { doc.innerHTML = `<p class="vazio">Escolha ${nome} para montar o briefing.</p>`; return; }
@@ -184,6 +185,7 @@ function docMunicipio(mun, ctx) {
     conc.length ? `${plural(conc.length, "contrato foi concluído ou encerrado", "contratos foram concluídos ou encerrados")} (${brlCurto(soma(conc, "v_atual"))}).` : "",
     hcs.length ? `Antes disso, a Planilha Geral registra ${plural(hcs.length, "contrato", "contratos")} no município${hAnos.length ? ` (${hAnos[0]} a ${hAnos[hAnos.length - 1]})` : ""}, somando ${brlCurto(soma(hcs, "v_atual"))}: estão no histórico, ao fim do documento.` : "",
     ocs.length ? `${plural(ocs.length, "acidente em rodovia estadual foi noticiado", "acidentes em rodovias estaduais foram noticiados")} no município desde 2019 (${num(ocs.filter(o => o.fatal).length)} com morte).` : "",
+    acessoTxt((ctx.ace?.municipios || []).find(m => semAcento(m.nome) === semAcento(mun))),
   ].filter(Boolean);
   const nome = semAcento(mun);
   return `<article class="doc">${cab("Município", mun, "Obras, contratos, rodovias e segurança viária da SEINFRA no município", ctx)}
@@ -225,7 +227,36 @@ function docRodovia(cod, ctx) {
     ${soLocal.length ? `<h2>Obras com acesso pela rodovia (${num(soLocal.length)})</h2><p class="nota">Ramais, estradas e comunidades que citam a ${esc(cod)} só como localização; não entram nos números da rodovia.</p>${tabelaObras(soLocal)}` : ""}
     ${s?.trechos_criticos?.length ? `<h2>Trechos críticos</h2><p>${s.trechos_criticos.map(t => `km ${t.km_ini}–${t.km_fim}: ${t.ocorrencias} ocorrências (${t.fatais} com morte)`).join("; ")}.</p>` : ""}
     ${blocoLic(ctx.lic, cita)}
-    ${rodape(ctx, r ? "; condição: levantamento RoadLab (data/icm.json)" : "")}</article>`;
+    ${blocoConexoes(cod, ctx)}
+    ${rodape(ctx, (r ? "; condição: levantamento RoadLab (data/icm.json)" : "") + (ctx.rinfo ? "; municípios: traçado SER × malha IBGE" : "") +
+      (ctx.qmd ? `; queimadas: INPE (${data(String(ctx.qmd._meta.gerado_em).slice(0, 10))})` : "") + (ctx.ofi ? "; RENAEST/SENATRAN" : "") + (ctx.ace ? "; acessibilidade: OSRM sobre OSM" : ""))}</article>`;
+}
+
+// Acesso da sede a Manaus (data/acesso.json): estrada (OSRM), rio (malha SNV/DNIT, tempo estimado) e avião (ANAC).
+function acessoTxt(a) {
+  if (!a || a.nome === "Manaus") return "";
+  const hm = v => v < 60 ? `${num(v)} min` : `${Math.floor(v / 60)} h ${String(Math.round(v % 60)).padStart(2, "0")}`;
+  const est = a.ligacao_rodoviaria ? `por estrada, ${hm(a.tempo_manaus_min)} (${num(a.km_manaus)} km${a.travessia_balsa ? ", com balsa" : ""})` : "sem ligação por estrada";
+  const rio = a.fluvial?.na_malha ? `; pelo rio, ${num(a.fluvial.km)} km (barco, estimativa: ${a.fluvial.h_barco >= 24 ? `${num(a.fluvial.h_barco / 24, 1)} dias` : `${num(a.fluvial.h_barco, 0)} h`})` : "";
+  const av = a.aereo ? `; aeródromo ${a.aereo.oaci}${a.aereo.voo_regular ? `, com voo regular (${num(a.aereo.voos_semana, 1)} por semana)` : ", sem voo regular"}` : "";
+  return `Acesso a Manaus: ${est}${rio}${av}.`;
+}
+
+// O que os outros módulos sabem da rodovia: municípios atendidos (com acessibilidade), queimadas na faixa e
+// RENAEST. Cada bloco só aparece se o arquivo existir e tiver a rodovia. [Claude] 25/11/2026
+function blocoConexoes(cod, ctx) {
+  const mi = ctx.rinfo?.rodovias?.[cod]?.municipios || [];
+  const acPor = new Map((ctx.ace?.municipios || []).map(m => [semAcento(m.nome), m]));
+  const hm = v => v == null ? "sem estrada" : v < 60 ? `${num(v)} min` : `${Math.floor(v / 60)} h ${String(Math.round(v % 60)).padStart(2, "0")}`;
+  const q = ctx.qmd?.rodovias?.[cod], buf = ctx.qmd?._meta?.buffer_km;
+  const ren = ctx.ofi?.renaest?.rodovias?.[cod], anosRen = ren ? Object.keys(ren).sort() : [];
+  const partes = [];
+  if (mi.length) partes.push(`<h2>Municípios atendidos (${num(mi.length)})</h2>${T(`<table class="t"><thead><tr><th>Município</th><th class="n">Extensão no município</th><th class="n">População</th><th class="n">Até Manaus por estrada</th></tr></thead><tbody>
+    ${mi.map(m => { const a = acPor.get(semAcento(m.nome)); return `<tr><td><a href="#/briefings?municipio=${encodeURIComponent(m.nome)}">${esc(m.nome)}</a></td><td class="n">${num(m.km, 1)} km</td><td class="n">${a?.pop ? num(a.pop) : "—"}</td><td class="n">${a ? (a.nome === "Manaus" ? "—" : hm(a.tempo_manaus_min)) : "—"}</td></tr>`; }).join("")}</tbody></table>`)}`);
+  if (q) partes.push(`<h2>Focos de queimada na faixa da rodovia</h2><p>${num(q.total)} focos a até ${num(buf || 5)} km do eixo desde 2019 (${num(q.por_100km, 0)} por 100 km); ${num(q.anos?.[String(new Date().getFullYear())] || 0)} neste ano e ${num(q.ultimos_30d)} nos últimos 30 dias. <a href="#/ambiente">Rios e queimadas →</a></p>`);
+  if (anosRen.length) partes.push(`<h2>Sinistros na base oficial (RENAEST)</h2><p>${anosRen.map(a => `${a}: ${num(ren[a].acidentes)} acidentes, ${num(ren[a].obitos)} óbitos`).join("; ")}. Identificação pela citação da rodovia no endereço do registro (estimativa). <a href="#/sinistros-oficiais">Bases oficiais →</a></p>`);
+  partes.push(`<p class="nao-imprime doc-chips"><a class="btn" href="#/mapa">Ver no mapa</a> <a class="btn" href="#/sinistros">Sinistros</a> <a class="btn" href="#/acesso">Acessibilidade</a> <a class="btn" href="#/m/rodovias">Cadastro da rodovia</a></p>`);
+  return partes.join("");
 }
 
 // ── briefing de um contrato ──
