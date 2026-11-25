@@ -18,7 +18,7 @@ const DESCR = {
 
 // Estado das fontes e "o que mudou" (data/painel.json, gerado no deploy por scripts/painel.py). [Claude] 25/11/2026
 const ESTILO_PAINEL = `<style>
-  .fontes-faixa { margin: 0 0 16px; border: 1px solid var(--borda); border-radius: 8px; background: var(--sup); }
+  .fontes-faixa { margin: 28px 0 0; border: 1px solid var(--borda); border-radius: 8px; background: var(--sup); }
   .fontes-faixa > summary { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 10px 14px; cursor: pointer; font-size: 13.5px; color: var(--tinta-2); list-style: none; min-height: 44px; }
   .fontes-faixa > summary::-webkit-details-marker { display: none; }
   .fontes-faixa > summary::after { content: "ver fontes"; margin-left: auto; color: var(--tinta-3); font-size: 12.5px; text-decoration: underline; }
@@ -106,7 +106,6 @@ export async function render(el) {
       <p>Situação dos contratos, da segurança viária e das licitações do modal rodoviário do Amazonas, calculada a partir das rotinas automáticas do DMOB.</p></div>
       <div class="fontes">${fonte("e-Obras", meta.posicao)}${an ? fonte("Sinistros", an._meta.gerado.slice(0, 10).split("-").reverse().join("/")) : ""}${lic ? fonte("Licitações", data(lic._meta.gerado)) : ""}</div></div>
 
-    ${faixaFontes(P)}
     <div class="painel">
       <div class="resumo"><span class="eyebrow">Situação hoje</span>
         <p>${frase}</p>
@@ -128,7 +127,6 @@ export async function render(el) {
       ${an ? kpi("Sinistros em 12 meses", num(an.totais.ultimos_12m), `${num(an.totais.fatais_ultimos_12m)} com morte`) : ""}
     </div>
 
-    ${secaoMudou(P)}
     <section class="secao"><h2>Onde agir primeiro</h2>
       <div class="grade g-agir" style="margin-top:12px">
         <div class="cartao"><header><div><h2>Contratos de maior risco</h2><p>Nota de risco de gestão, 0 a 100</p></div><a href="#/obras" class="mais">Ver todos →</a></header>
@@ -151,6 +149,8 @@ export async function render(el) {
       </div>
     </section>
 
+    ${secaoMudou(P)}
+    ${faixaFontes(P)}
     <section class="secao"><h2>Módulos do DMOB Hub</h2>
       <div class="indice" style="margin-top:8px">${grupos.filter(g => g.links.length).map(g => `<section><h3>${esc(g.t)}</h3>${g.links.map(a => {
         const h = a.getAttribute("href"), ic = a.querySelector("use")?.getAttribute("href") || "#i-inicio";

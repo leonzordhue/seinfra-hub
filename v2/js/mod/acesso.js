@@ -59,12 +59,16 @@ const ESTILO = `<style>
   .ac-painel .seg button { padding: 4px 10px; font-size: 12.5px; }
   .ac-card { position: absolute; left: 10px; bottom: 10px; z-index: 500; width: min(340px, calc(100% - 20px)); padding: 12px 14px 10px;
     background: var(--sup); border: 1px solid var(--borda); border-radius: var(--raio); box-shadow: var(--sombra); font-size: 13px; }
-  .ac-card h3 { margin: 0 28px 2px 0; font-size: 1.05rem; color: var(--tinta); }
+  .ac-card h3 { margin: 0 28px 2px 0; font: 600 1.35rem/1.2 var(--f-titulo); color: var(--tinta); }
   .ac-card .sub { margin: 0 0 8px; color: var(--tinta-3); font-size: 12.5px; }
   .ac-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
   .ac-card li { display: grid; grid-template-columns: 14px 1fr auto; gap: 8px; align-items: baseline; color: var(--tinta-2); }
-  .ac-card li i { width: 14px; height: 4px; border-radius: 2px; align-self: center; }
-  .ac-card li b { color: var(--tinta); font-weight: 600; white-space: nowrap; }
+  .ac-card li { grid-template-columns: 26px 1fr auto !important; align-items: center !important; padding: 6px 0; border-top: 1px solid var(--borda); }
+  .ac-card li:first-child { border-top: 0; }
+  .ac-ic { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: color-mix(in srgb, currentColor 14%, transparent); }
+  .ac-ic svg { width: 14px; height: 14px; }
+  .ac-card li b { color: var(--tinta); font-weight: 600; font-size: 1.15rem; white-space: nowrap; }
+  .ac-card .est { display: inline-block; margin-left: 4px; padding: 0 5px; border-radius: 3px; font-size: 10.5px; font-weight: 600; vertical-align: 2px; color: var(--tinta-3); border: 1px solid var(--borda-2, var(--borda)); }
   .ac-card li small { display: block; color: var(--tinta-3); font-size: 12px; }
   .ac-card .fechar { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; background: none; color: var(--tinta-3); font-size: 20px; cursor: pointer; border-radius: 6px; }
   .ac-card .fechar:hover { background: var(--sup-2); }
@@ -201,6 +205,8 @@ export async function render(el) {
 // Ícones dos alvos (traço da casa, sem emoji): cruz do hospital e âncora do terminal flutuante.
 const ICONE = {
   Hospital: `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 1h3v3.5H11v3H7.5V11h-3V7.5H1v-3h3.5z" fill="currentColor"/></svg>`,
+  Carro: `<svg viewBox="0 0 12 12" aria-hidden="true" fill="currentColor"><path d="M2.6 5 3.6 2.6c.2-.4.5-.6.9-.6h3c.4 0 .7.2.9.6L9.4 5c.6.1 1.1.6 1.1 1.2v2.3c0 .3-.2.5-.5.5h-.6v.7c0 .4-.3.7-.7.7s-.7-.3-.7-.7V9H4v.7c0 .4-.3.7-.7.7s-.7-.3-.7-.7V9H2c-.3 0-.5-.2-.5-.5V6.2c0-.6.5-1.1 1.1-1.2zm1.1 0h4.6l-.7-1.8H4.4zM3 7.5a.7.7 0 1 0 0-1.4.7.7 0 0 0 0 1.4zm6 0a.7.7 0 1 0 0-1.4.7.7 0 0 0 0 1.4z"/></svg>`,
+  Barco: `<svg viewBox="0 0 12 12" aria-hidden="true" fill="currentColor"><path d="M5.3 1h1.4v1.6h2.1v2.6l1.6.6-1.3 3.4c-.6 0-1.1-.3-1.5-.6-.5.4-1 .6-1.6.6s-1.1-.2-1.6-.6c-.4.3-.9.6-1.5.6L1.6 5.8l1.6-.6V2.6h2.1zM4.2 3.6v1.3L6 4.3l1.8.6V3.6z"/><path d="M1 10.6c.7 0 1.2-.2 1.7-.6.5.4 1.1.6 1.7.6s1.2-.2 1.6-.6c.5.4 1 .6 1.6.6s1.2-.2 1.7-.6c.5.4 1 .6 1.7.6v.9c-.6 0-1.2-.2-1.7-.5-.5.3-1.1.5-1.7.5s-1.1-.2-1.6-.5c-.5.3-1 .5-1.6.5s-1.2-.2-1.7-.5c-.5.3-1.1.5-1.7.5z"/></svg>`,
   Aviao: `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .8c.5 0 .8.5.8 1.1v3l4.2 2.3v1.2L6.8 7.2v2.2l1.3 1v.9L6 10.7l-2.1.6v-.9l1.3-1V7.2L1 8.4V7.2l4.2-2.3v-3C5.2 1.3 5.5.8 6 .8z" fill="currentColor"/></svg>`,
   Terminal: `<svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6" cy="2.4" r="1.3"/><path d="M6 3.7V11M3.4 5.6h5.2M1.6 7.4C2 9.6 3.8 11 6 11s4-1.4 4.4-3.6"/></svg>`,
 };
@@ -361,11 +367,12 @@ async function desenharMapa(el, mun, R = {}) {
     p.style.transition = "stroke-dashoffset 1.4s ease-out"; p.style.strokeDashoffset = 0;
     p.addEventListener("transitionend", () => { p.style.strokeDasharray = ""; p.style.transition = ""; }, { once: true });
   };
-  const linhaCard = (tipo, rot, a) => `<li><i style="background:${cor[tipo]}"></i><span>${rot}${a?.nome && tipo !== "Manaus" ? `<small>${esc(a.nome)}</small>` : ""}</span>` +
+  const ic = (svg, c) => `<span class="ac-ic" style="color:${c}">${svg}</span>`;
+  const linhaCard = (tipo, rot, a) => `<li>${ic(ICONE[tipo === "Manaus" ? "Carro" : tipo], cor[tipo])}<span>${rot}${a?.nome && tipo !== "Manaus" ? `<small>${esc(a.nome)}</small>` : ""}</span>` +
     `<span>${a?.min != null ? `<b>${hm(a.min)}</b><small>${num(a.km, 1)} km${a.estimado ? " · estimado" : ""}</small>` : `<b>sem estrada</b>${a?.km_linha_reta != null ? `<small>${num(a.km_linha_reta, 1)} km em linha reta</small>` : ""}`}</span></li>`;
-  const linhaRio = f => !f ? "" : `<li><i style="background:${corRio}"></i><span>Pelo rio até Manaus<small>${f.na_malha ? `${num(f.km)} km pela malha do DNIT` : "fora da malha hidroviária mapeada"}</small></span>` +
-    (f.na_malha ? `<span><b>~${hd(f.h_barco)}</b><small>barco · lancha ~${hd(f.h_lancha)}</small></span>` : `<span><b>—</b></span>`) + `</li>`;
-  const linhaAer = a => `<li><i style="background:${corAer}"></i><span>Avião${a ? `<small>${esc(a.nome)} (${esc(a.oaci)})</small>` : ""}</span>` +
+  const linhaRio = f => !f ? "" : `<li>${ic(ICONE.Barco, corRio)}<span>Pelo rio até Manaus<small>${f.na_malha ? `${num(f.km)} km pela malha do DNIT` : "fora da malha hidroviária mapeada"}</small></span>` +
+    (f.na_malha ? `<span><b>~${hd(f.h_barco)}</b><span class="est" title="Velocidade média de referência, a validar">estimativa</span><small>barco · lancha ~${hd(f.h_lancha)}</small></span>` : `<span><b>—</b></span>`) + `</li>`;
+  const linhaAer = a => `<li>${ic(ICONE.Aviao, corAer)}<span>Avião${a ? `<small>${esc(a.nome)} (${esc(a.oaci)})</small>` : ""}</span>` +
     (!a ? `<span><b>sem aeródromo público</b></span>` : a.voo_regular ? `<span><b>${a.tempo_voo_min ? hm(a.tempo_voo_min) : "voo regular"}</b><small>${num(a.voos_semana, 1)} voo(s)/semana</small></span>`
       : `<span><b>sem voo regular</b><small>${num(a.km_reta)} km em linha reta</small></span>`) + `</li>`;
   const limpar = () => {
