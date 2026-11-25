@@ -10,6 +10,7 @@ Uso: python -I scripts/painel.py [--teste]
 """
 import json
 import os
+import re
 import subprocess
 import sys
 from datetime import date, datetime, timedelta, timezone
@@ -91,13 +92,35 @@ def versao_antiga(nome, antes):
         return None, None
 
 
+CAT_VIARIO = ("Sistema viário (outros)", "Pavimentação viária", "Recuperação / manutenção viária")
+
+
+def modal(c):
+    """Mesma regra de v2/js/dados.js modal(): o Hub é só da parte rodoviária; None = fora (prédio, saneamento...)."""
+    t = f"{c.get('obj') or ''} {c.get('bem') or ''}"
+    if re.search(r"casa de apoio|alojamento|posto de vigil|centro (cultural|de eventos)|bumb[óo]dromo|escola|hospital|mirante",
+                 c.get("bem") or c.get("obj") or "", re.I) and \
+            not re.search(r"pavimenta|acesso vi[áa]rio", c.get("bem") or c.get("obj") or "", re.I):
+        return None   # edificação com rodovia/ponte só como endereço
+    if re.search(r"\bramal|\bramais|vicinal", t, re.I):
+        return "Ramal"
+    if c.get("rod") or re.search(r"\bAM[\s-]?\d{3}\b|rodovi|estrada", t, re.I):
+        return "Rodovia / estrada"
+    if c.get("cat") == "Ponte / OAE":
+        return "Ponte / OAE"
+    if c.get("cat") in CAT_VIARIO:
+        return "Viário urbano"
+    return None
+
+
 def diff_contratos(novo, velho):
     """Contratos que entraram e contratos que mudaram de situação (e-Obras, chave = número do contrato)."""
     n, v = (novo or {}).get("ct") or {}, (velho or {}).get("ct") or {}
-    entrou = [{"id": k, "sit": c.get("sit"), "mun": c.get("mun"), "obj": (c.get("obj") or "")[:140], "valor": c.get("v_atual")}
-              for k, c in n.items() if k not in v]
+    n = {k: c for k, c in n.items() if modal(c)}   # só contratos rodoviários (ramal, rodovia, viário, ponte)
+    entrou = [{"id": k, "sit": c.get("sit"), "mun": c.get("mun"), "obj": (c.get("obj") or "")[:140], "valor": c.get("v_atual"),
+               "modal": modal(c)} for k, c in n.items() if k not in v]
     mudou = [{"id": k, "de": v[k].get("sit"), "para": c.get("sit"), "mun": c.get("mun"), "obj": (c.get("obj") or "")[:140],
-              "valor": c.get("v_atual"), "fis": c.get("fis"), "desde": c.get("desde")}
+              "valor": c.get("v_atual"), "fis": c.get("fis"), "desde": c.get("desde"), "modal": modal(c)}
              for k, c in n.items() if k in v and c.get("sit") != v[k].get("sit")]
     return entrou, mudou
 
@@ -151,9 +174,12 @@ def gravar(obj):
 
 def teste():
     assert dia("2026-11-24 20:37") == "2026-11-24" and dia("23/11/2026") == "2026-11-23" and dia("") is None
-    e, m = diff_contratos({"ct": {"A": {"sit": "Em andamento"}, "B": {"sit": "Concluído"}}},
-                          {"ct": {"B": {"sit": "Em andamento"}}})
-    assert [x["id"] for x in e] == ["A"] and m[0]["de"] == "Em andamento" and m[0]["para"] == "Concluído"
+    e, m = diff_contratos({"ct": {"A": {"sit": "Em andamento", "obj": "Pavimentação do ramal X"},
+                                  "B": {"sit": "Concluído", "obj": "Recuperação da AM-010"},
+                                  "C": {"sit": "Concluído", "obj": "Reforma do Centro Cultural"}}},
+                          {"ct": {"B": {"sit": "Em andamento"}, "C": {"sit": "Andamento"}}})
+    assert [x["id"] for x in e] == ["A"] and len(m) == 1 and m[0]["de"] == "Em andamento" and m[0]["para"] == "Concluído"
+    assert modal({"obj": "ramal no km 41 da AM-010"}) == "Ramal" and modal({"obj": "Bumbódromo"}) is None
     assert [x["id"] for x in diff_licitacoes({"pncp": [{"id": 1, "rodoviario": True}, {"id": 2, "rodoviario": True}, {"id": 3}]},
                                              {"pncp": [{"id": 1}]})] == [2]
     assert diff_terminais({"entregues": [{"municipio": "X", "localidade": "Y"}]}, {"entregues": []}) == [{"municipio": "X", "localidade": "Y"}]

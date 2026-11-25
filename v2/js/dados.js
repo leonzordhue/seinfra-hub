@@ -28,6 +28,8 @@ const CAT_VIARIO = ["Sistema viário (outros)", "Pavimentação viária", "Recup
 // Ramal vem antes de rodovia: "ramal no km 41 da AM-010" é obra de ramal (a rodovia é só localização).
 export function modal(c) {
   const t = `${c.obj || ""} ${c.bem || ""}`;
+  // edificação com rodovia/ponte só como endereço (casa de apoio "na BR 307", posto de vigilância "da Ponte") fica fora
+  if (/casa de apoio|alojamento|posto de vigil|centro (cultural|de eventos)|bumb[óo]dromo|escola|hospital|mirante/i.test(c.bem || c.obj || "") && !/pavimenta|acesso vi[áa]rio/i.test(c.bem || c.obj || "")) return null;
   if (/\bramal|\bramais|vicinal/i.test(t)) return "Ramal";
   if (c.rod || /\bAM[\s-]?\d{3}\b|rodovi|estrada/i.test(t)) return "Rodovia / estrada";
   if (c.cat === "Ponte / OAE") return "Ponte / OAE";
