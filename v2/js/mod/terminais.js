@@ -151,6 +151,7 @@ export async function render(el) {
     setTimeout(() => mini?.invalidateSize(), 220);   // a gaveta desliza em .18s
   }
   const pino = () => window.L.divIcon({ className: "", html: `<div class="pino-term">${ANCORA}</div>`, iconSize: [30, 30], iconAnchor: [15, 15] });
+  const gms = v => v.toFixed(5).replace(".", ",");   // num() limita as casas; coordenada precisa de 5
   const coordTxt = (lat, lon) => `${num(Math.abs(lat), 4)}° S · ${num(Math.abs(lon), 4)}° O`;
 
   function fichaEnt(t) {
@@ -159,8 +160,8 @@ export async function render(el) {
       <dl class="ft-grade">
         <div><dt>Município</dt><dd>${esc(t.municipio)}</dd></div>
         <div><dt>Destino</dt><dd>${esc(t.localidade)}</dd></div>
-        <div><dt>Latitude</dt><dd class="n">${num(t.lat, 5)}°</dd></div>
-        <div><dt>Longitude</dt><dd class="n">${num(t.lon, 5)}°</dd></div>
+        <div><dt>Latitude</dt><dd class="n">${gms(t.lat)}°</dd></div>
+        <div><dt>Longitude</dt><dd class="n">${gms(t.lon)}°</dd></div>
       </dl>
       <div class="ft-mm" role="img" aria-label="Localização do terminal ${esc(t.localidade)}: ${coordTxt(t.lat, t.lon)}"></div>
       <p class="ft-sobre"><b>Sobre os terminais flutuantes:</b> estruturas de embarque e desembarque instaladas às margens dos rios, que ligam a sede do município às comunidades e distritos do interior.</p>
@@ -174,7 +175,7 @@ export async function render(el) {
       <h2 style="font-size:1.3rem;margin:4px 0 2px">${esc(p.localidade || p.municipio)}</h2><p style="margin:0;color:var(--tinta-3)">${esc(p.municipio)}${p.processo ? ` · processo ${esc(p.processo)}` : ""}</p>
       <p style="margin:12px 0">${chip(p.status, nivel(p.etapa))}</p>
       <dl class="ficha">${etapas.map(([r, v]) => `<dt>${r}</dt><dd>${v ? data(v) : "—"}</dd>`).join("")}
-        <dt>Coordenada</dt><dd>${p.lat != null ? `${num(p.lat, 5)}, ${num(p.lon, 5)}` : `a conferir${p.coord_aviso ? ` (${esc(p.coord_aviso)})` : ""}`}</dd></dl>
+        <dt>Coordenada</dt><dd>${p.lat != null ? `${gms(p.lat)}, ${gms(p.lon)}` : `a conferir${p.coord_aviso ? ` (${esc(p.coord_aviso)})` : ""}`}</dd></dl>
       ${p.perto ? `<p class="aviso">Fica a menos de 2 km do terminal entregue “${esc(p.perto)}”: confirmar se não é o mesmo ponto.</p>` : ""}
       ${p.lat != null ? `<div class="ft-mm" role="img" aria-label="Localização do pedido ${esc(p.localidade || p.municipio)}: ${coordTxt(p.lat, p.lon)}"></div>` : ""}
       <p style="font-size:12.5px;color:var(--tinta-3)">Fonte: planilha de acompanhamento do DMOB.</p>`);
