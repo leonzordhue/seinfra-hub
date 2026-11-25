@@ -43,7 +43,14 @@ jobs:
           done
       - name: Verificar sintaxe dos módulos da v2
         run: |
-          for f in $(find v2 -name '*.js' 2>/dev/null); do node --check "$f" && echo "$f: OK"; done
+          set -e
+          for f in $(find v2 -name '*.js' 2>/dev/null); do node --check "$f"; done
+          echo "módulos da v2: sintaxe OK"
+      # nome indefinido, chave duplicada etc. (eslint.config.mjs); pegaria o "R is not defined" de 25/11/2026
+      - name: Lint dos módulos da v2
+        run: |
+          npm i --no-save --no-audit --no-fund eslint@9 globals
+          npx eslint v2/js
 
   deploy:
     needs: check
