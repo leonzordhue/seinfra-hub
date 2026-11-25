@@ -1,15 +1,18 @@
 {
  "_meta": {
-  "fonte": "OpenStreetMap (Geofabrik, extrato norte do Brasil) roteado com OSRM 5.27.1; sedes kelvins/municipios-brasileiros (IBGE); população IBGE Censo 2022 (SIDRA 4709); hospitais CNES/DATASUS (API dados abertos) + OSM amenity=hospital; terminais flutuantes SEINFRA-AM (atlas-amazonas)",
+  "fonte": "OpenStreetMap (Geofabrik, extrato norte do Brasil) roteado com OSRM 5.27.1; sedes kelvins/municipios-brasileiros (IBGE); população IBGE Censo 2022 (SIDRA 4709); hospitais CNES/DATASUS (API dados abertos) + OSM amenity=hospital; terminais flutuantes SEINFRA-AM (atlas-amazonas); hidrovias DNIT SNV aquaviário (atlas-amazonas); aeródromos públicos e voos regulares ANAC (dados abertos)",
   "url": {
    "osm": "https://download.geofabrik.de/south-america/brazil/norte-latest.osm.pbf",
    "sedes": "https://raw.githubusercontent.com/kelvins/municipios-brasileiros/main/csv/municipios.csv",
    "populacao": "https://apisidra.ibge.gov.br/values/t/4709/n6/in%20n3%2013/v/93/p/last",
    "cnes": "https://apidadosabertos.saude.gov.br/cnes/estabelecimentos",
    "terminais": "https://leonzordhue.github.io/atlas-amazonas/geojson/TERMINAIS_FLUTUANTES_SEINFRA.geojson",
-   "osrm": "https://github.com/Project-OSRM/osrm-backend"
+   "osrm": "https://github.com/Project-OSRM/osrm-backend",
+   "hidrovias": "https://leonzordhue.github.io/atlas-amazonas/geojson/HIDROVIAS.geojson",
+   "aerodromos": "https://sistemas.anac.gov.br/dadosabertos/Aerodromos/Aer%C3%B3dromos%20P%C3%BAblicos/Lista%20de%20aer%C3%B3dromos%20p%C3%BAblicos/AerodromosPublicos.csv",
+   "voos": "https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo/Dados_Estatisticos.csv"
   },
-  "gerado_em": "2026-11-25T15:53:48Z",
+  "gerado_em": "2026-11-25T17:29:41Z",
   "servidor_osrm": "OSRM local no GitHub Actions",
   "metodologia": {
    "tempo": "Duração do OSRM (perfil car.lua: velocidade por classe de via, maxspeed e superfície do OSM; track incluído a 15 km/h). É tempo de fluxo livre: sem trânsito, chuva ou atoleiro.",
@@ -17,14 +20,18 @@
    "balsa": "Trecho de balsa no OSRM: duration do OSM ou 5 km/h. Espera, horário e fila não entram.",
    "hospital": "Menor tempo por estrada até hospital geral, especializado ou unidade mista do CNES (ativo, com coordenada) ou hospital do OSM. Sede sem malha no OSM: hospital a até 3 km em linha reta, tempo estimado a 20 km/h com fator 1,3 (estimado=true).",
    "isocronas": "Grade de 0.05° (~5,5 km); cada célula com via recebe o tempo do primeiro nó de via do OSM nela. Faixas cumulativas de 60, 120, 240 min a partir de Manaus e da sede mais próxima. Polígono = união das células, simplificado.",
-   "populacao_por_faixa": "População do município inteiro atribuída ao tempo da sede (Censo 2022). Aproximação: ignora quem mora fora da sede (zona rural, comunidades ribeirinhas)."
+   "populacao_por_faixa": "População do município inteiro atribuída ao tempo da sede (Censo 2022). Aproximação: ignora quem mora fora da sede (zona rural, comunidades ribeirinhas).",
+   "rio": "Menor caminho (Dijkstra) na malha hidroviária do SNV/DNIT, da sede até Manaus. Pontas a até 3 km viram confluência e pedaços soltos a até 15 km são emendados (lacunas da malha). Sede a mais de 5 km da malha: o trecho até ela é estimado (linha reta × 1.3); a mais de 60 km, fica fora. Tempo = distância ÷ velocidade de referência (14 km/h barco regional, 30 km/h lancha expressa): parâmetro do DMOB a validar, sem fonte oficial; só ordem de grandeza.",
+   "aviao": "Aeródromo público da ANAC que serve o município (Município Servido) ou a até 25 km da sede. Voo regular = decolagens do grupo REGULAR entre o aeródromo e SBEG nos 12 últimos meses do arquivo de dados estatísticos da ANAC (11/2025 a 10/2026). Tempo de voo = horas voadas ÷ decolagens (média real da ANAC). Linha no mapa = linha reta."
   },
   "limitacoes": [
    "Malha do OSM incompleta nos ramais e nas vias urbanas do interior: falta de via vira 'sem ligação' ou tempo maior.",
    "Tempo de espera de balsa não incluído; trechos fluviais acima de 25 km não contam como ligação rodoviária.",
    "BR-319 (trecho do meio) e ramais de terra podem estar intransitáveis na cheia; o OSRM não sabe disso.",
    "Coordenada do CNES vem do cadastro da unidade e pode estar errada; hospital do OSM pode estar desatualizado.",
-   "Coordenada da sede é um ponto (praça/prefeitura), não o centro populacional."
+   "Coordenada da sede é um ponto (praça/prefeitura), não o centro populacional.",
+   "Rio: a malha do SNV traz os rios principais; rios menores e furos não entram, e a distância segue o eixo do rio. Tempo de barco é estimativa (velocidade de referência, sem horário, paradas, correnteza nem seca).",
+   "Avião: só aeródromos públicos da ANAC; pista privada e táxi aéreo não entram. Voo regular conta decolagens registradas, não horário vigente."
   ],
   "balsas_longas_removidas": 73
  },
@@ -43,7 +50,16 @@
   "pop_hospital_ate_120": 3834928,
   "hospitais": 294,
   "terminais": 31,
-  "celulas_grade": 14284
+  "celulas_grade": 14284,
+  "com_rio": 59,
+  "com_aerodromo": 22,
+  "com_voo_regular": 14,
+  "periodo_voos": "11/2025 a 10/2026",
+  "aeroporto_manaus": {
+   "oaci": "SBEG",
+   "lat": -3.0411111,
+   "lon": -60.050556
+  }
  },
  "municipios": [
   {
@@ -77,6 +93,25 @@
     "estimado": false,
     "lat": -3.303888888888889,
     "lon": -64.77852777777778
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 674,
+    "h_barco": 48.1,
+    "h_lancha": 22.5,
+    "encaixe_km": 1.6,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SBTF",
+    "nome": "Prefeito Orlando Marinho",
+    "lat": -3.3802778,
+    "lon": -64.725278,
+    "km_reta": 520,
+    "voo_regular": true,
+    "voos_semana": 2.8,
+    "tempo_voo_min": 78,
+    "passageiros_12m": 21990
    }
   },
   {
@@ -109,7 +144,16 @@
     "km_linha_reta": 4.5,
     "lat": -3.407938888888889,
     "lon": -68.2240361111111
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1275,
+    "h_barco": 91.1,
+    "h_lancha": 42.5,
+    "encaixe_km": 3.0,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1300086",
@@ -141,7 +185,16 @@
     "km_linha_reta": 16.1,
     "lat": -3.476125,
     "lon": -61.509775
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 220,
+    "h_barco": 15.7,
+    "h_lancha": 7.3,
+    "encaixe_km": 3.4,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1300102",
@@ -174,7 +227,16 @@
     "estimado": false,
     "lat": -3.773333333333333,
     "lon": -61.644444444444446
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 257,
+    "h_barco": 18.3,
+    "h_lancha": 8.6,
+    "encaixe_km": 5.5,
+    "trecho_estimado_km": 7
+   },
+   "aereo": null
   },
   {
    "cod": "1300144",
@@ -207,6 +269,20 @@
     "estimado": false,
     "lat": -2.674016666666667,
     "lon": -56.627694444444444
+   },
+   "fluvial": {
+    "na_malha": false
+   },
+   "aereo": {
+    "oaci": "SWYN",
+    "nome": "Apuí",
+    "lat": -7.1722222,
+    "lon": -59.838889,
+    "km_reta": 460,
+    "voo_regular": true,
+    "voos_semana": 0.1,
+    "tempo_voo_min": 84,
+    "passageiros_12m": 848
    }
   },
   {
@@ -240,7 +316,16 @@
     "estimado": false,
     "lat": -4.362933333333333,
     "lon": -70.1924
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1626,
+    "h_barco": 116.1,
+    "h_lancha": 54.2,
+    "encaixe_km": 1.2,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1300300",
@@ -273,7 +358,16 @@
     "estimado": false,
     "lat": -4.050216666666667,
     "lon": -59.37213888888889
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 225,
+    "h_barco": 16.1,
+    "h_lancha": 7.5,
+    "encaixe_km": 10.9,
+    "trecho_estimado_km": 14
+   },
+   "aereo": null
   },
   {
    "cod": "1300409",
@@ -305,6 +399,25 @@
     "km_linha_reta": 154.0,
     "lat": -1.457222222222222,
     "lon": -61.62972222222222
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 447,
+    "h_barco": 31.9,
+    "h_lancha": 14.9,
+    "encaixe_km": 2.3,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWBC",
+    "nome": "Barcelos",
+    "lat": -0.98111111,
+    "lon": -62.919444,
+    "km_reta": 393,
+    "voo_regular": true,
+    "voos_semana": 3.5,
+    "tempo_voo_min": 102,
+    "passageiros_12m": 1241
    }
   },
   {
@@ -337,7 +450,16 @@
     "km_linha_reta": 39.0,
     "lat": -2.836111111111111,
     "lon": -57.41722222222222
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 451,
+    "h_barco": 32.2,
+    "h_lancha": 15.0,
+    "encaixe_km": 21.3,
+    "trecho_estimado_km": 28
+   },
+   "aereo": null
   },
   {
    "cod": "1300607",
@@ -370,6 +492,25 @@
     "estimado": false,
     "lat": -4.362933333333333,
     "lon": -70.1924
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1592,
+    "h_barco": 113.7,
+    "h_lancha": 53.1,
+    "encaixe_km": 1.2,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SBTT",
+    "nome": "Tabatinga",
+    "lat": -4.2505556,
+    "lon": -69.937778,
+    "km_reta": 1105,
+    "voo_regular": true,
+    "voos_semana": 5.7,
+    "tempo_voo_min": 129,
+    "passageiros_12m": 44516
    }
   },
   {
@@ -402,7 +543,16 @@
     "km_linha_reta": 23.4,
     "lat": -3.726,
     "lon": -61.24186111111111
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 260,
+    "h_barco": 18.6,
+    "h_lancha": 8.7,
+    "encaixe_km": 1.6,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1300680",
@@ -435,7 +585,16 @@
     "estimado": false,
     "lat": -2.836111111111111,
     "lon": -57.41722222222222
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 352,
+    "h_barco": 25.2,
+    "h_lancha": 11.7,
+    "encaixe_km": 30.8,
+    "trecho_estimado_km": 40
+   },
+   "aereo": null
   },
   {
    "cod": "1300706",
@@ -468,6 +627,22 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 2405,
+    "h_barco": 171.8,
+    "h_lancha": 80.2,
+    "encaixe_km": 1.1,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWNK",
+    "nome": "Novo Campo",
+    "lat": -8.8347222,
+    "lon": -67.3125,
+    "km_reta": 1029,
+    "voo_regular": false
    }
   },
   {
@@ -500,6 +675,25 @@
     "km_linha_reta": 5.3,
     "lat": -4.378666666666667,
     "lon": -59.63388888888889
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 330,
+    "h_barco": 23.6,
+    "h_lancha": 11.0,
+    "encaixe_km": 1.8,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWBR",
+    "nome": "Borba",
+    "lat": -4.4061111,
+    "lon": -59.6025,
+    "km_reta": 160,
+    "voo_regular": true,
+    "voos_semana": 1.5,
+    "tempo_voo_min": 54,
+    "passageiros_12m": 236
    }
   },
   {
@@ -532,7 +726,16 @@
     "km_linha_reta": 36.7,
     "lat": -3.476125,
     "lon": -61.509775
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 239,
+    "h_barco": 17.1,
+    "h_lancha": 8.0,
+    "encaixe_km": 30.5,
+    "trecho_estimado_km": 40
+   },
+   "aereo": null
   },
   {
    "cod": "1300904",
@@ -564,7 +767,16 @@
     "km_linha_reta": 84.9,
     "lat": -5.762472222222222,
     "lon": -64.39258333333333
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1314,
+    "h_barco": 93.9,
+    "h_lancha": 43.8,
+    "encaixe_km": 2.0,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1301001",
@@ -596,6 +808,25 @@
     "km_linha_reta": 182.7,
     "lat": -3.470583333333333,
     "lon": -66.06475833333333
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1478,
+    "h_barco": 105.6,
+    "h_lancha": 49.3,
+    "encaixe_km": 7.7,
+    "trecho_estimado_km": 10
+   },
+   "aereo": {
+    "oaci": "SWCA",
+    "nome": "Carauari",
+    "lat": -4.8713889,
+    "lon": -66.8975,
+    "km_reta": 786,
+    "voo_regular": true,
+    "voos_semana": 0.0,
+    "tempo_voo_min": 184,
+    "passageiros_12m": 0
    }
   },
   {
@@ -627,7 +858,16 @@
     "km_linha_reta": 83.5,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 162,
+    "h_barco": 11.6,
+    "h_lancha": 5.4,
+    "encaixe_km": 49.4,
+    "trecho_estimado_km": 64
+   },
+   "aereo": null
   },
   {
    "cod": "1301159",
@@ -660,7 +900,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 94,
+    "h_barco": 6.7,
+    "h_lancha": 3.1,
+    "encaixe_km": 21.6,
+    "trecho_estimado_km": 28
+   },
+   "aereo": null
   },
   {
    "cod": "1301209",
@@ -692,6 +941,25 @@
     "km_linha_reta": 153.8,
     "lat": -3.529722222222222,
     "lon": -64.40980555555555
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 453,
+    "h_barco": 32.4,
+    "h_lancha": 15.1,
+    "encaixe_km": 6.1,
+    "trecho_estimado_km": 8
+   },
+   "aereo": {
+    "oaci": "SWKO",
+    "nome": "Coari",
+    "lat": -4.1341667,
+    "lon": -63.1325,
+    "km_reta": 363,
+    "voo_regular": true,
+    "voos_semana": 1.2,
+    "tempo_voo_min": 98,
+    "passageiros_12m": 290
    }
   },
   {
@@ -725,7 +993,16 @@
     "estimado": false,
     "lat": -3.773333333333333,
     "lon": -61.644444444444446
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 320,
+    "h_barco": 22.9,
+    "h_lancha": 10.7,
+    "encaixe_km": 2.6,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1301407",
@@ -757,6 +1034,22 @@
     "km_linha_reta": 257.6,
     "lat": -4.362933333333333,
     "lon": -70.1924
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 2483,
+    "h_barco": 177.4,
+    "h_lancha": 82.8,
+    "encaixe_km": 1.3,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWEI",
+    "nome": "Eirunepé",
+    "lat": -6.6394444,
+    "lon": -69.879722,
+    "km_reta": 1160,
+    "voo_regular": false
    }
   },
   {
@@ -789,7 +1082,16 @@
     "km_linha_reta": 342.4,
     "lat": -4.362933333333333,
     "lon": -70.1924
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 2669,
+    "h_barco": 190.7,
+    "h_lancha": 89.0,
+    "encaixe_km": 0.5,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1301605",
@@ -821,6 +1123,22 @@
     "km_linha_reta": 96.8,
     "lat": -1.8214,
     "lon": -66.60935
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 900,
+    "h_barco": 64.3,
+    "h_lancha": 30.0,
+    "encaixe_km": 3.4,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWOB",
+    "nome": "Fonte Boa",
+    "lat": -2.5325,
+    "lon": -66.083333,
+    "km_reta": 672,
+    "voo_regular": false
    }
   },
   {
@@ -854,7 +1172,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 3288,
+    "h_barco": 234.9,
+    "h_lancha": 109.6,
+    "encaixe_km": 1.7,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1301704",
@@ -887,6 +1214,22 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 981,
+    "h_barco": 70.0,
+    "h_lancha": 32.7,
+    "encaixe_km": 2.1,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWHT",
+    "nome": "Humaitá",
+    "lat": -7.5347222,
+    "lon": -63.072222,
+    "km_reta": 601,
+    "voo_regular": false
    }
   },
   {
@@ -919,7 +1262,16 @@
     "km_linha_reta": 341.6,
     "lat": -4.362933333333333,
     "lon": -70.1924
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 3040,
+    "h_barco": 217.1,
+    "h_lancha": 101.3,
+    "encaixe_km": 0.7,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1301852",
@@ -952,7 +1304,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 70,
+    "h_barco": 5.0,
+    "h_lancha": 2.3,
+    "encaixe_km": 2.1,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1301902",
@@ -985,6 +1346,22 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 210,
+    "h_barco": 15.0,
+    "h_lancha": 7.0,
+    "encaixe_km": 2.1,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SBIC",
+    "nome": "Itacoatiara",
+    "lat": -3.1263889,
+    "lon": -58.481667,
+    "km_reta": 174,
+    "voo_regular": false
    }
   },
   {
@@ -1017,7 +1394,16 @@
     "km_linha_reta": 278.1,
     "lat": -4.295138888888889,
     "lon": -69.53769444444444
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 2016,
+    "h_barco": 144.0,
+    "h_lancha": 67.2,
+    "encaixe_km": 0.5,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1302009",
@@ -1050,7 +1436,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 296,
+    "h_barco": 21.1,
+    "h_lancha": 9.9,
+    "encaixe_km": 8.9,
+    "trecho_estimado_km": 12
+   },
+   "aereo": null
   },
   {
    "cod": "1302108",
@@ -1081,7 +1476,16 @@
     "km_linha_reta": 36.2,
     "lat": -1.8214,
     "lon": -66.60935
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1072,
+    "h_barco": 76.5,
+    "h_lancha": 35.7,
+    "encaixe_km": 4.6,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1302207",
@@ -1114,7 +1518,16 @@
     "estimado": false,
     "lat": -3.470583333333333,
     "lon": -66.06475833333333
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1069,
+    "h_barco": 76.4,
+    "h_lancha": 35.6,
+    "encaixe_km": 1.7,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1302306",
@@ -1146,7 +1559,16 @@
     "km_linha_reta": 21.6,
     "lat": -2.851944444444444,
     "lon": -66.93
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1020,
+    "h_barco": 72.8,
+    "h_lancha": 34.0,
+    "encaixe_km": 4.0,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1302405",
@@ -1179,6 +1601,25 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1548,
+    "h_barco": 110.5,
+    "h_lancha": 51.6,
+    "encaixe_km": 1.0,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWLB",
+    "nome": "Lábrea",
+    "lat": -7.2788889,
+    "lon": -64.769444,
+    "km_reta": 704,
+    "voo_regular": true,
+    "voos_semana": 0.0,
+    "tempo_voo_min": 162,
+    "passageiros_12m": 418
    }
   },
   {
@@ -1212,7 +1653,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 120,
+    "h_barco": 8.6,
+    "h_lancha": 4.0,
+    "encaixe_km": 3.1,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1302553",
@@ -1245,7 +1695,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 116,
+    "h_barco": 8.3,
+    "h_lancha": 3.9,
+    "encaixe_km": 11.7,
+    "trecho_estimado_km": 15
+   },
+   "aereo": null
   },
   {
    "cod": "1302603",
@@ -1278,7 +1737,9 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": null,
+   "aereo": null
   },
   {
    "cod": "1302702",
@@ -1311,6 +1772,25 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 624,
+    "h_barco": 44.5,
+    "h_lancha": 20.8,
+    "encaixe_km": 1.5,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SBMY",
+    "nome": "Manicoré",
+    "lat": -5.8111111,
+    "lon": -61.278333,
+    "km_reta": 337,
+    "voo_regular": true,
+    "voos_semana": 3.0,
+    "tempo_voo_min": 85,
+    "passageiros_12m": 1176
    }
   },
   {
@@ -1343,7 +1823,16 @@
     "km_linha_reta": 115.2,
     "lat": -1.8214,
     "lon": -66.60935
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 908,
+    "h_barco": 64.9,
+    "h_lancha": 30.3,
+    "encaixe_km": 4.2,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1302900",
@@ -1375,6 +1864,25 @@
     "km_linha_reta": 31.4,
     "lat": -3.159682775,
     "lon": -57.547835927777776
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 318,
+    "h_barco": 22.7,
+    "h_lancha": 10.6,
+    "encaixe_km": 59.1,
+    "trecho_estimado_km": 77
+   },
+   "aereo": {
+    "oaci": "SWMW",
+    "nome": "Maués",
+    "lat": -3.3719444,
+    "lon": -57.724722,
+    "km_reta": 261,
+    "voo_regular": true,
+    "voos_semana": 0.3,
+    "tempo_voo_min": 80,
+    "passageiros_12m": 231
    }
   },
   {
@@ -1408,7 +1916,16 @@
     "estimado": false,
     "lat": -2.192383333333333,
     "lon": -56.70921666666667
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 568,
+    "h_barco": 40.6,
+    "h_lancha": 18.9,
+    "encaixe_km": 35.5,
+    "trecho_estimado_km": 46
+   },
+   "aereo": null
   },
   {
    "cod": "1303106",
@@ -1440,7 +1957,16 @@
     "km_linha_reta": 35.1,
     "lat": -4.050216666666667,
     "lon": -59.37213888888889
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 243,
+    "h_barco": 17.4,
+    "h_lancha": 8.1,
+    "encaixe_km": 1.6,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1303205",
@@ -1473,7 +1999,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 127,
+    "h_barco": 9.1,
+    "h_lancha": 4.2,
+    "encaixe_km": 2.1,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1303304",
@@ -1506,7 +2041,16 @@
     "estimado": false,
     "lat": -2.674016666666667,
     "lon": -56.627694444444444
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 476,
+    "h_barco": 34.0,
+    "h_lancha": 15.9,
+    "encaixe_km": 1.8,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1303403",
@@ -1539,6 +2083,25 @@
     "estimado": false,
     "lat": -2.674016666666667,
     "lon": -56.627694444444444
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 474,
+    "h_barco": 33.9,
+    "h_lancha": 15.8,
+    "encaixe_km": 2.8,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWPI",
+    "nome": "Parintins",
+    "lat": -2.6736111,
+    "lon": -56.7775,
+    "km_reta": 366,
+    "voo_regular": true,
+    "voos_semana": 5.2,
+    "tempo_voo_min": 72,
+    "passageiros_12m": 22800
    }
   },
   {
@@ -1571,7 +2134,16 @@
     "km_linha_reta": 359.8,
     "lat": -5.762472222222222,
     "lon": -64.39258333333333
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 2134,
+    "h_barco": 152.4,
+    "h_lancha": 71.1,
+    "encaixe_km": 0.9,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1303536",
@@ -1604,7 +2176,11 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": false
+   },
+   "aereo": null
   },
   {
    "cod": "1303569",
@@ -1637,7 +2213,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 94,
+    "h_barco": 6.7,
+    "h_lancha": 3.1,
+    "encaixe_km": 39.8,
+    "trecho_estimado_km": 52
+   },
+   "aereo": null
   },
   {
    "cod": "1303601",
@@ -1669,6 +2254,22 @@
     "km_linha_reta": 237.2,
     "lat": -1.8214,
     "lon": -66.60935
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 717,
+    "h_barco": 51.2,
+    "h_lancha": 23.9,
+    "encaixe_km": 1.8,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWTP",
+    "nome": "SANTA ISABEL DO RIO NEGRO",
+    "lat": -0.37861111,
+    "lon": -64.993056,
+    "km_reta": 624,
+    "voo_regular": false
    }
   },
   {
@@ -1701,6 +2302,22 @@
     "km_linha_reta": 14.1,
     "lat": -3.072452572222222,
     "lon": -68.07090927777777
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1217,
+    "h_barco": 86.9,
+    "h_lancha": 40.6,
+    "encaixe_km": 1.9,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SWII",
+    "nome": "Ipiranga",
+    "lat": -2.9402778,
+    "lon": -69.694167,
+    "km_reta": 1071,
+    "voo_regular": false
    }
   },
   {
@@ -1734,7 +2351,16 @@
     "estimado": false,
     "lat": -3.382777777777778,
     "lon": -59.72277777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 293,
+    "h_barco": 20.9,
+    "h_lancha": 9.8,
+    "encaixe_km": 17.0,
+    "trecho_estimado_km": 22
+   },
+   "aereo": null
   },
   {
    "cod": "1303809",
@@ -1766,6 +2392,25 @@
     "km_linha_reta": 196.5,
     "lat": -1.8214,
     "lon": -66.60935
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 980,
+    "h_barco": 70.0,
+    "h_lancha": 32.7,
+    "encaixe_km": 2.1,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SBUA",
+    "nome": "São Gabriel da Cachoeira",
+    "lat": -0.14805556,
+    "lon": -66.985833,
+    "km_reta": 835,
+    "voo_regular": true,
+    "voos_semana": 2.2,
+    "tempo_voo_min": 106,
+    "passageiros_12m": 18297
    }
   },
   {
@@ -1797,6 +2442,22 @@
     "km_linha_reta": 47.9,
     "lat": -3.586211111111111,
     "lon": -69.38078888888889
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1362,
+    "h_barco": 97.3,
+    "h_lancha": 45.4,
+    "encaixe_km": 1.5,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SDCG",
+    "nome": "Senadora Eunice Michiles",
+    "lat": -3.4691667,
+    "lon": -68.921111,
+    "km_reta": 986,
+    "voo_regular": false
    }
   },
   {
@@ -1829,7 +2490,16 @@
     "km_linha_reta": 12.8,
     "lat": -2.577580555555556,
     "lon": -57.986825
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 355,
+    "h_barco": 25.4,
+    "h_lancha": 11.8,
+    "encaixe_km": 23.6,
+    "trecho_estimado_km": 31
+   },
+   "aereo": null
   },
   {
    "cod": "1304062",
@@ -1861,6 +2531,25 @@
     "km_linha_reta": 31.2,
     "lat": -4.362933333333333,
     "lon": -70.1924
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1608,
+    "h_barco": 114.8,
+    "h_lancha": 53.6,
+    "encaixe_km": 1.3,
+    "trecho_estimado_km": 0
+   },
+   "aereo": {
+    "oaci": "SBTT",
+    "nome": "Tabatinga",
+    "lat": -4.2505556,
+    "lon": -69.937778,
+    "km_reta": 1105,
+    "voo_regular": true,
+    "voos_semana": 5.7,
+    "tempo_voo_min": 129,
+    "passageiros_12m": 44516
    }
   },
   {
@@ -1893,7 +2582,16 @@
     "km_linha_reta": 135.0,
     "lat": -5.762472222222222,
     "lon": -64.39258333333333
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 781,
+    "h_barco": 55.8,
+    "h_lancha": 26.0,
+    "encaixe_km": 1.4,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1304203",
@@ -1925,6 +2623,25 @@
     "km_linha_reta": 9.7,
     "lat": -3.303888888888889,
     "lon": -64.77852777777778
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 662,
+    "h_barco": 47.3,
+    "h_lancha": 22.1,
+    "encaixe_km": 7.1,
+    "trecho_estimado_km": 9
+   },
+   "aereo": {
+    "oaci": "SBTF",
+    "nome": "Prefeito Orlando Marinho",
+    "lat": -3.3802778,
+    "lon": -64.725278,
+    "km_reta": 520,
+    "voo_regular": true,
+    "voos_semana": 2.8,
+    "tempo_voo_min": 78,
+    "passageiros_12m": 21990
    }
   },
   {
@@ -1957,7 +2674,16 @@
     "km_linha_reta": 38.6,
     "lat": -3.072452572222222,
     "lon": -68.07090927777777
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 1184,
+    "h_barco": 84.6,
+    "h_lancha": 39.5,
+    "encaixe_km": 2.4,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   },
   {
    "cod": "1304260",
@@ -1988,7 +2714,16 @@
     "km_linha_reta": 50.5,
     "lat": -3.303888888888889,
     "lon": -64.77852777777778
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 727,
+    "h_barco": 51.9,
+    "h_lancha": 24.2,
+    "encaixe_km": 5.5,
+    "trecho_estimado_km": 7
+   },
+   "aereo": null
   },
   {
    "cod": "1304302",
@@ -2020,7 +2755,16 @@
     "km_linha_reta": 26.4,
     "lat": -2.577580555555556,
     "lon": -57.986825
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 356,
+    "h_barco": 25.4,
+    "h_lancha": 11.9,
+    "encaixe_km": 13.9,
+    "trecho_estimado_km": 18
+   },
+   "aereo": null
   },
   {
    "cod": "1304401",
@@ -2053,7 +2797,16 @@
     "estimado": false,
     "lat": -3.122,
     "lon": -58.15847222222222
-   }
+   },
+   "fluvial": {
+    "na_malha": true,
+    "km": 246,
+    "h_barco": 17.5,
+    "h_lancha": 8.2,
+    "encaixe_km": 2.4,
+    "trecho_estimado_km": 0
+   },
+   "aereo": null
   }
  ]
 }
