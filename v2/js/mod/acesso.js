@@ -193,7 +193,7 @@ export async function render(el) {
   pinta();
 
   ganhoObra($("#obras", el), mun);
-  desenharMapa(el, mun).catch(e => { $("#mapa", el).innerHTML = `<div class="aviso" style="margin:12px">Mapa indisponível: ${esc(e.message)}. A tabela abaixo tem os mesmos dados.</div>`; });
+  desenharMapa(el, mun, R).catch(e => { $("#mapa", el).innerHTML = `<div class="aviso" style="margin:12px">Mapa indisponível: ${esc(e.message)}. A tabela abaixo tem os mesmos dados.</div>`; });
 }
 
 
@@ -205,7 +205,7 @@ const ICONE = {
   Terminal: `<svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6" cy="2.4" r="1.3"/><path d="M6 3.7V11M3.4 5.6h5.2M1.6 7.4C2 9.6 3.8 11 6 11s4-1.4 4.4-3.6"/></svg>`,
 };
 
-async function desenharMapa(el, mun) {
+async function desenharMapa(el, mun, R = {}) {
   const L = await carregarLeaflet();
   const box = $("#mapa", el);
   if (!box?.isConnected) return;   // usuário já saiu da rota
