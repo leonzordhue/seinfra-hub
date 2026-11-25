@@ -415,7 +415,7 @@ async function desenharMapa(el, mun, R = {}) {
     const manaus = { nome: "Manaus", min: m.tempo_manaus_min, km: m.km_manaus, km_linha_reta: m.km_linha_reta_manaus };
     card.innerHTML = `<button type="button" class="fechar" aria-label="Fechar">×</button><h3>${esc(m.nome)}</h3>
       <p class="sub">${num(m.pop)} habitantes · ${m.ligacao_rodoviaria ? (m.travessia_balsa ? "estrada com travessia de balsa" : "ligada a Manaus por estrada") : "só fluvial / aéreo até Manaus"}</p>
-      <ul>${m.nome === "Manaus" ? "" : linhaCard("Manaus", "Até Manaus", manaus)}${m.nome === "Manaus" ? "" : linhaRio(m.fluvial) + linhaAer(m.aereo)}${linhaCard("Hospital", "Hospital mais próximo", m.hospital_mais_proximo)}${linhaCard("Terminal", "Terminal flutuante mais próximo", m.terminal_mais_proximo)}</ul>
+      <ul>${m.nome === "Manaus" ? "" : linhaCard("Manaus", "Por estrada até Manaus", manaus)}${m.nome === "Manaus" ? "" : linhaRio(m.fluvial) + linhaAer(m.aereo)}${linhaCard("Hospital", "Hospital mais próximo", m.hospital_mais_proximo)}${linhaCard("Terminal", "Terminal flutuante mais próximo", m.terminal_mais_proximo)}</ul>
       ${m.travessia_balsa ? `<p class="sub" style="margin:8px 0 0">Tempo sem a espera da balsa.</p>` : ""}${m.fluvial?.na_malha ? `<p class="sub" style="margin:8px 0 0">Barco: estimativa por velocidade média de referência, sem horário nem paradas.</p>` : ""}${rotas ? "" : `<p class="sub" style="margin:8px 0 0">O traçado das rotas aparece após a próxima rodada do robô.</p>`}`;
     card.hidden = false;
     card.querySelector(".fechar").onclick = () => { limpar(); mapa.fitBounds(L.latLngBounds(mun.map(x => [x.lat, x.lon])), { padding: [20, 20] }); };
