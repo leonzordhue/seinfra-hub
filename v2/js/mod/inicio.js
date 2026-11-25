@@ -28,7 +28,8 @@ const ESTILO_PAINEL = `<style>
   .fontes-faixa th { font-weight: 600; color: var(--tinta-3); font-size: 12px; }
   .fontes-faixa td a { color: var(--tinta); }
   .mudou .t2 { white-space: normal; }
-  @media (max-width: 640px) { .fontes-faixa th:nth-child(2), .fontes-faixa td:nth-child(2) { display: none; } }
+  @media (max-width: 640px) { .fontes-faixa th:nth-child(2), .fontes-faixa td:nth-child(2) { display: none; }
+    .painel .mapa-mini { display: none; } }   /* no celular o mini-mapa empurrava "Onde agir" para 1.800 px; o botão "Abrir o mapa" fica nas ações */
 </style>`;
 const TIPO = { oficial: "dado oficial", monitoramento: "monitoramento (notícias)", estimativa: "estimativa calculada", derivado: "dado derivado", levantamento: "levantamento pontual" };
 const idade = d => d ? Math.floor((Date.now() - new Date(`${d}T12:00:00`)) / 864e5) : null;

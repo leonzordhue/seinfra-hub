@@ -72,7 +72,7 @@ const ESTILO = `<style>
   .ac-card li small { display: block; color: var(--tinta-3); font-size: 12px; }
   .ac-card .fechar { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; background: none; color: var(--tinta-3); font-size: 20px; cursor: pointer; border-radius: 6px; }
   .ac-card .fechar:hover { background: var(--sup-2); }
-  @media (max-width: 640px) { .ac-painel { position: static; margin-bottom: 8px; grid-auto-flow: column; overflow-x: auto; }
+  @media (max-width: 640px) { .ac-painel { position: static; margin: 8px 0; display: flex; flex-wrap: wrap; gap: 4px 14px; overflow: visible; box-shadow: none; } .ac-painel label { white-space: nowrap; min-height: 36px; display: inline-flex; align-items: center; gap: 6px; } .ac-painel .seg { flex-basis: 100%; }
     .ac-card { position: static; width: auto; margin-top: 8px; } }
   .ac-leg .ln { display: inline-block; width: 22px; height: 4px; border-radius: 2px; vertical-align: 3px; margin: 0 4px 0 10px; }
   .ac-leg .ln.rio { background: repeating-linear-gradient(90deg, var(--ac-rio) 0 8px, transparent 8px 11px); }
