@@ -121,6 +121,7 @@ function secaoMudou(P) {
           <ul>${term.map(t => `<li><div class="m-l1"><b>${esc(t.municipio)}</b></div><div class="m-l2">${esc(t.localidade)}</div></li>`).join("")}</ul>` : ""}
       </div>
     </div>
+    ${(M.contratos_corrigidos || []).length ? `<p class="m-nota">${plural(M.contratos_corrigidos.length, "contrato teve", "contratos tiveram")} a situação corrigida na leitura das fichas do e-Obras (mudança registrada antes de ${data(M.desde)}, fora desta lista): ${M.contratos_corrigidos.slice(0, 5).map(c => `${esc(ctId(c.id))} ${esc(c.para)} em ${data(c.desde)}`).join("; ")}${M.contratos_corrigidos.length > 5 ? "…" : ""}.</p>` : ""}
     <p class="m-nota">Comparação do dado atual com o publicado há 7 dias${base.length ? ` (base mais recente onde o histórico é curto: ${base.join(", ")})` : ""}. Sinistros pela data da notícia.</p>
   </section>`;
 }

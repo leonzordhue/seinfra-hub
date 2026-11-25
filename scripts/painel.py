@@ -97,7 +97,7 @@ def diff_contratos(novo, velho):
     entrou = [{"id": k, "sit": c.get("sit"), "mun": c.get("mun"), "obj": (c.get("obj") or "")[:140], "valor": c.get("v_atual")}
               for k, c in n.items() if k not in v]
     mudou = [{"id": k, "de": v[k].get("sit"), "para": c.get("sit"), "mun": c.get("mun"), "obj": (c.get("obj") or "")[:140],
-              "valor": c.get("v_atual"), "fis": c.get("fis")}
+              "valor": c.get("v_atual"), "fis": c.get("fis"), "desde": c.get("desde")}
              for k, c in n.items() if k in v and c.get("sit") != v[k].get("sit")]
     return entrou, mudou
 
@@ -131,7 +131,11 @@ def mudancas(hoje):
             m["sem_historico"].append(nome)
         else:
             m["base"][nome] = b   # data da versão usada na comparação
-    m["contratos_novos"], m["contratos_situacao"] = diff_contratos(e_novo, e_velho) if e_velho else ([], [])
+    m["contratos_novos"], mudou = diff_contratos(e_novo, e_velho) if e_velho else ([], [])
+    # situação com data (ficha do e-Obras) anterior à janela = leitura corrigida, não mudança da semana
+    # (25/11/2026: 26 rescisões de 2022-2026 só apareceram após o ajuste do ler_fichas_eobras.py)
+    m["contratos_situacao"] = [c for c in mudou if not c.get("desde") or c["desde"] >= desde]
+    m["contratos_corrigidos"] = [c for c in mudou if c.get("desde") and c["desde"] < desde]
     m["licitacoes_novas"] = diff_licitacoes(l_novo, l_velho) if l_velho else []
     m["terminais_entregues"] = diff_terminais(t_novo, t_velho) if t_velho else []
     m["sinistros"] = sorted(sinistros_recentes(ler("sinistros.json"), desde), key=lambda o: o["data"], reverse=True)
