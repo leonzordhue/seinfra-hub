@@ -38,6 +38,11 @@ const CSS = `
 /* pino e ficha dos entregues no estilo da v1 (Paulo, 25/11/2026) */
 .pino-term { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, #0077b6, #023e8a); border: 3px solid #fff; box-shadow: 0 3px 10px rgba(0,119,182,.5); display: grid; place-items: center; color: #fff; cursor: pointer; transition: transform .15s; }
 .pino-term svg { width: 15px; height: 15px; }
+/* tamanho pelo zoom: na vista do estado os pinos grandes se cobriam (Paulo, 25/11/2026) */
+.mapa-term.z-longe .pino-term { width: 16px; height: 16px; border-width: 2px; margin: 7px; }
+.mapa-term.z-longe .pino-term svg { width: 9px; height: 9px; }
+.mapa-term.z-medio .pino-term { width: 22px; height: 22px; border-width: 2px; margin: 4px; }
+.mapa-term.z-medio .pino-term svg { width: 12px; height: 12px; }
 .leaflet-marker-icon:hover .pino-term, .leaflet-marker-icon:focus-visible .pino-term { transform: scale(1.15); }
 .leaflet-marker-icon:focus-visible { outline: none; }
 .leaflet-marker-icon:focus-visible .pino-term { box-shadow: 0 0 0 3px var(--ouro), 0 3px 10px rgba(0,119,182,.5); }
@@ -207,8 +212,11 @@ export async function render(el) {
     // entregues por último, como marcador HTML (pane acima do canvas dos pedidos): Tab + Enter também abrem a ficha
     ent.forEach(t => L.marker([t.lat, t.lon], { icon: pino(), title: `${t.localidade} (${t.municipio}) · entregue`, alt: `Terminal entregue: ${t.localidade}, ${t.municipio}`, riseOnHover: true })
       .on("click", () => fichaEnt(t)).addTo(m));
+    const escala = () => { const z = m.getZoom(); box.classList.toggle("z-longe", z <= 6); box.classList.toggle("z-medio", z >= 7 && z <= 8); };
+    m.on("zoomend", escala);
     const tudo = pts.concat(ent.map(t => [t.lat, t.lon]));
     if (tudo.length) m.fitBounds(tudo, { padding: [24, 24], maxZoom: 7 });
+    escala();
   } catch (e) {
     $("#mapaTerm").innerHTML = `<p class="vazio">Mapa indisponível: ${esc(e.message)}</p>`;
   }
