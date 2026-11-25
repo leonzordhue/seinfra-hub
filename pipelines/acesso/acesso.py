@@ -43,6 +43,21 @@ BALSA_MAX_KM = 25                   # route=ferry acima disso é linha fluvial, 
 SNAP_MAX_M = 3000                   # sede/hospital a mais de 3 km da via mais próxima: sem acesso por estrada no OSM
 VEL_URBANA = 20                     # km/h, só para o fallback em linha reta dentro da cidade (ver hosp_mais_proximo)
 ROTA_TOL = 0.0015                   # graus (~165 m): simplificação do traçado das rotas no mapa
+# ── multimodal (rio e avião), [Claude] 25/11/2026 ──
+URL_HIDRO = "https://leonzordhue.github.io/atlas-amazonas/geojson/HIDROVIAS.geojson"   # DNIT, SNV aquaviário (vw_snv_aqa)
+URL_AERO = "https://sistemas.anac.gov.br/dadosabertos/Aerodromos/Aer%C3%B3dromos%20P%C3%BAblicos/Lista%20de%20aer%C3%B3dromos%20p%C3%BAblicos/AerodromosPublicos.csv"
+URL_ANAC_EST = "https://sistemas.anac.gov.br/dadosabertos/Voos%20e%20opera%C3%A7%C3%B5es%20a%C3%A9reas/Dados%20Estat%C3%ADsticos%20do%20Transporte%20A%C3%A9reo/Dados_Estatisticos.csv"
+OACI_MANAUS = "SBEG"
+# Velocidades de referência das embarcações (km/h): PARÂMETRO DO DMOB A VALIDAR, sem fonte oficial encontrada.
+# Servem só para converter a distância fluvial (que é medida na malha do DNIT) em ordem de grandeza de tempo.
+VEL_BARCO_REGIONAL = 14
+VEL_LANCHA_EXPRESSA = 30
+HIDRO_ENCAIXE_KM = 60               # sede a mais disso da linha da hidrovia do SNV: fora da malha mapeada
+HIDRO_APROX_KM = 5                  # acima disso o trecho sede→hidrovia é estimado (rio menor que o SNV não mapeia)
+HIDRO_SINUOSIDADE = 1.3             # trecho estimado: linha reta × 1,3 (o rio não é reto); mesmo fator da malha urbana
+HIDRO_JUNTA_KM = 3                  # ponta de trecho a até 3 km de outro trecho: confluência (liga os dois)
+HIDRO_PONTE_KM = 15                 # pedaço solto da malha a até 15 km do pedaço maior: lacuna do SNV, emenda
+AERO_RAIO_KM = 25                   # aeródromo a até 25 km da sede serve o município (quando o "Município Servido" não casa)
 # Classes de via do car.lua (OSRM v5.27.1) + track, que o perfil ajustado aceita (ramais no OSM)
 VIAS = {"motorway", "motorway_link", "trunk", "trunk_link", "primary", "primary_link", "secondary", "secondary_link",
         "tertiary", "tertiary_link", "unclassified", "residential", "living_street", "service", "track"}
@@ -245,6 +260,221 @@ def mais_proximo(sede, alvos, dur, km, snap_s, snap_d, i):
     return melhor
 
 
+# ── rio: malha hidroviária do SNV (DNIT) como grafo; menor caminho (Dijkstra) a partir de Manaus ──────────────
+class Hidrovia:
+    def __init__(self, linhas):
+        """linhas: listas de (lat, lon). Vértices iguais se fundem; pontas soltas ligam ao trecho vizinho (confluência)."""
+        self.pts, self.adj, idx, dono = [], [], {}, []
+        def no(p):
+            if p not in idx:
+                idx[p] = len(self.pts); self.pts.append(p); self.adj.append([]); dono.append(set())
+            return idx[p]
+        pontas = []
+        for li, l in enumerate(linhas):
+            ids = [no((round(la, 5), round(lo, 5))) for la, lo in l]
+            for i in ids:
+                dono[i].add(li)
+            for a, b in zip(ids, ids[1:]):
+                if a != b:
+                    self._liga(a, b)
+            pontas += [(ids[0], li), (ids[-1], li)]
+        self.grade = {}
+        for i, (la, lo) in enumerate(self.pts):
+            self.grade.setdefault((math.floor(la / CEL), math.floor(lo / CEL)), []).append(i)
+        for i, li in pontas:
+            j, d = self.perto(self.pts[i], HIDRO_JUNTA_KM, fora=lambda k: li in dono[k])
+            if j is not None and d > 0:
+                self._liga(i, j)
+        self.pontes = self._emendar()
+
+    def _componentes(self):
+        comp, n = [-1] * len(self.pts), 0
+        for i in range(len(self.pts)):
+            if comp[i] >= 0:
+                continue
+            pilha, comp[i] = [i], n
+            while pilha:
+                u = pilha.pop()
+                for v, _ in self.adj[u]:
+                    if comp[v] < 0:
+                        comp[v] = n; pilha.append(v)
+            n += 1
+        return comp
+
+    def _emendar(self):
+        """A malha do SNV tem lacunas (ex.: alto Rio Negro e Javari soltos do resto). Liga cada pedaço solto ao
+        pedaço maior pelo par de vértices mais próximo, se estiver a até HIDRO_PONTE_KM. Devolve as pontes feitas (km)."""
+        pontes = []
+        while True:
+            comp = self._componentes()
+            tam = {}
+            for c in comp:
+                tam[c] = tam.get(c, 0) + 1
+            maior = max(tam, key=tam.get)
+            melhor = None
+            for i, c in enumerate(comp):
+                if c == maior:
+                    continue
+                j, d = self.perto(self.pts[i], HIDRO_PONTE_KM, fora=lambda k: comp[k] != maior)
+                if j is not None and (melhor is None or d < melhor[2]):
+                    melhor = (i, j, d)
+            if melhor is None:
+                return pontes
+            self._liga(melhor[0], melhor[1])
+            pontes.append(round(melhor[2], 1))
+
+    def _liga(self, a, b):
+        d = hav_km(*self.pts[a], *self.pts[b])
+        self.adj[a].append((b, d)); self.adj[b].append((a, d))
+
+    def perto(self, p, raio_km, fora=None):
+        """Vértice mais próximo de p a até raio_km: (índice, km) ou (None, None)."""
+        r = math.ceil(raio_km / 5.5) + 1
+        c0 = (math.floor(p[0] / CEL), math.floor(p[1] / CEL))
+        melhor = (None, None)
+        for da in range(-r, r + 1):
+            for do in range(-r, r + 1):
+                for k in self.grade.get((c0[0] + da, c0[1] + do), ()):
+                    if fora and fora(k):
+                        continue
+                    d = hav_km(*p, *self.pts[k])
+                    if d <= raio_km and (melhor[1] is None or d < melhor[1]):
+                        melhor = (k, d)
+        return melhor
+
+    def dijkstra(self, s):
+        import heapq
+        dist, ant, fila = {s: 0.0}, {}, [(0.0, s)]
+        while fila:
+            d, u = heapq.heappop(fila)
+            if d > dist[u]:
+                continue
+            for v, w in self.adj[u]:
+                if d + w < dist.get(v, math.inf):
+                    dist[v], ant[v] = d + w, u
+                    heapq.heappush(fila, (d + w, v))
+        return dist, ant
+
+    def caminho(self, ant, alvo):
+        c = [alvo]
+        while c[-1] in ant:
+            c.append(ant[c[-1]])
+        return [[lo, la] for la, lo in (self.pts[i] for i in c)]   # do alvo (sede) até a origem (Manaus), [lon, lat]
+
+
+def hidrovia_linhas(url=URL_HIDRO):
+    out = []
+    for f in json.loads(get(url, timeout=300))["features"]:
+        g = f["geometry"]
+        for l in ([g["coordinates"]] if g["type"] == "LineString" else g["coordinates"]):
+            if len(l) > 1:
+                out.append([(c[1], c[0]) for c in l])
+    return out
+
+
+def fluvial(H, S, iM):
+    """Distância pelo rio de cada sede até Manaus na malha do SNV. Tempo = estimativa com as velocidades de referência."""
+    s, ds = H.perto((S[iM]["lat"], S[iM]["lon"]), HIDRO_ENCAIXE_KM)
+    assert s is not None, "Manaus fora da malha hidroviária: confira URL_HIDRO"
+    dist, ant = H.dijkstra(s)
+    res, feats = [], []
+    for i, x in enumerate(S):
+        if i == iM:
+            res.append(None); continue
+        n, dn = H.perto((x["lat"], x["lon"]), HIDRO_ENCAIXE_KM)
+        if n is None or n not in dist:
+            res.append({"na_malha": False}); continue
+        aprox = dn * HIDRO_SINUOSIDADE if dn > HIDRO_APROX_KM else dn
+        km = dist[n] + aprox + ds   # + trecho da sede até o eixo do rio e de Manaus até o eixo
+        res.append({"na_malha": True, "km": round(km), "h_barco": round(km / VEL_BARCO_REGIONAL, 1), "h_lancha": round(km / VEL_LANCHA_EXPRESSA, 1),
+                    "encaixe_km": round(dn, 1), "trecho_estimado_km": round(aprox) if dn > HIDRO_APROX_KM else 0})
+        tr = H.caminho(ant, n) + [[S[iM]["lon"], S[iM]["lat"]]]
+        feats.append({"type": "Feature", "properties": {"cod": x["cod"], "nome": x["nome"], "destino": "Manaus pelo rio", "km": round(km),
+                                                        "aproximacao": [[x["lon"], x["lat"]], tr[0]]},
+                      "geometry": {"type": "LineString", "coordinates": simplificar(tr, ROTA_TOL * 2)}})
+    return res, feats
+
+
+# ── avião: aeródromos públicos (ANAC) e voos regulares para Manaus nos últimos 12 meses (ANAC, dados estatísticos) ──
+def aerodromos(url=URL_AERO):
+    ls = get(url).decode("latin-1").splitlines()
+    i = next(k for k, l in enumerate(ls) if l.startswith("Código OACI") or l.startswith("Código OACI"))
+    r = []
+    for l in csv.DictReader(ls[i:], delimiter=";"):
+        if (l.get("UF") or "").strip().lower() != "amazonas":
+            continue
+        try:
+            la, lo = float(l["LATGEOPOINT"].replace(",", ".")), float(l["LONGEOPOINT"].replace(",", "."))
+        except ValueError:
+            continue
+        r.append({"oaci": l["Código OACI"].strip(), "nome": l["Nome"].strip(), "municipio": (l.get("Município Servido") or l.get("Município") or "").strip(),
+                  "lat": la, "lon": lo})
+    assert any(a["oaci"] == OACI_MANAUS for a in r), "SBEG fora da lista de aeródromos públicos da ANAC"
+    return r
+
+
+def num_br(v):
+    try:
+        return float((v or "0").replace(".", "").replace(",", ".")) if "," in (v or "") else float(v or 0)
+    except ValueError:
+        return 0.0
+
+
+def voos_regulares(linhas, oacis):
+    """linhas: dicts do Dados_Estatisticos.csv. Voo regular doméstico entre SBEG e um aeródromo do AM, nos 12
+    últimos meses presentes no arquivo. Devolve {oaci: {decolagens_ida, voos_semana, tempo_voo_min, passageiros_12m}}."""
+    am = [l for l in linhas if l.get("GRUPO_DE_VOO") == "REGULAR"
+          and {l.get("AEROPORTO_DE_ORIGEM_SIGLA"), l.get("AEROPORTO_DE_DESTINO_SIGLA")} & {OACI_MANAUS}
+          and ({l.get("AEROPORTO_DE_ORIGEM_SIGLA"), l.get("AEROPORTO_DE_DESTINO_SIGLA")} - {OACI_MANAUS}) & oacis]
+    if not am:
+        return {}, None
+    ult = max((int(l["ANO"]), int(l["MES"])) for l in am)
+    ini = (ult[0] - 1, ult[1])   # exclusivo: fica (ano-1, mês+1) .. (ano, mês) = 12 meses
+    agg = {}
+    for l in am:
+        if (int(l["ANO"]), int(l["MES"])) <= ini:
+            continue
+        o, d = l["AEROPORTO_DE_ORIGEM_SIGLA"], l["AEROPORTO_DE_DESTINO_SIGLA"]
+        k = d if o == OACI_MANAUS else o
+        a = agg.setdefault(k, {"dec": 0, "dec_ida": 0, "horas": 0.0, "pax": 0})
+        dec = int(num_br(l.get("DECOLAGENS")))
+        a["dec"] += dec; a["horas"] += num_br(l.get("HORAS_VOADAS")); a["pax"] += int(num_br(l.get("PASSAGEIROS_PAGOS")))
+        if d == OACI_MANAUS:
+            a["dec_ida"] += dec
+    out = {k: {"voos_semana": round(a["dec_ida"] / 52, 1), "tempo_voo_min": round(a["horas"] / a["dec"] * 60) if a["dec"] and a["horas"] else None,
+               "passageiros_12m": a["pax"]} for k, a in agg.items() if a["dec"]}
+    return out, f"{ini[1] % 12 + 1:02d}/{ini[0] + (ini[1] == 12)} a {ult[1]:02d}/{ult[0]}"
+
+
+def ler_estatisticas(url=URL_ANAC_EST):
+    """Lê o CSV da ANAC (~350 MB) em fluxo, guardando só as linhas que tocam SBEG (o resto é descartado na hora)."""
+    req = urllib.request.Request(url, headers=UA)
+    with urllib.request.urlopen(req, timeout=900) as r:
+        txt = io.TextIOWrapper(r, encoding="utf-8-sig", errors="replace", newline="")
+        txt.readline()   # "Atualizado em: ..."
+        return [l for l in csv.DictReader(txt, delimiter=";") if OACI_MANAUS in (l.get("AEROPORTO_DE_ORIGEM_SIGLA"), l.get("AEROPORTO_DE_DESTINO_SIGLA"))]
+
+
+def aereo(S, A, voos):
+    """Aeródromo de cada sede: o do 'Município Servido'; senão o mais perto a até AERO_RAIO_KM. Prefere o com voo regular."""
+    sm = next(a for a in A if a["oaci"] == OACI_MANAUS)
+    res = []
+    for x in S:
+        cand = [a for a in A if semacento(a["municipio"]) == semacento(x["nome"]) or hav_km(x["lat"], x["lon"], a["lat"], a["lon"]) <= AERO_RAIO_KM]
+        if x["cod"] == COD_MANAUS or not cand:
+            res.append(None); continue
+        a = min(cand, key=lambda a: (a["oaci"] not in voos, hav_km(x["lat"], x["lon"], a["lat"], a["lon"])))
+        v = voos.get(a["oaci"])
+        res.append({"oaci": a["oaci"], "nome": a["nome"], "lat": a["lat"], "lon": a["lon"],
+                    "km_reta": round(hav_km(a["lat"], a["lon"], sm["lat"], sm["lon"])), "voo_regular": bool(v), **(v or {})})
+    return res, sm
+
+
+def semacento(s):
+    import unicodedata
+    return "".join(c for c in unicodedata.normalize("NFD", (s or "").lower()) if unicodedata.category(c) != "Mn").strip()
+
+
 def ligado(snap_o, snap_d, km_rota, km_reta):
     """Rota válida: os dois pontos encaixam numa via a até 3 km e a rota não é menor que a linha reta
     (descarta encaixe em componente distante, que o OSRM faz quando a malha local é pequena)."""
@@ -266,22 +496,22 @@ def isocronas(cels, tempos_manaus, tempos_sede):
     return {"type": "FeatureCollection", "features": fs}
 
 
-def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None):
+def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None, multimodal=True):
     S = sedes()
     if so:
         S = [s for s in S if s["cod"] in so]
     pop, ano_pop = populacao()
     hosp_osm = json.load(open(os.path.join(trab, "hospitais_osm.json"), encoding="utf-8")) if os.path.exists(os.path.join(trab, "hospitais_osm.json")) else []
-    H = juntar_hospitais(hospitais_cnes(), hosp_osm)
+    Hs = juntar_hospitais(hospitais_cnes(), hosp_osm)
     T = terminais()
     if cels is None:
         cels = json.load(open(os.path.join(trab, "celulas.json")))
-    print(f"{len(S)} sedes, {len(H)} hospitais ({sum(h['fonte'] == 'OSM' for h in H)} só OSM), {len(T)} terminais, {len(cels)} células", flush=True)
+    print(f"{len(S)} sedes, {len(Hs)} hospitais ({sum(h['fonte'] == 'OSM' for h in Hs)} só OSM), {len(T)} terminais, {len(cels)} células", flush=True)
     P = [(s["lat"], s["lon"]) for s in S]
     iM = next(i for i, s in enumerate(S) if s["cod"] == COD_MANAUS)
 
     dm, km_m, so_s, sd_m = tabela(osrm, P, [P[iM]], lote, pausa)
-    dh, kh, _, sd_h = tabela(osrm, P, [(h["lat"], h["lon"]) for h in H], lote, pausa)
+    dh, kh, _, sd_h = tabela(osrm, P, [(h["lat"], h["lon"]) for h in Hs], lote, pausa)
     dt_, kt, _, sd_t = tabela(osrm, P, [(t["lat"], t["lon"]) for t in T], lote, pausa)
     dc, _, _, sd_c = tabela(osrm, P, [(c[2], c[3]) for c in cels], lote, pausa)
 
@@ -293,7 +523,7 @@ def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None):
              "ligacao_rodoviaria": lig, "travessia_balsa": False,
              "tempo_manaus_min": round(dm[i][0]) if lig else None, "km_manaus": round(km_m[i][0], 1) if lig else None,
              "km_linha_reta_manaus": round(reta, 1), "encaixe_via_m": round(so_s[i]) if so_s[i] is not None else None,
-             "hospital_mais_proximo": mais_proximo(s, H, dh, kh, so_s, sd_h, i),
+             "hospital_mais_proximo": mais_proximo(s, Hs, dh, kh, so_s, sd_h, i),
              "terminal_mais_proximo": mais_proximo(s, T, dt_, kt, so_s, sd_t, i)}
         if lig and i != iM:
             r = rota(osrm, P[i], P[iM])
@@ -312,6 +542,25 @@ def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None):
                     time.sleep(pausa)
         mun.append(m)
 
+    # multimodal: rio (malha do SNV) e avião (ANAC). O demo pula (o CSV da ANAC tem ~350 MB: só no Actions).
+    H, voos, periodo = None, {}, None
+    if multimodal:
+        H = Hidrovia(hidrovia_linhas())
+        flu, flu_f = fluvial(H, S, iM)
+        A = aerodromos()
+        try:
+            voos, periodo = voos_regulares(ler_estatisticas(), {a["oaci"] for a in A} - {OACI_MANAUS})
+        except Exception as e:   # ANAC fora do ar: segue sem voos (o painel diz que não há dado de voo)
+            print("ANAC dados estatísticos indisponível:", str(e)[:120], flush=True)
+        aer, sbeg = aereo(S, A, voos)
+    else:
+        flu, flu_f, aer, sbeg = [None] * len(S), [], [None] * len(S), {"lat": -3.0411, "lon": -60.0506}
+    for i, m in enumerate(mun):
+        m["fluvial"], m["aereo"] = flu[i], aer[i]
+    rotas += flu_f
+    print(f"rio: {sum(1 for f in flu if f and f['na_malha'])} sedes na malha, {len(H.pontes) if H else 0} lacunas emendadas; "
+          f"avião: {sum(1 for a in aer if a)} com aeródromo, {sum(1 for a in aer if a and a['voo_regular'])} com voo regular ({periodo})", flush=True)
+
     # isócronas: célula conta se o nó de via encaixou (sempre, é nó do OSM) e há rota a partir de sede encaixada
     ok_s = [so_s[i] is not None and so_s[i] <= SNAP_MAX_M for i in range(len(S))]
     cel_k = [(c[0], c[1]) for c in cels]
@@ -326,13 +575,17 @@ def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None):
               "pop_sem_ligacao": sum(m["pop"] or 0 for m in mun if not m["ligacao_rodoviaria"]),
               "pop_manaus_ate_min": {str(l): sum(m["pop"] or 0 for m in mun if m["tempo_manaus_min"] is not None and m["tempo_manaus_min"] <= l) for l in FAIXAS},
               "pop_hospital_ate_120": sum(m["pop"] or 0 for m in mun if (m["hospital_mais_proximo"].get("min") is not None and m["hospital_mais_proximo"]["min"] <= 120)),
-              "hospitais": len(H), "terminais": len(T), "celulas_grade": len(cels)}
+              "hospitais": len(Hs), "terminais": len(T), "celulas_grade": len(cels),
+              "com_rio": sum(1 for m in mun if m["fluvial"] and m["fluvial"]["na_malha"]),
+              "com_aerodromo": sum(1 for m in mun if m["aereo"]), "com_voo_regular": sum(1 for m in mun if m["aereo"] and m["aereo"]["voo_regular"]),
+              "periodo_voos": periodo, "aeroporto_manaus": {"oaci": OACI_MANAUS, "lat": sbeg["lat"], "lon": sbeg["lon"]}}
     meta = {
         "fonte": "OpenStreetMap (Geofabrik, extrato norte do Brasil) roteado com OSRM 5.27.1; sedes kelvins/municipios-brasileiros (IBGE); "
                  f"população IBGE Censo {ano_pop} (SIDRA 4709); hospitais CNES/DATASUS (API dados abertos) + OSM amenity=hospital; "
-                 "terminais flutuantes SEINFRA-AM (atlas-amazonas)",
+                 "terminais flutuantes SEINFRA-AM (atlas-amazonas); hidrovias DNIT SNV aquaviário (atlas-amazonas); "
+                 "aeródromos públicos e voos regulares ANAC (dados abertos)",
         "url": {"osm": URL_OSM, "sedes": URL_SEDES, "populacao": URL_POP, "cnes": URL_CNES.split("?")[0], "terminais": URL_TERM,
-                "osrm": "https://github.com/Project-OSRM/osrm-backend"},
+                "osrm": "https://github.com/Project-OSRM/osrm-backend", "hidrovias": URL_HIDRO, "aerodromos": URL_AERO, "voos": URL_ANAC_EST},
         "gerado_em": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "servidor_osrm": "demo público (teste)" if osrm == OSRM_DEMO else "OSRM local no GitHub Actions",
         "metodologia": {
@@ -342,6 +595,11 @@ def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None):
             "hospital": "Menor tempo por estrada até hospital geral, especializado ou unidade mista do CNES (ativo, com coordenada) ou hospital do OSM. Sede sem malha no OSM: hospital a até 3 km em linha reta, tempo estimado a 20 km/h com fator 1,3 (estimado=true).",
             "isocronas": f"Grade de {CEL}° (~5,5 km); cada célula com via recebe o tempo do primeiro nó de via do OSM nela. Faixas cumulativas de {', '.join(str(f) for f in FAIXAS)} min a partir de Manaus e da sede mais próxima. Polígono = união das células, simplificado.",
             "populacao_por_faixa": "População do município inteiro atribuída ao tempo da sede (Censo 2022). Aproximação: ignora quem mora fora da sede (zona rural, comunidades ribeirinhas).",
+            "rio": f"Menor caminho (Dijkstra) na malha hidroviária do SNV/DNIT, da sede até Manaus. Pontas a até {HIDRO_JUNTA_KM} km viram confluência e pedaços soltos a até {HIDRO_PONTE_KM} km são emendados (lacunas da malha). "
+                   f"Sede a mais de {HIDRO_APROX_KM} km da malha: o trecho até ela é estimado (linha reta × {HIDRO_SINUOSIDADE}); a mais de {HIDRO_ENCAIXE_KM} km, fica fora. "
+                   f"Tempo = distância ÷ velocidade de referência ({VEL_BARCO_REGIONAL} km/h barco regional, {VEL_LANCHA_EXPRESSA} km/h lancha expressa): parâmetro do DMOB a validar, sem fonte oficial; só ordem de grandeza.",
+            "aviao": f"Aeródromo público da ANAC que serve o município (Município Servido) ou a até {AERO_RAIO_KM} km da sede. Voo regular = decolagens do grupo REGULAR entre o aeródromo e {OACI_MANAUS} "
+                     f"nos 12 últimos meses do arquivo de dados estatísticos da ANAC ({periodo or 'sem dado'}). Tempo de voo = horas voadas ÷ decolagens (média real da ANAC). Linha no mapa = linha reta.",
         },
         "limitacoes": [
             "Malha do OSM incompleta nos ramais e nas vias urbanas do interior: falta de via vira 'sem ligação' ou tempo maior.",
@@ -349,6 +607,8 @@ def calcular(osrm, trab, saida=DATA, so=None, lote=150, pausa=0.0, cels=None):
             "BR-319 (trecho do meio) e ramais de terra podem estar intransitáveis na cheia; o OSRM não sabe disso.",
             "Coordenada do CNES vem do cadastro da unidade e pode estar errada; hospital do OSM pode estar desatualizado.",
             "Coordenada da sede é um ponto (praça/prefeitura), não o centro populacional.",
+            "Rio: a malha do SNV traz os rios principais; rios menores e furos não entram, e a distância segue o eixo do rio. Tempo de barco é estimativa (velocidade de referência, sem horário, paradas, correnteza nem seca).",
+            "Avião: só aeródromos públicos da ANAC; pista privada e táxi aéreo não entram. Voo regular conta decolagens registradas, não horário vigente.",
         ],
         "balsas_longas_removidas": len(json.load(open(os.path.join(trab, "balsas_longas.json"), encoding="utf-8"))) if os.path.exists(os.path.join(trab, "balsas_longas.json")) else None,
     }
@@ -404,6 +664,21 @@ def teste(demo=False):
     assert simplificar([[-60.123456, -3.0], [-59.0, -3.0]]) == [[-60.1235, -3.0], [-59.0, -3.0]]
     f = feicao({"cod": "1", "nome": "X"}, "Hospital", {"nome": "H", "min": 5, "km": 2.0}, [[0, 0], [1, 1]], [])
     assert f["properties"]["destino"] == "Hospital" and f["geometry"]["type"] == "LineString"
+    # rio: dois trechos com lacuna de ~5,5 km (emendada) e um terceiro a ~110 km (fica solto)
+    H = Hidrovia([[(-3.0, -60.0), (-3.0, -59.5)], [(-3.0, -59.45), (-3.0, -59.0)], [(-4.0, -59.0), (-4.0, -58.5)]])
+    assert len(H.pontes) == 1 and 5 < H.pontes[0] < 6, H.pontes
+    S2 = [{"cod": COD_MANAUS, "nome": "Manaus", "lat": -3.0, "lon": -60.0}, {"cod": "2", "nome": "B", "lat": -3.0, "lon": -59.0},
+          {"cod": "3", "nome": "C", "lat": -4.0, "lon": -58.5}, {"cod": "4", "nome": "D", "lat": -9.0, "lon": -59.0}]
+    fl, ff = fluvial(H, S2, 0)
+    assert fl[0] is None and fl[1]["na_malha"] and 110 < fl[1]["km"] < 113 and not fl[2]["na_malha"] and not fl[3]["na_malha"], fl
+    assert ff[0]["geometry"]["coordinates"][0] == [-59.0, -3.0] and ff[0]["geometry"]["coordinates"][-1] == [-60.0, -3.0]
+    # avião: 2 meses de voos SBEG<->SWXX; mês antigo (fora dos 12) é ignorado
+    L = lambda a, m, o, d, dec, h: {"ANO": str(a), "MES": str(m), "AEROPORTO_DE_ORIGEM_SIGLA": o, "AEROPORTO_DE_DESTINO_SIGLA": d,
+                                    "GRUPO_DE_VOO": "REGULAR", "DECOLAGENS": str(dec), "HORAS_VOADAS": h, "PASSAGEIROS_PAGOS": "100"}
+    v, per = voos_regulares([L(2026, 9, "SWXX", "SBEG", 26, "26,0"), L(2026, 9, "SBEG", "SWXX", 26, "26,0"), L(2024, 1, "SWXX", "SBEG", 999, "1,0"),
+                             L(2026, 9, "SWYY", "SBGR", 5, "5")], {"SWXX", "SWYY"})
+    assert v == {"SWXX": {"voos_semana": 0.5, "tempo_voo_min": 60, "passageiros_12m": 200}} and per == "10/2025 a 09/2026", (v, per)
+    assert num_br("409,08") == 409.08 and num_br("1.234,5") == 1234.5 and num_br("") == 0
     try:
         import osmium  # noqa: F401
         with tempfile.TemporaryDirectory() as d:
@@ -419,7 +694,7 @@ def teste(demo=False):
                 json.dump([], open(os.path.join(d, n), "w"))
             # células sintéticas ao redor de Manaus: poucas, para não pesar no servidor público
             cels = [[*chave(-3.1 + a * 0.3, -60.0 + b * 0.3), -3.1 + a * 0.3, -60.0 + b * 0.3] for a in (-1, 0, 1) for b in (-1, 0, 1)]
-            out = calcular(OSRM_DEMO, d, saida=os.path.join(tempfile.gettempdir(), "acesso_demo"), so={COD_MANAUS, "1301902", "1304203"}, lote=60, pausa=1.5, cels=cels)
+            out = calcular(OSRM_DEMO, d, saida=os.path.join(tempfile.gettempdir(), "acesso_demo"), so={COD_MANAUS, "1301902", "1304203"}, lote=60, pausa=1.5, cels=cels, multimodal=False)
         m = {x["nome"]: x for x in out["municipios"]}
         print({k: (v["ligacao_rodoviaria"], v["tempo_manaus_min"], v["km_manaus"], v["travessia_balsa"], v["hospital_mais_proximo"]["min"]) for k, v in m.items()})
         assert m["Manaus"]["tempo_manaus_min"] == 0 and m["Itacoatiara"]["ligacao_rodoviaria"] and 120 < m["Itacoatiara"]["tempo_manaus_min"] < 400
