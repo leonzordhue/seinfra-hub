@@ -18,7 +18,7 @@ export const chip = (txt, nivel = "", titulo = "") =>
   `<span class="chip ${nivel}"${titulo ? ` title="${esc(titulo)}"` : ""}>${ICONE[nivel] || ""}${esc(txt)}</span>`;
 
 export function chipSit(s) {
-  const n = /Paralis|Tomada/.test(s) ? "critico" : /Expirad/.test(s) ? "alerta" : /Andamento|Vigente|A Iniciar|recebimento/.test(s) ? "ok" : "";
+  const n = /^Conclu/.test(s) ? "" : /Paralis|Tomada|Suspens/.test(s) ? "critico" : /Expirad|Pend[êe]ncia|PGE|MP$|Tr[âa]mite/.test(s) ? "alerta" : /Andamento|Vigente|A Iniciar|recebimento/.test(s) ? "ok" : "";
   return chip(s || "—", n);
 }
 

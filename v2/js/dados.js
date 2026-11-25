@@ -14,9 +14,12 @@ export function carregar(nome) {
 export const talvez = nome => carregar(nome).catch(e => { console.warn(e); return null; });
 
 // ── e-Obras ──────────────────────────────────────────────────────────────────
+// Situações oficiais: FlSituacaoContratoEnum / SituacaoConvenioEnum (fonte do e-Obras, sicopam-sicop 1.10.22).
+// "Concluído/Encaminhado PGE" e "Concluído/Em trâmite MP" ficam em encerrado (obra concluída).
 export const SIT = {
   ativo: ["Andamento", "Vigente", "A Iniciar", "Em recebimento"],
-  atencao: ["Paralisado", "Expirado", "Tomada de Contas"],
+  atencao: ["Paralisado", "Expirado", "Tomada de Contas", "Suspenso", "Pendência Administrativa",
+    "Encaminhado PGE", "Em trâmite MP", "Em Trâmite"],
 };
 export const grupoSit = s => SIT.ativo.includes(s) ? "ativo" : SIT.atencao.includes(s) ? "atencao" : "encerrado";
 
@@ -46,8 +49,11 @@ export const REGRAS = [
     f: c => grupoSit(c.sit) !== "encerrado" && c.fis != null && c.fin - c.fis > 10 },
   { id: "aditivo", nivel: "alerta", txt: "Aditivos acima de 25% do valor original", base: "Lei 14.133/2021, art. 125 (limite de 25%; 50% em reforma)",
     f: c => c.v_orig > 0 && c.v_adit / c.v_orig > 0.25 },
-  { id: "paralisado", nivel: "critico", txt: "Obra paralisada", base: "Situação no e-Obras",
-    f: c => c.sit === "Paralisado" },
+  { id: "paralisado", nivel: "critico", txt: "Obra paralisada ou suspensa", base: "Situação no e-Obras",
+    f: c => c.sit === "Paralisado" || c.sit === "Suspenso" },
+  // Mesmo critério do alerta "RD" do e-Obras (SmoEmailBean.enviarEmailGestoresRecebimentoDefinitivo, 90 dias).
+  { id: "rec-def", nivel: "alerta", txt: "Em recebimento há mais de 90 dias sem termo definitivo", base: "Lei 8.666/1993, art. 73, § 3º (até 90 dias); alerta RD do e-Obras",
+    f: (c, h) => c.sit === "Em recebimento" && c.desde && (h - new Date(c.desde)) / DIA > 90 },
 ];
 export function alertas(c, hoje = new Date()) {
   return REGRAS.filter(r => { try { return r.f(c, hoje); } catch { return false; } });
