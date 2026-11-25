@@ -18,10 +18,12 @@ function pintarFaixas() {
   FAIXAS.forEach((f, i) => { f.cor = azul[i]; });
   SEM.cor = ehEscuro() ? "#55606F" : "#A3ACB8";  // cinza neutro, fora da escala
 }
-const estado = { lig: "", q: "", origem: "Manaus", base: "mapa", iso: true, rot: true, alv: false, sel: "" };
+const estado = { lig: "", q: "", origem: "Manaus", base: "mapa", iso: true, rot: true, alv: false, rio: true, aer: true, sel: "" };
 let mapa = null, selecionar = () => {};
 
 const faixa = m => m.tempo_manaus_min == null ? SEM : FAIXAS.find(f => m.tempo_manaus_min <= f.ate);
+// horas (float) de barco: acima de 24 h vira dias
+const hd = h => h == null ? "—" : h >= 24 ? `${num(h / 24, 1)} dias` : hm(Math.round(h * 60));
 const hm = v => v == null ? "—" : v < 60 ? `${num(v)} min` : `${Math.floor(v / 60)} h ${String(Math.round(v % 60)).padStart(2, "0")}`;
 const ligTxt = m => !m.ligacao_rodoviaria ? chip("Só fluvial / aéreo", "", "Sem rota por estrada até Manaus na malha do OSM")
   : m.travessia_balsa ? chip("Estrada + balsa", "alerta", "A rota usa travessia de balsa (espera não incluída)") : chip("Estrada", "ok");
@@ -69,6 +71,11 @@ const ESTILO = `<style>
   @media (max-width: 640px) { .ac-painel { position: static; margin-bottom: 8px; grid-auto-flow: column; overflow-x: auto; }
     .ac-card { position: static; width: auto; margin-top: 8px; } }
   .ac-leg .ln { display: inline-block; width: 22px; height: 4px; border-radius: 2px; vertical-align: 3px; margin: 0 4px 0 10px; }
+  .ac-leg .ln.rio { background: repeating-linear-gradient(90deg, var(--ac-rio) 0 8px, transparent 8px 11px); }
+  .ac-leg .ln.aer { background: repeating-linear-gradient(90deg, var(--ac-aer) 0 3px, transparent 3px 6px); }
+  .ac-wrap, .ac-leg { --ac-rio: #0A7DB0; --ac-aer: #7A4FB5; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) :is(.ac-wrap, .ac-leg) { --ac-rio: #5CC8F0; --ac-aer: #C3A6F2; } }
+  :root[data-theme="dark"] :is(.ac-wrap, .ac-leg) { --ac-rio: #5CC8F0; --ac-aer: #C3A6F2; }
   .ac-leg .ln.balsa { background: repeating-linear-gradient(90deg, var(--ouro) 0 5px, transparent 5px 9px); }
   .ac-alvo { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--sup); border: 2px solid currentColor; box-shadow: 0 1px 3px rgba(0,0,0,.35); }
   .ac-alvo svg { width: 12px; height: 12px; }
@@ -102,7 +109,7 @@ export async function render(el) {
     </div>
     <div class="aviso secao"><b>Como ler:</b> a população é a do município inteiro, atribuída ao tempo da sede; quem mora em comunidade ou zona rural pode estar bem mais longe. Tempo de fluxo livre, sem espera de balsa e sem considerar estrada intransitável na cheia.</div>
 
-    <section class="secao cartao"><header><div><h2>Mapa de acessibilidade</h2><p>Escolha um município (no mapa, na lista ou na tabela) para ver o caminho por estrada até Manaus, até o hospital e até o terminal flutuante mais próximos. A mancha azul é a área alcançável em 1, 2 e 4 horas.</p></div></header>
+    <section class="secao cartao"><header><div><h2>Mapa de acessibilidade</h2><p>Escolha um município (no mapa, na lista ou na tabela) para ver o caminho por estrada, pelo rio e de avião até Manaus, e até o hospital e o terminal flutuante mais próximos. A mancha azul é a área alcançável em 1, 2 e 4 horas.</p></div></header>
         <div class="corpo">
           <div class="filtros">
             <select id="fMun" aria-label="Ver o caminho de um município"><option value="">Ver o caminho de um município…</option>${[...mun].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")).map(m => `<option value="${esc(m.cod)}">${esc(m.nome)}</option>`).join("")}</select>
@@ -117,6 +124,8 @@ export async function render(el) {
                 <button type="button" data-v="sat" aria-pressed="${estado.base === "sat"}">Satélite</button></div>
               <label><input type="checkbox" id="cIso" ${estado.iso ? "checked" : ""}> Isócronas</label>
               <label><input type="checkbox" id="cRot" ${estado.rot ? "checked" : ""}> Rotas até Manaus</label>
+              <label><input type="checkbox" id="cRio" ${estado.rio ? "checked" : ""}> Rotas pelo rio</label>
+              <label><input type="checkbox" id="cAer" ${estado.aer ? "checked" : ""}> Aeródromos e voos</label>
               <label><input type="checkbox" id="cAlv" ${estado.alv ? "checked" : ""}> Hospitais e terminais</label>
             </div>
             <div class="ac-card" id="acCard" aria-live="polite" hidden></div>
@@ -124,7 +133,7 @@ export async function render(el) {
           <div class="ac-leg"><span><b>Tempo até Manaus</b></span>
             <span><span class="rampa">${FAIXAS.map(f => `<i style="background:${f.cor}"></i>`).join("")}</span><br><span class="rot-r">${["1 h", "2 h", "4 h", "+4 h"].map(t => `<span>${t}</span>`).join("")}</span></span>
             <span><i class="pt" style="background:${SEM.cor}"></i>Sede sem ligação rodoviária</span>
-            <span><b>Caminho</b><i class="ln" style="background:var(--ouro)"></i>até Manaus <i class="ln" style="background:var(--critico)"></i>até hospital <i class="ln" style="background:var(--ok)"></i>até terminal <i class="ln balsa"></i>balsa</span></div>
+            <span><b>Caminho</b><i class="ln" style="background:var(--ouro)"></i>até Manaus <i class="ln" style="background:var(--critico)"></i>até hospital <i class="ln" style="background:var(--ok)"></i>até terminal <i class="ln balsa"></i>balsa <i class="ln rio"></i>pelo rio <i class="ln aer"></i>voo regular</span></div>
         </div></section>
     <section class="secao cartao"><header><div><h2>${pct(p4 / pt * 100, 0)} da população está a até 4 h de Manaus por estrada</h2><p>População dos municípios pela faixa de tempo da sede até Manaus (pessoas e % do AM). Entre parênteses, número de municípios.</p></div></header>
       <div class="corpo"><div class="ac-graf"><canvas id="gFaixa" role="img" aria-label="População por faixa de tempo até Manaus"></canvas></div>
@@ -172,6 +181,9 @@ export async function render(el) {
       { k: "lig", rot: "Ligação com Manaus", v: lig, html: ligTxt },
       { k: "tempo_manaus_min", rot: "Tempo até Manaus", n: 1, v: m => m.tempo_manaus_min ?? 1e9,
         html: m => m.tempo_manaus_min == null ? `—<div class="peq">${num(m.km_linha_reta_manaus)} km em linha reta</div>` : `${hm(m.tempo_manaus_min)}<div class="peq">${num(m.km_manaus)} km</div>` },
+      { k: "rio", rot: "Rio e avião até Manaus", n: 1, v: m => m.fluvial?.na_malha ? m.fluvial.km : 1e9,
+        html: m => m.nome === "Manaus" || (!m.fluvial && !m.aereo) ? "—" : `${m.fluvial?.na_malha ? `${num(m.fluvial.km)} km de rio · ~${hd(m.fluvial.h_barco)} de barco` : "fora da malha fluvial"}` +
+          `<div class="peq">${!m.aereo ? "sem aeródromo público" : `${esc(m.aereo.oaci)} · ${m.aereo.voo_regular ? `voo regular${m.aereo.tempo_voo_min ? `, ${hm(m.aereo.tempo_voo_min)}` : ""}` : "sem voo regular"}`}</div>` },
       { k: "hosp", rot: "Hospital mais próximo", n: 1, v: m => m.hospital_mais_proximo?.min ?? 1e9, html: m => alvo(m.hospital_mais_proximo) },
       { k: "term", rot: "Terminal flutuante mais próximo", n: 1, v: m => m.terminal_mais_proximo?.min ?? 1e9, html: m => alvo(m.terminal_mais_proximo) },
     ], fl, { ordem: { k: "tempo_manaus_min", dir: 1 }, onLinha: m => { selecionar(m); $("#mapa", el)?.scrollIntoView({ behavior: "smooth", block: "center" }); } });
@@ -189,6 +201,7 @@ export async function render(el) {
 // Ícones dos alvos (traço da casa, sem emoji): cruz do hospital e âncora do terminal flutuante.
 const ICONE = {
   Hospital: `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M4.5 1h3v3.5H11v3H7.5V11h-3V7.5H1v-3h3.5z" fill="currentColor"/></svg>`,
+  Aviao: `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 .8c.5 0 .8.5.8 1.1v3l4.2 2.3v1.2L6.8 7.2v2.2l1.3 1v.9L6 10.7l-2.1.6v-.9l1.3-1V7.2L1 8.4V7.2l4.2-2.3v-3C5.2 1.3 5.5.8 6 .8z" fill="currentColor"/></svg>`,
   Terminal: `<svg viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="6" cy="2.4" r="1.3"/><path d="M6 3.7V11M3.4 5.6h5.2M1.6 7.4C2 9.6 3.8 11 6 11s4-1.4 4.4-3.6"/></svg>`,
 };
 
@@ -249,6 +262,9 @@ async function desenharMapa(el, mun) {
   const fundo = escuro ? "#0E1626" : "#FFFFFF";
   const ouro = css("--ouro") || "#F5A623", cor = { Manaus: ouro, Hospital: css("--critico") || "#C0392B", Terminal: css("--ok") || "#1B7F4C" };
   // linha um tom mais forte que a faixa: as cores claras da rampa (+4 h) somem sobre o fundo topográfico
+  const wrap = $(".ac-wrap", el), corRio = getComputedStyle(wrap).getPropertyValue("--ac-rio").trim() || "#0A7DB0",
+    corAer = getComputedStyle(wrap).getPropertyValue("--ac-aer").trim() || "#7A4FB5";
+  cor["Manaus pelo rio"] = corRio;
   const corLinha = m => (escuro ? ["#B3CCF8", "#8DB2F2", "#6FA0F0", "#5A8BD8"] : ["#002D72", "#1F4F99", "#3D6DB5", "#5B85C4"])[FAIXAS.indexOf(faixa(m))] || SEM.cor;
   const camRot = L.layerGroup();
   const rotasDe = cod => (rotas?.features || []).filter(f => f.properties.cod === cod);
@@ -281,6 +297,46 @@ async function desenharMapa(el, mun) {
   const pintaAlv = () => { estado.alv && vistos.size ? camAlv.addTo(mapa) : camAlv.remove(); };
   pintaAlv();
 
+  // rio: menor caminho na malha hidroviária do SNV (DNIT); o trecho sede→rio fora da malha vai pontilhado
+  const camRio = L.layerGroup(), rioDe = new Map();
+  (rotas?.features || []).filter(f => f.properties.destino === "Manaus pelo rio").forEach(f => {
+    const m = porCod.get(f.properties.cod);
+    if (!m) return;
+    rioDe.set(m.cod, f);
+    L.polyline(linha(f.geometry.coordinates), { pane: "rotas", color: corRio, weight: 2, opacity: 0.75, dashArray: "8 4" })
+      .bindTooltip(`${esc(m.nome)} → Manaus pelo rio · ${num(f.properties.km)} km`, { sticky: true }).on("click", () => selecionar(m)).addTo(camRio);
+  });
+  const cRio = $("#cRio", el);
+  if (!rioDe.size) { cRio.disabled = true; cRio.parentElement.title = "O traçado pelo rio sai na próxima rodada do robô"; cRio.parentElement.style.opacity = .55; }
+  const pintaRio = () => { estado.rio && rioDe.size ? camRio.addTo(mapa) : camRio.remove(); };
+  pintaRio();
+
+  // avião: aeródromo público (ANAC) de cada sede; arco até Manaus (SBEG) quando há voo regular
+  const SBEG = R.aeroporto_manaus ? [R.aeroporto_manaus.lat, R.aeroporto_manaus.lon] : [-3.0411, -60.0506];
+  const arco = (a, b) => {   // curva de Bézier quadrática: distingue o voo da estrada e do rio
+    const [y1, x1] = a, [y2, x2] = b, k = 0.18, cy = (y1 + y2) / 2 + (x2 - x1) * k, cx = (x1 + x2) / 2 - (y2 - y1) * k;
+    return Array.from({ length: 33 }, (_, i) => { const t = i / 32, u = 1 - t; return [u * u * y1 + 2 * u * t * cy + t * t * y2, u * u * x1 + 2 * u * t * cx + t * t * x2]; });
+  };
+  const iconeAer = grande => L.divIcon({ className: "", iconSize: grande ? [26, 26] : [20, 20],
+    html: `<span class="ac-alvo" style="color:${corAer};width:${grande ? 26 : 20}px;height:${grande ? 26 : 20}px">${ICONE.Aviao}</span>` });
+  const vooTxt = a => a.voo_regular ? `voo regular · ${num(a.voos_semana, 1)} por semana${a.tempo_voo_min ? ` · ${hm(a.tempo_voo_min)} de voo` : ""}` : "sem voo regular (pista pública)";
+  const camAer = L.layerGroup(), aeroVistos = new Set();
+  mun.forEach(m => {
+    const a = m.aereo;
+    if (!a || aeroVistos.has(a.oaci)) return;
+    aeroVistos.add(a.oaci);
+    if (a.voo_regular) L.polyline(arco([a.lat, a.lon], SBEG), { pane: "rotas", color: corAer, weight: 1.6, opacity: 0.8, dashArray: "2 5", interactive: false }).addTo(camAer);
+    L.marker([a.lat, a.lon], { pane: "sedes", icon: iconeAer(), keyboard: false })
+      .bindTooltip(`${esc(a.nome)} (${esc(a.oaci)}) · ${vooTxt(a)}`).on("click", () => selecionar(m)).addTo(camAer);
+  });
+  if (aeroVistos.size) L.marker(SBEG, { pane: "sedes", icon: iconeAer(), keyboard: false }).bindTooltip("Aeroporto Eduardo Gomes (SBEG), Manaus").addTo(camAer);
+  const cAer = $("#cAer", el);
+  if (!aeroVistos.size) { cAer.disabled = true; cAer.parentElement.title = "Os aeródromos saem na próxima rodada do robô"; cAer.parentElement.style.opacity = .55; }
+  const pintaAer = () => { estado.aer && aeroVistos.size ? camAer.addTo(mapa) : camAer.remove(); };
+  pintaAer();
+  cRio.onchange = e => { estado.rio = e.target.checked; pintaRio(); };
+  cAer.onchange = e => { estado.aer = e.target.checked; pintaAer(); };
+
   $("#cIso", el).onchange = e => { estado.iso = e.target.checked; pintaIso(); };
   cRot.onchange = e => { estado.rot = e.target.checked; pintaRot(); };
   cAlv.onchange = e => { estado.alv = e.target.checked; pintaAlv(); };
@@ -307,9 +363,15 @@ async function desenharMapa(el, mun) {
   };
   const linhaCard = (tipo, rot, a) => `<li><i style="background:${cor[tipo]}"></i><span>${rot}${a?.nome && tipo !== "Manaus" ? `<small>${esc(a.nome)}</small>` : ""}</span>` +
     `<span>${a?.min != null ? `<b>${hm(a.min)}</b><small>${num(a.km, 1)} km${a.estimado ? " · estimado" : ""}</small>` : `<b>sem estrada</b>${a?.km_linha_reta != null ? `<small>${num(a.km_linha_reta, 1)} km em linha reta</small>` : ""}`}</span></li>`;
+  const linhaRio = f => !f ? "" : `<li><i style="background:${corRio}"></i><span>Pelo rio até Manaus<small>${f.na_malha ? `${num(f.km)} km pela malha do DNIT` : "fora da malha hidroviária mapeada"}</small></span>` +
+    (f.na_malha ? `<span><b>~${hd(f.h_barco)}</b><small>barco · lancha ~${hd(f.h_lancha)}</small></span>` : `<span><b>—</b></span>`) + `</li>`;
+  const linhaAer = a => `<li><i style="background:${corAer}"></i><span>Avião${a ? `<small>${esc(a.nome)} (${esc(a.oaci)})</small>` : ""}</span>` +
+    (!a ? `<span><b>sem aeródromo público</b></span>` : a.voo_regular ? `<span><b>${a.tempo_voo_min ? hm(a.tempo_voo_min) : "voo regular"}</b><small>${num(a.voos_semana, 1)} voo(s)/semana</small></span>`
+      : `<span><b>sem voo regular</b><small>${num(a.km_reta)} km em linha reta</small></span>`) + `</li>`;
   const limpar = () => {
     camSel.clearLayers(); card.hidden = true; estado.sel = ""; fMun.value = "";
     camRot.eachLayer(l => l.options.interactive !== false && l.setStyle({ opacity: 0.95 }));
+    camRio.eachLayer(l => l.setStyle({ opacity: 0.75 }));
     pintaIso();
   };
   selecionar = m => {
@@ -317,14 +379,30 @@ async function desenharMapa(el, mun) {
     camSel.clearLayers(); estado.sel = m.cod; fMun.value = m.cod;
     pintaIso();   // isócronas esmaecidas: o caminho fica em primeiro plano
     camRot.eachLayer(l => l.options.interactive !== false && l.setStyle({ opacity: 0.3 }));
+    camRio.eachLayer(l => l.setStyle({ opacity: 0.25 }));
     const pts = [[m.lat, m.lon]], fs = rotasDe(m.cod).sort((a, b) => (a.properties.destino === "Manaus") - (b.properties.destino === "Manaus"));
     fs.forEach(f => {
       const ll = linha(f.geometry.coordinates), c = cor[f.properties.destino];
       pts.push(...ll);
       L.polyline(ll, { pane: "sel", color: fundo, weight: 9, opacity: 0.9, interactive: false }).addTo(camSel);
       desenhar(L.polyline(ll, { pane: "sel", color: c, weight: 5, opacity: 1, lineCap: "round", interactive: false }).addTo(camSel));
-      f.properties.balsas.forEach(b => L.polyline(linha(b), { pane: "sel", color: fundo, weight: 5, dashArray: "2 7", interactive: false }).addTo(camSel));
+      if (f.properties.destino === "Manaus pelo rio") {   // trecho sede→eixo do rio, pontilhado
+        L.polyline(linha(f.properties.aproximacao), { pane: "sel", color: c, weight: 3, dashArray: "1 6", lineCap: "round", interactive: false }).addTo(camSel);
+        return;
+      }
+      (f.properties.balsas || []).forEach(b => L.polyline(linha(b), { pane: "sel", color: fundo, weight: 5, dashArray: "2 7", interactive: false }).addTo(camSel));
     });
+    if (m.aereo) {   // aeródromo do município e, com voo regular, o arco até Manaus
+      const a = m.aereo;
+      pts.push([a.lat, a.lon]);
+      if (a.voo_regular) {
+        const ll = arco([a.lat, a.lon], SBEG); pts.push(SBEG);
+        L.polyline(ll, { pane: "sel", color: fundo, weight: 7, opacity: 0.85, interactive: false }).addTo(camSel);
+        desenhar(L.polyline(ll, { pane: "sel", color: corAer, weight: 3.5, lineCap: "round", interactive: false }).addTo(camSel));
+      }
+      L.marker([a.lat, a.lon], { pane: "sedes", icon: iconeAer(true), keyboard: false })
+        .bindTooltip(esc(a.oaci), { permanent: true, direction: "bottom", offset: [0, 12], className: "ac-rot" }).addTo(camSel);
+    }
     [["Hospital", m.hospital_mais_proximo], ["Terminal", m.terminal_mais_proximo]].forEach(([tipo, a]) => {
       if (a?.lat == null) return;
       pts.push([a.lat, a.lon]);
@@ -337,8 +415,8 @@ async function desenharMapa(el, mun) {
     const manaus = { nome: "Manaus", min: m.tempo_manaus_min, km: m.km_manaus, km_linha_reta: m.km_linha_reta_manaus };
     card.innerHTML = `<button type="button" class="fechar" aria-label="Fechar">×</button><h3>${esc(m.nome)}</h3>
       <p class="sub">${num(m.pop)} habitantes · ${m.ligacao_rodoviaria ? (m.travessia_balsa ? "estrada com travessia de balsa" : "ligada a Manaus por estrada") : "só fluvial / aéreo até Manaus"}</p>
-      <ul>${m.nome === "Manaus" ? "" : linhaCard("Manaus", "Até Manaus", manaus)}${linhaCard("Hospital", "Hospital mais próximo", m.hospital_mais_proximo)}${linhaCard("Terminal", "Terminal flutuante mais próximo", m.terminal_mais_proximo)}</ul>
-      ${m.travessia_balsa ? `<p class="sub" style="margin:8px 0 0">Tempo sem a espera da balsa.</p>` : ""}${rotas ? "" : `<p class="sub" style="margin:8px 0 0">O traçado das rotas aparece após a próxima rodada do robô.</p>`}`;
+      <ul>${m.nome === "Manaus" ? "" : linhaCard("Manaus", "Até Manaus", manaus)}${m.nome === "Manaus" ? "" : linhaRio(m.fluvial) + linhaAer(m.aereo)}${linhaCard("Hospital", "Hospital mais próximo", m.hospital_mais_proximo)}${linhaCard("Terminal", "Terminal flutuante mais próximo", m.terminal_mais_proximo)}</ul>
+      ${m.travessia_balsa ? `<p class="sub" style="margin:8px 0 0">Tempo sem a espera da balsa.</p>` : ""}${m.fluvial?.na_malha ? `<p class="sub" style="margin:8px 0 0">Barco: estimativa por velocidade média de referência, sem horário nem paradas.</p>` : ""}${rotas ? "" : `<p class="sub" style="margin:8px 0 0">O traçado das rotas aparece após a próxima rodada do robô.</p>`}`;
     card.hidden = false;
     card.querySelector(".fechar").onclick = () => { limpar(); mapa.fitBounds(L.latLngBounds(mun.map(x => [x.lat, x.lon])), { padding: [20, 20] }); };
     if (pts.length > 1) mapa[semMov ? "fitBounds" : "flyToBounds"](L.latLngBounds(pts), { padding: [60, 60], maxZoom: 11, duration: 0.8 });
