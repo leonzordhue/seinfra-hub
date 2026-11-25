@@ -490,3 +490,9 @@ h1[tabindex="-1"]:focus { outline: none; }
 
 /* fundo satélite clareado (igual à v1) */
 .leaflet-layer.tile-sat-clara{filter:brightness(1.18) contrast(1.06) saturate(1.12)}
+.paleta li.grupo { padding: 10px 14px 4px; font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-3); }
+.nav-grupo button { all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 28px; cursor: pointer; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; border-radius: 4px; }
+.nav-grupo button::after { content: ""; width: 6px; height: 6px; border: solid currentColor; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg); margin: 0 6px 3px 0; transition: transform .15s; }
+.nav-grupo button[aria-expanded="false"]::after { transform: rotate(-45deg); margin-bottom: 0; }
+.nav-grupo button:focus-visible { outline: 2px solid var(--ouro); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .nav-grupo button::after { transition: none; } }

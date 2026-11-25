@@ -137,3 +137,24 @@ $("#tema").onclick = () => {
 };
 if (new URLSearchParams(location.search).has("teste")) teste();
 navegar();
+
+// Grupos do menu recolhíveis (estado guardado neste aparelho). O link da tela atual nunca some. [Claude] 25/11/2026
+{
+  const CHAVE = "dmob-nav-fechados";
+  let fech;
+  try { fech = new Set(JSON.parse(localStorage.getItem(CHAVE) || "[]")); } catch { fech = new Set(); }
+  const linksDo = g => { const r = []; let n = g.nextElementSibling; while (n && !n.classList.contains("nav-grupo")) { r.push(n); n = n.nextElementSibling; } return r; };
+  document.querySelectorAll(".nav .nav-grupo").forEach(g => {
+    const t = g.textContent.trim(), b = document.createElement("button");
+    b.type = "button"; b.textContent = t; g.textContent = ""; g.append(b);
+    const aplica = aberto => { b.setAttribute("aria-expanded", aberto); linksDo(g).forEach(a => { a.hidden = !aberto && a.getAttribute("aria-current") !== "page"; }); };
+    aplica(!fech.has(t));
+    addEventListener("hashchange", () => setTimeout(() => aplica(b.getAttribute("aria-expanded") === "true")));   // depois do roteador marcar aria-current
+    b.onclick = () => {
+      const aberto = b.getAttribute("aria-expanded") !== "true";
+      aberto ? fech.delete(t) : fech.add(t);
+      try { localStorage.setItem(CHAVE, JSON.stringify([...fech])); } catch { /* sem localStorage: vale só nesta visita */ }
+      aplica(aberto);
+    };
+  });
+}
