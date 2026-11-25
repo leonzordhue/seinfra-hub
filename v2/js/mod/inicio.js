@@ -1,6 +1,6 @@
 // Painel do dia: o que pede decisão agora, em uma tela. [Nexus] 23/11/2026 · v3 "prancha técnica"
 import { contratos, talvez } from "../dados.js";
-import { esc, num, pct, data, brlCurto } from "../fmt.js";
+import { esc, num, pct, data, brlCurto, plural } from "../fmt.js";
 import { $, kpi, chip, fonte } from "../ui.js";
 
 // descrição curta de cada módulo no índice (o índice segue os grupos do menu, sem lista duplicada)
@@ -27,7 +27,21 @@ const ESTILO_PAINEL = `<style>
   .fontes-faixa th, .fontes-faixa td { text-align: left; padding: 7px 14px; border-top: 1px solid var(--borda); }
   .fontes-faixa th { font-weight: 600; color: var(--tinta-3); font-size: 12px; }
   .fontes-faixa td a { color: var(--tinta); }
-  .mudou .t2 { white-space: normal; }
+  .mudou .m-frase { font-size: 16px; line-height: 1.55; color: var(--tinta); max-width: 78ch; margin: 6px 0 18px; }
+  .mudou .m-cols { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr); gap: 28px; }
+  .mudou .m-col > header { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--borda); padding-bottom: 6px; margin-bottom: 4px; }
+  .mudou .m-tit { margin: 0; font-size: 15px; font-weight: 600; color: var(--tinta); }
+  .mudou .m-grupo h3 { display: flex; align-items: center; gap: 8px; margin: 16px 0 4px; font-size: 14px; font-weight: 600; color: var(--tinta-2); }
+  .mudou ul { list-style: none; margin: 0; padding: 0; }
+  .mudou li { padding: 9px 0; border-bottom: 1px solid var(--borda); }
+  .mudou li:last-child { border-bottom: 0; }
+  .mudou .m-l1 { display: flex; justify-content: space-between; gap: 10px; font-weight: 600; color: var(--tinta); }
+  .mudou .m-l1 span { font-weight: 400; color: var(--tinta-3); font-size: 13px; white-space: nowrap; }
+  .mudou .m-l2 { color: var(--tinta-2); font-size: 14px; line-height: 1.4; margin-top: 2px; }
+  .mudou .m-l3 { color: var(--tinta-3); font-size: 12.5px; margin-top: 3px; }
+  .mudou details summary { cursor: pointer; color: var(--azul, var(--tinta-2)); font-size: 13.5px; padding: 8px 0; min-height: 36px; }
+  .mudou .m-nota { margin: 16px 0 0; font-size: 12.5px; color: var(--tinta-3); }
+  @media (max-width: 900px) { .mudou .m-cols { grid-template-columns: 1fr; } }
   @media (max-width: 640px) { .fontes-faixa th:nth-child(2), .fontes-faixa td:nth-child(2) { display: none; }
     .painel .mapa-mini { display: none; } }   /* no celular o mini-mapa empurrava "Onde agir" para 1.800 px; o botão "Abrir o mapa" fica nas ações */
 </style>`;
@@ -53,22 +67,61 @@ function faixaFontes(P) {
 function secaoMudou(P) {
   const M = P?.mudancas;
   if (!M) return "";
-  const desde = data(M.desde), base = n => M.base?.[n] && M.base[n] > M.desde ? ` (comparado com ${data(M.base[n])})` : "";
-  const cartao = (titulo, sub, link, itens, vazio) => `<div class="cartao mudou"><header><div><h2>${titulo}</h2><p>${sub}</p></div>${link ? `<a href="${link}" class="mais">Abrir →</a>` : ""}</header>
-    <div class="corpo">${itens.length ? `<ul class="linhas">${itens.slice(0, 5).join("")}</ul>${itens.length > 5 ? `<p class="peq" style="margin:6px 0 0">e mais ${num(itens.length - 5)}</p>` : ""}` : `<p class="vazio">${vazio}</p>`}</div></div>`;
-  const li = (t1, t2, v = "") => `<li><div><div class="t1">${t1}</div>${t2 ? `<div class="t2">${t2}</div>` : ""}</div>${v ? `<div class="v">${v}</div>` : ""}</li>`;
-  const ct = M.contratos_novos.map(c => li(`<a href="#/briefings?contrato=${encodeURIComponent(c.id)}">${esc(c.id.replace(/-SEINFRA$/, ""))}</a> · novo`, esc(`${c.mun || ""} · ${c.obj || ""}`), c.valor ? brlCurto(c.valor) : ""))
-    .concat(M.contratos_situacao.map(c => li(`<a href="#/briefings?contrato=${encodeURIComponent(c.id)}">${esc(c.id.replace(/-SEINFRA$/, ""))}</a> · ${esc(c.mun || "")}`, `${esc(c.de || "—")} → <b>${esc(c.para || "—")}</b>`)));
-  const lc = M.licitacoes_novas.map(l => li(l.link ? `<a href="${esc(l.link)}" target="_blank" rel="noopener">${esc(l.edital || "Edital")}</a>` : esc(l.edital || "Edital"), esc(l.objeto), l.encerramento ? `<small>até ${data(l.encerramento)}</small>` : ""));
-  const sn = M.sinistros.map(o => li(`<a href="#/briefings?rodovia=${encodeURIComponent(o.rodovia)}">${esc(o.rodovia)}</a> · ${esc(o.tipo || "Acidente")}${o.fatal ? ` ${chip("com morte", "critico")}` : ""}`, esc(o.municipio || ""), `<small>${data(o.data)}</small>`));
-  const tm = M.terminais_entregues.map(t => li(esc(t.municipio), esc(t.localidade)));
-  return `<section class="secao"><h2>O que mudou desde ${desde}</h2>
-    <div class="grade g-agir" style="margin-top:12px">
-      ${cartao("Contratos", `Novos no e-Obras e mudanças de situação${base("contratos")}`, "#/obras", ct, "Nenhum contrato novo nem mudança de situação.")}
-      ${cartao("Sinistros noticiados", "Ocorrências em rodovias estaduais, pela data da notícia", "#/sinistros", sn, "Nenhuma ocorrência noticiada no período.")}
-      ${cartao("Licitações rodoviárias novas", `Publicadas no PNCP${base("licitacoes")}`, "#/licitacoes", lc, "Nenhuma licitação rodoviária nova.")}
-      ${tm.length ? cartao("Terminais entregues", `Planilha do DMOB${base("terminais")}`, "#/terminais", tm, "") : ""}
-    </div></section>`;
+  const ini = new Date(`${M.desde}T12:00:00`), fim = new Date();
+  const dm = d => d.toLocaleDateString("pt-BR", { day: "numeric", month: "short" }).replace(".", "");
+  const periodo = `${dm(ini)} a ${dm(fim)}`;
+  // objeto sem o preâmbulo burocrático ("Obras e serviços de engenharia para a ...")
+  const objeto = t => { const s = String(t || "").replace(/^(contratação de (pessoa jurídica|empresa)[^,]*?(para|em) )?(a )?(execução (das|de) )?(obras e serviços de engenharia,? ?)?(para|de)? ?(a |o )?/i, "").trim(); return s ? s[0].toUpperCase() + s.slice(1) : ""; };
+  const ctId = id => id.replace(/-SEINFRA$/, "");
+  // o que aconteceu com o contrato, em linguagem de gestão; ordem = o que pede atenção primeiro
+  const GRUPOS = [
+    { k: "rescindido", t: "Rescindidos ou distratados", nivel: "critico", teste: c => /Rescindid|Distrat/.test(c.para) },
+    { k: "paralisado", t: "Paralisados", nivel: "critico", teste: c => /Paralis|Suspens/.test(c.para) },
+    { k: "pendente", t: "Com pendência ou em trâmite", nivel: "alerta", teste: c => /Expirad|Pend|Trâmite|PGE|MP$|Tomada/.test(c.para) },
+    { k: "retomado", t: "Retomados", nivel: "ok", teste: c => /Andamento|Vigente/.test(c.para) && /Paralis|Suspens|Expirad/.test(c.de || "") },
+    { k: "concluido", t: "Concluídos ou em recebimento", nivel: "ok", teste: c => /Conclu|recebimento/i.test(c.para) },
+    { k: "novo", t: "Novos no e-Obras", nivel: "", teste: c => c.novo },
+    { k: "outro", t: "Outras mudanças de situação", nivel: "", teste: () => true },
+  ];
+  const cts = [...M.contratos_novos.map(c => ({ ...c, novo: true, para: c.sit })), ...M.contratos_situacao];
+  const porGrupo = GRUPOS.map(g => ({ ...g, cs: [] }));
+  cts.forEach(c => porGrupo.find(g => g.teste(c)).cs.push(c));
+  porGrupo.forEach(g => g.cs.sort((a, b) => (b.valor || 0) - (a.valor || 0)));
+  const itemCt = c => `<li><div class="m-l1"><a href="#/briefings?contrato=${encodeURIComponent(c.id)}">${esc(ctId(c.id))}</a><span>${esc(c.mun || "")}</span></div>
+      <div class="m-l2">${esc(objeto(c.obj))}</div>
+      <div class="m-l3">${c.valor ? brlCurto(c.valor) : ""}${c.fis != null ? ` · ${pct(c.fis, 0)} executado` : ""}${c.novo ? "" : ` · antes: ${esc(c.de || "—")}`}</div></li>`;
+  const blocoGrupo = g => `<div class="m-grupo"><h3>${chip(String(g.cs.length), g.nivel)} ${esc(g.t)}</h3>
+      <ul>${g.cs.slice(0, 3).map(itemCt).join("")}</ul>
+      ${g.cs.length > 3 ? `<details><summary>ver os outros ${num(g.cs.length - 3)}</summary><ul>${g.cs.slice(3).map(itemCt).join("")}</ul></details>` : ""}</div>`;
+  const gruposCom = porGrupo.filter(g => g.cs.length);
+
+  const sn = M.sinistros, fatais = sn.filter(o => o.fatal), mortos = fatais.reduce((s, o) => s + (o.mortos || 1), 0);
+  const lic = M.licitacoes_novas, term = M.terminais_entregues;
+  const frase = [
+    cts.length ? `${plural(cts.length, "contrato mudou", "contratos mudaram")} de situação no e-Obras (${gruposCom.map(g => `${num(g.cs.length)} ${g.t.toLowerCase().replace(/^novos no e-obras$/, "novos")}`).join(", ")})` : "nenhum contrato mudou de situação no e-Obras",
+    sn.length ? `${plural(sn.length, "sinistro foi noticiado", "sinistros foram noticiados")} em rodovias estaduais${fatais.length ? `, ${num(fatais.length)} com morte (${plural(mortos, "óbito", "óbitos")})` : ""}` : "nenhum sinistro noticiado em rodovia estadual",
+    lic.length ? `${plural(lic.length, "licitação rodoviária foi publicada", "licitações rodoviárias foram publicadas")} no PNCP` : "nenhuma licitação rodoviária nova no PNCP",
+    term.length ? `${plural(term.length, "terminal flutuante foi entregue", "terminais flutuantes foram entregues")}` : "",
+  ].filter(Boolean);
+  const base = Object.entries(M.base || {}).filter(([, d]) => d > M.desde).map(([k, d]) => `${k}: desde ${data(d)}`);
+
+  return `<section class="secao mudou"><h2>Nos últimos 7 dias</h2>
+    <p class="m-frase">De ${periodo}, ${frase.join("; ")}.</p>
+    <div class="m-cols">
+      <div class="m-col"><header><h3 class="m-tit">Contratos</h3><a class="mais" href="#/obras">Abrir contratos →</a></header>
+        ${gruposCom.length ? gruposCom.map(blocoGrupo).join("") : `<p class="peq">Sem mudanças no período.</p>`}</div>
+      <div class="m-col"><header><h3 class="m-tit">Sinistros noticiados</h3><a class="mais" href="#/sinistros">Abrir sinistros →</a></header>
+        ${sn.length ? `<ul>${sn.map(o => `<li><div class="m-l1"><a href="#/briefings?rodovia=${encodeURIComponent(o.rodovia)}">${esc(o.rodovia)}</a><span>${dm(new Date(`${o.data}T12:00:00`))}</span></div>
+          <div class="m-l2">${esc(o.tipo || "Acidente")}${o.municipio ? `, ${esc(o.municipio)}` : ""}</div>
+          ${o.fatal ? `<div class="m-l3">${chip(o.mortos ? plural(o.mortos, "morte", "mortes") : "com morte", "critico")}</div>` : ""}</li>`).join("")}</ul>` : `<p class="peq">Nenhum no período.</p>`}
+        ${lic.length ? `<header style="margin-top:20px"><h3 class="m-tit">Licitações novas</h3><a class="mais" href="#/licitacoes">Abrir licitações →</a></header>
+          <ul>${lic.map(l => `<li><div class="m-l1">${l.link ? `<a href="${esc(l.link)}" target="_blank" rel="noopener">${esc(l.edital || "Edital")}</a>` : esc(l.edital || "Edital")}${l.encerramento ? `<span>até ${data(l.encerramento)}</span>` : ""}</div><div class="m-l2">${esc(objeto(l.objeto))}</div></li>`).join("")}</ul>` : ""}
+        ${term.length ? `<header style="margin-top:20px"><h3 class="m-tit">Terminais entregues</h3><a class="mais" href="#/terminais">Abrir terminais →</a></header>
+          <ul>${term.map(t => `<li><div class="m-l1"><b>${esc(t.municipio)}</b></div><div class="m-l2">${esc(t.localidade)}</div></li>`).join("")}</ul>` : ""}
+      </div>
+    </div>
+    <p class="m-nota">Comparação do dado atual com o publicado há 7 dias${base.length ? ` (base mais recente onde o histórico é curto: ${base.join(", ")})` : ""}. Sinistros pela data da notícia.</p>
+  </section>`;
 }
 
 export async function render(el) {

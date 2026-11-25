@@ -96,7 +96,8 @@ def diff_contratos(novo, velho):
     n, v = (novo or {}).get("ct") or {}, (velho or {}).get("ct") or {}
     entrou = [{"id": k, "sit": c.get("sit"), "mun": c.get("mun"), "obj": (c.get("obj") or "")[:140], "valor": c.get("v_atual")}
               for k, c in n.items() if k not in v]
-    mudou = [{"id": k, "de": v[k].get("sit"), "para": c.get("sit"), "mun": c.get("mun"), "obj": (c.get("obj") or "")[:140]}
+    mudou = [{"id": k, "de": v[k].get("sit"), "para": c.get("sit"), "mun": c.get("mun"), "obj": (c.get("obj") or "")[:140],
+              "valor": c.get("v_atual"), "fis": c.get("fis")}
              for k, c in n.items() if k in v and c.get("sit") != v[k].get("sit")]
     return entrou, mudou
 
@@ -116,7 +117,7 @@ def diff_terminais(novo, velho):
 
 
 def sinistros_recentes(s, desde):
-    return [{"id": o.get("id"), "data": o.get("data"), "rodovia": o.get("rodovia"), "tipo": o.get("tipo"), "fatal": o.get("fatal"),
+    return [{"id": o.get("id"), "data": o.get("data"), "rodovia": o.get("rodovia"), "tipo": o.get("tipo"), "fatal": o.get("fatal"), "mortos": o.get("mortos"),
              "municipio": o.get("municipio")} for o in (s or {}).get("ocorrencias") or [] if (o.get("data") or "") >= desde]
 
 
