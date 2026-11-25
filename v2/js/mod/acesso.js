@@ -233,7 +233,7 @@ async function desenharMapa(el, mun) {
     if (!geo || !estado.iso) return;
     const fs = geo.features.filter(f => f.properties.origem === estado.origem).sort((a, b) => b.properties.ate_min - a.properties.ate_min);
     camIso = L.geoJSON({ type: "FeatureCollection", features: fs }, { pane: "iso",
-      style: f => ({ color: corIso[f.properties.ate_min], weight: 0.8, opacity: 0.6, fillColor: corIso[f.properties.ate_min], fillOpacity: 0.2 }),
+      style: f => ({ color: corIso[f.properties.ate_min], weight: 0.8, opacity: estado.sel ? 0.25 : 0.6, fillColor: corIso[f.properties.ate_min], fillOpacity: estado.sel ? 0.06 : 0.2 }),
       onEachFeature: (f, l) => l.bindTooltip(`Até ${hm(f.properties.ate_min)} ${f.properties.origem === "Manaus" ? "de Manaus" : "da sede mais próxima"}`, { sticky: true }),
     }).addTo(mapa);
   };
@@ -248,6 +248,8 @@ async function desenharMapa(el, mun) {
   const porCod = new Map(mun.map(m => [m.cod, m]));
   const fundo = escuro ? "#0E1626" : "#FFFFFF";
   const ouro = css("--ouro") || "#F5A623", cor = { Manaus: ouro, Hospital: css("--critico") || "#C0392B", Terminal: css("--ok") || "#1B7F4C" };
+  // linha um tom mais forte que a faixa: as cores claras da rampa (+4 h) somem sobre o fundo topográfico
+  const corLinha = m => (escuro ? ["#B3CCF8", "#8DB2F2", "#6FA0F0", "#5A8BD8"] : ["#002D72", "#1F4F99", "#3D6DB5", "#5B85C4"])[FAIXAS.indexOf(faixa(m))] || SEM.cor;
   const camRot = L.layerGroup();
   const rotasDe = cod => (rotas?.features || []).filter(f => f.properties.cod === cod);
   const linha = c => c.map(([x, y]) => [y, x]);
@@ -255,7 +257,7 @@ async function desenharMapa(el, mun) {
     const m = porCod.get(f.properties.cod), ll = linha(f.geometry.coordinates);
     if (!m) return;
     L.polyline(ll, { pane: "rotas", color: fundo, weight: 5, opacity: 0.85, interactive: false }).addTo(camRot);
-    L.polyline(ll, { pane: "rotas", color: faixa(m).cor, weight: 2.6, opacity: 0.95 })
+    L.polyline(ll, { pane: "rotas", color: corLinha(m), weight: 3, opacity: 0.95 })
       .bindTooltip(`${esc(m.nome)} → Manaus · ${hm(m.tempo_manaus_min)}`, { sticky: true }).on("click", () => selecionar(m)).addTo(camRot);
     f.properties.balsas.forEach(b => L.polyline(linha(b), { pane: "rotas", color: ouro, weight: 2.6, dashArray: "4 5", interactive: false }).addTo(camRot));
   });
@@ -308,10 +310,12 @@ async function desenharMapa(el, mun) {
   const limpar = () => {
     camSel.clearLayers(); card.hidden = true; estado.sel = ""; fMun.value = "";
     camRot.eachLayer(l => l.options.interactive !== false && l.setStyle({ opacity: 0.95 }));
+    pintaIso();
   };
   selecionar = m => {
     if (!m) return limpar();
     camSel.clearLayers(); estado.sel = m.cod; fMun.value = m.cod;
+    pintaIso();   // isócronas esmaecidas: o caminho fica em primeiro plano
     camRot.eachLayer(l => l.options.interactive !== false && l.setStyle({ opacity: 0.3 }));
     const pts = [[m.lat, m.lon]], fs = rotasDe(m.cod).sort((a, b) => (a.properties.destino === "Manaus") - (b.properties.destino === "Manaus"));
     fs.forEach(f => {
