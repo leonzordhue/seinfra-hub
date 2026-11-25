@@ -490,6 +490,8 @@ h1 .escudo, h2 .escudo { font-size: max(12px, .72em); }
 h1[tabindex="-1"]:focus { outline: none; }
 
 /* fundo satélite clareado (igual à v1) */
+/* Leaflet usa z-index 400–1000 nos panes/controles; sem isolar, o mapa passa por cima da gaveta (50) e do menu (70) */
+.leaflet-container, .maplibregl-map { isolation: isolate; z-index: 0; }
 .leaflet-layer.tile-sat-clara{filter:brightness(1.18) contrast(1.06) saturate(1.12)}
 .paleta li.grupo { padding: 10px 14px 4px; font-size: 11.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-3); }
 .nav-grupo button { all: unset; box-sizing: border-box; display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 28px; cursor: pointer; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; border-radius: 4px; }
