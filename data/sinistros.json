@@ -2,10 +2,10 @@
  "_meta": {
   "fonte": "Google News (busca pt-BR) -> link real da matéria; texto da matéria conferido pelas regras de coletor/coletar.py",
   "escopo": "somente rodovias estaduais do Amazonas (AM-xxx); BR fica de fora",
-  "atualizado": "2026-11-25 19:55",
-  "noticias": 329,
+  "atualizado": "2026-11-26 19:32",
+  "noticias": 330,
   "ocorrencias": 230,
-  "arquivadas_wayback": 237
+  "arquivadas_wayback": 240
  },
  "ocorrencias": [
   {
@@ -18,7 +18,8 @@
    "km": null,
    "municipio": "Novo Airão",
    "noticias": [
-    1
+    1,
+    2
    ],
    "id": "OC-2026-0001"
   },
@@ -32,7 +33,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    5
+    6
    ],
    "id": "OC-2026-0002"
   },
@@ -46,13 +47,13 @@
    "km": null,
    "municipio": "Manacapuru",
    "noticias": [
-    7,
     8,
     9,
     10,
     11,
-    3,
-    4
+    12,
+    4,
+    5
    ],
    "id": "OC-2026-0003"
   },
@@ -66,9 +67,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    12,
-    6,
-    2
+    13,
+    7,
+    3
    ],
    "id": "OC-2026-0004"
   },
@@ -82,7 +83,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    13
+    14
    ],
    "id": "OC-2026-0005"
   },
@@ -96,7 +97,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    14
+    15
    ],
    "id": "OC-2026-0006"
   },
@@ -110,7 +111,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    15
+    16
    ],
    "id": "OC-2026-0007"
   },
@@ -124,7 +125,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    16
+    17
    ],
    "id": "OC-2026-0008"
   },
@@ -138,7 +139,7 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    17
+    18
    ],
    "id": "OC-2026-0009"
   },
@@ -152,7 +153,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    18
+    19
    ],
    "id": "OC-2026-0010"
   },
@@ -166,7 +167,7 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    19
+    20
    ],
    "id": "OC-2026-0011"
   },
@@ -180,7 +181,7 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    20
+    21
    ],
    "id": "OC-2026-0012"
   },
@@ -194,7 +195,7 @@
    "km": "4",
    "municipio": "Manacapuru",
    "noticias": [
-    21
+    22
    ],
    "id": "OC-2026-0013"
   },
@@ -208,7 +209,7 @@
    "km": null,
    "municipio": "Silves",
    "noticias": [
-    22
+    23
    ],
    "id": "OC-2026-0014"
   },
@@ -222,7 +223,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    23
+    24
    ],
    "id": "OC-2026-0015"
   },
@@ -236,7 +237,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    24
+    25
    ],
    "id": "OC-2026-0016"
   },
@@ -250,7 +251,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    25
+    26
    ],
    "id": "OC-2026-0017"
   },
@@ -264,7 +265,7 @@
    "km": null,
    "municipio": "Silves",
    "noticias": [
-    26
+    27
    ],
    "id": "OC-2026-0018"
   },
@@ -278,7 +279,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    27
+    28
    ],
    "id": "OC-2026-0019"
   },
@@ -292,7 +293,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    28
+    29
    ],
    "id": "OC-2025-0020"
   },
@@ -306,7 +307,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    29
+    30
    ],
    "id": "OC-2025-0021"
   },
@@ -320,7 +321,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    30
+    31
    ],
    "id": "OC-2025-0022"
   },
@@ -334,9 +335,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    31,
     32,
-    33
+    33,
+    34
    ],
    "id": "OC-2025-0023"
   },
@@ -350,9 +351,9 @@
    "km": "6",
    "municipio": "Itacoatiara",
    "noticias": [
-    34,
     35,
-    36
+    36,
+    37
    ],
    "id": "OC-2025-0024"
   },
@@ -366,7 +367,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    37
+    38
    ],
    "id": "OC-2025-0025"
   },
@@ -380,7 +381,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    38
+    39
    ],
    "id": "OC-2025-0026"
   },
@@ -394,7 +395,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    39
+    40
    ],
    "id": "OC-2025-0027"
   },
@@ -408,7 +409,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    40
+    41
    ],
    "id": "OC-2025-0028"
   },
@@ -422,7 +423,7 @@
    "km": "86",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    41
+    42
    ],
    "id": "OC-2025-0029"
   },
@@ -436,7 +437,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    42
+    43
    ],
    "id": "OC-2025-0030"
   },
@@ -450,7 +451,7 @@
    "km": "8",
    "municipio": "Manaus",
    "noticias": [
-    43
+    44
    ],
    "id": "OC-2025-0031"
   },
@@ -464,7 +465,7 @@
    "km": "9",
    "municipio": "Presidente Figueiredo",
    "noticias": [
-    44
+    45
    ],
    "id": "OC-2025-0032"
   },
@@ -478,7 +479,7 @@
    "km": "9",
    "municipio": "Presidente Figueiredo",
    "noticias": [
-    45
+    46
    ],
    "id": "OC-2025-0033"
   },
@@ -492,7 +493,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    46
+    47
    ],
    "id": "OC-2025-0034"
   },
@@ -506,7 +507,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    47
+    48
    ],
    "id": "OC-2025-0035"
   },
@@ -520,7 +521,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    48
+    49
    ],
    "id": "OC-2025-0036"
   },
@@ -534,8 +535,8 @@
    "km": "33",
    "municipio": "Manacapuru",
    "noticias": [
-    50,
-    49
+    51,
+    50
    ],
    "id": "OC-2025-0037"
   },
@@ -549,7 +550,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    51
+    52
    ],
    "id": "OC-2025-0038"
   },
@@ -563,8 +564,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    53,
-    52
+    54,
+    53
    ],
    "id": "OC-2025-0039"
   },
@@ -578,7 +579,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    54
+    55
    ],
    "id": "OC-2025-0040"
   },
@@ -592,8 +593,8 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    56,
-    57
+    57,
+    58
    ],
    "id": "OC-2025-0041"
   },
@@ -607,13 +608,13 @@
    "km": "30",
    "municipio": "Manaus",
    "noticias": [
-    58,
     59,
     60,
     61,
     62,
     63,
-    55
+    64,
+    56
    ],
    "id": "OC-2025-0042"
   },
@@ -627,7 +628,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    64
+    65
    ],
    "id": "OC-2025-0043"
   },
@@ -641,7 +642,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    65
+    66
    ],
    "id": "OC-2025-0044"
   },
@@ -655,7 +656,7 @@
    "km": "5",
    "municipio": "Itacoatiara",
    "noticias": [
-    66
+    67
    ],
    "id": "OC-2025-0045"
   },
@@ -669,7 +670,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    67
+    68
    ],
    "id": "OC-2025-0046"
   },
@@ -683,7 +684,7 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    68
+    69
    ],
    "id": "OC-2025-0047"
   },
@@ -697,7 +698,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    69
+    70
    ],
    "id": "OC-2025-0048"
   },
@@ -711,10 +712,10 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    70,
     71,
     72,
-    73
+    73,
+    74
    ],
    "id": "OC-2025-0049"
   },
@@ -728,7 +729,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    74
+    75
    ],
    "id": "OC-2025-0050"
   },
@@ -742,7 +743,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    75
+    76
    ],
    "id": "OC-2025-0051"
   },
@@ -756,7 +757,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    76
+    77
    ],
    "id": "OC-2025-0052"
   },
@@ -770,7 +771,7 @@
    "km": "93",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    77
+    78
    ],
    "id": "OC-2025-0053"
   },
@@ -784,7 +785,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    78
+    79
    ],
    "id": "OC-2025-0054"
   },
@@ -798,7 +799,7 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    79
+    80
    ],
    "id": "OC-2025-0055"
   },
@@ -812,7 +813,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    80
+    81
    ],
    "id": "OC-2025-0056"
   },
@@ -826,7 +827,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    81
+    82
    ],
    "id": "OC-2024-0057"
   },
@@ -840,7 +841,7 @@
    "km": "138",
    "municipio": "Itacoatiara",
    "noticias": [
-    82
+    83
    ],
    "id": "OC-2024-0058"
   },
@@ -854,7 +855,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    83
+    84
    ],
    "id": "OC-2024-0059"
   },
@@ -868,15 +869,15 @@
    "km": "135",
    "municipio": "Manaus",
    "noticias": [
-    94,
     95,
     96,
     97,
     98,
-    100,
+    99,
     101,
     102,
-    105
+    103,
+    106
    ],
    "id": "OC-2024-0060"
   },
@@ -890,8 +891,8 @@
    "km": "135",
    "municipio": "Itacoatiara",
    "noticias": [
-    99,
-    108
+    100,
+    109
    ],
    "id": "OC-2024-0061"
   },
@@ -905,9 +906,9 @@
    "km": "138",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    103,
     104,
-    106
+    105,
+    107
    ],
    "id": "OC-2024-0062"
   },
@@ -921,16 +922,16 @@
    "km": "127",
    "municipio": "Manaus",
    "noticias": [
-    107,
-    109,
+    108,
     110,
     111,
-    113,
-    85,
+    112,
+    114,
     86,
     87,
     88,
-    84
+    89,
+    85
    ],
    "id": "OC-2024-0063"
   },
@@ -944,13 +945,13 @@
    "km": "62",
    "municipio": "Manaus",
    "noticias": [
-    114,
-    89,
+    115,
     90,
     91,
     92,
     93,
-    112
+    94,
+    113
    ],
    "id": "OC-2024-0064"
   },
@@ -964,7 +965,7 @@
    "km": null,
    "municipio": "Manacapuru",
    "noticias": [
-    115
+    116
    ],
    "id": "OC-2024-0065"
   },
@@ -978,8 +979,8 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    116,
-    117
+    117,
+    118
    ],
    "id": "OC-2024-0066"
   },
@@ -993,7 +994,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    118
+    119
    ],
    "id": "OC-2024-0067"
   },
@@ -1007,7 +1008,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    119
+    120
    ],
    "id": "OC-2024-0068"
   },
@@ -1021,7 +1022,7 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    120
+    121
    ],
    "id": "OC-2024-0069"
   },
@@ -1035,7 +1036,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    121
+    122
    ],
    "id": "OC-2024-0070"
   },
@@ -1049,7 +1050,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    122
+    123
    ],
    "id": "OC-2024-0071"
   },
@@ -1063,7 +1064,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    123
+    124
    ],
    "id": "OC-2024-0072"
   },
@@ -1077,7 +1078,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    124
+    125
    ],
    "id": "OC-2024-0073"
   },
@@ -1091,7 +1092,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    125
+    126
    ],
    "id": "OC-2024-0074"
   },
@@ -1105,8 +1106,8 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    126,
-    127
+    127,
+    128
    ],
    "id": "OC-2024-0075"
   },
@@ -1120,9 +1121,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    128,
     129,
-    130
+    130,
+    131
    ],
    "id": "OC-2024-0076"
   },
@@ -1136,7 +1137,7 @@
    "km": "12",
    "municipio": "Manaus",
    "noticias": [
-    131
+    132
    ],
    "id": "OC-2024-0077"
   },
@@ -1150,7 +1151,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    132
+    133
    ],
    "id": "OC-2024-0078"
   },
@@ -1164,7 +1165,7 @@
    "km": "37",
    "municipio": "Itacoatiara",
    "noticias": [
-    134
+    135
    ],
    "id": "OC-2024-0079"
   },
@@ -1178,7 +1179,7 @@
    "km": null,
    "municipio": "Manacapuru",
    "noticias": [
-    133
+    134
    ],
    "id": "OC-2024-0080"
   },
@@ -1192,7 +1193,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    135
+    136
    ],
    "id": "OC-2024-0081"
   },
@@ -1206,7 +1207,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    137
+    138
    ],
    "id": "OC-2024-0082"
   },
@@ -1220,8 +1221,8 @@
    "km": "21",
    "municipio": "Iranduba",
    "noticias": [
-    138,
-    136
+    139,
+    137
    ],
    "id": "OC-2024-0083"
   },
@@ -1235,7 +1236,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    139
+    140
    ],
    "id": "OC-2023-0084"
   },
@@ -1249,7 +1250,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    140
+    141
    ],
    "id": "OC-2023-0085"
   },
@@ -1263,7 +1264,7 @@
    "km": "37",
    "municipio": "Manaus",
    "noticias": [
-    141
+    142
    ],
    "id": "OC-2023-0086"
   },
@@ -1277,7 +1278,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    142
+    143
    ],
    "id": "OC-2023-0087"
   },
@@ -1291,8 +1292,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    144,
-    143
+    145,
+    144
    ],
    "id": "OC-2023-0088"
   },
@@ -1306,8 +1307,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    145,
-    146
+    146,
+    147
    ],
    "id": "OC-2023-0089"
   },
@@ -1321,7 +1322,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    147
+    148
    ],
    "id": "OC-2023-0090"
   },
@@ -1335,7 +1336,7 @@
    "km": "34",
    "municipio": "Itacoatiara",
    "noticias": [
-    148
+    149
    ],
    "id": "OC-2023-0091"
   },
@@ -1349,7 +1350,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    149
+    150
    ],
    "id": "OC-2023-0092"
   },
@@ -1363,7 +1364,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    152
+    153
    ],
    "id": "OC-2023-0093"
   },
@@ -1377,8 +1378,8 @@
    "km": "9",
    "municipio": "Manaus",
    "noticias": [
-    150,
-    151
+    151,
+    152
    ],
    "id": "OC-2023-0094"
   },
@@ -1392,7 +1393,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    153
+    154
    ],
    "id": "OC-2023-0095"
   },
@@ -1406,7 +1407,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    154
+    155
    ],
    "id": "OC-2023-0096"
   },
@@ -1420,7 +1421,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    155
+    156
    ],
    "id": "OC-2023-0097"
   },
@@ -1434,8 +1435,8 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    156,
-    157
+    157,
+    158
    ],
    "id": "OC-2023-0098"
   },
@@ -1449,7 +1450,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    158
+    159
    ],
    "id": "OC-2022-0099"
   },
@@ -1463,7 +1464,7 @@
    "km": "05",
    "municipio": "Manaus",
    "noticias": [
-    159
+    160
    ],
    "id": "OC-2022-0100"
   },
@@ -1477,10 +1478,10 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    163,
-    160,
+    164,
     161,
-    162
+    162,
+    163
    ],
    "id": "OC-2022-0101"
   },
@@ -1494,8 +1495,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    164,
-    165
+    165,
+    166
    ],
    "id": "OC-2022-0102"
   },
@@ -1509,8 +1510,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    167,
-    166
+    168,
+    167
    ],
    "id": "OC-2022-0103"
   },
@@ -1524,7 +1525,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    168
+    169
    ],
    "id": "OC-2022-0104"
   },
@@ -1538,7 +1539,7 @@
    "km": "53",
    "municipio": "Manaus",
    "noticias": [
-    169
+    170
    ],
    "id": "OC-2022-0105"
   },
@@ -1552,7 +1553,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    170
+    171
    ],
    "id": "OC-2022-0106"
   },
@@ -1566,7 +1567,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    171
+    172
    ],
    "id": "OC-2022-0107"
   },
@@ -1580,7 +1581,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    172
+    173
    ],
    "id": "OC-2022-0108"
   },
@@ -1594,7 +1595,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    173
+    174
    ],
    "id": "OC-2022-0109"
   },
@@ -1608,7 +1609,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    174
+    175
    ],
    "id": "OC-2022-0110"
   },
@@ -1622,7 +1623,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    175
+    176
    ],
    "id": "OC-2022-0111"
   },
@@ -1636,7 +1637,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    176
+    177
    ],
    "id": "OC-2022-0112"
   },
@@ -1650,10 +1651,10 @@
    "km": "28",
    "municipio": "Manaus",
    "noticias": [
-    177,
     178,
     179,
-    180
+    180,
+    181
    ],
    "id": "OC-2022-0113"
   },
@@ -1667,7 +1668,7 @@
    "km": "22",
    "municipio": "Manaus",
    "noticias": [
-    181
+    182
    ],
    "id": "OC-2022-0114"
   },
@@ -1681,7 +1682,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    182
+    183
    ],
    "id": "OC-2022-0115"
   },
@@ -1695,7 +1696,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    183
+    184
    ],
    "id": "OC-2022-0116"
   },
@@ -1709,7 +1710,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    184
+    185
    ],
    "id": "OC-2022-0117"
   },
@@ -1723,7 +1724,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    185
+    186
    ],
    "id": "OC-2022-0118"
   },
@@ -1737,10 +1738,10 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    186,
     187,
     188,
-    189
+    189,
+    190
    ],
    "id": "OC-2022-0119"
   },
@@ -1754,8 +1755,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    191,
-    192
+    192,
+    193
    ],
    "id": "OC-2021-0120"
   },
@@ -1769,7 +1770,7 @@
    "km": null,
    "municipio": "Novo Airão",
    "noticias": [
-    190
+    191
    ],
    "id": "OC-2021-0121"
   },
@@ -1783,7 +1784,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    193
+    194
    ],
    "id": "OC-2021-0122"
   },
@@ -1797,7 +1798,7 @@
    "km": "26",
    "municipio": "Manaus",
    "noticias": [
-    194
+    195
    ],
    "id": "OC-2021-0123"
   },
@@ -1811,7 +1812,7 @@
    "km": "35",
    "municipio": "Manaus",
    "noticias": [
-    195
+    196
    ],
    "id": "OC-2021-0124"
   },
@@ -1825,8 +1826,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    196,
-    198
+    197,
+    199
    ],
    "id": "OC-2021-0125"
   },
@@ -1840,7 +1841,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    197
+    198
    ],
    "id": "OC-2021-0126"
   },
@@ -1854,7 +1855,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    199
+    200
    ],
    "id": "OC-2021-0127"
   },
@@ -1868,10 +1869,10 @@
    "km": "84",
    "municipio": "Manaus",
    "noticias": [
-    201,
     202,
     203,
-    200
+    204,
+    201
    ],
    "id": "OC-2021-0128"
   },
@@ -1885,7 +1886,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    204
+    205
    ],
    "id": "OC-2021-0129"
   },
@@ -1899,8 +1900,8 @@
    "km": "3",
    "municipio": "Manaus",
    "noticias": [
-    205,
-    206
+    206,
+    207
    ],
    "id": "OC-2021-0130"
   },
@@ -1914,7 +1915,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    207
+    208
    ],
    "id": "OC-2021-0131"
   },
@@ -1928,7 +1929,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    208
+    209
    ],
    "id": "OC-2021-0132"
   },
@@ -1942,7 +1943,7 @@
    "km": "102",
    "municipio": "Manaus",
    "noticias": [
-    209
+    210
    ],
    "id": "OC-2021-0133"
   },
@@ -1956,7 +1957,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    210
+    211
    ],
    "id": "OC-2021-0134"
   },
@@ -1970,9 +1971,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    211,
     212,
-    213
+    213,
+    214
    ],
    "id": "OC-2021-0135"
   },
@@ -1986,8 +1987,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    214,
-    215
+    215,
+    216
    ],
    "id": "OC-2021-0136"
   },
@@ -2001,7 +2002,7 @@
    "km": "8",
    "municipio": "Manaus",
    "noticias": [
-    216
+    217
    ],
    "id": "OC-2021-0137"
   },
@@ -2015,7 +2016,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    217
+    218
    ],
    "id": "OC-2021-0138"
   },
@@ -2029,7 +2030,7 @@
    "km": "37",
    "municipio": "Manaus",
    "noticias": [
-    218
+    219
    ],
    "id": "OC-2021-0139"
   },
@@ -2043,7 +2044,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    219
+    220
    ],
    "id": "OC-2021-0140"
   },
@@ -2057,7 +2058,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    220
+    221
    ],
    "id": "OC-2021-0141"
   },
@@ -2071,7 +2072,7 @@
    "km": "83",
    "municipio": "Manaus",
    "noticias": [
-    221
+    222
    ],
    "id": "OC-2021-0142"
   },
@@ -2085,7 +2086,7 @@
    "km": "03",
    "municipio": "Manaus",
    "noticias": [
-    222
+    223
    ],
    "id": "OC-2021-0143"
   },
@@ -2099,8 +2100,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    223,
-    224
+    224,
+    225
    ],
    "id": "OC-2021-0144"
   },
@@ -2114,7 +2115,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    225
+    226
    ],
    "id": "OC-2021-0145"
   },
@@ -2128,7 +2129,7 @@
    "km": "19",
    "municipio": "Manaus",
    "noticias": [
-    226
+    227
    ],
    "id": "OC-2021-0146"
   },
@@ -2142,7 +2143,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    227
+    228
    ],
    "id": "OC-2021-0147"
   },
@@ -2156,7 +2157,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    228
+    229
    ],
    "id": "OC-2021-0148"
   },
@@ -2170,7 +2171,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    229
+    230
    ],
    "id": "OC-2020-0149"
   },
@@ -2184,7 +2185,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    230
+    231
    ],
    "id": "OC-2020-0150"
   },
@@ -2198,7 +2199,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    231
+    232
    ],
    "id": "OC-2020-0151"
   },
@@ -2212,8 +2213,8 @@
    "km": "49",
    "municipio": "Manaus",
    "noticias": [
-    233,
-    232
+    234,
+    233
    ],
    "id": "OC-2020-0152"
   },
@@ -2227,7 +2228,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    234
+    235
    ],
    "id": "OC-2020-0153"
   },
@@ -2241,8 +2242,8 @@
    "km": "8",
    "municipio": "Novo Airão",
    "noticias": [
-    235,
-    236
+    236,
+    237
    ],
    "id": "OC-2020-0154"
   },
@@ -2256,7 +2257,7 @@
    "km": "83",
    "municipio": "Manaus",
    "noticias": [
-    237
+    238
    ],
    "id": "OC-2020-0155"
   },
@@ -2270,7 +2271,7 @@
    "km": "19",
    "municipio": "Manaus",
    "noticias": [
-    238
+    239
    ],
    "id": "OC-2020-0156"
   },
@@ -2284,7 +2285,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    239
+    240
    ],
    "id": "OC-2020-0157"
   },
@@ -2298,7 +2299,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    240
+    241
    ],
    "id": "OC-2020-0158"
   },
@@ -2312,7 +2313,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    241
+    242
    ],
    "id": "OC-2020-0159"
   },
@@ -2326,7 +2327,7 @@
    "km": "76",
    "municipio": "Itapiranga",
    "noticias": [
-    242
+    243
    ],
    "id": "OC-2020-0160"
   },
@@ -2340,7 +2341,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    243
+    244
    ],
    "id": "OC-2020-0161"
   },
@@ -2354,7 +2355,7 @@
    "km": "60",
    "municipio": "Manaus",
    "noticias": [
-    244
+    245
    ],
    "id": "OC-2020-0162"
   },
@@ -2368,7 +2369,7 @@
    "km": "17",
    "municipio": "Manaus",
    "noticias": [
-    245
+    246
    ],
    "id": "OC-2020-0163"
   },
@@ -2382,7 +2383,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    246
+    247
    ],
    "id": "OC-2020-0164"
   },
@@ -2396,7 +2397,7 @@
    "km": "59",
    "municipio": "Manaus",
    "noticias": [
-    247
+    248
    ],
    "id": "OC-2020-0165"
   },
@@ -2410,7 +2411,7 @@
    "km": "4",
    "municipio": "Manaus",
    "noticias": [
-    248
+    249
    ],
    "id": "OC-2020-0166"
   },
@@ -2424,9 +2425,9 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    251,
-    249,
-    250
+    252,
+    250,
+    251
    ],
    "id": "OC-2020-0167"
   },
@@ -2440,7 +2441,7 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    252
+    253
    ],
    "id": "OC-2020-0168"
   },
@@ -2454,8 +2455,8 @@
    "km": "61",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    253,
-    254
+    254,
+    255
    ],
    "id": "OC-2020-0169"
   },
@@ -2469,8 +2470,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    256,
-    255
+    257,
+    256
    ],
    "id": "OC-2020-0170"
   },
@@ -2484,7 +2485,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    257
+    258
    ],
    "id": "OC-2020-0171"
   },
@@ -2498,8 +2499,8 @@
    "km": "41",
    "municipio": "Manaus",
    "noticias": [
-    258,
-    259
+    259,
+    260
    ],
    "id": "OC-2020-0172"
   },
@@ -2513,7 +2514,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    260
+    261
    ],
    "id": "OC-2020-0173"
   },
@@ -2527,7 +2528,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    261
+    262
    ],
    "id": "OC-2020-0174"
   },
@@ -2541,7 +2542,7 @@
    "km": "132",
    "municipio": "Manaus",
    "noticias": [
-    262
+    263
    ],
    "id": "OC-2020-0175"
   },
@@ -2555,7 +2556,7 @@
    "km": "68",
    "municipio": "Manacapuru",
    "noticias": [
-    263
+    264
    ],
    "id": "OC-2020-0176"
   },
@@ -2569,7 +2570,7 @@
    "km": "132",
    "municipio": "Manaus",
    "noticias": [
-    264
+    265
    ],
    "id": "OC-2020-0177"
   },
@@ -2583,7 +2584,7 @@
    "km": "35",
    "municipio": "Itacoatiara",
    "noticias": [
-    265
+    266
    ],
    "id": "OC-2019-0178"
   },
@@ -2597,7 +2598,7 @@
    "km": null,
    "municipio": "Manacapuru",
    "noticias": [
-    266
+    267
    ],
    "id": "OC-2019-0179"
   },
@@ -2611,7 +2612,7 @@
    "km": "44",
    "municipio": "Iranduba",
    "noticias": [
-    267
+    268
    ],
    "id": "OC-2019-0180"
   },
@@ -2625,7 +2626,7 @@
    "km": "52",
    "municipio": "Manaus",
    "noticias": [
-    268
+    269
    ],
    "id": "OC-2019-0181"
   },
@@ -2639,8 +2640,8 @@
    "km": "105",
    "municipio": "Manaus",
    "noticias": [
-    270,
-    269
+    271,
+    270
    ],
    "id": "OC-2019-0182"
   },
@@ -2654,7 +2655,7 @@
    "km": "135",
    "municipio": "Manaus",
    "noticias": [
-    272
+    273
    ],
    "id": "OC-2019-0183"
   },
@@ -2668,8 +2669,8 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    271,
-    273
+    272,
+    274
    ],
    "id": "OC-2019-0184"
   },
@@ -2683,7 +2684,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    274
+    275
    ],
    "id": "OC-2019-0185"
   },
@@ -2697,7 +2698,7 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    275
+    276
    ],
    "id": "OC-2019-0186"
   },
@@ -2711,7 +2712,7 @@
    "km": "72",
    "municipio": "Manaus",
    "noticias": [
-    276
+    277
    ],
    "id": "OC-2019-0187"
   },
@@ -2725,7 +2726,7 @@
    "km": "19",
    "municipio": "Manaus",
    "noticias": [
-    277
+    278
    ],
    "id": "OC-2019-0188"
   },
@@ -2739,7 +2740,7 @@
    "km": "72",
    "municipio": "Manacapuru",
    "noticias": [
-    278
+    279
    ],
    "id": "OC-2019-0189"
   },
@@ -2753,7 +2754,7 @@
    "km": "28",
    "municipio": "Manaus",
    "noticias": [
-    279
+    280
    ],
    "id": "OC-2019-0190"
   },
@@ -2767,7 +2768,7 @@
    "km": "102",
    "municipio": "Manaus",
    "noticias": [
-    280
+    281
    ],
    "id": "OC-2019-0191"
   },
@@ -2781,7 +2782,7 @@
    "km": null,
    "municipio": null,
    "noticias": [
-    281
+    282
    ],
    "id": "OC-2019-0192"
   },
@@ -2795,7 +2796,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    282
+    283
    ],
    "id": "OC-2019-0193"
   },
@@ -2809,7 +2810,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    283
+    284
    ],
    "id": "OC-2019-0194"
   },
@@ -2823,7 +2824,7 @@
    "km": "4",
    "municipio": "Manaus",
    "noticias": [
-    284
+    285
    ],
    "id": "OC-2019-0195"
   },
@@ -2837,7 +2838,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    285
+    286
    ],
    "id": "OC-2019-0196"
   },
@@ -2851,7 +2852,7 @@
    "km": "17",
    "municipio": "Autazes",
    "noticias": [
-    286
+    287
    ],
    "id": "OC-2019-0197"
   },
@@ -2865,7 +2866,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    287
+    288
    ],
    "id": "OC-2019-0198"
   },
@@ -2879,7 +2880,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    288
+    289
    ],
    "id": "OC-2019-0199"
   },
@@ -2893,7 +2894,7 @@
    "km": "104",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    289
+    290
    ],
    "id": "OC-2019-0200"
   },
@@ -2907,7 +2908,7 @@
    "km": "58",
    "municipio": "Manaus",
    "noticias": [
-    290
+    291
    ],
    "id": "OC-2019-0201"
   },
@@ -2921,7 +2922,7 @@
    "km": null,
    "municipio": "Autazes",
    "noticias": [
-    291
+    292
    ],
    "id": "OC-2019-0202"
   },
@@ -2935,7 +2936,7 @@
    "km": "5",
    "municipio": "Manaus",
    "noticias": [
-    292
+    293
    ],
    "id": "OC-2019-0203"
   },
@@ -2949,7 +2950,7 @@
    "km": null,
    "municipio": "Novo Airão",
    "noticias": [
-    295
+    296
    ],
    "id": "OC-2019-0204"
   },
@@ -2963,9 +2964,9 @@
    "km": "88",
    "municipio": "Itacoatiara",
    "noticias": [
-    298,
-    294,
-    297
+    299,
+    295,
+    298
    ],
    "id": "OC-2019-0205"
   },
@@ -2979,10 +2980,10 @@
    "km": "184",
    "municipio": "Manaus",
    "noticias": [
+    301,
     300,
-    299,
-    293,
-    296
+    294,
+    297
    ],
    "id": "OC-2019-0206"
   },
@@ -2996,7 +2997,7 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    301
+    302
    ],
    "id": "OC-2019-0207"
   },
@@ -3010,7 +3011,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    302
+    303
    ],
    "id": "OC-2019-0208"
   },
@@ -3024,7 +3025,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    303
+    304
    ],
    "id": "OC-2019-0209"
   },
@@ -3038,8 +3039,8 @@
    "km": "74",
    "municipio": "Manaus",
    "noticias": [
-    304,
-    305
+    305,
+    306
    ],
    "id": "OC-2019-0210"
   },
@@ -3053,8 +3054,8 @@
    "km": "108",
    "municipio": "Itacoatiara",
    "noticias": [
-    307,
-    308
+    308,
+    309
    ],
    "id": "OC-2019-0211"
   },
@@ -3068,7 +3069,7 @@
    "km": "18",
    "municipio": "Manaus",
    "noticias": [
-    306
+    307
    ],
    "id": "OC-2019-0212"
   },
@@ -3082,7 +3083,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    309
+    310
    ],
    "id": "OC-2019-0213"
   },
@@ -3096,7 +3097,7 @@
    "km": "22",
    "municipio": "Manaus",
    "noticias": [
-    310
+    311
    ],
    "id": "OC-2019-0214"
   },
@@ -3110,8 +3111,8 @@
    "km": "135",
    "municipio": "Manaus",
    "noticias": [
-    312,
-    311
+    313,
+    312
    ],
    "id": "OC-2019-0215"
   },
@@ -3125,7 +3126,7 @@
    "km": "7",
    "municipio": "Manaus",
    "noticias": [
-    313
+    314
    ],
    "id": "OC-2019-0216"
   },
@@ -3139,7 +3140,7 @@
    "km": "77",
    "municipio": "Manaus",
    "noticias": [
-    314
+    315
    ],
    "id": "OC-2019-0217"
   },
@@ -3153,7 +3154,7 @@
    "km": "47",
    "municipio": "Manaus",
    "noticias": [
-    315
+    316
    ],
    "id": "OC-2019-0218"
   },
@@ -3167,8 +3168,8 @@
    "km": "175",
    "municipio": "Manaus",
    "noticias": [
-    317,
-    316
+    318,
+    317
    ],
    "id": "OC-2019-0219"
   },
@@ -3182,7 +3183,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    318
+    319
    ],
    "id": "OC-2017-0220"
   },
@@ -3196,7 +3197,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    319
+    320
    ],
    "id": "OC-2017-0221"
   },
@@ -3210,7 +3211,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    320
+    321
    ],
    "id": "OC-2017-0222"
   },
@@ -3224,7 +3225,7 @@
    "km": "127",
    "municipio": "Manaus",
    "noticias": [
-    321
+    322
    ],
    "id": "OC-2016-0223"
   },
@@ -3238,7 +3239,7 @@
    "km": "3",
    "municipio": "Manaus",
    "noticias": [
-    322
+    323
    ],
    "id": "OC-2016-0224"
   },
@@ -3252,7 +3253,7 @@
    "km": "30",
    "municipio": "Itacoatiara",
    "noticias": [
-    323
+    324
    ],
    "id": "OC-2016-0225"
   },
@@ -3266,8 +3267,8 @@
    "km": null,
    "municipio": "Itacoatiara",
    "noticias": [
-    324,
-    325
+    325,
+    326
    ],
    "id": "OC-2016-0226"
   },
@@ -3281,7 +3282,7 @@
    "km": "2",
    "municipio": "Manacapuru",
    "noticias": [
-    326
+    327
    ],
    "id": "OC-2016-0227"
   },
@@ -3295,7 +3296,7 @@
    "km": "91",
    "municipio": "Rio Preto da Eva",
    "noticias": [
-    327
+    328
    ],
    "id": "OC-2015-0228"
   },
@@ -3309,7 +3310,7 @@
    "km": null,
    "municipio": "Iranduba",
    "noticias": [
-    328
+    329
    ],
    "id": "OC-2014-0229"
   },
@@ -3323,7 +3324,7 @@
    "km": null,
    "municipio": "Manaus",
    "noticias": [
-    329
+    330
    ],
    "id": "OC-2014-0230"
   }
@@ -3354,6 +3355,30 @@
    "arquivado_em": "2026-11-24"
   },
   {
+   "url": "https://todahora.com/motorista-fica-ferido-apos-kombi-tombar-ao-atingir-cavalo-em-estrada-de-novo-airao/",
+   "titulo": "Motorista fica ferido após Kombi tombar ao atingir cavalo em estrada de Novo Airão",
+   "fonte": "Toda Hora",
+   "fonte_url": "https://todahora.com",
+   "data": "2026-11-24",
+   "verificacao": "texto da matéria",
+   "termo": "AM-352",
+   "trecho": null,
+   "rodovia": "AM-352",
+   "rodovias_citadas": [
+    "AM-352"
+   ],
+   "tipo": "Tombamento",
+   "fatal": false,
+   "mortos": null,
+   "feridos": null,
+   "km": null,
+   "municipio": "Novo Airão",
+   "id": 2,
+   "ocorrencia": "OC-2026-0001",
+   "arquivo": "https://web.archive.org/web/20261126193325/https://todahora.com/motorista-fica-ferido-apos-kombi-tombar-ao-atingir-cavalo-em-estrada-de-novo-airao/",
+   "arquivado_em": "2026-11-26"
+  },
+  {
    "url": "https://www.riosdenoticias.com.br/familia-pede-ajuda-para-consertar-carro-apos-acidente-com-morte-na-am-070/",
    "titulo": "Família pede ajuda para consertar carro após acidente com morte na AM-070",
    "fonte": "Portal - Rios de Notícias",
@@ -3372,7 +3397,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 2,
+   "id": 3,
    "ocorrencia": "OC-2026-0004",
    "arquivo": "https://web.archive.org/web/20261124203910/https://www.riosdenoticias.com.br/familia-pede-ajuda-para-consertar-carro-apos-acidente-com-morte-na-am-070/",
    "arquivado_em": "2026-11-24"
@@ -3396,7 +3421,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 3,
+   "id": 4,
    "ocorrencia": "OC-2026-0003",
    "arquivo": "https://web.archive.org/web/20261124204047/https://novo2026.portaldoholanda.com.br/amazonas/motociclista-despedacado-em-acidente-na-am-070-voltava-de-torneio-de-futebol",
    "arquivado_em": "2026-11-24"
@@ -3420,7 +3445,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 4,
+   "id": 5,
    "ocorrencia": "OC-2026-0003",
    "arquivo": "https://web.archive.org/web/20261125195515/https://www.portaldoholanda.com.br/amazonas/motociclista-despedacado-em-acidente-na-am-070-voltava-de-torneio-de-futebol",
    "arquivado_em": "2026-11-25"
@@ -3444,8 +3469,10 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 5,
-   "ocorrencia": "OC-2026-0002"
+   "id": 6,
+   "ocorrencia": "OC-2026-0002",
+   "arquivo": "https://web.archive.org/web/20261126193449/https://ochefaodanoticia.com.br/policia/corpo-de-motociclista-fica-dilacerado-apos-batida-violenta-com-carro-no-am/",
+   "arquivado_em": "2026-11-26"
   },
   {
    "url": "https://www.acritica.com/geral/homem-morre-em-grave-acidente-na-am-070-2/",
@@ -3466,7 +3493,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 6,
+   "id": 7,
    "ocorrencia": "OC-2026-0004",
    "arquivo": "http://web.archive.org/web/20261123212317/https://www.acritica.com/geral/homem-morre-em-grave-acidente-na-am-070-2/",
    "arquivado_em": "2026-11-25"
@@ -3490,7 +3517,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 7,
+   "id": 8,
    "ocorrencia": "OC-2026-0003"
   },
   {
@@ -3512,7 +3539,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 8,
+   "id": 9,
    "ocorrencia": "OC-2026-0003",
    "arquivo": "https://web.archive.org/web/20261125195655/https://www.riosdenoticias.com.br/homem-morre-apos-ter-corpo-partido-ao-meio-em-grave-acidente-na-am-070-em-manacapuru/",
    "arquivado_em": "2026-11-25"
@@ -3536,7 +3563,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 9,
+   "id": 10,
    "ocorrencia": "OC-2026-0003",
    "arquivo": "http://web.archive.org/web/20261123212531/https://marioadolfo.com/video-motociclista-tem-corpo-despedacado-em-grave-acidente-na-am-070/",
    "arquivado_em": "2026-11-25"
@@ -3560,7 +3587,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 10,
+   "id": 11,
    "ocorrencia": "OC-2026-0003",
    "arquivo": "https://web.archive.org/web/20261125195841/https://todahora.com/motociclista-morre-apos-violenta-colisao-com-carro-na-rodovia-am-070/",
    "arquivado_em": "2026-11-25"
@@ -3584,7 +3611,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 11,
+   "id": 12,
    "ocorrencia": "OC-2026-0003",
    "arquivo": "https://web.archive.org/web/20261125195949/https://emtempo.com.br/613076/amazonas/motociclista-morre-acidente-am-070-amazonas/",
    "arquivado_em": "2026-11-25"
@@ -3608,8 +3635,10 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 12,
-   "ocorrencia": "OC-2026-0004"
+   "id": 13,
+   "ocorrencia": "OC-2026-0004",
+   "arquivo": "http://web.archive.org/web/20261125200019/https://www.portaldoholanda.com.br/amazonas/motociclista-tem-o-corpo-despedacado-em-grave-acidente-na-am-070",
+   "arquivado_em": "2026-11-26"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2026/11/12/passageiro-morre-apos-taxi-capotar-e-pegar-fogo-na-am-010-em-manaus.ghtml",
@@ -3632,7 +3661,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 13,
+   "id": 14,
    "ocorrencia": "OC-2026-0005"
   },
   {
@@ -3656,7 +3685,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 14,
+   "id": 15,
    "ocorrencia": "OC-2026-0006"
   },
   {
@@ -3680,7 +3709,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 15,
+   "id": 16,
    "ocorrencia": "OC-2026-0007"
   },
   {
@@ -3704,7 +3733,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 16,
+   "id": 17,
    "ocorrencia": "OC-2026-0008"
   },
   {
@@ -3728,7 +3757,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 17,
+   "id": 18,
    "ocorrencia": "OC-2026-0009"
   },
   {
@@ -3752,7 +3781,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 18,
+   "id": 19,
    "ocorrencia": "OC-2026-0010"
   },
   {
@@ -3776,7 +3805,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 19,
+   "id": 20,
    "ocorrencia": "OC-2026-0011"
   },
   {
@@ -3800,7 +3829,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 20,
+   "id": 21,
    "ocorrencia": "OC-2026-0012"
   },
   {
@@ -3824,7 +3853,7 @@
    "feridos": 2,
    "km": "4",
    "municipio": "Manacapuru",
-   "id": 21,
+   "id": 22,
    "ocorrencia": "OC-2026-0013"
   },
   {
@@ -3849,7 +3878,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Silves",
-   "id": 22,
+   "id": 23,
    "ocorrencia": "OC-2026-0014"
   },
   {
@@ -3873,7 +3902,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 23,
+   "id": 24,
    "ocorrencia": "OC-2026-0015"
   },
   {
@@ -3897,7 +3926,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 24,
+   "id": 25,
    "ocorrencia": "OC-2026-0016"
   },
   {
@@ -3921,7 +3950,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 25,
+   "id": 26,
    "ocorrencia": "OC-2026-0017"
   },
   {
@@ -3945,7 +3974,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Silves",
-   "id": 26,
+   "id": 27,
    "ocorrencia": "OC-2026-0018"
   },
   {
@@ -3969,7 +3998,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 27,
+   "id": 28,
    "ocorrencia": "OC-2026-0019"
   },
   {
@@ -3990,7 +4019,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 28,
+   "id": 29,
    "ocorrencia": "OC-2025-0020"
   },
   {
@@ -4011,7 +4040,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 29,
+   "id": 30,
    "ocorrencia": "OC-2025-0021"
   },
   {
@@ -4035,7 +4064,7 @@
    "feridos": 5,
    "km": null,
    "municipio": null,
-   "id": 30,
+   "id": 31,
    "ocorrencia": "OC-2025-0022"
   },
   {
@@ -4056,7 +4085,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 31,
+   "id": 32,
    "ocorrencia": "OC-2025-0023",
    "arquivo": "http://web.archive.org/web/20260711204925/https://www.riosdenoticias.com.br/motorista-fica-ferido-apos-caminhao-pipa-tombar-na-am-010/",
    "arquivado_em": "2026-11-25"
@@ -4079,7 +4108,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 32,
+   "id": 33,
    "ocorrencia": "OC-2025-0023"
   },
   {
@@ -4100,7 +4129,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 33,
+   "id": 34,
    "ocorrencia": "OC-2025-0023",
    "arquivo": "http://web.archive.org/web/20251212011632/https://www.portaldoholanda.com.br/amazonas/video-mostra-resgate-e-perigo-em-acidente-com-caminhao-pipa-na-am-010",
    "arquivado_em": "2026-11-25"
@@ -4123,7 +4152,7 @@
    "feridos": null,
    "km": "6",
    "municipio": "Itacoatiara",
-   "id": 34,
+   "id": 35,
    "ocorrencia": "OC-2025-0024",
    "arquivo": "http://web.archive.org/web/20251219053633/https://g1.globo.com/am/amazonas/noticia/2025/11/17/jovem-morre-apos-colisao-entre-moto-e-carro-na-am-010-em-itacoatiara.ghtml",
    "arquivado_em": "2026-11-25"
@@ -4146,7 +4175,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 35,
+   "id": 36,
    "ocorrencia": "OC-2025-0024"
   },
   {
@@ -4167,7 +4196,7 @@
    "feridos": null,
    "km": "6",
    "municipio": "Manaus",
-   "id": 36,
+   "id": 37,
    "ocorrencia": "OC-2025-0024",
    "arquivo": "https://web.archive.org/web/20261125200255/https://www.riosdenoticias.com.br/jovem-de-18-anos-morre-apos-colisao-entre-moto-e-carro-na-am-010/",
    "arquivado_em": "2026-11-25"
@@ -4193,7 +4222,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 37,
+   "id": 38,
    "ocorrencia": "OC-2025-0025"
   },
   {
@@ -4217,7 +4246,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 38,
+   "id": 39,
    "ocorrencia": "OC-2025-0026"
   },
   {
@@ -4238,7 +4267,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 39,
+   "id": 40,
    "ocorrencia": "OC-2025-0027",
    "arquivo": "http://web.archive.org/web/20251114153534/https://www.riosdenoticias.com.br/carreta-tomba-na-am-010-e-destroi-carga-de-mercadorias-compradas-pela-internet/",
    "arquivado_em": "2026-11-25"
@@ -4264,7 +4293,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 40,
+   "id": 41,
    "ocorrencia": "OC-2025-0028"
   },
   {
@@ -4285,7 +4314,7 @@
    "feridos": null,
    "km": "86",
    "municipio": "Rio Preto da Eva",
-   "id": 41,
+   "id": 42,
    "ocorrencia": "OC-2025-0029"
   },
   {
@@ -4309,7 +4338,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 42,
+   "id": 43,
    "ocorrencia": "OC-2025-0030"
   },
   {
@@ -4333,7 +4362,7 @@
    "feridos": 3,
    "km": "8",
    "municipio": "Manaus",
-   "id": 43,
+   "id": 44,
    "ocorrencia": "OC-2025-0031"
   },
   {
@@ -4357,7 +4386,7 @@
    "feridos": 3,
    "km": "9",
    "municipio": "Presidente Figueiredo",
-   "id": 44,
+   "id": 45,
    "ocorrencia": "OC-2025-0032"
   },
   {
@@ -4381,7 +4410,7 @@
    "feridos": null,
    "km": "9",
    "municipio": "Presidente Figueiredo",
-   "id": 45,
+   "id": 46,
    "ocorrencia": "OC-2025-0033"
   },
   {
@@ -4402,7 +4431,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 46,
+   "id": 47,
    "ocorrencia": "OC-2025-0034",
    "arquivo": "http://web.archive.org/web/20250913015648/https://www.riosdenoticias.com.br/homem-e-atropelado-por-caminhao-e-escapa-de-ser-atingido-por-onibus-em-manaus/",
    "arquivado_em": "2026-11-25"
@@ -4428,7 +4457,7 @@
    "feridos": 5,
    "km": null,
    "municipio": null,
-   "id": 47,
+   "id": 48,
    "ocorrencia": "OC-2025-0035"
   },
   {
@@ -4449,7 +4478,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 48,
+   "id": 49,
    "ocorrencia": "OC-2025-0036",
    "arquivo": "http://web.archive.org/web/20250719151654/https://g1.globo.com/am/amazonas/noticia/2025/07/07/carro-invade-a-contramao-e-atropela-homem-e-crianca-na-zona-oeste-de-manaus-video.ghtml",
    "arquivado_em": "2026-11-25"
@@ -4475,7 +4504,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 49,
+   "id": 50,
    "ocorrencia": "OC-2025-0037"
   },
   {
@@ -4499,7 +4528,7 @@
    "feridos": null,
    "km": "33",
    "municipio": "Manacapuru",
-   "id": 50,
+   "id": 51,
    "ocorrencia": "OC-2025-0037"
   },
   {
@@ -4520,7 +4549,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 51,
+   "id": 52,
    "ocorrencia": "OC-2025-0038",
    "arquivo": "http://web.archive.org/web/20250715171848/https://www.portaldoholanda.com.br/amazonas/homem-morre-atropelado-na-am-010-e-corpo-fica-mais-de-10-horas-na-pista",
    "arquivado_em": "2026-11-25"
@@ -4543,7 +4572,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 52,
+   "id": 53,
    "ocorrencia": "OC-2025-0039",
    "arquivo": "http://web.archive.org/web/20251026103233/https://g1.globo.com/am/amazonas/noticia/2025/06/11/motociclista-morre-apos-colidir-em-alta-velocidade-contra-mureta-na-zona-leste-de-manaus.ghtml",
    "arquivado_em": "2026-11-25"
@@ -4566,7 +4595,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 53,
+   "id": 54,
    "ocorrencia": "OC-2025-0039"
   },
   {
@@ -4590,7 +4619,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 54,
+   "id": 55,
    "ocorrencia": "OC-2025-0040"
   },
   {
@@ -4611,7 +4640,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 55,
+   "id": 56,
    "ocorrencia": "OC-2025-0042",
    "arquivo": "http://web.archive.org/web/20260410230937/https://www.riosdenoticias.com.br/motoristas-morrem-e-tres-ficam-feridos-em-acidente-na-am-010/",
    "arquivado_em": "2026-11-25"
@@ -4634,7 +4663,7 @@
    "feridos": 3,
    "km": null,
    "municipio": null,
-   "id": 56,
+   "id": 57,
    "ocorrencia": "OC-2025-0041"
   },
   {
@@ -4658,7 +4687,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 57,
+   "id": 58,
    "ocorrencia": "OC-2025-0041"
   },
   {
@@ -4679,7 +4708,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 58,
+   "id": 59,
    "ocorrencia": "OC-2025-0042",
    "arquivo": "http://web.archive.org/web/20251027024530/https://g1.globo.com/am/amazonas/noticia/2025/06/01/acidente-entre-cacamba-e-onibus-na-am-010-deixa-um-morto-e-tres-feridos.ghtml",
    "arquivado_em": "2026-11-25"
@@ -4702,7 +4731,7 @@
    "feridos": null,
    "km": "30",
    "municipio": "Manaus",
-   "id": 59,
+   "id": 60,
    "ocorrencia": "OC-2025-0042"
   },
   {
@@ -4723,7 +4752,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 60,
+   "id": 61,
    "ocorrencia": "OC-2025-0042"
   },
   {
@@ -4744,7 +4773,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 61,
+   "id": 62,
    "ocorrencia": "OC-2025-0042"
   },
   {
@@ -4765,7 +4794,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 62,
+   "id": 63,
    "ocorrencia": "OC-2025-0042"
   },
   {
@@ -4786,7 +4815,7 @@
    "feridos": 3,
    "km": "30",
    "municipio": "Manaus",
-   "id": 63,
+   "id": 64,
    "ocorrencia": "OC-2025-0042"
   },
   {
@@ -4807,7 +4836,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 64,
+   "id": 65,
    "ocorrencia": "OC-2025-0043"
   },
   {
@@ -4831,7 +4860,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 65,
+   "id": 66,
    "ocorrencia": "OC-2025-0044"
   },
   {
@@ -4852,7 +4881,7 @@
    "feridos": 5,
    "km": "5",
    "municipio": "Itacoatiara",
-   "id": 66,
+   "id": 67,
    "ocorrencia": "OC-2025-0045"
   },
   {
@@ -4876,7 +4905,7 @@
    "feridos": 2,
    "km": null,
    "municipio": null,
-   "id": 67,
+   "id": 68,
    "ocorrencia": "OC-2025-0046"
   },
   {
@@ -4900,7 +4929,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 68,
+   "id": 69,
    "ocorrencia": "OC-2025-0047"
   },
   {
@@ -4921,7 +4950,7 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 69,
+   "id": 70,
    "ocorrencia": "OC-2025-0048"
   },
   {
@@ -4942,7 +4971,7 @@
    "feridos": 4,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 70,
+   "id": 71,
    "ocorrencia": "OC-2025-0049"
   },
   {
@@ -4963,7 +4992,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 71,
+   "id": 72,
    "ocorrencia": "OC-2025-0049"
   },
   {
@@ -4984,7 +5013,7 @@
    "feridos": 4,
    "km": null,
    "municipio": "Manaus",
-   "id": 72,
+   "id": 73,
    "ocorrencia": "OC-2025-0049"
   },
   {
@@ -5005,7 +5034,7 @@
    "feridos": 4,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 73,
+   "id": 74,
    "ocorrencia": "OC-2025-0049"
   },
   {
@@ -5029,7 +5058,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 74,
+   "id": 75,
    "ocorrencia": "OC-2025-0050"
   },
   {
@@ -5050,7 +5079,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 75,
+   "id": 76,
    "ocorrencia": "OC-2025-0051"
   },
   {
@@ -5071,7 +5100,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 76,
+   "id": 77,
    "ocorrencia": "OC-2025-0052"
   },
   {
@@ -5092,7 +5121,7 @@
    "feridos": null,
    "km": "93",
    "municipio": "Rio Preto da Eva",
-   "id": 77,
+   "id": 78,
    "ocorrencia": "OC-2025-0053"
   },
   {
@@ -5114,7 +5143,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 78,
+   "id": 79,
    "ocorrencia": "OC-2025-0054"
   },
   {
@@ -5135,7 +5164,7 @@
    "feridos": 16,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 79,
+   "id": 80,
    "ocorrencia": "OC-2025-0055"
   },
   {
@@ -5156,7 +5185,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 80,
+   "id": 81,
    "ocorrencia": "OC-2025-0056"
   },
   {
@@ -5180,7 +5209,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 81,
+   "id": 82,
    "ocorrencia": "OC-2024-0057"
   },
   {
@@ -5201,7 +5230,7 @@
    "feridos": 18,
    "km": "138",
    "municipio": "Itacoatiara",
-   "id": 82,
+   "id": 83,
    "ocorrencia": "OC-2024-0058"
   },
   {
@@ -5225,7 +5254,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 83,
+   "id": 84,
    "ocorrencia": "OC-2024-0059"
   },
   {
@@ -5246,7 +5275,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 84,
+   "id": 85,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5267,7 +5296,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Manaus",
-   "id": 85,
+   "id": 86,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5288,7 +5317,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Manaus",
-   "id": 86,
+   "id": 87,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5309,7 +5338,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Itapiranga",
-   "id": 87,
+   "id": 88,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5330,7 +5359,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Itapiranga",
-   "id": 88,
+   "id": 89,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5351,7 +5380,7 @@
    "feridos": 16,
    "km": null,
    "municipio": "Manaus",
-   "id": 89,
+   "id": 90,
    "ocorrencia": "OC-2024-0064"
   },
   {
@@ -5372,7 +5401,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 90,
+   "id": 91,
    "ocorrencia": "OC-2024-0064"
   },
   {
@@ -5393,7 +5422,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 91,
+   "id": 92,
    "ocorrencia": "OC-2024-0064"
   },
   {
@@ -5414,7 +5443,7 @@
    "feridos": 16,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 92,
+   "id": 93,
    "ocorrencia": "OC-2024-0064"
   },
   {
@@ -5435,7 +5464,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 93,
+   "id": 94,
    "ocorrencia": "OC-2024-0064"
   },
   {
@@ -5456,7 +5485,7 @@
    "feridos": null,
    "km": "135",
    "municipio": "Manaus",
-   "id": 94,
+   "id": 95,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5477,7 +5506,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 95,
+   "id": 96,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5498,7 +5527,7 @@
    "feridos": 16,
    "km": null,
    "municipio": "Manaus",
-   "id": 96,
+   "id": 97,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5519,7 +5548,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itapiranga",
-   "id": 97,
+   "id": 98,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5540,7 +5569,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Manaus",
-   "id": 98,
+   "id": 99,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5561,7 +5590,7 @@
    "feridos": 16,
    "km": null,
    "municipio": null,
-   "id": 99,
+   "id": 100,
    "ocorrencia": "OC-2024-0061"
   },
   {
@@ -5582,7 +5611,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 100,
+   "id": 101,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5603,7 +5632,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 101,
+   "id": 102,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5624,7 +5653,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Itapiranga",
-   "id": 102,
+   "id": 103,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5645,7 +5674,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 103,
+   "id": 104,
    "ocorrencia": "OC-2024-0062"
   },
   {
@@ -5666,7 +5695,7 @@
    "feridos": 16,
    "km": "138",
    "municipio": "Rio Preto da Eva",
-   "id": 104,
+   "id": 105,
    "ocorrencia": "OC-2024-0062"
   },
   {
@@ -5687,7 +5716,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 105,
+   "id": 106,
    "ocorrencia": "OC-2024-0060"
   },
   {
@@ -5708,7 +5737,7 @@
    "feridos": 18,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 106,
+   "id": 107,
    "ocorrencia": "OC-2024-0062"
   },
   {
@@ -5729,7 +5758,7 @@
    "feridos": null,
    "km": "127",
    "municipio": "Manaus",
-   "id": 107,
+   "id": 108,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5750,7 +5779,7 @@
    "feridos": null,
    "km": "135",
    "municipio": "Itacoatiara",
-   "id": 108,
+   "id": 109,
    "ocorrencia": "OC-2024-0061"
   },
   {
@@ -5771,7 +5800,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 109,
+   "id": 110,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5792,7 +5821,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 110,
+   "id": 111,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5813,7 +5842,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 111,
+   "id": 112,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5834,7 +5863,7 @@
    "feridos": 18,
    "km": "62",
    "municipio": "Manaus",
-   "id": 112,
+   "id": 113,
    "ocorrencia": "OC-2024-0064"
   },
   {
@@ -5858,7 +5887,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 113,
+   "id": 114,
    "ocorrencia": "OC-2024-0063"
   },
   {
@@ -5879,7 +5908,7 @@
    "feridos": null,
    "km": "62",
    "municipio": "Manaus",
-   "id": 114,
+   "id": 115,
    "ocorrencia": "OC-2024-0064"
   },
   {
@@ -5903,7 +5932,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 115,
+   "id": 116,
    "ocorrencia": "OC-2024-0065"
   },
   {
@@ -5924,7 +5953,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 116,
+   "id": 117,
    "ocorrencia": "OC-2024-0066"
   },
   {
@@ -5945,7 +5974,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 117,
+   "id": 118,
    "ocorrencia": "OC-2024-0066"
   },
   {
@@ -5966,7 +5995,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 118,
+   "id": 119,
    "ocorrencia": "OC-2024-0067"
   },
   {
@@ -5987,7 +6016,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 119,
+   "id": 120,
    "ocorrencia": "OC-2024-0068"
   },
   {
@@ -6008,7 +6037,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 120,
+   "id": 121,
    "ocorrencia": "OC-2024-0069"
   },
   {
@@ -6032,7 +6061,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 121,
+   "id": 122,
    "ocorrencia": "OC-2024-0070"
   },
   {
@@ -6056,7 +6085,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 122,
+   "id": 123,
    "ocorrencia": "OC-2024-0071"
   },
   {
@@ -6080,7 +6109,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 123,
+   "id": 124,
    "ocorrencia": "OC-2024-0072"
   },
   {
@@ -6104,7 +6133,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 124,
+   "id": 125,
    "ocorrencia": "OC-2024-0073"
   },
   {
@@ -6128,7 +6157,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 125,
+   "id": 126,
    "ocorrencia": "OC-2024-0074"
   },
   {
@@ -6152,7 +6181,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 126,
+   "id": 127,
    "ocorrencia": "OC-2024-0075"
   },
   {
@@ -6176,7 +6205,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 127,
+   "id": 128,
    "ocorrencia": "OC-2024-0075"
   },
   {
@@ -6197,7 +6226,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 128,
+   "id": 129,
    "ocorrencia": "OC-2024-0076"
   },
   {
@@ -6218,7 +6247,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 129,
+   "id": 130,
    "ocorrencia": "OC-2024-0076"
   },
   {
@@ -6242,7 +6271,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 130,
+   "id": 131,
    "ocorrencia": "OC-2024-0076"
   },
   {
@@ -6266,7 +6295,7 @@
    "feridos": null,
    "km": "12",
    "municipio": "Manaus",
-   "id": 131,
+   "id": 132,
    "ocorrencia": "OC-2024-0077"
   },
   {
@@ -6290,7 +6319,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 132,
+   "id": 133,
    "ocorrencia": "OC-2024-0078"
   },
   {
@@ -6312,7 +6341,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 133,
+   "id": 134,
    "ocorrencia": "OC-2024-0080"
   },
   {
@@ -6336,7 +6365,7 @@
    "feridos": null,
    "km": "37",
    "municipio": "Itacoatiara",
-   "id": 134,
+   "id": 135,
    "ocorrencia": "OC-2024-0079"
   },
   {
@@ -6357,7 +6386,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 135,
+   "id": 136,
    "ocorrencia": "OC-2024-0081"
   },
   {
@@ -6381,7 +6410,7 @@
    "feridos": 3,
    "km": "21",
    "municipio": "Manacapuru",
-   "id": 136,
+   "id": 137,
    "ocorrencia": "OC-2024-0083"
   },
   {
@@ -6405,7 +6434,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 137,
+   "id": 138,
    "ocorrencia": "OC-2024-0082"
   },
   {
@@ -6429,7 +6458,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 138,
+   "id": 139,
    "ocorrencia": "OC-2024-0083"
   },
   {
@@ -6450,7 +6479,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 139,
+   "id": 140,
    "ocorrencia": "OC-2023-0084"
   },
   {
@@ -6474,7 +6503,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 140,
+   "id": 141,
    "ocorrencia": "OC-2023-0085"
   },
   {
@@ -6495,7 +6524,7 @@
    "feridos": null,
    "km": "37",
    "municipio": "Manaus",
-   "id": 141,
+   "id": 142,
    "ocorrencia": "OC-2023-0086"
   },
   {
@@ -6519,7 +6548,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 142,
+   "id": 143,
    "ocorrencia": "OC-2023-0087"
   },
   {
@@ -6540,7 +6569,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 143,
+   "id": 144,
    "ocorrencia": "OC-2023-0088"
   },
   {
@@ -6561,7 +6590,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 144,
+   "id": 145,
    "ocorrencia": "OC-2023-0088"
   },
   {
@@ -6582,7 +6611,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 145,
+   "id": 146,
    "ocorrencia": "OC-2023-0089"
   },
   {
@@ -6603,7 +6632,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 146,
+   "id": 147,
    "ocorrencia": "OC-2023-0089"
   },
   {
@@ -6627,7 +6656,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 147,
+   "id": 148,
    "ocorrencia": "OC-2023-0090"
   },
   {
@@ -6652,7 +6681,7 @@
    "feridos": 1,
    "km": "34",
    "municipio": "Itacoatiara",
-   "id": 148,
+   "id": 149,
    "ocorrencia": "OC-2023-0091"
   },
   {
@@ -6674,7 +6703,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 149,
+   "id": 150,
    "ocorrencia": "OC-2023-0092"
   },
   {
@@ -6698,7 +6727,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 150,
+   "id": 151,
    "ocorrencia": "OC-2023-0094"
   },
   {
@@ -6722,7 +6751,7 @@
    "feridos": null,
    "km": "9",
    "municipio": "Manaus",
-   "id": 151,
+   "id": 152,
    "ocorrencia": "OC-2023-0094"
   },
   {
@@ -6746,7 +6775,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 152,
+   "id": 153,
    "ocorrencia": "OC-2023-0093"
   },
   {
@@ -6767,7 +6796,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 153,
+   "id": 154,
    "ocorrencia": "OC-2023-0095"
   },
   {
@@ -6791,7 +6820,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 154,
+   "id": 155,
    "ocorrencia": "OC-2023-0096"
   },
   {
@@ -6815,7 +6844,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 155,
+   "id": 156,
    "ocorrencia": "OC-2023-0097"
   },
   {
@@ -6836,7 +6865,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 156,
+   "id": 157,
    "ocorrencia": "OC-2023-0098"
   },
   {
@@ -6857,7 +6886,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 157,
+   "id": 158,
    "ocorrencia": "OC-2023-0098"
   },
   {
@@ -6882,7 +6911,7 @@
    "feridos": 3,
    "km": null,
    "municipio": null,
-   "id": 158,
+   "id": 159,
    "ocorrencia": "OC-2022-0099"
   },
   {
@@ -6906,7 +6935,7 @@
    "feridos": 7,
    "km": "05",
    "municipio": "Manaus",
-   "id": 159,
+   "id": 160,
    "ocorrencia": "OC-2022-0100"
   },
   {
@@ -6930,7 +6959,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 160,
+   "id": 161,
    "ocorrencia": "OC-2022-0101"
   },
   {
@@ -6954,7 +6983,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 161,
+   "id": 162,
    "ocorrencia": "OC-2022-0101"
   },
   {
@@ -6978,7 +7007,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 162,
+   "id": 163,
    "ocorrencia": "OC-2022-0101"
   },
   {
@@ -6999,7 +7028,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 163,
+   "id": 164,
    "ocorrencia": "OC-2022-0101"
   },
   {
@@ -7023,7 +7052,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 164,
+   "id": 165,
    "ocorrencia": "OC-2022-0102"
   },
   {
@@ -7047,7 +7076,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 165,
+   "id": 166,
    "ocorrencia": "OC-2022-0102"
   },
   {
@@ -7071,7 +7100,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 166,
+   "id": 167,
    "ocorrencia": "OC-2022-0103"
   },
   {
@@ -7095,7 +7124,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 167,
+   "id": 168,
    "ocorrencia": "OC-2022-0103"
   },
   {
@@ -7119,7 +7148,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 168,
+   "id": 169,
    "ocorrencia": "OC-2022-0104"
   },
   {
@@ -7143,7 +7172,7 @@
    "feridos": null,
    "km": "53",
    "municipio": "Manaus",
-   "id": 169,
+   "id": 170,
    "ocorrencia": "OC-2022-0105"
   },
   {
@@ -7164,7 +7193,7 @@
    "feridos": 1,
    "km": null,
    "municipio": "Manaus",
-   "id": 170,
+   "id": 171,
    "ocorrencia": "OC-2022-0106"
   },
   {
@@ -7186,7 +7215,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 171,
+   "id": 172,
    "ocorrencia": "OC-2022-0107"
   },
   {
@@ -7210,7 +7239,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 172,
+   "id": 173,
    "ocorrencia": "OC-2022-0108"
   },
   {
@@ -7234,7 +7263,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 173,
+   "id": 174,
    "ocorrencia": "OC-2022-0109"
   },
   {
@@ -7258,7 +7287,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 174,
+   "id": 175,
    "ocorrencia": "OC-2022-0110"
   },
   {
@@ -7282,7 +7311,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 175,
+   "id": 176,
    "ocorrencia": "OC-2022-0111"
   },
   {
@@ -7303,7 +7332,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 176,
+   "id": 177,
    "ocorrencia": "OC-2022-0112"
   },
   {
@@ -7324,7 +7353,7 @@
    "feridos": 2,
    "km": "28",
    "municipio": "Manaus",
-   "id": 177,
+   "id": 178,
    "ocorrencia": "OC-2022-0113"
   },
   {
@@ -7348,7 +7377,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 178,
+   "id": 179,
    "ocorrencia": "OC-2022-0113"
   },
   {
@@ -7372,7 +7401,7 @@
    "feridos": 2,
    "km": "28",
    "municipio": "Manaus",
-   "id": 179,
+   "id": 180,
    "ocorrencia": "OC-2022-0113"
   },
   {
@@ -7397,7 +7426,7 @@
    "feridos": 3,
    "km": "28",
    "municipio": "Manaus",
-   "id": 180,
+   "id": 181,
    "ocorrencia": "OC-2022-0113"
   },
   {
@@ -7421,7 +7450,7 @@
    "feridos": null,
    "km": "22",
    "municipio": "Manaus",
-   "id": 181,
+   "id": 182,
    "ocorrencia": "OC-2022-0114"
   },
   {
@@ -7445,7 +7474,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 182,
+   "id": 183,
    "ocorrencia": "OC-2022-0115"
   },
   {
@@ -7469,7 +7498,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 183,
+   "id": 184,
    "ocorrencia": "OC-2022-0116"
   },
   {
@@ -7493,7 +7522,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 184,
+   "id": 185,
    "ocorrencia": "OC-2022-0117"
   },
   {
@@ -7517,7 +7546,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 185,
+   "id": 186,
    "ocorrencia": "OC-2022-0118"
   },
   {
@@ -7538,7 +7567,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 186,
+   "id": 187,
    "ocorrencia": "OC-2022-0119"
   },
   {
@@ -7559,7 +7588,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 187,
+   "id": 188,
    "ocorrencia": "OC-2022-0119"
   },
   {
@@ -7583,7 +7612,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 188,
+   "id": 189,
    "ocorrencia": "OC-2022-0119"
   },
   {
@@ -7607,7 +7636,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 189,
+   "id": 190,
    "ocorrencia": "OC-2022-0119"
   },
   {
@@ -7632,7 +7661,7 @@
    "feridos": 36,
    "km": null,
    "municipio": "Novo Airão",
-   "id": 190,
+   "id": 191,
    "ocorrencia": "OC-2021-0121"
   },
   {
@@ -7656,7 +7685,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 191,
+   "id": 192,
    "ocorrencia": "OC-2021-0120"
   },
   {
@@ -7680,7 +7709,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 192,
+   "id": 193,
    "ocorrencia": "OC-2021-0120"
   },
   {
@@ -7704,7 +7733,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 193,
+   "id": 194,
    "ocorrencia": "OC-2021-0122"
   },
   {
@@ -7728,7 +7757,7 @@
    "feridos": 11,
    "km": "26",
    "municipio": "Manaus",
-   "id": 194,
+   "id": 195,
    "ocorrencia": "OC-2021-0123"
   },
   {
@@ -7752,7 +7781,7 @@
    "feridos": 9,
    "km": "35",
    "municipio": "Manaus",
-   "id": 195,
+   "id": 196,
    "ocorrencia": "OC-2021-0124"
   },
   {
@@ -7774,7 +7803,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 196,
+   "id": 197,
    "ocorrencia": "OC-2021-0125"
   },
   {
@@ -7798,7 +7827,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 197,
+   "id": 198,
    "ocorrencia": "OC-2021-0126"
   },
   {
@@ -7822,7 +7851,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 198,
+   "id": 199,
    "ocorrencia": "OC-2021-0125"
   },
   {
@@ -7843,7 +7872,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 199,
+   "id": 200,
    "ocorrencia": "OC-2021-0127"
   },
   {
@@ -7867,7 +7896,7 @@
    "feridos": null,
    "km": "84",
    "municipio": "Rio Preto da Eva",
-   "id": 200,
+   "id": 201,
    "ocorrencia": "OC-2021-0128"
   },
   {
@@ -7888,7 +7917,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 201,
+   "id": 202,
    "ocorrencia": "OC-2021-0128"
   },
   {
@@ -7912,7 +7941,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 202,
+   "id": 203,
    "ocorrencia": "OC-2021-0128"
   },
   {
@@ -7936,7 +7965,7 @@
    "feridos": null,
    "km": "84",
    "municipio": "Manaus",
-   "id": 203,
+   "id": 204,
    "ocorrencia": "OC-2021-0128"
   },
   {
@@ -7961,7 +7990,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 204,
+   "id": 205,
    "ocorrencia": "OC-2021-0129"
   },
   {
@@ -7985,7 +8014,7 @@
    "feridos": 1,
    "km": null,
    "municipio": "Manaus",
-   "id": 205,
+   "id": 206,
    "ocorrencia": "OC-2021-0130"
   },
   {
@@ -8009,7 +8038,7 @@
    "feridos": null,
    "km": "3",
    "municipio": "Manaus",
-   "id": 206,
+   "id": 207,
    "ocorrencia": "OC-2021-0130"
   },
   {
@@ -8030,7 +8059,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 207,
+   "id": 208,
    "ocorrencia": "OC-2021-0131"
   },
   {
@@ -8054,7 +8083,7 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 208,
+   "id": 209,
    "ocorrencia": "OC-2021-0132"
   },
   {
@@ -8078,7 +8107,7 @@
    "feridos": null,
    "km": "102",
    "municipio": "Manaus",
-   "id": 209,
+   "id": 210,
    "ocorrencia": "OC-2021-0133"
   },
   {
@@ -8102,7 +8131,7 @@
    "feridos": 4,
    "km": null,
    "municipio": "Manaus",
-   "id": 210,
+   "id": 211,
    "ocorrencia": "OC-2021-0134"
   },
   {
@@ -8123,7 +8152,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 211,
+   "id": 212,
    "ocorrencia": "OC-2021-0135"
   },
   {
@@ -8147,7 +8176,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 212,
+   "id": 213,
    "ocorrencia": "OC-2021-0135"
   },
   {
@@ -8171,7 +8200,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 213,
+   "id": 214,
    "ocorrencia": "OC-2021-0135"
   },
   {
@@ -8195,7 +8224,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 214,
+   "id": 215,
    "ocorrencia": "OC-2021-0136"
   },
   {
@@ -8219,7 +8248,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 215,
+   "id": 216,
    "ocorrencia": "OC-2021-0136"
   },
   {
@@ -8243,7 +8272,7 @@
    "feridos": null,
    "km": "8",
    "municipio": "Manaus",
-   "id": 216,
+   "id": 217,
    "ocorrencia": "OC-2021-0137"
   },
   {
@@ -8267,7 +8296,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 217,
+   "id": 218,
    "ocorrencia": "OC-2021-0138"
   },
   {
@@ -8291,7 +8320,7 @@
    "feridos": null,
    "km": "37",
    "municipio": "Manaus",
-   "id": 218,
+   "id": 219,
    "ocorrencia": "OC-2021-0139"
   },
   {
@@ -8315,7 +8344,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 219,
+   "id": 220,
    "ocorrencia": "OC-2021-0140"
   },
   {
@@ -8339,7 +8368,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 220,
+   "id": 221,
    "ocorrencia": "OC-2021-0141"
   },
   {
@@ -8363,7 +8392,7 @@
    "feridos": null,
    "km": "83",
    "municipio": "Manaus",
-   "id": 221,
+   "id": 222,
    "ocorrencia": "OC-2021-0142"
   },
   {
@@ -8387,7 +8416,7 @@
    "feridos": null,
    "km": "03",
    "municipio": "Manaus",
-   "id": 222,
+   "id": 223,
    "ocorrencia": "OC-2021-0143"
   },
   {
@@ -8411,7 +8440,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 223,
+   "id": 224,
    "ocorrencia": "OC-2021-0144"
   },
   {
@@ -8435,7 +8464,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 224,
+   "id": 225,
    "ocorrencia": "OC-2021-0144"
   },
   {
@@ -8459,7 +8488,7 @@
    "feridos": 5,
    "km": null,
    "municipio": "Manaus",
-   "id": 225,
+   "id": 226,
    "ocorrencia": "OC-2021-0145"
   },
   {
@@ -8483,7 +8512,7 @@
    "feridos": null,
    "km": "19",
    "municipio": "Manaus",
-   "id": 226,
+   "id": 227,
    "ocorrencia": "OC-2021-0146"
   },
   {
@@ -8507,7 +8536,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 227,
+   "id": 228,
    "ocorrencia": "OC-2021-0147"
   },
   {
@@ -8531,7 +8560,7 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 228,
+   "id": 229,
    "ocorrencia": "OC-2021-0148"
   },
   {
@@ -8555,7 +8584,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 229,
+   "id": 230,
    "ocorrencia": "OC-2020-0149"
   },
   {
@@ -8579,7 +8608,7 @@
    "feridos": 5,
    "km": null,
    "municipio": "Manaus",
-   "id": 230,
+   "id": 231,
    "ocorrencia": "OC-2020-0150"
   },
   {
@@ -8603,7 +8632,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 231,
+   "id": 232,
    "ocorrencia": "OC-2020-0151"
   },
   {
@@ -8627,7 +8656,7 @@
    "feridos": null,
    "km": "49",
    "municipio": "Manaus",
-   "id": 232,
+   "id": 233,
    "ocorrencia": "OC-2020-0152"
   },
   {
@@ -8651,7 +8680,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 233,
+   "id": 234,
    "ocorrencia": "OC-2020-0152"
   },
   {
@@ -8675,7 +8704,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 234,
+   "id": 235,
    "ocorrencia": "OC-2020-0153"
   },
   {
@@ -8699,7 +8728,7 @@
    "feridos": 3,
    "km": "8",
    "municipio": "Novo Airão",
-   "id": 235,
+   "id": 236,
    "ocorrencia": "OC-2020-0154"
   },
   {
@@ -8723,7 +8752,7 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 236,
+   "id": 237,
    "ocorrencia": "OC-2020-0154"
   },
   {
@@ -8747,7 +8776,7 @@
    "feridos": null,
    "km": "83",
    "municipio": "Manaus",
-   "id": 237,
+   "id": 238,
    "ocorrencia": "OC-2020-0155"
   },
   {
@@ -8771,7 +8800,7 @@
    "feridos": 2,
    "km": "19",
    "municipio": "Manaus",
-   "id": 238,
+   "id": 239,
    "ocorrencia": "OC-2020-0156"
   },
   {
@@ -8795,7 +8824,7 @@
    "feridos": 4,
    "km": null,
    "municipio": "Manaus",
-   "id": 239,
+   "id": 240,
    "ocorrencia": "OC-2020-0157"
   },
   {
@@ -8819,7 +8848,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 240,
+   "id": 241,
    "ocorrencia": "OC-2020-0158"
   },
   {
@@ -8843,7 +8872,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 241,
+   "id": 242,
    "ocorrencia": "OC-2020-0159"
   },
   {
@@ -8867,7 +8896,7 @@
    "feridos": 20,
    "km": "76",
    "municipio": "Itapiranga",
-   "id": 242,
+   "id": 243,
    "ocorrencia": "OC-2020-0160"
   },
   {
@@ -8891,7 +8920,7 @@
    "feridos": 10,
    "km": null,
    "municipio": "Manaus",
-   "id": 243,
+   "id": 244,
    "ocorrencia": "OC-2020-0161"
   },
   {
@@ -8915,7 +8944,7 @@
    "feridos": 2,
    "km": "60",
    "municipio": "Manaus",
-   "id": 244,
+   "id": 245,
    "ocorrencia": "OC-2020-0162"
   },
   {
@@ -8939,7 +8968,7 @@
    "feridos": 3,
    "km": "17",
    "municipio": "Manaus",
-   "id": 245,
+   "id": 246,
    "ocorrencia": "OC-2020-0163"
   },
   {
@@ -8963,7 +8992,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 246,
+   "id": 247,
    "ocorrencia": "OC-2020-0164"
   },
   {
@@ -8987,7 +9016,7 @@
    "feridos": null,
    "km": "59",
    "municipio": "Manaus",
-   "id": 247,
+   "id": 248,
    "ocorrencia": "OC-2020-0165"
   },
   {
@@ -9011,7 +9040,7 @@
    "feridos": null,
    "km": "4",
    "municipio": "Manaus",
-   "id": 248,
+   "id": 249,
    "ocorrencia": "OC-2020-0166"
   },
   {
@@ -9035,7 +9064,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 249,
+   "id": 250,
    "ocorrencia": "OC-2020-0167"
   },
   {
@@ -9059,7 +9088,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 250,
+   "id": 251,
    "ocorrencia": "OC-2020-0167"
   },
   {
@@ -9083,7 +9112,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 251,
+   "id": 252,
    "ocorrencia": "OC-2020-0167"
   },
   {
@@ -9107,7 +9136,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 252,
+   "id": 253,
    "ocorrencia": "OC-2020-0168"
   },
   {
@@ -9131,7 +9160,7 @@
    "feridos": 3,
    "km": "61",
    "municipio": "Rio Preto da Eva",
-   "id": 253,
+   "id": 254,
    "ocorrencia": "OC-2020-0169"
   },
   {
@@ -9155,7 +9184,7 @@
    "feridos": 3,
    "km": "61",
    "municipio": "Manaus",
-   "id": 254,
+   "id": 255,
    "ocorrencia": "OC-2020-0169"
   },
   {
@@ -9179,7 +9208,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 255,
+   "id": 256,
    "ocorrencia": "OC-2020-0170"
   },
   {
@@ -9203,7 +9232,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 256,
+   "id": 257,
    "ocorrencia": "OC-2020-0170"
   },
   {
@@ -9227,7 +9256,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 257,
+   "id": 258,
    "ocorrencia": "OC-2020-0171"
   },
   {
@@ -9248,7 +9277,7 @@
    "feridos": null,
    "km": "41",
    "municipio": "Manaus",
-   "id": 258,
+   "id": 259,
    "ocorrencia": "OC-2020-0172"
   },
   {
@@ -9269,7 +9298,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 259,
+   "id": 260,
    "ocorrencia": "OC-2020-0172"
   },
   {
@@ -9293,7 +9322,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 260,
+   "id": 261,
    "ocorrencia": "OC-2020-0173"
   },
   {
@@ -9317,7 +9346,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 261,
+   "id": 262,
    "ocorrencia": "OC-2020-0174"
   },
   {
@@ -9341,7 +9370,7 @@
    "feridos": 3,
    "km": "132",
    "municipio": "Manaus",
-   "id": 262,
+   "id": 263,
    "ocorrencia": "OC-2020-0175"
   },
   {
@@ -9365,7 +9394,7 @@
    "feridos": 5,
    "km": "68",
    "municipio": "Manacapuru",
-   "id": 263,
+   "id": 264,
    "ocorrencia": "OC-2020-0176"
   },
   {
@@ -9389,7 +9418,7 @@
    "feridos": null,
    "km": "132",
    "municipio": "Manaus",
-   "id": 264,
+   "id": 265,
    "ocorrencia": "OC-2020-0177"
   },
   {
@@ -9413,7 +9442,7 @@
    "feridos": null,
    "km": "35",
    "municipio": "Itacoatiara",
-   "id": 265,
+   "id": 266,
    "ocorrencia": "OC-2019-0178"
   },
   {
@@ -9437,7 +9466,7 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manacapuru",
-   "id": 266,
+   "id": 267,
    "ocorrencia": "OC-2019-0179"
   },
   {
@@ -9462,7 +9491,7 @@
    "feridos": 2,
    "km": "44",
    "municipio": "Iranduba",
-   "id": 267,
+   "id": 268,
    "ocorrencia": "OC-2019-0180"
   },
   {
@@ -9486,7 +9515,7 @@
    "feridos": null,
    "km": "52",
    "municipio": "Manaus",
-   "id": 268,
+   "id": 269,
    "ocorrencia": "OC-2019-0181"
   },
   {
@@ -9510,7 +9539,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 269,
+   "id": 270,
    "ocorrencia": "OC-2019-0182"
   },
   {
@@ -9534,7 +9563,7 @@
    "feridos": 3,
    "km": "105",
    "municipio": "Manaus",
-   "id": 270,
+   "id": 271,
    "ocorrencia": "OC-2019-0182"
   },
   {
@@ -9558,7 +9587,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 271,
+   "id": 272,
    "ocorrencia": "OC-2019-0184"
   },
   {
@@ -9582,7 +9611,7 @@
    "feridos": 3,
    "km": "135",
    "municipio": "Manaus",
-   "id": 272,
+   "id": 273,
    "ocorrencia": "OC-2019-0183"
   },
   {
@@ -9606,7 +9635,7 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 273,
+   "id": 274,
    "ocorrencia": "OC-2019-0184"
   },
   {
@@ -9630,7 +9659,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 274,
+   "id": 275,
    "ocorrencia": "OC-2019-0185"
   },
   {
@@ -9654,7 +9683,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Rio Preto da Eva",
-   "id": 275,
+   "id": 276,
    "ocorrencia": "OC-2019-0186"
   },
   {
@@ -9678,7 +9707,7 @@
    "feridos": null,
    "km": "72",
    "municipio": "Manaus",
-   "id": 276,
+   "id": 277,
    "ocorrencia": "OC-2019-0187"
   },
   {
@@ -9702,7 +9731,7 @@
    "feridos": null,
    "km": "19",
    "municipio": "Manaus",
-   "id": 277,
+   "id": 278,
    "ocorrencia": "OC-2019-0188"
   },
   {
@@ -9726,7 +9755,7 @@
    "feridos": null,
    "km": "72",
    "municipio": "Manacapuru",
-   "id": 278,
+   "id": 279,
    "ocorrencia": "OC-2019-0189"
   },
   {
@@ -9750,7 +9779,7 @@
    "feridos": 6,
    "km": "28",
    "municipio": "Manaus",
-   "id": 279,
+   "id": 280,
    "ocorrencia": "OC-2019-0190"
   },
   {
@@ -9774,7 +9803,7 @@
    "feridos": null,
    "km": "102",
    "municipio": "Manaus",
-   "id": 280,
+   "id": 281,
    "ocorrencia": "OC-2019-0191"
   },
   {
@@ -9798,7 +9827,7 @@
    "feridos": null,
    "km": null,
    "municipio": null,
-   "id": 281,
+   "id": 282,
    "ocorrencia": "OC-2019-0192"
   },
   {
@@ -9822,7 +9851,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 282,
+   "id": 283,
    "ocorrencia": "OC-2019-0193"
   },
   {
@@ -9846,7 +9875,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 283,
+   "id": 284,
    "ocorrencia": "OC-2019-0194"
   },
   {
@@ -9870,7 +9899,7 @@
    "feridos": null,
    "km": "4",
    "municipio": "Manaus",
-   "id": 284,
+   "id": 285,
    "ocorrencia": "OC-2019-0195"
   },
   {
@@ -9894,7 +9923,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 285,
+   "id": 286,
    "ocorrencia": "OC-2019-0196"
   },
   {
@@ -9918,7 +9947,7 @@
    "feridos": 10,
    "km": "17",
    "municipio": "Autazes",
-   "id": 286,
+   "id": 287,
    "ocorrencia": "OC-2019-0197"
   },
   {
@@ -9942,7 +9971,7 @@
    "feridos": 1,
    "km": null,
    "municipio": "Manaus",
-   "id": 287,
+   "id": 288,
    "ocorrencia": "OC-2019-0198"
   },
   {
@@ -9966,7 +9995,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 288,
+   "id": 289,
    "ocorrencia": "OC-2019-0199"
   },
   {
@@ -9990,7 +10019,7 @@
    "feridos": null,
    "km": "104",
    "municipio": "Rio Preto da Eva",
-   "id": 289,
+   "id": 290,
    "ocorrencia": "OC-2019-0200"
   },
   {
@@ -10014,7 +10043,7 @@
    "feridos": null,
    "km": "58",
    "municipio": "Manaus",
-   "id": 290,
+   "id": 291,
    "ocorrencia": "OC-2019-0201"
   },
   {
@@ -10038,7 +10067,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Autazes",
-   "id": 291,
+   "id": 292,
    "ocorrencia": "OC-2019-0202"
   },
   {
@@ -10062,7 +10091,7 @@
    "feridos": null,
    "km": "5",
    "municipio": "Manaus",
-   "id": 292,
+   "id": 293,
    "ocorrencia": "OC-2019-0203"
   },
   {
@@ -10086,7 +10115,7 @@
    "feridos": 12,
    "km": "184",
    "municipio": "Manaus",
-   "id": 293,
+   "id": 294,
    "ocorrencia": "OC-2019-0206"
   },
   {
@@ -10110,7 +10139,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 294,
+   "id": 295,
    "ocorrencia": "OC-2019-0205"
   },
   {
@@ -10134,7 +10163,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Novo Airão",
-   "id": 295,
+   "id": 296,
    "ocorrencia": "OC-2019-0204"
   },
   {
@@ -10158,7 +10187,7 @@
    "feridos": 10,
    "km": "184",
    "municipio": "Itacoatiara",
-   "id": 296,
+   "id": 297,
    "ocorrencia": "OC-2019-0206"
   },
   {
@@ -10182,7 +10211,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 297,
+   "id": 298,
    "ocorrencia": "OC-2019-0205"
   },
   {
@@ -10206,7 +10235,7 @@
    "feridos": 12,
    "km": "88",
    "municipio": "Itacoatiara",
-   "id": 298,
+   "id": 299,
    "ocorrencia": "OC-2019-0205"
   },
   {
@@ -10230,7 +10259,7 @@
    "feridos": 11,
    "km": "184",
    "municipio": "Manaus",
-   "id": 299,
+   "id": 300,
    "ocorrencia": "OC-2019-0206"
   },
   {
@@ -10254,7 +10283,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 300,
+   "id": 301,
    "ocorrencia": "OC-2019-0206"
   },
   {
@@ -10278,7 +10307,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 301,
+   "id": 302,
    "ocorrencia": "OC-2019-0207"
   },
   {
@@ -10302,7 +10331,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 302,
+   "id": 303,
    "ocorrencia": "OC-2019-0208"
   },
   {
@@ -10326,7 +10355,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 303,
+   "id": 304,
    "ocorrencia": "OC-2019-0209"
   },
   {
@@ -10350,7 +10379,7 @@
    "feridos": 3,
    "km": "74",
    "municipio": "Manaus",
-   "id": 304,
+   "id": 305,
    "ocorrencia": "OC-2019-0210"
   },
   {
@@ -10374,7 +10403,7 @@
    "feridos": 3,
    "km": null,
    "municipio": "Manaus",
-   "id": 305,
+   "id": 306,
    "ocorrencia": "OC-2019-0210"
   },
   {
@@ -10398,7 +10427,7 @@
    "feridos": 2,
    "km": "18",
    "municipio": "Manaus",
-   "id": 306,
+   "id": 307,
    "ocorrencia": "OC-2019-0212"
   },
   {
@@ -10422,7 +10451,7 @@
    "feridos": null,
    "km": "108",
    "municipio": "Itacoatiara",
-   "id": 307,
+   "id": 308,
    "ocorrencia": "OC-2019-0211"
   },
   {
@@ -10446,7 +10475,7 @@
    "feridos": null,
    "km": "105",
    "municipio": "Manaus",
-   "id": 308,
+   "id": 309,
    "ocorrencia": "OC-2019-0211"
   },
   {
@@ -10470,7 +10499,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 309,
+   "id": 310,
    "ocorrencia": "OC-2019-0213"
   },
   {
@@ -10494,7 +10523,7 @@
    "feridos": null,
    "km": "22",
    "municipio": "Manaus",
-   "id": 310,
+   "id": 311,
    "ocorrencia": "OC-2019-0214"
   },
   {
@@ -10518,7 +10547,7 @@
    "feridos": null,
    "km": "135",
    "municipio": "Rio Preto da Eva",
-   "id": 311,
+   "id": 312,
    "ocorrencia": "OC-2019-0215"
   },
   {
@@ -10542,7 +10571,7 @@
    "feridos": 1,
    "km": null,
    "municipio": "Manaus",
-   "id": 312,
+   "id": 313,
    "ocorrencia": "OC-2019-0215"
   },
   {
@@ -10566,7 +10595,7 @@
    "feridos": null,
    "km": "7",
    "municipio": "Manaus",
-   "id": 313,
+   "id": 314,
    "ocorrencia": "OC-2019-0216"
   },
   {
@@ -10590,7 +10619,7 @@
    "feridos": 2,
    "km": "77",
    "municipio": "Manaus",
-   "id": 314,
+   "id": 315,
    "ocorrencia": "OC-2019-0217"
   },
   {
@@ -10614,7 +10643,7 @@
    "feridos": 2,
    "km": "47",
    "municipio": "Manaus",
-   "id": 315,
+   "id": 316,
    "ocorrencia": "OC-2019-0218"
   },
   {
@@ -10638,7 +10667,7 @@
    "feridos": 1,
    "km": "175",
    "municipio": "Manaus",
-   "id": 316,
+   "id": 317,
    "ocorrencia": "OC-2019-0219"
   },
   {
@@ -10662,7 +10691,7 @@
    "feridos": null,
    "km": "175",
    "municipio": "Manaus",
-   "id": 317,
+   "id": 318,
    "ocorrencia": "OC-2019-0219"
   },
   {
@@ -10686,7 +10715,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 318,
+   "id": 319,
    "ocorrencia": "OC-2017-0220"
   },
   {
@@ -10710,7 +10739,7 @@
    "feridos": 2,
    "km": null,
    "municipio": "Manaus",
-   "id": 319,
+   "id": 320,
    "ocorrencia": "OC-2017-0221"
   },
   {
@@ -10734,7 +10763,7 @@
    "feridos": 4,
    "km": null,
    "municipio": "Manaus",
-   "id": 320,
+   "id": 321,
    "ocorrencia": "OC-2017-0222"
   },
   {
@@ -10758,7 +10787,7 @@
    "feridos": null,
    "km": "127",
    "municipio": "Manaus",
-   "id": 321,
+   "id": 322,
    "ocorrencia": "OC-2016-0223"
   },
   {
@@ -10782,7 +10811,7 @@
    "feridos": 4,
    "km": "3",
    "municipio": "Manaus",
-   "id": 322,
+   "id": 323,
    "ocorrencia": "OC-2016-0224"
   },
   {
@@ -10806,7 +10835,7 @@
    "feridos": 3,
    "km": "30",
    "municipio": "Itacoatiara",
-   "id": 323,
+   "id": 324,
    "ocorrencia": "OC-2016-0225"
   },
   {
@@ -10830,7 +10859,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 324,
+   "id": 325,
    "ocorrencia": "OC-2016-0226"
   },
   {
@@ -10854,7 +10883,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Itacoatiara",
-   "id": 325,
+   "id": 326,
    "ocorrencia": "OC-2016-0226"
   },
   {
@@ -10878,7 +10907,7 @@
    "feridos": null,
    "km": "2",
    "municipio": "Manacapuru",
-   "id": 326,
+   "id": 327,
    "ocorrencia": "OC-2016-0227"
   },
   {
@@ -10902,7 +10931,7 @@
    "feridos": null,
    "km": "91",
    "municipio": "Rio Preto da Eva",
-   "id": 327,
+   "id": 328,
    "ocorrencia": "OC-2015-0228"
   },
   {
@@ -10926,7 +10955,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Iranduba",
-   "id": 328,
+   "id": 329,
    "ocorrencia": "OC-2014-0229"
   },
   {
@@ -10950,7 +10979,7 @@
    "feridos": null,
    "km": null,
    "municipio": "Manaus",
-   "id": 329,
+   "id": 330,
    "ocorrencia": "OC-2014-0230"
   }
  ]
