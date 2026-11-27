@@ -28,9 +28,17 @@ MAX_PDF = 8_000_000  # planilha orçamentária costuma ter < 1 MB; acima disso �
 UA = {"User-Agent": "Mozilla/5.0 (DMOB Hub)"}
 RX_OBRA = re.compile(r"engenharia|obra|constru|reforma|pavimenta|recupera|ponte|vi[aá]ri|drenagem|terraplen|rodovi|ramal", re.I)
 RX_PLANILHA = re.compile(r"PLANILHA.{0,3}OR", re.I)
-# linha de item do e-OBRAS: "DNIT-342 03.01.00.001 3108007 Fôrmas ..." e fecho "M2 28,080 188,96 5.306,00"
-RX_INICIO = re.compile(r"^(\S+)\s+(\d{2}(?:\.\d{2}){2,4}\.\d{3})\s+(\S+)\s+(.*)$")
-RX_FECHO = re.compile(r"^(.*?)\s*(\S+)\s+(\d[\d.]*,\d+)\s+(\d[\d.]*,\d+)\s+(\d[\d.]*,\d+)\s*$")
+# Layout da linha de item tirado do fonte do SCO.NET (sco-seinfra-web .../report/orcamento/RelOrcamentoSEINFRA.java,
+# printItem/printCodigosCabecalho): Tabela ("CPU" ou SGTABELA-origem), [Referência], [Cód. Sist.], [Código], Descrição,
+# Unid., Quantidade, [Material, Mão de obra, Equipamento, Serviços, Incidência, Transporte: só no analítico],
+# Preço unitário, Preço total. Ex.: "DNIT-342 03.01.00.001 3108007 Fôrmas ..." e fecho "M2 28,080 188,96 5.306,00".
+RX_INICIO = re.compile(r"^(CPU|[A-Z][\w/]*-\S+)\s+(\d{2}(?:\.\d{2}){2,4}\.\d{3})\s+(\S+)\s+(.*)$")
+RX_INICIO2 = re.compile(r"^(CPU|[A-Z][\w/]*-\S+)\s+(\d{2}(?:\.\d{2}){2,4}\.\d{3})\s+(\S+)\s+(\S+)\s+(.*)$")  # com Cód. Sist.
+NUM = r"-?\d[\d.]*,\d+"
+RX_FECHO = re.compile(rf"^(.*?)\s*(\S+)\s+((?:{NUM}\s+){{2}}(?:(?:{NUM}\s+){{6}})?{NUM})\s*$")
+RX_CODSIST = re.compile(r"C[oó]d\.?\s*(Sist|Padr)", re.I)
+RX_ACRESC = re.compile(r"(Melhoria ambiental|Mobiliza\w+ e desmobiliza\w+)\s*\((\d+(?:,\d+)?)%\)", re.I)
+RX_TOTAL_GERAL = re.compile(rf"Total geral do or\w+\s*:?\s*({NUM})", re.I)
 RX_BDI = re.compile(r"Bonifica\w*\s*:\s*(\d+(?:,\d+)?)\s*%", re.I)
 RX_BASE = re.compile(r"Data Base\s*:\s*\d{2}/(\d{2})/(\d{4})\s*\(([^)]*)\)", re.I)
 RX_DIM = re.compile(r"Dimens\w+\s*:\s*([\d.]+,\d+)\s*(\S+)", re.I)
@@ -153,8 +161,12 @@ def faixa(d):
 
 # ── planilha orçamentária (e-OBRAS) ──
 def ler_planilha(texto):
-    """Linhas de item do relatório 'Orçamentos Agrupados' do e-OBRAS (Poligraph), com BDI e data-base de cada orçamento."""
+    """Linhas de item do relatório 'Orçamentos Agrupados' do e-OBRAS (SCO.NET), com BDI e data-base de cada orçamento.
+    Regras do fonte (RelOrcamentoSEINFRA.java): total do item = PU x quantidade (truncado ou arredondado conforme o
+    parâmetro do orçamento) -> 'conferido'; no fim de cada orçamento, 'Melhoria ambiental (x%)' e 'Mobilização e
+    desmobilização (x%)' entram por cima do total dos itens (não estão no PU) -> 'acrescimo_pct' e 'total_geral_orcamento'."""
     itens, cab, aberto = [], {"bdi": None, "base": None, "regime": None, "dimensao": None}, None
+    dois_codigos, ini_orc, acresc = False, 0, 0.0
     for ln in (l.strip() for l in texto.splitlines()):
         if (m := RX_BDI.search(ln)):
             cab["bdi"] = round(br(m.group(1)) / 100, 4)
@@ -162,21 +174,42 @@ def ler_planilha(texto):
             cab["dimensao"] = [br(m.group(1)), unid(m.group(2))]
         if (m := RX_BASE.search(ln)):
             cab["base"], cab["regime"] = f"{m.group(2)}-{m.group(1)}", m.group(3).strip()
-        if (m := RX_INICIO.match(ln)):
-            aberto = {"tabela": m.group(1), "item": m.group(2), "codigo": m.group(3), "desc": [m.group(4)], **cab}
-            ln = m.group(4)
-            aberto["desc"] = []
+        if ln.startswith("Tabela") and "Descri" in ln:
+            dois_codigos = bool(RX_CODSIST.search(ln))
+        if (m := RX_ACRESC.search(ln)):
+            acresc += br(m.group(2)) / 100
+        if (m := RX_TOTAL_GERAL.search(ln)):  # fecha o orçamento: grava acréscimos e total geral nas linhas dele
+            for it in itens[ini_orc:]:
+                it["acrescimo_pct"] = round(acresc, 4)
+                it["total_geral_orcamento"] = br(m.group(1))
+            ini_orc, acresc, aberto = len(itens), 0.0, None
+            continue
+        m = (RX_INICIO2 if dois_codigos else RX_INICIO).match(ln)
+        if m:
+            g = m.groups()
+            aberto = {"tabela": g[0], "item": g[1], "codigo": g[-2], "desc": [], **cab}
+            if dois_codigos:
+                aberto["cod_sist"] = g[2]
+            ln = g[-1]
         if aberto is None:
             continue
         if (f := RX_FECHO.match(ln)):
             aberto["desc"].append(f.group(1))
-            itens.append({"tabela": aberto["tabela"], "item": aberto["item"], "codigo": aberto["codigo"],
-                          "descricao": re.sub(r"\s+", " ", " ".join(aberto["desc"])).replace(" ,", ",").strip(),
-                          "unidade": f.group(2), "quantidade": br(f.group(3)), "preco_unitario": br(f.group(4)),
-                          "preco_total": br(f.group(5)), "bdi": aberto["bdi"], "data_base": aberto["base"],
-                          "regime": aberto["regime"], "dimensao": aberto["dimensao"]})
+            nums = [br(x) for x in f.group(3).split()]
+            qt, pu, tot = nums[0], nums[-2], nums[-1]
+            it = {"tabela": aberto["tabela"], "item": aberto["item"], "codigo": aberto["codigo"],
+                  "descricao": re.sub(r"\s+", " ", " ".join(aberto["desc"])).replace(" ,", ",").strip(),
+                  "unidade": f.group(2), "quantidade": qt, "preco_unitario": pu, "preco_total": tot,
+                  # PU impresso tem 2 casas e o total usa o PU cheio: folga de meio centavo por unidade
+                  "conferido": abs(qt * pu - tot) <= max(0.02, abs(qt) * 0.005 + 0.01),
+                  "bdi": aberto["bdi"], "data_base": aberto["base"], "regime": aberto["regime"], "dimensao": aberto["dimensao"]}
+            if len(nums) == 9:
+                it["composicao"] = dict(zip(("material", "mao_de_obra", "equipamento", "servicos", "incidencia", "transporte"), nums[1:7]))
+            if "cod_sist" in aberto:
+                it["cod_sist"] = aberto["cod_sist"]
+            itens.append(it)
             aberto = None
-        elif not re.match(r"^(Total|Tabela Refer|e-OBRAS|P[aá]gina|Folha|\d{2}(\.\d{2})*\s+-?\s*[A-ZÇÃÕÉ])", ln):
+        elif not re.match(r"^(Total|Tabela Refer|Tabela\s|e-OBRAS|P[aá]gina|Folha|\d{2}(\.\d{2})*\s+-?\s*[A-ZÇÃÕÉ])", ln):
             aberto["desc"].append(ln)
     return itens
 
@@ -262,6 +295,9 @@ def processar(compra, s):
         r["valor_por_km"] = round((compra.get("homologado") or compra.get("estimado") or 0) / km, 2) if km else None
     r["planilha"].update(linhas=len(linhas), casadas=sum(1 for i in itens if i["sicro_codigo"]),
                          por_codigo=sum(1 for i in itens if (i["confianca"] or "").startswith("alta")),
+                         conferidas=sum(1 for i in itens if i["conferido"]),
+                         acrescimo_pct=sorted({i["acrescimo_pct"] for i in itens if i.get("acrescimo_pct")}),
+                         totais_gerais=sorted({i["total_geral_orcamento"] for i in itens if i.get("total_geral_orcamento")}),
                          bdi=sorted({i["bdi"] for i in itens if i["bdi"] is not None}),
                          data_base=sorted({i["data_base"] for i in itens if i["data_base"]}))
     return r, itens
@@ -300,6 +336,25 @@ Total do Grupo: 7.524,33"""
     assert a["descricao"].startswith("Fôrmas de compensado") and a["descricao"].endswith("instalação e retirada"), a["descricao"]
     assert a["data_base"] == "2025-04" and a["dimensao"] == [1103.6, "m²"], a
     assert b["unidade"] == "MES" and b["preco_total"] == 224116.68, b
+    assert a["conferido"] and b["conferido"] and "composicao" not in a
+    # analítico (6 colunas de composição), com Cód. Sist. e acréscimos no fim do orçamento (RelOrcamentoSEINFRA.java)
+    txt2 = """Bonificação : 20,00%
+Data Base : 01/01/2026 (Desonerado)
+Tabela Referência Cód. Sist. Código Descrição Unid. Quantidade Material Mão de obra Equipamento Serviços Incidência Transporte Preço unitário Preço total
+DNIT-370 02.01.00.001 88123 4011459 Brita graduada simples - areia e brita comerciais
+M3 100,000 50,00 10,00 20,00 0,00 1,00 5,00 103,20 10.320,00
+Total: 10.320,00
+Melhoria ambiental (1,50%): 154,80
+Mobilização e desmobilização (2,00%): 209,49
+Total geral do orçamento: 10.684,29"""
+    c2 = ler_planilha(txt2)
+    assert len(c2) == 1, c2
+    x = c2[0]
+    assert x["codigo"] == "4011459" and x["cod_sist"] == "88123" and x["unidade"] == "M3", x
+    assert x["quantidade"] == 100 and x["preco_unitario"] == 103.2 and x["preco_total"] == 10320 and x["conferido"], x
+    assert x["composicao"]["transporte"] == 5.0 and x["bdi"] == 0.2 and x["data_base"] == "2026-01", x
+    assert x["acrescimo_pct"] == 0.035 and x["total_geral_orcamento"] == 10684.29, x
+    assert not ler_planilha("DNIT-1 01.00.00.001 123 X\nM3 10,000 5,00 99,00")[0]["conferido"]  # 10 x 5 != 99
     assert br("1.063,000") == 1063.0 and unid("M3") == "m³" and unid("mês") == "mês"
     # 911,07 = 741,73 (SICRO AM abr/2025, 1107900) x 1,2283: desvio ~0
     assert abs(desvio({"preco_unitario": 911.07, "bdi": 0.2283, "sicro_custo_ref": 741.73})) < 0.001

@@ -171,7 +171,9 @@ export function ficha(c) {
       ${lin("Valor original", brl(c.v_orig))}
       ${lin(`Aditivos (${num(c.n_adit)})`, `${brl(c.v_adit)}${c.v_orig ? `<div class="peq">${pct(c.v_adit / c.v_orig * 100)} do original</div>` : ""}`)}
       ${lin("Valor atual", `<b>${brl(c.v_atual)}</b>`)}${lin("Medido", `${brl(c.medido)} (${pct(c.fin)})`)}
-      ${c.reaj_med ? lin("Reajuste medido", brl(c.reaj_med)) : ""}${lin("Pago", brl(c.pago))}${lin("Saldo", brl(c.saldo))}
+      ${c.reaj_med ? lin("Reajuste medido", `${brl(c.reaj_med)}<div class="peq">fora do medido, como na ficha do e-Obras</div>`) : ""}
+      ${c.reeq ? lin("Reequilíbrio", brl(c.reeq)) : ""}${c.corr ? lin("Correção de medição", brl(c.corr)) : ""}
+      ${lin("Pago", brl(c.pago))}${lin("Saldo", brl(c.saldo))}
     </dl>
     ${c.risco ? `<h3 class="fc-h">Nota de risco</h3><div class="fc-risco">${notaRisco(c.risco).replace(" pq", "")}<div><b>Risco ${esc(c.risco.faixa)}</b><div class="peq">nota de 0 a 100 · <a href="#/briefings?contrato=${encodeURIComponent(c.id)}">ver componentes</a></div></div></div>` : ""}
     ${(c.med || []).length > 1 ? `<h3 class="fc-h">Curva de medição e previsão</h3>${legendaCurva(c)}<div class="graf"><canvas id="gCurva" aria-label="Curva de medição acumulada e previsão"></canvas></div>` : ""}
