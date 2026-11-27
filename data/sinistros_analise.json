@@ -1,18 +1,18 @@
 {
  "_meta": {
-  "gerado": "2026-11-26 19:38",
+  "gerado": "2026-11-27 20:12",
   "periodo": [
    "2019-01-01",
-   "2026-11-26"
+   "2026-11-27"
   ],
   "anos_observados": 7.9,
   "fonte_base": {
    "fonte": "Google News (busca pt-BR) -> link real da matéria; texto da matéria conferido pelas regras de coletor/coletar.py",
    "escopo": "somente rodovias estaduais do Amazonas (AM-xxx); BR fica de fora",
-   "atualizado": "2026-11-26 19:32",
+   "atualizado": "2026-11-27 19:44",
    "noticias": 330,
    "ocorrencias": 230,
-   "arquivadas_wayback": 240
+   "arquivadas_wayback": 274
   },
   "metodos": {
    "ups": "DENATRAN (1987), Manual de identificação, análise e tratamento de pontos negros: morte 13, atropelamento com ferido 6, ferido 4, só danos 1",
@@ -47,7 +47,7 @@
   "feridos": 395,
   "ups": 2022,
   "noticias": 330,
-  "arquivadas_wayback": 240,
+  "arquivadas_wayback": 274,
   "rodovias_com_registro": 6,
   "ultimos_12m": 22,
   "12m_anteriores": 45,
@@ -267,15 +267,15 @@
     4.95,
     7.08
    ],
-   "fatais_100km_ano": 3.444,
+   "fatais_100km_ano": 3.443,
    "fatais_ic95": [
-    2.7,
-    4.331
+    2.699,
+    4.329
    ],
-   "ups_100km_ano": 52.09,
+   "ups_100km_ano": 52.07,
    "ultimos_12m": 11,
-   "media_anual_36m_antes": 17.0,
-   "tendencia": 0.65,
+   "media_anual_36m_antes": 16.67,
+   "tendencia": 0.66,
    "trechos_criticos": [
     {
      "km_ini": 135,
@@ -351,7 +351,7 @@
    },
    "posicao": 3,
    "faixa": "Baixa",
-   "leitura": "126 ocorrências desde 2019 (73 com morte); 3,444 ocorrências fatais por 100 km/ano; trecho mais grave: km 135–140 (6 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00058/2020-SEINFRA, CT-00057/2022-SEINFRA."
+   "leitura": "126 ocorrências desde 2019 (73 com morte); 3,443 ocorrências fatais por 100 km/ano; trecho mais grave: km 135–140 (6 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00058/2020-SEINFRA, CT-00057/2022-SEINFRA."
   },
   "AM-070": {
    "ocorrencias": 78,
@@ -360,17 +360,17 @@
    "feridos": 68,
    "ups": 762,
    "extensao_km": 83.47,
-   "taxa_100km_ano": 11.83,
+   "taxa_100km_ano": 11.82,
    "taxa_ic95": [
-    9.35,
+    9.34,
     14.76
    ],
-   "fatais_100km_ano": 7.884,
+   "fatais_100km_ano": 7.882,
    "fatais_ic95": [
-    5.888,
-    10.34
+    5.886,
+    10.336
    ],
-   "ups_100km_ano": 115.54,
+   "ups_100km_ano": 115.5,
    "ultimos_12m": 6,
    "media_anual_36m_antes": 8.0,
    "tendencia": 0.75,
@@ -443,7 +443,7 @@
    },
    "posicao": 1,
    "faixa": "Alta",
-   "leitura": "78 ocorrências desde 2019 (52 com morte); 7,884 ocorrências fatais por 100 km/ano; trecho mais grave: km 5–10 (6 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00006/2020-SEINFRA."
+   "leitura": "78 ocorrências desde 2019 (52 com morte); 7,882 ocorrências fatais por 100 km/ano; trecho mais grave: km 5–10 (6 ocorrências); tipo mais comum: colisão. Estudar: 3ª faixa ou duplicação nos trechos de maior volume, separação de sentidos, fiscalização eletrônica; obra ativa: CT-00006/2020-SEINFRA."
   },
   "AM-240": {
    "ocorrencias": 2,
@@ -460,7 +460,7 @@
    "fatais_100km_ano": 0.318,
    "fatais_ic95": [
     0.036,
-    1.15
+    1.149
    ],
    "ups_100km_ano": 4.14,
    "ultimos_12m": 0,
@@ -604,7 +604,7 @@
    ],
    "fatais_100km_ano": 0.344,
    "fatais_ic95": [
-    0.093,
+    0.092,
     0.88
    ],
    "ups_100km_ano": 4.9,

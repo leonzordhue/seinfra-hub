@@ -2,10 +2,10 @@
  "_meta": {
   "fonte": "Google News (busca pt-BR) -> link real da matéria; texto da matéria conferido pelas regras de coletor/coletar.py",
   "escopo": "somente rodovias estaduais do Amazonas (AM-xxx); BR fica de fora",
-  "atualizado": "2026-11-26 19:32",
+  "atualizado": "2026-11-27 19:44",
   "noticias": 330,
   "ocorrencias": 230,
-  "arquivadas_wayback": 240
+  "arquivadas_wayback": 274
  },
  "ocorrencias": [
   {
@@ -4020,7 +4020,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 29,
-   "ocorrencia": "OC-2025-0020"
+   "ocorrencia": "OC-2025-0020",
+   "arquivo": "https://web.archive.org/web/20261127194607/https://www.riosdenoticias.com.br/curva-da-morte-acidente-com-carreta-na-am-010-deixa-carga-de-soja-espalhada/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://d24am.com/amazonas/video-carro-capota-em-curva-da-am-010-e-chama-atencao-de-motoristas/",
@@ -4109,7 +4111,9 @@
    "km": null,
    "municipio": null,
    "id": 33,
-   "ocorrencia": "OC-2025-0023"
+   "ocorrencia": "OC-2025-0023",
+   "arquivo": "https://web.archive.org/web/20261127194828/https://todahora.com/motorista-e-resgatado-ferragens-apos-caminhao-tombar-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.portaldoholanda.com.br/amazonas/video-mostra-resgate-e-perigo-em-acidente-com-caminhao-pipa-na-am-010",
@@ -4596,7 +4600,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 54,
-   "ocorrencia": "OC-2025-0039"
+   "ocorrencia": "OC-2025-0039",
+   "arquivo": "https://web.archive.org/web/20261127195205/https://portaldozacarias.com.br/site/noticia/idoso-de-68-anos-morre-com-choque-eletrico-ao-tentar-consertar-fiacao-em-comunidade-na-rodovia-am-010--regiao-metropolitana-de-manaus--veja-videos/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/06/04/sobrevivente-de-acidente-entre-caminhao-e-onibus-na-am-010-recebe-alta-apos-tres-dias-internado-em-manaus.ghtml",
@@ -4664,7 +4670,9 @@
    "km": null,
    "municipio": null,
    "id": 57,
-   "ocorrencia": "OC-2025-0041"
+   "ocorrencia": "OC-2025-0041",
+   "arquivo": "https://web.archive.org/web/20261127195329/https://portaldozacarias.com.br/site/noticia/veja-no-programa--rota-policial-do-portal-do-zacarias--os-destaques-desta-segunda-feira--corpo-e-encontrado-boiando-em-igarape-no-educandos--acidente-entre-onibus-e-caminhao-deixa-dois-mortos-e-tres-feridos-na-am-010--participe/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/06/02/sobrevivente-de-acidente-na-am-010-diz-que-motorista-de-caminhao-pediu-desculpas-antes-de-morrer-estava-sob-efeito-de-bebidas-alcoolicas.ghtml",
@@ -4732,7 +4740,9 @@
    "km": "30",
    "municipio": "Manaus",
    "id": 60,
-   "ocorrencia": "OC-2025-0042"
+   "ocorrencia": "OC-2025-0042",
+   "arquivo": "https://web.archive.org/web/20261127195450/https://revistacenarium.com.br/veja-imagens-da-colisao-entre-onibus-e-caminhao-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://d24am.com/amazonas/am-010-dois-motoristas-morrem-apos-colisao-identidades-sao-reveladas/",
@@ -4774,7 +4784,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 62,
-   "ocorrencia": "OC-2025-0042"
+   "ocorrencia": "OC-2025-0042",
+   "arquivo": "http://web.archive.org/web/20250712230440/https://amazonasatual.com.br/acidente-entre-cacamba-e-onibus-mata-2-pessoas-na-am-010-neste-domingo/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.riosdenoticias.com.br/colisao-frontal-entre-onibus-e-caminhao-deixa-motoristas-presos-as-ferragens-na-am-010/",
@@ -4795,7 +4807,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 63,
-   "ocorrencia": "OC-2025-0042"
+   "ocorrencia": "OC-2025-0042",
+   "arquivo": "https://web.archive.org/web/20261127195717/https://www.riosdenoticias.com.br/colisao-frontal-entre-onibus-e-caminhao-deixa-motoristas-presos-as-ferragens-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/imagens-fortes--grave-acidente-entre-onibus-e-cacamba-deixa-um-morto-e-tres-feridos-na-am-010--veja-video/",
@@ -4816,7 +4830,9 @@
    "km": "30",
    "municipio": "Manaus",
    "id": 64,
-   "ocorrencia": "OC-2025-0042"
+   "ocorrencia": "OC-2025-0042",
+   "arquivo": "https://web.archive.org/web/20261127195832/https://portaldozacarias.com.br/site/noticia/imagens-fortes--grave-acidente-entre-onibus-e-cacamba-deixa-um-morto-e-tres-feridos-na-am-010--veja-video/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/05/13/motociclista-morre-apos-avancar-o-sinal-vermelho-e-colidir-com-carro-no-interior-do-am-video.ghtml",
@@ -4837,7 +4853,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "id": 65,
-   "ocorrencia": "OC-2025-0043"
+   "ocorrencia": "OC-2025-0043",
+   "arquivo": "http://web.archive.org/web/20251026093358/https://g1.globo.com/am/amazonas/noticia/2025/05/13/motociclista-morre-apos-avancar-o-sinal-vermelho-e-colidir-com-carro-no-interior-do-am-video.ghtml",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/05/08/video-gravida-morre-apos-colisao-entre-carros-na-rodovia-am-070.ghtml",
@@ -4882,7 +4900,9 @@
    "km": "5",
    "municipio": "Itacoatiara",
    "id": 67,
-   "ocorrencia": "OC-2025-0045"
+   "ocorrencia": "OC-2025-0045",
+   "arquivo": "https://web.archive.org/web/20261127195951/https://www.acritica.com/policia/colisao-violenta-entre-hilux-e-corsa-deixa-cinco-feridos-na-am-010-em-itacoatiara/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/05/04/acidente-entre-carros-deixa-uma-pessoa-em-estado-grave-e-outras-duas-feridas-na-rodovia-am-070-video.ghtml",
@@ -4951,7 +4971,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 70,
-   "ocorrencia": "OC-2025-0048"
+   "ocorrencia": "OC-2025-0048",
+   "arquivo": "http://web.archive.org/web/20250726013450/https://g1.globo.com/am/amazonas/noticia/2025/04/11/acidente-entre-carro-e-onibus-deixa-dois-feridos-na-zona-norte-de-manaus.ghtml",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2025/03/29/taxi-bate-na-traseira-de-caminhao-e-deixa-quatro-feridos-na-am-010.ghtml",
@@ -4972,7 +4994,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "id": 71,
-   "ocorrencia": "OC-2025-0049"
+   "ocorrencia": "OC-2025-0049",
+   "arquivo": "http://web.archive.org/web/20250727110352/https://g1.globo.com/am/amazonas/noticia/2025/03/29/taxi-bate-na-traseira-de-caminhao-e-deixa-quatro-feridos-na-am-010.ghtml",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://d24am.com/amazonas/tres-adultos-e-uma-crianca-ficam-feridos-em-acidente-na-rodovia-am-010/",
@@ -5014,7 +5038,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 73,
-   "ocorrencia": "OC-2025-0049"
+   "ocorrencia": "OC-2025-0049",
+   "arquivo": "https://web.archive.org/web/20261127200211/https://portaldozacarias.com.br/site/noticia/grave-acidente-deixa-quatro-pessoas-feridas-na-rodovia-am-010--que-liga-manaus-ao-municipio-de-itacoatiara--veja-video/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/imagens-fortes--dois-homens-morrem-em-grave-acidente-de-motocicleta-em-itacoatiara--veja-videos/",
@@ -5035,7 +5061,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "id": 74,
-   "ocorrencia": "OC-2025-0049"
+   "ocorrencia": "OC-2025-0049",
+   "arquivo": "https://web.archive.org/web/20261127200258/https://portaldozacarias.com.br/site/noticia/imagens-fortes--dois-homens-morrem-em-grave-acidente-de-motocicleta-em-itacoatiara--veja-videos/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://d24am.com/amazonas/video-carreta-tomba-na-am-010-e-deixa-oleo-na-pista-curva-da-morte/",
@@ -5080,7 +5108,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "id": 76,
-   "ocorrencia": "OC-2025-0051"
+   "ocorrencia": "OC-2025-0051",
+   "arquivo": "http://web.archive.org/web/20250429045151/https://d24am.com/amazonas/video-caminhao-colide-com-onibus-e-cai-em-ribanceira-na-rodovia-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.riosdenoticias.com.br/video-duas-criancas-ficam-feridas-apos-atropelamento-na-am-010/",
@@ -5101,7 +5131,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 77,
-   "ocorrencia": "OC-2025-0052"
+   "ocorrencia": "OC-2025-0052",
+   "arquivo": "http://web.archive.org/web/20250328155740/https://www.riosdenoticias.com.br/video-duas-criancas-ficam-feridas-apos-atropelamento-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.acritica.com/geral/acidente-fatal-homem-morre-em-colisao-de-motocicletas-em-rio-preto-da-eva/",
@@ -5122,7 +5154,9 @@
    "km": "93",
    "municipio": "Rio Preto da Eva",
    "id": 78,
-   "ocorrencia": "OC-2025-0053"
+   "ocorrencia": "OC-2025-0053",
+   "arquivo": "https://web.archive.org/web/20261127200416/https://www.acritica.com/geral/acidente-fatal-homem-morre-em-colisao-de-motocicletas-em-rio-preto-da-eva/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://amazonasatual.com.br/acidente-envolvendo-moto-deixa-duas-pessoas-morta-em-rodovia-no-am/",
@@ -5144,7 +5178,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 79,
-   "ocorrencia": "OC-2025-0054"
+   "ocorrencia": "OC-2025-0054",
+   "arquivo": "http://web.archive.org/web/20250316151044/https://amazonasatual.com.br/acidente-envolvendo-moto-deixa-duas-pessoas-morta-em-rodovia-no-am/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.acritica.com/geral/familiares-das-vitimas-do-acidente-entre-onibus-e-carreta-na-am-010-protestam-em-rio-preto-da-eva/",
@@ -5165,7 +5201,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "id": 80,
-   "ocorrencia": "OC-2025-0055"
+   "ocorrencia": "OC-2025-0055",
+   "arquivo": "https://web.archive.org/web/20261127200536/https://www.acritica.com/geral/familiares-das-vitimas-do-acidente-entre-onibus-e-carreta-na-am-010-protestam-em-rio-preto-da-eva/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://portaldozacarias.com.br/site/noticia/motociclista-fica-gravemente-ferido-apos-ser-atropelado-por-caminhao-em-alta-velocidade-na-rodovia-am-010--veja-video/",
@@ -5186,7 +5224,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 81,
-   "ocorrencia": "OC-2025-0056"
+   "ocorrencia": "OC-2025-0056",
+   "arquivo": "http://web.archive.org/web/20250224112209/https://www.portaldozacarias.com.br/site/noticia/motociclista-fica-gravemente-ferido-apos-ser-atropelado-por-caminhao-em-alta-velocidade-na-rodovia-am-010--veja-video/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/26/ciclista-e-motorista-ficam-feridos-apos-acidente-na-am-010-em-itacoatiara.ghtml",
@@ -5231,7 +5271,9 @@
    "km": "138",
    "municipio": "Itacoatiara",
    "id": 83,
-   "ocorrencia": "OC-2024-0058"
+   "ocorrencia": "OC-2024-0058",
+   "arquivo": "http://web.archive.org/web/20250125215845/https://estradas.com.br/caminhoneiro-tem-prisao-decretada-apos-acidente-com-onibus-irregular-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://d24am.com/wp-content/uploads/2024/12/acidente-am-010-3-1-150x150.png",
@@ -5276,7 +5318,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "id": 85,
-   "ocorrencia": "OC-2024-0063"
+   "ocorrencia": "OC-2024-0063",
+   "arquivo": "http://web.archive.org/web/20251123133814/https://g1.globo.com/am/amazonas/noticia/2024/12/22/motorista-de-carreta-tem-prisao-mantida-apos-acidente-com-onibus-que-matou-4-pessoas-no-am.ghtml",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/21/acidente-na-am-010-o-que-se-sabe-e-o-que-falta-esclarecer-sobre-a-colisao-entre-um-onibus-e-uma-carreta-no-interior-do-amazonas.ghtml",
@@ -5297,7 +5341,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 86,
-   "ocorrencia": "OC-2024-0063"
+   "ocorrencia": "OC-2024-0063",
+   "arquivo": "http://web.archive.org/web/20241221171817/https://g1.globo.com/am/amazonas/noticia/2024/12/21/acidente-na-am-010-o-que-se-sabe-e-o-que-falta-esclarecer-sobre-a-colisao-entre-um-onibus-e-uma-carreta-no-interior-do-amazonas.ghtml",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.riosdenoticias.com.br/am-010-e-liberada-apos-sete-horas-de-bloqueio-em-decorrencia-de-grave-acidente-entre-onibus-e-carreta/",
@@ -5318,7 +5364,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 87,
-   "ocorrencia": "OC-2024-0063"
+   "ocorrencia": "OC-2024-0063",
+   "arquivo": "https://web.archive.org/web/20261127200651/https://www.riosdenoticias.com.br/am-010-e-liberada-apos-sete-horas-de-bloqueio-em-decorrencia-de-grave-acidente-entre-onibus-e-carreta/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/21/motorista-de-onibus-morto-apos-acidente-com-carreta-em-rodovia-do-am-estava-ha-pouco-tempo-na-empresa-diz-familia.ghtml",
@@ -5339,7 +5387,9 @@
    "km": null,
    "municipio": "Itapiranga",
    "id": 88,
-   "ocorrencia": "OC-2024-0063"
+   "ocorrencia": "OC-2024-0063",
+   "arquivo": "https://web.archive.org/web/20261127200810/https://g1.globo.com/am/amazonas/noticia/2024/12/21/motorista-de-onibus-morto-apos-acidente-com-carreta-em-rodovia-do-am-estava-ha-pouco-tempo-na-empresa-diz-familia.ghtml",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/21/motorista-de-carreta-que-colidiu-com-onibus-e-matou-quatro-pessoas-no-am-vai-responder-por-homicidio-culposo.ghtml",
@@ -5360,7 +5410,9 @@
    "km": null,
    "municipio": "Itapiranga",
    "id": 89,
-   "ocorrencia": "OC-2024-0063"
+   "ocorrencia": "OC-2024-0063",
+   "arquivo": "http://web.archive.org/web/20260826113338/https://g1.globo.com/am/amazonas/noticia/2024/12/21/motorista-de-carreta-que-colidiu-com-onibus-e-matou-quatro-pessoas-no-am-vai-responder-por-homicidio-culposo.ghtml",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://g1.globo.com/am/amazonas/noticia/2024/12/20/grave-acidente-de-transito-e-registrado-na-am-010.ghtml",
@@ -5381,7 +5433,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 90,
-   "ocorrencia": "OC-2024-0064"
+   "ocorrencia": "OC-2024-0064",
+   "arquivo": "http://web.archive.org/web/20241220181917/https://g1.globo.com/am/amazonas/noticia/2024/12/20/grave-acidente-de-transito-e-registrado-na-am-010.ghtml",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://amazonas1.com.br/video-acidente-grave-onibus-carreta-feridos-am-010/",
@@ -5402,7 +5456,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 91,
-   "ocorrencia": "OC-2024-0064"
+   "ocorrencia": "OC-2024-0064",
+   "arquivo": "http://web.archive.org/web/20241223063821/https://amazonas1.com.br/video-acidente-grave-onibus-carreta-feridos-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://radioriomarfm.com.br/acidente-entre-carreta-e-onibus-deixa-mortos-e-feridos-na-am-010/",
@@ -5423,7 +5479,9 @@
    "km": null,
    "municipio": "Itacoatiara",
    "id": 92,
-   "ocorrencia": "OC-2024-0064"
+   "ocorrencia": "OC-2024-0064",
+   "arquivo": "http://web.archive.org/web/20250516210651/https://radioriomarfm.com.br/acidente-entre-carreta-e-onibus-deixa-mortos-e-feridos-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://bncamazonas.com.br/municipios/colisao-entre-onibus-e-carreta-deixa-mortos-na-am-010/",
@@ -5444,7 +5502,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "id": 93,
-   "ocorrencia": "OC-2024-0064"
+   "ocorrencia": "OC-2024-0064",
+   "arquivo": "https://web.archive.org/web/20261127200943/https://bncamazonas.com.br/municipios/colisao-entre-onibus-e-carreta-deixa-mortos-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.riosdenoticias.com.br/governo-confirma-quatro-mortos-e-18-feridos-no-acidente-entre-onibus-e-carreta-na-am-010/",
@@ -5465,7 +5525,9 @@
    "km": null,
    "municipio": "Rio Preto da Eva",
    "id": 94,
-   "ocorrencia": "OC-2024-0064"
+   "ocorrencia": "OC-2024-0064",
+   "arquivo": "https://web.archive.org/web/20261127201108/https://www.riosdenoticias.com.br/governo-confirma-quatro-mortos-e-18-feridos-no-acidente-entre-onibus-e-carreta-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://revistacenarium.com.br/acidente-entre-onibus-e-carreta-na-am-010-deixa-mortos-e-feridos/",
@@ -5486,7 +5548,9 @@
    "km": "135",
    "municipio": "Manaus",
    "id": 95,
-   "ocorrencia": "OC-2024-0060"
+   "ocorrencia": "OC-2024-0060",
+   "arquivo": "http://web.archive.org/web/20241220180257/https://revistacenarium.com.br/acidente-entre-onibus-e-carreta-na-am-010-deixa-mortos-e-feridos/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.estadopolitico.com.br/estado-confirma-quatro-mortes-e-resgate-de-18-sobreviventes-em-acidente-na-am-010/",
@@ -5507,7 +5571,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 96,
-   "ocorrencia": "OC-2024-0060"
+   "ocorrencia": "OC-2024-0060",
+   "arquivo": "https://web.archive.org/web/20261127201215/https://www.estadopolitico.com.br/estado-confirma-quatro-mortes-e-resgate-de-18-sobreviventes-em-acidente-na-am-010/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://portalmazemourao.com.br/amazonas/acidente-entre-onibus-e-carreta-na-am-010-deixa-ao-menos-quatro-mortos/",
@@ -5528,7 +5594,9 @@
    "km": null,
    "municipio": "Manaus",
    "id": 97,
-   "ocorrencia": "OC-2024-0060"
+   "ocorrencia": "OC-2024-0060",
+   "arquivo": "http://web.archive.org/web/20251009212214/https://portalmazemourao.com.br/amazonas/acidente-entre-onibus-e-carreta-na-am-010-deixa-ao-menos-quatro-mortos/",
+   "arquivado_em": "2026-11-27"
   },
   {
    "url": "https://www.acritica.com/geral/grave-acidente-deixa-mortos-e-feridos-na-am-010/",
