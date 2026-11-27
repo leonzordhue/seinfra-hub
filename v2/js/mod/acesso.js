@@ -2,7 +2,7 @@
 // Fonte: data/acesso.json e data/acesso_isocronas.geojson (pipelines/acesso/acesso.py, mensal no GitHub Actions:
 // OpenStreetMap + OSRM perfil car, CNES, IBGE Censo 2022). Métodos e limitações vêm do _meta e aparecem no painel.
 // Sem ligação rodoviária é informação (município só fluvial/aéreo), não erro.
-import { talvez, contratos, municipios } from "../dados.js";
+import { talvez, contratos, municipios, PUBLICO, RAIZ } from "../dados.js";
 import { esc, num, pct, data, semAcento, plural } from "../fmt.js";
 import { $, kpi, chip, tabela, fonte, opcoes, grafico, css } from "../ui.js";
 
@@ -92,7 +92,7 @@ export async function render(el) {
   if (mapa) { mapa.remove(); mapa = null; }
   const d = await talvez("acesso");
   if (!d) {
-    el.innerHTML = `<div class="cab"><div><h1>Acessibilidade rodoviária</h1></div></div><div class="aviso">Os dados ainda não foram gerados. O robô <b>Acessibilidade rodoviária (mensal)</b> (<code>pipelines/acesso/acesso.py</code>) baixa a malha do OpenStreetMap, sobe o OSRM no GitHub Actions e publica <code>data/acesso.json</code> no dia 5 de cada mês.</div>`;
+    el.innerHTML = `<div class="cab"><div><h1>Acessibilidade rodoviária</h1></div></div><div class="aviso">${PUBLICO ? "Os dados de acessibilidade estão indisponíveis no momento. Tente novamente mais tarde." : `Os dados ainda não foram gerados. O robô <b>Acessibilidade rodoviária (mensal)</b> (<code>pipelines/acesso/acesso.py</code>) baixa a malha do OpenStreetMap, sobe o OSRM no GitHub Actions e publica <code>data/acesso.json</code> no dia 5 de cada mês.`}</div>`;
     return;
   }
   pintarFaixas();
@@ -151,15 +151,15 @@ export async function render(el) {
         </div>
         <div id="tab"></div></div></section>
 
-    <section class="secao cartao"><header><div><h2>Ganho com obra</h2><p>Contratos ativos de rodovia, ramal ou ponte (e-Obras) por município e o que a obra pode mudar no acesso. Leitura qualitativa: o ganho em minutos não foi simulado.</p></div></header>
-      <div class="corpo" id="obras"></div></section>
+    ${PUBLICO ? "" : `<section class="secao cartao"><header><div><h2>Ganho com obra</h2><p>Contratos ativos de rodovia, ramal ou ponte (e-Obras) por município e o que a obra pode mudar no acesso. Leitura qualitativa: o ganho em minutos não foi simulado.</p></div></header>
+      <div class="corpo" id="obras"></div></section>`}
 
     <details class="secao cartao"><summary style="padding:14px 16px;cursor:pointer;font-weight:500;color:var(--tinta)">Métodos, fontes e limitações</summary>
       <div class="corpo"><dl class="ficha">
         ${Object.entries(M.metodologia).map(([k, v]) => `<dt>${esc(k.replace(/_/g, " "))}</dt><dd>${esc(v)}</dd>`).join("")}
         <dt>limitações</dt><dd><ul style="margin:0;padding-left:18px">${M.limitacoes.map(l => `<li>${esc(l)}</li>`).join("")}</ul></dd>
         <dt>fontes</dt><dd>${esc(M.fonte)}.<br>${Object.entries(M.url).map(([k, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(k)}</a>`).join(" · ")}</dd>
-        <dt>servidor</dt><dd>${esc(M.servidor_osrm)}${M.balsas_longas_removidas != null ? ` · ${num(M.balsas_longas_removidas)} linhas fluviais longas retiradas da malha` : ""} · grade de ${num(R.celulas_grade)} células · ${num(R.hospitais)} hospitais · ${num(R.terminais)} terminais</dd>
+        <dt>${PUBLICO ? "base" : "servidor"}</dt><dd>${PUBLICO ? "Roteamento OSRM sobre o OpenStreetMap" : esc(M.servidor_osrm)}${M.balsas_longas_removidas != null ? ` · ${num(M.balsas_longas_removidas)} linhas fluviais longas retiradas da malha` : ""} · grade de ${num(R.celulas_grade)} células · ${num(R.hospitais)} hospitais · ${num(R.terminais)} terminais</dd>
       </dl></div></details>`;
 
   // gráfico população por faixa
@@ -196,7 +196,7 @@ export async function render(el) {
   $("#fQ", el).oninput = e => { estado.q = e.target.value; pinta(); };
   pinta();
 
-  ganhoObra($("#obras", el), mun);
+  if (!PUBLICO) ganhoObra($("#obras", el), mun);
   desenharMapa(el, mun, R).catch(e => { $("#mapa", el).innerHTML = `<div class="aviso" style="margin:12px">Mapa indisponível: ${esc(e.message)}. A tabela abaixo tem os mesmos dados.</div>`; });
 }
 
@@ -241,7 +241,7 @@ async function desenharMapa(el, mun, R = {}) {
   });
 
   const [geo, rotas] = await Promise.all(["acesso_isocronas", "acesso_rotas"].map(n =>
-    fetch(`../data/${n}.geojson`, { cache: "no-cache" }).then(x => x.ok ? x.json() : null).catch(() => null)));
+    fetch(`${RAIZ}data/${n}.geojson`, { cache: "no-cache" }).then(x => x.ok ? x.json() : null).catch(() => null)));
   if (!box.isConnected) return;
 
   // isócronas
@@ -284,7 +284,7 @@ async function desenharMapa(el, mun, R = {}) {
     f.properties.balsas.forEach(b => L.polyline(linha(b), { pane: "rotas", color: ouro, weight: 2.6, dashArray: "4 5", interactive: false }).addTo(camRot));
   });
   const cRot = $("#cRot", el);
-  if (!rotas) { cRot.disabled = true; cRot.parentElement.title = "O traçado das rotas sai na próxima rodada do robô"; cRot.parentElement.style.opacity = .55; }
+  if (!rotas) { cRot.disabled = true; cRot.parentElement.title = "Traçado das rotas indisponível no momento"; cRot.parentElement.style.opacity = .55; }
   const pintaRot = () => { estado.rot && rotas ? camRot.addTo(mapa) : camRot.remove(); };
   pintaRot();
 
@@ -299,7 +299,7 @@ async function desenharMapa(el, mun, R = {}) {
     L.marker([a.lat, a.lon], { pane: "sedes", icon: iconeAlvo(tipo), keyboard: false }).bindTooltip(`${tipo === "Hospital" ? "Hospital" : "Terminal flutuante"}: ${esc(a.nome)}`).addTo(camAlv);
   }));
   const cAlv = $("#cAlv", el);
-  if (!vistos.size) { cAlv.disabled = true; cAlv.parentElement.title = "A localização sai na próxima rodada do robô"; cAlv.parentElement.style.opacity = .55; }
+  if (!vistos.size) { cAlv.disabled = true; cAlv.parentElement.title = "Localização indisponível no momento"; cAlv.parentElement.style.opacity = .55; }
   const pintaAlv = () => { estado.alv && vistos.size ? camAlv.addTo(mapa) : camAlv.remove(); };
   pintaAlv();
 
@@ -313,7 +313,7 @@ async function desenharMapa(el, mun, R = {}) {
       .bindTooltip(`${esc(m.nome)} → Manaus pelo rio · ${num(f.properties.km)} km`, { sticky: true }).on("click", () => selecionar(m)).addTo(camRio);
   });
   const cRio = $("#cRio", el);
-  if (!rioDe.size) { cRio.disabled = true; cRio.parentElement.title = "O traçado pelo rio sai na próxima rodada do robô"; cRio.parentElement.style.opacity = .55; }
+  if (!rioDe.size) { cRio.disabled = true; cRio.parentElement.title = "Traçado pelo rio indisponível no momento"; cRio.parentElement.style.opacity = .55; }
   const pintaRio = () => { estado.rio && rioDe.size ? camRio.addTo(mapa) : camRio.remove(); };
   pintaRio();
 
@@ -337,7 +337,7 @@ async function desenharMapa(el, mun, R = {}) {
   });
   if (aeroVistos.size) L.marker(SBEG, { pane: "sedes", icon: iconeAer(), keyboard: false }).bindTooltip("Aeroporto Eduardo Gomes (SBEG), Manaus").addTo(camAer);
   const cAer = $("#cAer", el);
-  if (!aeroVistos.size) { cAer.disabled = true; cAer.parentElement.title = "Os aeródromos saem na próxima rodada do robô"; cAer.parentElement.style.opacity = .55; }
+  if (!aeroVistos.size) { cAer.disabled = true; cAer.parentElement.title = "Aeródromos indisponíveis no momento"; cAer.parentElement.style.opacity = .55; }
   const pintaAer = () => { estado.aer && aeroVistos.size ? camAer.addTo(mapa) : camAer.remove(); };
   pintaAer();
   cRio.onchange = e => { estado.rio = e.target.checked; pintaRio(); };

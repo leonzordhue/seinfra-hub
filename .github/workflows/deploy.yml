@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Verifica a sintaxe do JS inline do index.html ANTES do deploy.
+  # Verifica a sintaxe do JS inline da v1 (classico.html; a raiz index.html é a versão pública) ANTES do deploy.
   # Um erro de sintaxe em qualquer linha derruba a plataforma inteira —
   # este job impede que uma versão quebrada chegue ao ar.
   check:
@@ -31,7 +31,7 @@ jobs:
         run: |
           node -e '
             const fs = require("fs");
-            const src = fs.readFileSync("index.html", "utf8");
+            const src = fs.readFileSync("classico.html", "utf8");
             const blocks = [...src.matchAll(/<script(?![^>]*src)[^>]*>([\s\S]*?)<\/script>/g)];
             if (!blocks.length) { console.error("Nenhum <script> inline encontrado — estrutura mudou?"); process.exit(1); }
             blocks.forEach((m, i) => fs.writeFileSync(`blk${i}.js`, m[1]));

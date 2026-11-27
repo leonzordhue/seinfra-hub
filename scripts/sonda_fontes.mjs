@@ -2,7 +2,7 @@
 // Roda no GitHub Actions (semanal) e localmente: `node scripts/sonda_fontes.mjs`
 // Sai com código 1 se qualquer fonte crítica falhar — o workflow abre issue.
 //
-// As URLs/keys abaixo espelham as constantes do index.html (são públicas lá).
+// As URLs/keys abaixo espelham as constantes do classico.html, a v1 (são públicas lá).
 
 // Mojibake = UTF-8 lido como latin-1 num re-export ("Alvarães" -> "AlvarÃ£es").
 // Já aconteceu no SISTEMAS_VIARIOS_AMAZONAS2; este teste impede que volte despercebido.
@@ -114,7 +114,7 @@ const CHECKS = [
   },
   {
     nome: "Hub publicado (GitHub Pages)",
-    url: "https://leonzordhue.github.io/seinfra-hub/index.html",
+    url: "https://leonzordhue.github.io/seinfra-hub/classico.html",
     valida: async r => {
       const t = await r.text();
       return t.includes("DMOB") ? { ok: true, detalhe: `${t.length} bytes` } : { ok: false, detalhe: "conteúdo inesperado" };

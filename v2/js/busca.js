@@ -1,5 +1,5 @@
 // Busca global (Ctrl K / "/"): contratos, municípios, rodovias e módulos, num só campo. [Nexus] 23/11/2026
-import { contratos, municipios, talvez } from "./dados.js";
+import { contratos, municipios, talvez, PUBLICO } from "./dados.js";
 import { esc, semAcento, brlCurto, data } from "./fmt.js";
 
 // [Claude] 25/11/2026: licitações, terminais e nomes alternativos das rodovias no índice; resultados agrupados por
@@ -94,7 +94,8 @@ export async function abrirBusca() {
 }
 export function fecharBusca(devolver = false) { if (!veu || veu.hidden) return; veu.hidden = true; if (devolver) volta?.focus?.(); }
 
-document.addEventListener("keydown", e => {
+// versão pública não tem busca: o índice cobre contratos, licitações e sinistros
+if (!PUBLICO) document.addEventListener("keydown", e => {
   const campo = /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName) || document.activeElement?.isContentEditable;
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") { e.preventDefault(); abrirBusca(); }
   else if (e.key === "/" && !campo) { e.preventDefault(); abrirBusca(); }

@@ -4,7 +4,7 @@
 // Números: data/mapa_municipios.json, data/mapa_trechos.json, data/sinistros_analise.json, data/eobras.json.
 // Os números entram por expressão "match" no navegador, então o .pmtiles só muda quando muda a geometria.
 // v3 (acabamento): painel de camadas e legenda flutuantes sobre o mapa, escala em rampa rotulada, ficha diagramada.
-import { talvez, contratos, municipios, historico } from "../dados.js";
+import { talvez, contratos, municipios, historico, PUBLICO, RAIZ } from "../dados.js";
 import { esc, num, brlCurto, semAcento } from "../fmt.js";
 import { $, $$, gaveta, fonte, chipSit, kpi } from "../ui.js";
 
@@ -21,7 +21,8 @@ const APELIDO = { "AM-151": "Carlos Braga", "AM-450": "Anel Sul" };  // CLAUDE.m
 const IRI = [["Excelente", "até 1,9"], ["Bom", "1,9 a 2,7"], ["Regular", "2,7 a 3,5"], ["Ruim", "3,5 a 4,6"], ["Péssimo", "acima de 4,6"], ["Sem medição", ""]];
 const IRI_LIM = ["1,9", "2,7", "3,5", "4,6"];
 const COR_IRI = () => escuro() ? ["#3FB37A", "#8BCF6A", "#F5B544", "#F08C3A", "#F07A70", "#5B6777"] : ["#157347", "#4CAF50", "#F5A623", "#E8730C", "#C0392B", "#9AA5B5"];
-const CAMADAS = [["iri", "Condição (IRI)"], ["sinistros", "Sinistros por km"], ["obras", "Obras ativas"], ["invest", "Investimento por município"]];
+const CAMADAS = PUBLICO ? [["iri", "Condição (IRI)"]]
+  : [["iri", "Condição (IRI)"], ["sinistros", "Sinistros por km"], ["obras", "Obras ativas"], ["invest", "Investimento por município"]];
 const EXTRAS = [["ramais", "Ramais", "RAMAIS_SEINFRA.geojson"], ["hidrovias", "Hidrovias", "HIDROVIAS.geojson"], ["federais", "Rodovias federais", "RODOVIAS_FEDERAIS.geojson"]];
 
 const estado = { camada: "iri", porHab: false, extras: {}, tresD: false };
@@ -131,13 +132,16 @@ export async function render(el, params) {
   mapa?.remove(); mapa = null;
   if (!document.getElementById("mapa-css")) document.head.append(Object.assign(document.createElement("style"), { id: "mapa-css", textContent: CSS }));
   el.innerHTML = `<div class="carregando">Carregando o mapa…</div>`;
-  const [_, mun, tr, an, ct, temTiles, hist] = await Promise.all([
-    carregarLibs(), talvez("mapa_municipios"), talvez("mapa_trechos"), talvez("sinistros_analise"), contratos(),
-    fetch("../data/mapa.pmtiles", { method: "HEAD" }).then(r => r.ok).catch(() => false), historico().catch(() => null)]);
+  // versão pública não baixa sinistros nem contratos; usa o levantamento (icm) e o cadastro das rodovias
+  const [_, mun, tr, an, ct, temTiles, hist, icm, info] = await Promise.all([
+    carregarLibs(), talvez("mapa_municipios"), talvez("mapa_trechos"), PUBLICO ? null : talvez("sinistros_analise"), PUBLICO ? { lista: [] } : contratos(),
+    fetch(`${RAIZ}data/mapa.pmtiles`, { method: "HEAD" }).then(r => r.ok).catch(() => false), PUBLICO ? null : historico().catch(() => null),
+    PUBLICO ? talvez("icm") : null, PUBLICO ? talvez("rodovias_info") : null]);
+  if (PUBLICO) estado.camada = "iri";
   if (params?.get("camada") && CAMADAS.some(c => c[0] === params.get("camada"))) estado.camada = params.get("camada");
 
   const M = mun?.municipios || {};
-  const obrasRod = tr?._meta?.obras_por_rodovia || {};
+  const obrasRod = PUBLICO ? {} : tr?._meta?.obras_por_rodovia || {};
   const ctPor = new Map(ct.lista.map(c => [c.id, c]));
   const munsEo = [...new Set(ct.lista.flatMap(municipios))];
   const rodAn = an?.rodovias || {};
@@ -145,15 +149,15 @@ export async function render(el, params) {
 
   el.innerHTML = `
     <div class="cab"><div><h1>Mapa do Amazonas</h1>
-      <p>Condição das rodovias estaduais, sinistros, obras ativas e investimento da SEINFRA por município. Clique num trecho, rodovia ou município para ver a ficha.</p></div>
+      <p>${PUBLICO ? "Rodovias estaduais do Amazonas e a condição do pavimento medida em campo. Clique numa rodovia, num trecho ou num município para ver os dados." : "Condição das rodovias estaduais, sinistros, obras ativas e investimento da SEINFRA por município. Clique num trecho, rodovia ou município para ver a ficha."}</p></div>
       <div class="fontes">${fonte("municípios", mun?._meta?.gerado_em?.slice(0, 10) || "—")}${fonte("trechos", tr?._meta?.gerado_em?.slice(0, 10) || "—")}${fonte("geometria", temTiles ? "PMTiles" : "GeoJSON")}</div></div>
-    ${mun && tr ? "" : `<div class="aviso" style="margin-bottom:16px"><b>Dados do mapa ainda não gerados.</b> Rode o robô "Mapa (semanal)" (pipelines/mapa/gerar.py); por enquanto aparecem só as geometrias.</div>`}
+    ${mun && tr ? "" : `<div class="aviso" style="margin-bottom:16px">${PUBLICO ? "<b>Parte dos dados do mapa está indisponível no momento.</b> Por enquanto aparecem só os traçados." : `<b>Dados do mapa ainda não gerados.</b> Rode o robô "Mapa (semanal)" (pipelines/mapa/gerar.py); por enquanto aparecem só as geometrias.`}</div>`}
     <div class="mapa-caixa"><div id="mapa"></div>
       <details class="mp-flut mp-painel" id="painel"${largo ? " open" : ""}>
         <summary>Camadas <small id="painelAtual"></small></summary>
         <div class="mp-corpo">
-          <div class="mp-rot" id="rotTema">Tema do mapa</div>
-          <div class="mp-opcoes" id="fCamada" role="group" aria-labelledby="rotTema">${CAMADAS.map(([v, r]) => `<button type="button" data-v="${v}" aria-pressed="${estado.camada === v}">${r}</button>`).join("")}</div>
+          <div class="mp-rot" id="rotTema"${CAMADAS.length < 2 ? " hidden" : ""}>Tema do mapa</div>
+          <div class="mp-opcoes" id="fCamada" role="group" aria-labelledby="rotTema"${CAMADAS.length < 2 ? " hidden" : ""}>${CAMADAS.map(([v, r]) => `<button type="button" data-v="${v}" aria-pressed="${estado.camada === v}">${r}</button>`).join("")}</div>
           <div class="seg" id="fHab" role="group" aria-label="Medida do investimento"><button type="button" data-v="" aria-pressed="${!estado.porHab}">Valor total</button><button type="button" data-v="1" aria-pressed="${estado.porHab}">Por habitante</button></div>
           <div class="mp-rot">Sobrepor</div>
           ${EXTRAS.map(([v, r]) => `<label class="mp-extra"><input type="checkbox" data-x="${v}" ${estado.extras[v] ? "checked" : ""}> ${r}</label>`).join("")}
@@ -165,16 +169,16 @@ export async function render(el, params) {
     </div>
     <details class="secao cartao"><summary style="padding:14px 18px;cursor:pointer;font-weight:600;color:var(--tinta)">Métodos e fontes</summary>
       <div class="corpo"><dl class="ficha">
-        <dt>Condição</dt><dd>IRI médio de cada trecho de 1 km do levantamento RoadLab Pro (data/icm.json), classificado pelo DNIT, Manual de Restauração de Pavimentos Asfálticos (IPR-720, 2006): excelente até 1,9; bom até 2,7; regular até 3,5; ruim até 4,6; péssimo acima de 4,6 m/km. Condição preliminar, não é o ICM oficial do DNIT. ${esc(tr?._meta?.metodologia || "")}</dd>
-        <dt>Sinistros</dt><dd>Rodovia pintada pelas ocorrências por 100 km por ano (análise do módulo Sinistros); trechos destacados quando a notícia informa o km. A base são notícias, não boletins de ocorrência.</dd>
+        <dt>Condição</dt><dd>IRI médio de cada trecho de 1 km do levantamento RoadLab Pro (data/icm.json), classificado pelo DNIT, Manual de Restauração de Pavimentos Asfálticos (IPR-720, 2006): excelente até 1,9; bom até 2,7; regular até 3,5; ruim até 4,6; péssimo acima de 4,6 m/km. Condição preliminar, não é o ICM oficial do DNIT. ${PUBLICO ? "" : esc(tr?._meta?.metodologia || "")}</dd>
+        ${PUBLICO ? `<dt>Municípios</dt><dd>Limites municipais e população estimada pelo IBGE (${esc(mun?._meta?.ano_populacao || "")}). A extensão de cada rodovia por município é medida sobre o traçado da SEINFRA.</dd>` : `<dt>Sinistros</dt><dd>Rodovia pintada pelas ocorrências por 100 km por ano (análise do módulo Sinistros); trechos destacados quando a notícia informa o km. A base são notícias, não boletins de ocorrência.</dd>
         <dt>Obras ativas</dt><dd>Contratos em andamento, vigentes, a iniciar ou em recebimento no e-Obras. Rodovia citada só como localização não conta como obra da rodovia.</dd>
-        <dt>Municípios</dt><dd>${esc(mun?._meta?.metodologia || "")} Fonte: ${esc(mun?._meta?.fonte || "")}.</dd>
+        <dt>Municípios</dt><dd>${esc(mun?._meta?.metodologia || "")} Fonte: ${esc(mun?._meta?.fonte || "")}.</dd>`}
         <dt>Geometria</dt><dd>IBGE (malha municipal); Atlas Amazonas (rodovias estaduais SEINFRA, ramais, rodovias federais SNV/DNIT, hidrovias). Fundo: Esri World Gray Canvas.</dd>
       </dl></div></details>`;
 
   // ── fontes de geometria: PMTiles quando existe, senão GeoJSON ──
-  const vt = temTiles ? { type: "vector", url: "pmtiles://" + new URL("../data/mapa.pmtiles", location.href).href } : null;
-  const GJ = { municipios: "../data/mapa_malha.geojson", rodovias: ATLAS + "RODOVIAS_ESTADUAIS_AMAZONAS.geojson",
+  const vt = temTiles ? { type: "vector", url: `pmtiles://${RAIZ}data/mapa.pmtiles` } : null;
+  const GJ = { municipios: `${RAIZ}data/mapa_malha.geojson`, rodovias: ATLAS + "RODOVIAS_ESTADUAIS_AMAZONAS.geojson",
     ...Object.fromEntries(EXTRAS.map(([v, , a]) => [v, ATLAS + a])) };
   const fonteDe = nome => vt ? { source: "vt", "source-layer": nome } : { source: nome };
   const garantirFonte = nome => { if (!vt && !mapa.getSource(nome)) mapa.addSource(nome, { type: "geojson", data: GJ[nome] }); };
@@ -328,7 +332,24 @@ export async function render(el, params) {
     return cs.length ? `<ul class="mp-lista">${cs.map(c => itemCt(c)).join("")}</ul>` : `<p class="mp-vazio">Nenhuma obra ativa da rodovia no e-Obras.</p>`; };
   const linkBrief = (k, v, txt) => `<p class="mp-acao"><a class="btn pri" href="#/briefings?${k}=${encodeURIComponent(v)}">${txt}</a></p>`;
   const classeIri = cl => { const i = IRI.findIndex(x => x[0] === cl); return `<span class="mp-classe"><i style="background:${COR_IRI()[i < 0 ? 5 : i]}"></i>${esc(cl || "Sem medição")}</span>`; };
+  const rodIcm = new Map((icm?.rodovias || []).map(x => [x.codigo, x]));
+  const rodPorMun = new Map();  // município -> [{ cod, km }] (cadastro das rodovias)
+  Object.entries(info?.rodovias || {}).forEach(([cod, x]) => (x.municipios || []).forEach(({ nome, km }) =>
+    (rodPorMun.get(semAcento(nome)) || rodPorMun.set(semAcento(nome), []).get(semAcento(nome))).push({ cod, km })));
+  function fichaRodoviaPub(r, sobre, extra) {
+    const x = info?.rodovias?.[r], c = rodIcm.get(r);
+    const ext = (x?.municipios || []).reduce((t, m) => t + m.km, 0);
+    gaveta(`<div class="mp-ficha"><span class="mp-sobre">${esc(sobre)}</span><h2>${nomeRod(r)}</h2>${x?.nome_alt ? `<p class="mp-intro">${esc(x.nome_alt)}</p>` : ""}${extra}
+      <div class="grade g-kpi">
+        ${kpi("Extensão no cadastro", ext ? `${num(ext, 1)} km` : "—", "traçado da SEINFRA")}
+        ${kpi("IRI médio", c?.iri_medio != null ? num(c.iri_medio, 2) : "—", c?.iri_medio != null ? `m/km · ${esc(c.nivel_geral || "")}` : "sem levantamento")}
+        ${kpi("Pavimento", esc(c?.pavimento || "—"), c ? `${num(c.extensao_levantada_km, 0)} km levantados` : "")}
+      </div>
+      ${x?.municipios?.length ? `<h3>Municípios atravessados <span>${num(x.municipios.length)}</span></h3>
+        <ul class="mp-lista">${x.municipios.map(m => `<li><div class="l1"><b>${esc(m.nome)}</b><span class="v">${num(m.km, 1)} km</span></div></li>`).join("")}</ul>` : ""}</div>`);
+  }
   function fichaRodovia(r, sobre = "Rodovia estadual", extra = "") {
+    if (PUBLICO) return fichaRodoviaPub(r, sobre, extra);
     const a = rodAn[r];
     gaveta(`<div class="mp-ficha"><span class="mp-sobre">${esc(sobre)}</span><h2>${nomeRod(r)}</h2>${extra}
       <div class="grade g-kpi">
@@ -346,12 +367,21 @@ export async function render(el, params) {
   function fichaTrecho(p) {
     fichaRodovia(p.rodovia, `Trecho de 1 km · km ${num(p.km)} ao ${num(p.km + 1)}`,
       `<dl class="ficha"><dt>IRI do trecho</dt><dd>${p.iri == null ? "—" : `${num(p.iri, 2)} m/km`} · ${classeIri(p.classe)} <span class="peq" style="color:var(--tinta-3)">(DNIT IPR-720)</span></dd>
-      <dt>Sinistros neste km</dt><dd>${num(p.sinistros)}${p.fatais ? ` (${num(p.fatais)} com morte)` : ""}</dd></dl>
+      ${PUBLICO ? "" : `<dt>Sinistros neste km</dt><dd>${num(p.sinistros)}${p.fatais ? ` (${num(p.fatais)} com morte)` : ""}</dd>`}</dl>
       <p class="mp-intro" style="font-size:12.5px;color:var(--tinta-3)">km contado do início do levantamento.</p>`);
   }
   function fichaMunicipio(cod, nome) {
     const x = M[cod] || {};
     nome = x.nome || nome;
+    if (PUBLICO) {
+      const rs = (rodPorMun.get(semAcento(nome)) || []).sort((a, b) => b.km - a.km);
+      m.setFilter("mun-sel", ["==", ["get", "cod"], cod]);
+      return gaveta(`<div class="mp-ficha"><span class="mp-sobre">Município</span><h2>${esc(nome)}</h2>
+        <p class="mp-intro">${x.pop ? `${num(x.pop)} habitantes (IBGE, estimativa ${esc(mun?._meta?.ano_populacao || "")})` : ""}</p>
+        ${rs.length ? `<h3>Rodovias estaduais no município <span>${num(rs.reduce((t, r) => t + r.km, 0), 1)} km</span></h3>
+          <ul class="mp-lista">${rs.map(r => `<li><div class="l1"><b>${nomeRod(r.cod)}</b><span class="v">${num(r.km, 1)} km</span></div></li>`).join("")}</ul>`
+          : `<p class="mp-vazio">Nenhuma rodovia estadual cadastrada no território do município.</p>`}</div>`);
+    }
     const nomeEo = munsEo.find(n => semAcento(n) === semAcento(nome)) || nome;
     const cs = ct.lista.filter(c => municipios(c).includes(nomeEo)).sort((a, b) => (b.v_atual || 0) - (a.v_atual || 0));
     const hs = (hist?.lista || []).filter(c => municipios(c).some(m => semAcento(m) === semAcento(nome))).sort((a, b) => String(b.ass || b.ano).localeCompare(String(a.ass || a.ano)));

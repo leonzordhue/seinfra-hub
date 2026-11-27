@@ -1,6 +1,6 @@
 // Terminais fluviais: flutuantes entregues + programa "Portos Autorizados" (termos de cessão 2026). [Nexus] 24/11/2026
 // Dados: data/terminais.json (robô pipelines/terminais/coletar.py lê a planilha de acompanhamento do DMOB).
-import { carregar } from "../dados.js";
+import { carregar, PUBLICO } from "../dados.js";
 import { esc, num, data, semAcento } from "../fmt.js";
 import { $, kpi, chip, fonte, tabela, gaveta } from "../ui.js";
 import { script, folha, estilo, dist, baixar, csv } from "./campo_comum.js";
@@ -64,7 +64,7 @@ const CSS = `
 export async function render(el) {
   estilo("terminais-css", CSS);
   const d = await carregar("terminais");
-  const ped = d.pedidos, ent = d.entregues;
+  const ped = PUBLICO ? [] : d.pedidos, ent = d.entregues;
   const ativos = ped.filter(p => p.etapa !== "cancelado");
   const cont = id => ped.filter(p => p.etapa === id).length;
   const res = d.resumo_planilha || {};
@@ -79,7 +79,24 @@ export async function render(el) {
   const semCoord = ativos.filter(p => p.lat == null && p.localidade);
   const parados = ativos.filter(p => p.etapa === "assinatura" && dias(p.datas.protocolo) > 21);
 
-  el.innerHTML = `
+  if (PUBLICO) el.innerHTML = `
+    <div class="cab"><div><h1>Terminais fluviais</h1>
+      <p>Terminais flutuantes já entregues pela SEINFRA nos municípios do Amazonas. São estruturas de embarque e desembarque às margens dos rios, que ligam a sede do município a comunidades e distritos.</p></div>
+      <div class="fontes">${fonte("atualizado em", data(d._meta.gerado_em))}</div></div>
+    <div class="grade g-kpi">
+      ${kpi("Terminais entregues", num(ent.length), "em operação", true)}
+      ${kpi("Municípios atendidos", num(munsEnt.size), "com ao menos um terminal")}
+    </div>
+    <section class="secao"><h2>Onde estão</h2>
+      <div class="cartao" style="margin-top:12px"><header><div><h2>${num(ent.length)} terminais entregues</h2><p>Clique num ponto para ver a localização.</p></div></header>
+        <div id="mapaTerm" class="mapa-term" role="region" aria-label="Mapa dos terminais fluviais entregues"></div>
+      </div>
+    </section>
+    <section class="secao"><h2>Lista dos terminais</h2>
+      <div class="cartao" style="margin-top:12px" id="tabEnt"></div>
+      <p class="nota" style="font-size:12.5px;color:var(--tinta-3);margin-top:10px">Fonte: SEINFRA-AM, cadastro de terminais flutuantes entregues.</p>
+    </section>`;
+  else el.innerHTML = `
     <div class="cab"><div><h1>Terminais fluviais</h1>
       <p>Terminais flutuantes entregues pela SEINFRA e o programa Portos Autorizados de 2026: termos de cessão por município, da solicitação à entrega.</p></div>
       <div class="fontes">${fonte("Planilha DMOB", data(d._meta.gerado_em))}${fonte("Entregues", `${num(ent.length)} terminais`)}</div></div>
@@ -132,10 +149,12 @@ export async function render(el) {
     tabela($("#tabPed"), colsPed, ls, { ordem: { k: "etapa", dir: -1 }, onLinha: ficha });
     return ls;
   };
+  if (!PUBLICO) {
   $("#fT").oninput = filtrar; $("#fE").onchange = filtrar;
   $("#csvT").onclick = () => baixar("pedidos_terminais_2026.csv", csv(["municipio", "localidade", "processo", "status", "lat", "lon", "protocolo", "assinatura", "entrega"],
     filtrar().map(p => [p.municipio, p.localidade, p.processo, p.status, p.lat, p.lon, p.datas.protocolo, p.datas.assinatura, p.datas.entrega])), "text/csv");
   filtrar();
+  }
   tabela($("#tabEnt"), [
     { k: "municipio", rot: "Município", html: t => `<b style="color:var(--tinta)">${esc(t.municipio)}</b>` },
     { k: "localidade", rot: "Localidade" },
@@ -170,7 +189,7 @@ export async function render(el) {
       </dl>
       <div class="ft-mm" role="img" aria-label="Localização do terminal ${esc(t.localidade)}: ${coordTxt(t.lat, t.lon)}"></div>
       <p class="ft-sobre"><b>Sobre os terminais flutuantes:</b> estruturas de embarque e desembarque instaladas às margens dos rios, que ligam a sede do município às comunidades e distritos do interior.</p>
-      <p style="font-size:12.5px;color:var(--tinta-3)">Fonte: planilha de acompanhamento do DMOB.</p>`);
+      <p style="font-size:12.5px;color:var(--tinta-3)">Fonte: ${PUBLICO ? "SEINFRA-AM." : "planilha de acompanhamento do DMOB."}</p>`);
     miniMapa(g, t.lat, t.lon);
   }
 

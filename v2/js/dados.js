@@ -1,9 +1,14 @@
 // Carga dos dados gerados pelas rotinas (pasta ../data). Cada arquivo traz _meta com fonte e data. [Nexus] 23/11/2026
 const cache = new Map();
+// Caminhos a partir deste arquivo (v2/js/), não da página: a versão pública (index.html da raiz) e a v2 usam os mesmos módulos. [Claude] 27/11/2026
+export const RAIZ = new URL("../../", import.meta.url).href;
+export const V2 = `${RAIZ}v2/`;
+// Versão pública (raiz do site): sem contratos, licitações, sinistros, briefings e ferramentas internas.
+export const PUBLICO = document.documentElement.dataset.publico === "1";
 
 export function carregar(nome) {
   if (!cache.has(nome)) {
-    cache.set(nome, fetch(`../data/${nome}.json`, { cache: "no-cache" })
+    cache.set(nome, fetch(`${RAIZ}data/${nome}.json`, { cache: "no-cache" })
       .then(r => { if (!r.ok) throw new Error(`${nome}.json: HTTP ${r.status}`); return r.json(); })
       .catch(e => { cache.delete(nome); throw e; }));
   }
