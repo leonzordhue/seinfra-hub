@@ -234,12 +234,14 @@ export async function render(el, params) {
   const comMouse = matchMedia("(hover: hover)").matches;
   const fCod = cod => ["==", ["get", "cod"], cod || ""];
   const realce = escuro() ? "#F5B544" : "#002D72";
-  m.addLayer({ id: "mun-sombra", type: "fill", ...fonteDe("municipios"), filter: fCod(""),
-    paint: { "fill-color": "#00173D", "fill-opacity": escuro() ? 0.6 : 0.3, "fill-translate": [6, 8], "fill-translate-anchor": "viewport" } }, "rod-linha");
+  // [Claude] 27/11/2026: o "alto relevo" (polígono opaco deslocado + sombra) tampava fundo, ramais e hidrovias do município (Paulo).
+  // Agora o realce não cobre nada: halo claro + borda forte e tom translúcido, sem deslocar. "mun-sombra" vira o halo da borda.
+  m.addLayer({ id: "mun-sombra", type: "line", ...fonteDe("municipios"), filter: fCod(""),
+    paint: { "line-color": escuro() ? "#0B1220" : "#FFFFFF", "line-width": 6, "line-opacity": 0.9 } }, "rod-linha");
   m.addLayer({ id: "mun-hover", type: "fill", ...fonteDe("municipios"), filter: fCod(""),
-    paint: { "fill-color": escuro() ? "#1E2A3D" : "#E8EEF8", "fill-opacity": 1, "fill-translate": [-3, -5], "fill-translate-anchor": "viewport" } }, "rod-linha");
+    paint: { "fill-color": realce, "fill-opacity": 0.1 } }, "rod-linha");
   m.addLayer({ id: "mun-hover-borda", type: "line", ...fonteDe("municipios"), filter: fCod(""),
-    paint: { "line-color": realce, "line-width": 2, "line-translate": [-3, -5], "line-translate-anchor": "viewport" } }, "rod-linha");
+    paint: { "line-color": realce, "line-width": 2.5 } });
   m.addLayer({ id: "mun-3d", type: "fill-extrusion", ...fonteDe("municipios"), filter: fCod(""), layout: { visibility: "none" },
     paint: { "fill-extrusion-color": "#1A4A96", "fill-extrusion-opacity": 0.95, "fill-extrusion-height": 0,
       "fill-extrusion-height-transition": { duration: reduz ? 0 : 320, delay: 0 }, "fill-extrusion-vertical-gradient": true } });
@@ -314,8 +316,7 @@ export async function render(el, params) {
     }
     m.setPaintProperty("mun-fill", "fill-color", fill); m.setPaintProperty("mun-fill", "fill-opacity", fillOp);
     // relevo: o município levantado mantém a cor do tema quando a camada pinta municípios; senão, azul claro
-    const corRelevo = fillOp > 0 ? fill : (escuro() ? "#1E2A3D" : "#E8EEF8");
-    m.setPaintProperty("mun-hover", "fill-color", corRelevo);
+    // realce translúcido em qualquer camada (o tom opaco do relevo escondia o que há embaixo)
     m.setPaintProperty("mun-3d", "fill-extrusion-color", fillOp > 0 ? fill : "#1A4A96");
     m.setPaintProperty("rod-linha", "line-color", rodCor); m.setPaintProperty("rod-linha", "line-width", rodW);
     m.setLayoutProperty("tr-linha", "visibility", trVis);
